@@ -32,9 +32,23 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        compose = true
+    }
+
 }
 
 dependencies {
 
     implementation(libs.play.services.wearable)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui.tooling.preview)
+
+    implementation(libs.wear.compose.material)
+    implementation(libs.wear.compose.foundation)
+
+    implementation(libs.horologist.composables)
+    implementation(libs.horologist.compose.layout)
+    implementation(libs.horologist.compose.material)
 }
