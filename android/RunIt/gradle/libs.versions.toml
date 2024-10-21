@@ -18,6 +18,7 @@ okhttp = "4.9.0"
 #jetpack navigation
 navigation = "2.8.3"
 nav-material = "1.7.4"
+playServicesWearable = "18.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,7 @@ gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref 
 #jetpack navigation
 nav = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 nav-material = {group = "androidx.compose.material", name = "material", version.ref = "nav-material"}
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
