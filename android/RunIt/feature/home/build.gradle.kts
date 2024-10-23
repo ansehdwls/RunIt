@@ -41,7 +41,10 @@ android {
 }
 
 dependencies {
+    //injection
     implementation(projects.core.ui)
+
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -51,6 +54,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.nav)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,4 +67,5 @@ dependencies {
     //hilt
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
+
 }

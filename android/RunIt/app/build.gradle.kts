@@ -52,10 +52,9 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.home)
     implementation(projects.core.network)
     implementation(projects.core.data)
-    implementation(projects.feature.ranking)
+    implementation(projects.feature.home)
     implementation(projects.core.ui)
     implementation(projects.feature.login)
 
