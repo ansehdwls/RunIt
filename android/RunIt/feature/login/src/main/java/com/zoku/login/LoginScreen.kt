@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -65,7 +66,7 @@ fun LoginScreen(modifier: Modifier = Modifier, onLoginSuccess: () -> Unit){
             onKakaoLoginClick = {
                 Toast.makeText(context, "로그인 버튼 클릭됨", Toast.LENGTH_SHORT).show()
                 onLoginSuccess()
-                // 여기에 카카오 로그인 로직을 추가할 수 있습니다.
+                // 여기에 카카오 로그인 로직을 추가
             }
         )
     }
@@ -74,7 +75,7 @@ fun LoginScreen(modifier: Modifier = Modifier, onLoginSuccess: () -> Unit){
 
 @Composable
 fun KakaoLoginButton(onKakaoLoginClick: () -> Unit) {
-    Card(
+    Surface(
         onClick = { onKakaoLoginClick() },
         modifier = Modifier
             .wrapContentWidth()

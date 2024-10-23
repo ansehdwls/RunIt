@@ -1,6 +1,7 @@
 package com.zoku.runit
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -44,6 +45,7 @@ import com.zoku.login.LoginScreen
 import com.zoku.ranking.RankingScreen
 import dagger.hilt.android.AndroidEntryPoint
 
+private const val TAG = "MainActivity"
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,11 +81,13 @@ fun MainScreen(modifier: Modifier = Modifier) {
         })
     }
 
+
 }
 
 @Composable
 fun MyNavHost(navController: NavHostController, onLoginSuccess: () -> Unit) {
     val context = LocalContext.current
+    Log.d(TAG, "MyNavHost: aaaa")
     NavHost(
         navController = navController,
         startDestination = "login"
@@ -93,7 +97,9 @@ fun MyNavHost(navController: NavHostController, onLoginSuccess: () -> Unit) {
             LaunchedEffect(Unit) {
                 Toast.makeText(context, "aaa", Toast.LENGTH_SHORT).show()
             }
-            HomeScreen()
+            HomeScreen(modifier = Modifier
+                .background(com.zoku.ui.BaseGray)
+                .padding(start = 10.dp, end = 10.dp))
         }
         composable("ranking") {
             RankingScreen()
@@ -163,6 +169,9 @@ fun MenuButton(name: String, backgroundColor: Color, onClick: (String) -> Unit) 
 @Composable
 fun GreetingPreview() {
     com.zoku.ui.RunItTheme {
-        MainScreen()
+//        MainScreen()
+        HomeScreen(modifier = Modifier
+            .background(com.zoku.ui.BaseGray)
+            .padding(start = 10.dp, end = 10.dp))
     }
 }
