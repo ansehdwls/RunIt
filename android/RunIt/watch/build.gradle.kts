@@ -49,6 +49,9 @@ android {
 }
 
 dependencies {
+    //injection
+    implementation(projects.core.ui)
+
     //androidx
     implementation(libs.play.services.wearable)
     implementation(platform(libs.androidx.compose.bom))

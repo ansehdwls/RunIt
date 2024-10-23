@@ -1,4 +1,4 @@
-package com.zoku.watch.ui.theme
+package com.zoku.watch.theme
 
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.material.MaterialTheme
