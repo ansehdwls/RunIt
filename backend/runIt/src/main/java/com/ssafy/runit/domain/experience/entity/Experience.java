@@ -3,12 +3,14 @@ package com.ssafy.runit.domain.experience.entity;
 import com.ssafy.runit.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity
 @Getter
+@Setter
 public class Experience {
     @Id
     @GeneratedValue
