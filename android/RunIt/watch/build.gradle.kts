@@ -66,4 +66,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //horologist
+    implementation(libs.horologist.composables)
+    implementation(libs.horologist.compose.layout)
+    implementation(libs.horologist.compose.material)
+
 }
