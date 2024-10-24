@@ -44,7 +44,8 @@ dependencies {
     //injection
     implementation(projects.core.ui)
 
-
+    //PieChart
+    implementation(libs.piechart)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

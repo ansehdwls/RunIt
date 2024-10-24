@@ -33,7 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, onLoginSuccess: () -> Unit){
+fun LoginScreen(onLoginSuccess: () -> Unit){
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -59,7 +59,10 @@ fun LoginScreen(modifier: Modifier = Modifier, onLoginSuccess: () -> Unit){
             }
         Image(
             painter = painterResource(id = R.drawable.main_logo),
-            contentDescription = "Logo Image"
+            contentDescription = "Logo Image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp)
         )
 
         KakaoLoginButton(

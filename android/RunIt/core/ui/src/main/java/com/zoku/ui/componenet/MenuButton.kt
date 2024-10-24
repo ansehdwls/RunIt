@@ -13,13 +13,13 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun MenuButton(modifier : Modifier = Modifier, name : String, backgroundColor : Color, onClick : () -> Unit){
+fun MenuButton(modifier : Modifier = Modifier, name : String, backgroundColor : Color, onClick: () -> Unit){
     Button(
         modifier = modifier
             .height(32.dp)
             .padding(horizontal = 16.dp)
         ,
-        onClick = { onClick() },
+        onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             contentColor = Color.Black
