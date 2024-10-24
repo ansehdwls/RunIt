@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error Codes</title>
+    <style>
+        table {
+            width: 80%; /* Set a reasonable width for the table */
+            margin: 20px auto; /* Center the table horizontally */
+            border-collapse: collapse; /* Make sure borders don't collapse */
+        }
+
+        th, td {
+            padding: 15px; /* Add space inside the cells */
+            text-align: left; /* Align text to the left */
+            border: 2px solid #ddd; /* Add a solid border around table cells */
+        }
+
+        th {
+            background-color: #f2f2f2; /* Light grey background for header */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9; /* Alternate row background color */
+        }
+
+        tr:hover {
+            background-color: #f1f1f1; /* Highlight row on hover */
+        }
+
+        .error-title {
+            text-align: center; /* Center the title */
+            width: 80%; /* Match the width of the table */
+            margin: 20px auto; /* Center it horizontally */
+        }
+    </style>
+</head>
+<body>
+
+<div th:each="entry : ${errorCodesMap}">
+    <h2 class="error-title" th:text="${entry.key}"></h2> <!-- Title for each error code group -->
+    <table>
+        <thead>
+        <tr>
+            <th>Http Status</th>
+            <th>Code</th>
+            <th>Message</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="errorCode : ${entry.value}">
+            <td th:text="${errorCode.httpStatus()}"></td>
+            <td th:text="${errorCode.errorCode()}"></td>
+            <td th:text="${errorCode.message()}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
