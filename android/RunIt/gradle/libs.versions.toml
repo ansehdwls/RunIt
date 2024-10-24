@@ -1,5 +1,8 @@
 [versions]
 agp = "8.5.0"
+#piechart
+piechart = "v3.1.0"
+
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -26,9 +29,14 @@ horologist = "0.5.26"
 wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.0.1"
 navigationRuntime = "2.8.3"
+navigationRuntimeKtx = "2.8.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+
+#piechart
+piechart = {group = "com.github.PhilJay", name = "MPAndroidChart",version.ref = "piechart"}
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -66,6 +74,7 @@ horologist-compose-material = { module = "com.google.android.horologist:horologi
 androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-navigation-runtime = { group = "androidx.navigation", name = "navigation-runtime", version.ref = "navigationRuntime" }
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
