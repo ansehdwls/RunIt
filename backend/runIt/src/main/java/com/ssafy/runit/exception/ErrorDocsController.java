@@ -1,5 +1,6 @@
 package com.ssafy.runit.exception;
 
+import com.ssafy.runit.exception.code.AuthErrorCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
