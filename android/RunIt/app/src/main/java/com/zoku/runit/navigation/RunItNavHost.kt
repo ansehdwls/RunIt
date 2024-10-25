@@ -1,6 +1,7 @@
 package com.zoku.runit.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +47,12 @@ fun RunItMainNavHost(
         })
     }
 
-    if(isUserLoggedIn) navController.navigateToHome()
+    // 로그인 성공 시 홈 화면으로 이동
+    LaunchedEffect(isUserLoggedIn) {
+        if (isUserLoggedIn) {
+            navController.navigateToHome()
+        }
+    }
 }
 
 
