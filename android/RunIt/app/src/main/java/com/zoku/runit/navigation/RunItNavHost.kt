@@ -31,9 +31,9 @@ fun RunItMainNavHost(
         this.homeScreen()
         this.loginScreen(onLoginSuccess = {
             // 로그인 성공 시, 상태 업데이트
-//            isUserLoggedIn = true
-//            navController.navigate("home")
-            navController.navigate("running")
+            isUserLoggedIn = true
+            navController.navigate("home")
+//            navController.navigate("running")
         })
         this.runningScreen(modifier = modifier)
 
