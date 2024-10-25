@@ -58,7 +58,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import kotlin.random.Random
 
 @Composable
-fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit) {
+fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit, moveToRecordMode : ()-> Unit) {
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -129,7 +129,9 @@ fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit) {
 
                 HomeFunctionButton(modifier = buttonModifier
                     .background(Color.White)
-                    , onClick = {}
+                    , onClick = {
+                        moveToRecordMode()
+                    }
                 , icon = R.drawable.record_info_icon
                 ,"기록 갱신"
                 ,iconModifier)
