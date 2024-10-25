@@ -5,12 +5,12 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ErrorResponse<T> {
+public class ErrorResponse {
     private String errorCode;
     private String message;
 
-    public static <T> ErrorResponse<T> error(ErrorCodeType errorCodeType) {
-        return ErrorResponse.<T>builder()
+    public static  ErrorResponse error(ErrorCodeType errorCodeType) {
+        return ErrorResponse.builder()
                 .errorCode(errorCodeType.errorCode())
                 .message(errorCodeType.message())
                 .build();

@@ -4,40 +4,40 @@
     <title>Error Codes</title>
     <style>
         table {
-            width: 80%; /* Set a reasonable width for the table */
-            margin: 20px auto; /* Center the table horizontally */
-            border-collapse: collapse; /* Make sure borders don't collapse */
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
         }
 
         th, td {
-            padding: 15px; /* Add space inside the cells */
-            text-align: left; /* Align text to the left */
-            border: 2px solid #ddd; /* Add a solid border around table cells */
+            padding: 15px;
+            text-align: left;
+            border: 2px solid #ddd;
         }
 
         th {
-            background-color: #f2f2f2; /* Light grey background for header */
+            background-color: #f2f2f2;
         }
 
         tr:nth-child(even) {
-            background-color: #f9f9f9; /* Alternate row background color */
+            background-color: #f9f9f9;
         }
 
         tr:hover {
-            background-color: #f1f1f1; /* Highlight row on hover */
+            background-color: #f1f1f1;
         }
 
         .error-title {
-            text-align: center; /* Center the title */
-            width: 80%; /* Match the width of the table */
-            margin: 20px auto; /* Center it horizontally */
+            text-align: center;
+            width: 80%;
+            margin: 20px auto;
         }
     </style>
 </head>
 <body>
 
 <div th:each="entry : ${errorCodesMap}">
-    <h2 class="error-title" th:text="${entry.key}"></h2> <!-- Title for each error code group -->
+    <h2 class="error-title" th:text="${entry.key}"></h2>
     <table>
         <thead>
         <tr>
