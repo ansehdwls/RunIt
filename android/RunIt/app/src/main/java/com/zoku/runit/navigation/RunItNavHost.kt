@@ -11,9 +11,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.zoku.login.navigation.loginScreen
 import com.zoku.navigatinon.homeScreen
+import com.zoku.running.navigation.runningScreen
 import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.runHistory
-
 import com.zoku.util.ScreenDestinations
 
 @Composable
@@ -38,7 +38,11 @@ fun RunItMainNavHost(
         this.loginScreen(onLoginSuccess = {
             // 로그인 성공 시, 상태 업데이트
             isUserLoggedIn = true
+            navController.navigate("home")
+//            navController.navigate("running")
         })
+        this.runningScreen(modifier = modifier)
+
     }
 
     if(isUserLoggedIn) navController.navigate(ScreenDestinations.home.route)
