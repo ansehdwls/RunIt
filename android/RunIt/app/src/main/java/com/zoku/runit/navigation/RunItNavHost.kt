@@ -6,10 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.zoku.login.navigation.loginScreen
 import com.zoku.navigatinon.homeScreen
+import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.runHistory
 
 import com.zoku.util.ScreenDestinations
@@ -30,7 +32,7 @@ fun RunItMainNavHost(
     ) {
 
         this.homeScreen(moveToHistory = {
-            navController.navigate(ScreenDestinations.runHistory.route)
+            navController.navigateToRunHistory()
         })
         this.runHistory()
         this.loginScreen(onLoginSuccess = {
