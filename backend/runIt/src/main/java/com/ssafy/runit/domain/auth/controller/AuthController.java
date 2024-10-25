@@ -1,6 +1,6 @@
 package com.ssafy.runit.domain.auth.controller;
 
-import com.ssafy.runit.ApiResponse;
+import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
 import com.ssafy.runit.domain.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ public class AuthController implements AuthDocs {
 
     @Override
     @PostMapping("/register")
-    public ApiResponse<Void> register(@RequestBody UserRegisterRequest request) {
+    public RunItApiResponse<Void> register(@RequestBody UserRegisterRequest request) {
         authService.registerUser(request);
-        return ApiResponse.create(null, "회원가입에 성공했습니다");
+        return RunItApiResponse.create(null, "회원가입에 성공했습니다");
     }
 }
