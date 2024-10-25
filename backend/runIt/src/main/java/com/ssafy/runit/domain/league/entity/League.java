@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.league.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ssafy.runit.domain.auth.entity.User;
 import com.ssafy.runit.domain.group.entity.Group;
 import jakarta.persistence.*;
@@ -22,5 +23,6 @@ public class League {
 
 
     @OneToMany(mappedBy = "groupLeague")
+    @JsonBackReference
     private Set<Group> groups;
 }

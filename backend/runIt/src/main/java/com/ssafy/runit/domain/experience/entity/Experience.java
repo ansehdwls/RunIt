@@ -1,6 +1,7 @@
 package com.ssafy.runit.domain.experience.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.runit.domain.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,8 +21,9 @@ public class Experience {
     private long id;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     private String activity;

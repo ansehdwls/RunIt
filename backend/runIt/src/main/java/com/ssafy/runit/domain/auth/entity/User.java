@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.auth.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ssafy.runit.domain.group.entity.Group;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,5 +28,6 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
+    @JsonManagedReference
     private Group userGroup;
 }

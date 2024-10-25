@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @Transactional(readOnly = true)
@@ -30,9 +32,17 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     public Long experienceChangedSum(Long id){
 
-        return id;
+        return  experienceRepository.experienceChangedSum(id);
     }
 
+    @Override
+    public List<Experience> experienceList(Long userId) {
+        List<Experience> t = experienceRepository.findByUser_Id(userId);
+
+        log.debug("list = {}", t.get(0).getActivity());
+
+        return t;
+    }
 
 
 }
