@@ -79,4 +79,7 @@ dependencies {
     implementation(libs.horologist.compose.layout)
     implementation(libs.horologist.compose.material)
 
+    //navigation
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.nav)
 }

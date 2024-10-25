@@ -20,10 +20,17 @@ import com.zoku.watch.component.PagerScreen
 import com.zoku.watch.component.StartButton
 
 @Composable
-fun HomeScreen(modifier: Modifier) {
+fun HomeScreen(
+    modifier: Modifier,
+    onStartClick: () -> Unit
+) {
 
     val items: List<@Composable () -> Unit> =
-        listOf({ StartButton(modifier) { } }, { UserInfoRow(modifier) })
+        listOf({
+            StartButton(modifier) {
+                onStartClick()
+            }
+        }, { UserInfoRow(modifier) })
     val pagerState = rememberPagerState(pageCount = { items.size })
     PagerScreen(
         modifier = modifier,
