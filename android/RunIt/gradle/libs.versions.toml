@@ -22,6 +22,7 @@ okhttp = "4.9.0"
 navigation = "2.8.3"
 nav-material = "1.7.4"
 playServicesWearable = "18.2.0"
+navigationRuntimeKtx = "2.8.3"
 
 #Watch
 androidx-wear-compose = "1.4.0"
@@ -64,6 +65,7 @@ gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref 
 nav = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 nav-material = {group = "androidx.compose.material", name = "material", version.ref = "nav-material"}
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 
 #Wear
 wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "androidx-wear-compose" }
