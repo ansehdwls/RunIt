@@ -5,6 +5,5 @@ sealed class ScreenDestinations(
 ) {
     data object login : ScreenDestinations(route = "login")
     data object home : ScreenDestinations(route = "home")
-
-
+    data object running : ScreenDestinations(route = "running")
 }
