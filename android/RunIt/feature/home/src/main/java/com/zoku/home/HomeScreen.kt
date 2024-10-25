@@ -24,10 +24,12 @@ import com.zoku.ui.componenet.MenuButton
 
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier, moveToHistory :() -> Unit) {
 
     var isInfo by remember { mutableStateOf(true) }
-
+    var isHistory by remember {
+        mutableStateOf(false)
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -71,8 +73,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         // InfoScreen 표시 조건
         if (isInfo) {
-            InfoScreen(modifier = modifier.background(com.zoku.ui.BaseGray)
-                .padding(horizontal = 10.dp))
+            InfoScreen(modifier = modifier
+                .background(com.zoku.ui.BaseGray)
+                .padding(horizontal = 10.dp), moveToHistory = moveToHistory)
         }
 
         else {

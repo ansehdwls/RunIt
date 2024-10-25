@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavController
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -57,7 +58,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import kotlin.random.Random
 
 @Composable
-fun InfoScreen(modifier: Modifier = Modifier) {
+fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit) {
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -106,7 +107,9 @@ fun InfoScreen(modifier: Modifier = Modifier) {
 
                 HomeFunctionButton(modifier = buttonModifier
                     .background(Color.White)
-                    , onClick = {}
+                    , onClick = {
+                        moveToHistory()
+                    }
                 , icon = R.drawable.calendar_info_icon
                 ,"히스토리"
                 ,iconModifier)
