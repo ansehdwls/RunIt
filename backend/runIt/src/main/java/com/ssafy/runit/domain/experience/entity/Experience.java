@@ -1,16 +1,18 @@
 package com.ssafy.runit.domain.experience.entity;
 
-import com.ssafy.runit.domain.user.entity.User;
+
+import com.ssafy.runit.domain.auth.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Experience {
     @Id
     @GeneratedValue
