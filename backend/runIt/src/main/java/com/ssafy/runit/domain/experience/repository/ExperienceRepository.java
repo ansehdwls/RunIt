@@ -9,8 +9,5 @@ import java.util.List;
 
 public interface ExperienceRepository extends JpaRepository<Experience, Long> {
 
-    @Query(value = "select sum(e.changed) from experience e where user_id = :id ", nativeQuery = true)
-    Long experienceChangedSum(@Param("id") Long id);
-
     List<Experience> findByUser_Id(Long userId);
 }

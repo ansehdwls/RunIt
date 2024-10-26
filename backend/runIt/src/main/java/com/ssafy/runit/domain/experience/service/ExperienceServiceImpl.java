@@ -6,6 +6,11 @@ import com.ssafy.runit.domain.auth.repository.UserRepository;
 import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
 import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.experience.repository.ExperienceRepository;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,17 +27,35 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     private final UserRepository userRepository;
 
+    private final EntityManager em;
+
     @Override
     @Transactional
-    public void experienceSave(Long userId,ExperienceSaveRequest request) {
+    public void experienceSave(Long userId, ExperienceSaveRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Experience exp = request.Mapper(user);
         experienceRepository.save(exp);
     }
 
-    public Long experienceChangedSum(Long id){
+    public Long experienceChangedSum(Long id) {
 
-        return  experienceRepository.experienceChangedSum(id);
+        LocalDate today = LocalDate.now();
+        LocalDate monday = getStartOfWeek(today);
+        String jpql = "select sum(e.changed) from experience e"
+                        + "where user_id = :id "
+                        + "AND e.createAt >= :startDate"
+                        + "AND e.createAt <= :endDate";
+
+
+        return em.createQuery(jpql, Long.class)
+                .setParameter("id", id)
+                .setParameter("startDate", today)
+                .setParameter("endDate", monday)
+                .getSingleResult();
+    }
+
+    public static LocalDate getStartOfWeek(LocalDate date) {
+        return date.with(DayOfWeek.MONDAY); // 해당 주의 월요일 날짜 반환
     }
 
     @Override

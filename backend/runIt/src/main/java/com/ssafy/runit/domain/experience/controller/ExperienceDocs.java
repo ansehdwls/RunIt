@@ -24,4 +24,9 @@ public interface ExperienceDocs {
     @ApiResponse(responseCode = "200", description = "경험치 조회", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<List<Experience>> getListExperience(@RequestParam(required = true) Long userId);
 
+    @Operation(summary = "경험치 api", description = "경험치 조회 api")
+    @ApiResponse(responseCode = "200", description = "경험치 합계", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
+    RunItApiResponse<Long> getWeekSumExperience(@RequestParam(required = true) Long userId);
+
+
 }

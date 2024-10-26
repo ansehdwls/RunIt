@@ -22,7 +22,6 @@ public class ExperienceController implements ExperienceDocs{
     @Override
     @PostMapping("/exp")
     public RunItApiResponse<Void> saveExperience(@RequestBody ExperienceSaveRequest experienceSaveRequest) {
-        log.debug("user = {}", experienceSaveRequest.getUserId());
         experienceService.experienceSave(experienceSaveRequest.getUserId(), experienceSaveRequest);
         return null;
     }
@@ -30,9 +29,15 @@ public class ExperienceController implements ExperienceDocs{
     @Override
     @GetMapping("/exp")
     public RunItApiResponse<List<Experience>> getListExperience(@RequestParam("userId") Long userId) {
-        log.debug("getListExperience = {}", userId);
         List<Experience> experienceList = experienceService.experienceList(userId);
-        log.debug("getListExperience = {}", experienceList.get(0).getActivity());
         return new RunItApiResponse<>(experienceList, "성공");
     }
+
+    @Override
+    @GetMapping("/week/exp")
+    public RunItApiResponse<Long> getWeekSumExperience(Long userId) {
+        return new RunItApiResponse<>(experienceService.experienceChangedSum(userId), "성공");
+    }
+
+
 }
