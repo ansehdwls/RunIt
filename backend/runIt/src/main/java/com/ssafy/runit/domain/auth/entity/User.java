@@ -3,7 +3,10 @@ package com.ssafy.runit.domain.auth.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ssafy.runit.domain.group.entity.Group;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user")
@@ -11,7 +14,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
