@@ -7,10 +7,9 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum GroupErrorCode implements ErrorCodeType {
+public enum ServerErrorCode implements ErrorCodeType {
 
-    GROUP_NOT_FOUND_ERROR(HttpStatus.BAD_REQUEST, "GROUP-001", "존재하지 않는 그룹입니다.");
-
+    UNKNOWN_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "서버 내부 오류입니다");
 
     private final HttpStatus status;
     private final String errorCode;
