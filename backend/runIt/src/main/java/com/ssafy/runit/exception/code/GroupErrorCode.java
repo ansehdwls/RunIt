@@ -13,8 +13,8 @@ public enum GroupErrorCode implements ErrorCodeType {
 
 
     private final HttpStatus status;
-    private final String message;
     private final String errorCode;
+    private final String message;
 
     @Override
     public HttpStatus httpStatus() {
