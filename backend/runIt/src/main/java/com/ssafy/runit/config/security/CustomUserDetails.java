@@ -1,6 +1,6 @@
 package com.ssafy.runit.config.security;
 
-import com.ssafy.runit.domain.auth.entity.User;
+import com.ssafy.runit.domain.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

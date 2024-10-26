@@ -1,4 +1,4 @@
-package com.ssafy.runit.domain.auth.entity;
+package com.ssafy.runit.domain.user.entity;
 
 import com.ssafy.runit.domain.group.entity.Group;
 import jakarta.persistence.*;

@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.auth.entity;
 
+import com.ssafy.runit.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

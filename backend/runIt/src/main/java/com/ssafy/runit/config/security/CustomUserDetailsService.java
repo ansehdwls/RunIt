@@ -1,7 +1,7 @@
 package com.ssafy.runit.config.security;
 
-import com.ssafy.runit.domain.auth.entity.User;
-import com.ssafy.runit.domain.auth.repository.UserRepository;
+import com.ssafy.runit.domain.user.entity.User;
+import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
 import lombok.RequiredArgsConstructor;

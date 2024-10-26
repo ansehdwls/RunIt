@@ -4,7 +4,7 @@ import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.auth.dto.request.UserLoginRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
 import com.ssafy.runit.domain.auth.dto.response.LoginResponse;
-import com.ssafy.runit.domain.auth.repository.UserRepository;
+import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.domain.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
