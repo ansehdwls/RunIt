@@ -14,7 +14,7 @@ public enum AuthErrorCode implements ErrorCodeType {
     INVALID_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "AUTH-003", "유효하지 않은 토큰입니다."),
     INVALID_DATA_FORM(HttpStatus.BAD_REQUEST, "AUTH-004", "데이터 형식을 확인해주세요."),
     DUPLICATED_USER_ERROR(HttpStatus.BAD_REQUEST, "AUTH-005", "이미 가입된 사용자입니다."),
-    UNREGISTERED_USER_ERROR(HttpStatus.BAD_REQUEST, "AUTH-006", "회원가입을 진행해주세요");
+    UNREGISTERED_USER_ERROR(HttpStatus.BAD_REQUEST, "AUTH-006", "존재하지 않는 사용자입니다.");
 
     private final HttpStatus status;
     private final String errorCode;
