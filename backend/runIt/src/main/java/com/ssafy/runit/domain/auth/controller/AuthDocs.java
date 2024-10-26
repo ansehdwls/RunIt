@@ -1,7 +1,9 @@
 package com.ssafy.runit.domain.auth.controller;
 
 import com.ssafy.runit.RunItApiResponse;
+import com.ssafy.runit.domain.auth.dto.request.UserLoginRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
+import com.ssafy.runit.domain.auth.dto.response.LoginResponse;
 import com.ssafy.runit.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,5 +20,11 @@ public interface AuthDocs {
     @ApiResponse(responseCode = "AUTH-004", description = "데이터 형식을 확인해주세요", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "AUTH-005", description = "이미 가입된 사용자입니다", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     RunItApiResponse<Void> register(@RequestBody UserRegisterRequest userRegisterRequest);
+
+    @Operation(summary = "사용자 로그인 API", description = "사용자 로그인")
+    @ApiResponse(responseCode = "200", description = "로그인에 성공했습니다", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
+    @ApiResponse(responseCode = "AUTH-004", description = "데이터 형식을 확인해주세요", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "AUTH-006", description = "가입하지 않은 사용자입니다", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    RunItApiResponse<LoginResponse> login(@RequestBody UserLoginRequest userLoginRequest);
 
 }
