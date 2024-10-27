@@ -1,7 +1,7 @@
 package com.ssafy.runit.domain.experience.dto.request;
 
-import com.ssafy.runit.domain.auth.entity.User;
 import com.ssafy.runit.domain.experience.entity.Experience;
+import com.ssafy.runit.domain.user.entity.User;
 import lombok.*;
 
 import java.sql.Date;
