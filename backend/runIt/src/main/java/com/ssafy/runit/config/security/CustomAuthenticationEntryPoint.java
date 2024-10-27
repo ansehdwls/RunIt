@@ -20,7 +20,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        System.out.println(authException.getMessage());
         ErrorResponse error = ErrorResponse.error(AuthErrorCode.AUTHENTICATION_FAIL_ERROR);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(AuthErrorCode.AUTHENTICATION_FAIL_ERROR.getStatus().value());
