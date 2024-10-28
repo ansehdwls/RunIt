@@ -12,6 +12,8 @@ import java.time.LocalDate;
 
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
+import com.ssafy.runit.exception.CustomException;
+import com.ssafy.runit.exception.code.ExperienceErrorCode;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +41,7 @@ public class ExperienceServiceImpl implements ExperienceService {
     public Long experienceSave(Long userId, ExperienceSaveRequest request) {
 
 //      기존의 user id 받아서 처리하는 부분
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ExperienceErrorCode.SAVE_EXPERIENCE_FAIL));
         Experience exp = request.Mapper(user);
         experienceRepository.save(exp);
         return userId;
@@ -74,9 +76,9 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     public List<ExperienceGetListResponse> experienceList(Long userId) {
-        List<ExperienceGetListResponse> t = experienceRepository.findByUser_Id(userId);
+        List<ExperienceGetListResponse> expList = experienceRepository.findByUser_Id(userId);
 
-        return t;
+        return expList;
     }
 
 
