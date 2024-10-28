@@ -9,7 +9,7 @@ import java.util.List;
 public interface ExperienceService {
     void experienceSave(Long userId, ExperienceSaveRequest request);
 
-    Long experienceChangedSum(Long id);
+    Long experienceChangedSum(Long userId);
 
     List<Experience> experienceList(Long userId);
 }

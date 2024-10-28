@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -22,11 +24,11 @@ public interface ExperienceDocs {
 
     @Operation(summary = "경험치 api", description = "경험치 조회 api")
     @ApiResponse(responseCode = "200", description = "경험치 조회", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
-    RunItApiResponse<List<Experience>> getListExperience(@RequestParam(required = true) Long userId);
+    RunItApiResponse<List<Experience>> getListExperience(@AuthenticationPrincipal UserDetails userDetails);
 
     @Operation(summary = "경험치 api", description = "경험치 조회 api")
     @ApiResponse(responseCode = "200", description = "경험치 합계", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
-    RunItApiResponse<Long> getWeekSumExperience(@RequestParam(required = true) Long userId);
+    RunItApiResponse<Long> getWeekSumExperience(@AuthenticationPrincipal UserDetails userDetails);
 
 
 }

@@ -5,6 +5,7 @@ import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
 import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.experience.repository.ExperienceRepository;
 
+import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Slf4j
@@ -43,19 +45,29 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     public Long experienceChangedSum(Long id) {
 
-        LocalDate today = LocalDate.now();
+        LocalDate today =  LocalDate.now();
         LocalDate monday = getStartOfWeek(today);
-        String jpql = "select sum(e.changed) from experience e"
-                        + "where user_id = :id "
-                        + "AND e.createAt >= :startDate"
-                        + "AND e.createAt <= :endDate";
 
+        Timestamp convertToday = Timestamp.valueOf(today.atTime(LocalTime.now()));
 
-        return em.createQuery(jpql, Long.class)
+        Timestamp convertMonday = Timestamp.valueOf(monday.atTime(LocalTime.MIN));
+
+        log.debug("id = {}", id);
+        log.debug("today = {} , monday = {}, convet = {}, cmonday = {}", today, monday, convertToday, convertMonday);
+
+        String jpql = "SELECT SUM(e.changed) \n" +
+                        "FROM Experience e \n" +
+                        "WHERE e.user.id = :id \n" +
+                        "AND e.createAt >= :startDate";
+
+        Long result = em.createQuery(jpql, Long.class)
                 .setParameter("id", id)
-                .setParameter("startDate", today)
-                .setParameter("endDate", monday)
+                .setParameter("startDate", convertMonday)
                 .getSingleResult();
+
+        log.debug("result = {}", result);
+
+        return result;
     }
 
     public static LocalDate getStartOfWeek(LocalDate date) {
@@ -66,7 +78,7 @@ public class ExperienceServiceImpl implements ExperienceService {
     public List<Experience> experienceList(Long userId) {
         List<Experience> t = experienceRepository.findByUser_Id(userId);
 
-        log.debug("list = {}", t.get(0).getActivity());
+        log.debug("list = {}", t.get(0).getActivity()   );
 
         return t;
     }

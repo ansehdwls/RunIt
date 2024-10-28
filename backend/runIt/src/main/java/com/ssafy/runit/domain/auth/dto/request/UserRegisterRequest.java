@@ -3,13 +3,13 @@ package com.ssafy.runit.domain.auth.dto.request;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.group.entity.Group;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRegisterRequest {
     private String userName;
     private String userImageUrl;
