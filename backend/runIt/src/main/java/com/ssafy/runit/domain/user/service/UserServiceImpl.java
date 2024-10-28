@@ -8,12 +8,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -21,5 +23,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUserEmail(userEmail).orElseThrow(
                 () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
         );
+    }
+
+    @Override
+    public List<String> findAllFcmTokens() {
+        return userRepository.findAllFcmTokens();
     }
 }
