@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.plugin)
     id("kotlin-kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -82,4 +83,7 @@ dependencies {
 
     //jetpack navigation
     implementation(libs.bundles.nav)
+
+    //fcm
+    implementation(platform(libs.firebase.bom))
 }

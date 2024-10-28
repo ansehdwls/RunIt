@@ -1,6 +1,7 @@
 [versions]
 agp = "8.5.0"
 #piechart
+firebaseBom = "33.5.1"
 piechart = "v3.1.0"
 
 kotlin = "1.9.0"
@@ -32,11 +33,14 @@ coreSplashscreen = "1.0.1"
 navigationRuntime = "2.8.3"
 desguaring = "2.1.2"
 
+#FCM
+fcm = "4.4.2"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 #piechart
-piechart = {group = "com.github.PhilJay", name = "MPAndroidChart",version.ref = "piechart"}
+piechart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "piechart" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -63,28 +67,32 @@ okhttp3-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor"
 gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit2" }
 #jetpack navigation
 nav = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-nav-material = {group = "androidx.compose.material", name = "material", version.ref = "nav-material"}
+nav-material = { group = "androidx.compose.material", name = "material", version.ref = "nav-material" }
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 
 #Wear
 wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "androidx-wear-compose" }
 wear-compose-material = { module = "androidx.wear.compose:compose-material", version.ref = "androidx-wear-compose" }
-wear-compose-pager = {module = "androidx.wear.compose:compose-pager", version.ref = "androidx-wear-compose"}
+wear-compose-pager = { module = "androidx.wear.compose:compose-pager", version.ref = "androidx-wear-compose" }
 horologist-composables = { module = "com.google.android.horologist:horologist-composables", version.ref = "horologist" }
 horologist-compose-layout = { module = "com.google.android.horologist:horologist-compose-layout", version.ref = "horologist" }
 horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologist" }
 androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-navigation-runtime = { group = "androidx.navigation", name = "navigation-runtime", version.ref = "navigationRuntime" }
-core-desugaring = {group = "com.android.tools", name="desugar_jdk_libs", version.ref="desguaring"}
+core-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desguaring" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+
+#fcm
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+fcm = { id = "com.google.gms.google-services", version.ref = "fcm"}
 
 [bundles]
 network = ["retrofit2", "okhttp3", "okhttp3-logging", "gson"]
