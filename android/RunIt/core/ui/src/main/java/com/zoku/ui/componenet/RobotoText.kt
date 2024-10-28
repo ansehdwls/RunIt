@@ -4,12 +4,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import com.zoku.ui.R
+import com.zoku.ui.CustomTypo
 
 @Composable
 fun RobotoText(
@@ -22,12 +19,7 @@ fun RobotoText(
     Text(
         modifier = modifier,
         text = text,
-        style = TextStyle(
-            fontFamily = FontFamily(
-                Font(if (style == "Bold") R.font.roboto_bold else R.font.roboto_medium)
-            ),
-            fontSize = fontSize
-        ),
+        style = CustomTypo().mapleBold.copy(fontSize = fontSize),
         color = color,
     )
 }

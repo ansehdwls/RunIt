@@ -10,12 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
+import com.zoku.ui.CustomTypo
 import com.zoku.watch.component.PagerScreen
 import com.zoku.watch.component.StartButton
 
@@ -53,8 +53,7 @@ fun UserInfoRow(modifier: Modifier) {
         ) {
             Text(
                 "콱씨",
-                textAlign = TextAlign.Start,
-                fontSize = 13.sp,
+                style = CustomTypo().mapleBold.copy(fontSize = 11.sp),
                 color = Color.White
             )
             Text(
