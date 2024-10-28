@@ -15,7 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.Typography
 import androidx.wear.tooling.preview.devices.WearDevices
+import com.zoku.ui.Typography
 import com.zoku.watch.component.PagerScreen
 import com.zoku.watch.component.StartButton
 
