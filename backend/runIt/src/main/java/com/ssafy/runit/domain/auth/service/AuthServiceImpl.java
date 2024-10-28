@@ -1,6 +1,7 @@
 package com.ssafy.runit.domain.auth.service;
 
 import com.ssafy.runit.config.security.CustomUserDetailsService;
+import com.ssafy.runit.domain.auth.dto.request.UpdateJwtRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserLoginRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
 import com.ssafy.runit.domain.auth.dto.response.LoginResponse;
@@ -56,6 +57,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public LoginResponse createJwtToken(String userEmail) {
+        String refreshToken = TOKEN_PREFIX + jwtTokenProvider.generateRefreshToken(userEmail);
+        String accessToken = TOKEN_PREFIX + jwtTokenProvider.generateAccessToken(userEmail);
+        saveRefreshToken(userEmail, refreshToken);
+        return new LoginResponse(accessToken, refreshToken);
+    }
+
+
+    @Override
     public LoginResponse login(UserLoginRequest request) {
         if (!request.isValid()) {
             log.error("잘못된 입력 형식 : {}", request.getUserEmail());
@@ -66,10 +76,7 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String refreshToken = TOKEN_PREFIX + jwtTokenProvider.generateRefreshToken(userEmail);
-        String accessToken = TOKEN_PREFIX + jwtTokenProvider.generateAccessToken(userEmail);
-        saveRefreshToken(userEmail, refreshToken);
-        return new LoginResponse(accessToken, refreshToken);
+        return createJwtToken(userEmail);
     }
 
     @Override
@@ -86,5 +93,16 @@ public class AuthServiceImpl implements AuthService {
                     RefreshToken newRefreshToken = RefreshToken.builder().refreshToken(refreshToken).user(user).build();
                     return refreshTokenRepository.save(newRefreshToken);
                 });
+    }
+
+    @Override
+    public LoginResponse getNewRefreshToken(UpdateJwtRequest request) {
+        String refreshToken = request.getRefreshToken();
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new CustomException(AuthErrorCode.EXPIRED_TOKEN_ERROR);
+        }
+
+        String userEmail = jwtTokenProvider.extractUserEmail(refreshToken);
+        return createJwtToken(userEmail);
     }
 }
