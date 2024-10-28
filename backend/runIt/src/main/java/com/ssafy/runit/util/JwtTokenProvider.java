@@ -3,10 +3,7 @@ package com.ssafy.runit.util;
 import com.ssafy.runit.config.security.CustomUserDetailsService;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -80,6 +77,8 @@ public class JwtTokenProvider {
             throw new CustomException(AuthErrorCode.EXPIRED_TOKEN_ERROR);
         } catch (IllegalArgumentException | UnsupportedJwtException e) {
             throw new CustomException(AuthErrorCode.INVALID_TOKEN_ERROR);
+        } catch (MalformedJwtException e) {
+            throw new CustomException(AuthErrorCode.INVALID_TOKEN_ERROR);
         }
     }
 
@@ -107,9 +106,7 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         String userEmail = extractUserEmail(token);
-        log.debug("jwtTokenProvider userEmail : {}", userEmail);
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
-        log.debug("userDetails : {}, {}", userDetails.getUsername(), userDetails.getAuthorities());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
