@@ -42,6 +42,9 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun RunHistoryScreen(modifier: Modifier = Modifier) {
 
+    var selectHistory by remember {
+        mutableStateOf(false)
+    }
     var selectedDay by remember { mutableStateOf(1) }
     var challengeList by remember {
         mutableStateOf(
@@ -65,7 +68,6 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxHeight()
             .background(com.zoku.ui.BaseGray)
-            .systemBarsPadding()
     ) {
         // ex) < 10 월 >
         RunHistoryTitle(baseModifier)
@@ -79,26 +81,20 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
             start = 1,
             onDateClick = { day ->
                 selectedDay = day  // 클릭된 날짜 업데이트
+                selectHistory = false
             },
             challengeList = challengeList
         )
+        if (!selectHistory) {
+            RunHistoryRecordListScreen(selectedDay = selectedDay,
+                onClick = { selectItem ->
+                    selectHistory = true
 
-        // 선택된 날짜
-        Text(
-            text = "2024-10-${selectedDay}", color = Color.White,
-            fontSize = 20.sp, modifier = Modifier
-                .padding(top = 10.dp, start = 20.dp, bottom = 5.dp)
-        )
-
-
-        // 그날 뛴 기록 확인
-        DailyRouteView(
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp),
-            selectedDay
-        )
-
+                })
+        }
+        else {
+            RunHistoryDetailScreen()
+        }
     }
 }
 
@@ -240,68 +236,4 @@ fun WeeklyDateView(
         }
 
     }
-}
-
-@Composable
-fun DailyRouteView(modifier: Modifier, day: Int) {
-
-    Column(
-        modifier = modifier
-            .padding(horizontal = 20.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
-        for (i in 0..2) {
-            Surface(
-                onClick = { },
-                modifier = modifier
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(16.dp))
-            ) {
-                Row(
-                    modifier = modifier
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.sample_map_history_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .weight(3f)
-                            .fillMaxHeight()
-                            .padding(horizontal = 10.dp),
-                        contentScale = ContentScale.Crop
-                    )
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        val textModifier = Modifier.weight(1f)
-
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        DailyRouteText(modifier = textModifier, text = "시작", fontSize = 16.sp)
-                        DailyRouteText(modifier = textModifier, text = "오후 3:37", fontSize = 12.sp)
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        DailyRouteText(modifier = textModifier, text = "종료", fontSize = 16.sp)
-                        DailyRouteText(modifier = textModifier, text = "오후 3:57", fontSize = 12.sp)
-
-                        Spacer(modifier = Modifier.height(20.dp))
-                    }
-                }
-            }
-        }
-
-    }
-}
-
-@Composable
-fun DailyRouteText(modifier: Modifier, text: String, fontSize: TextUnit) {
-    Text(
-        text = text,
-        modifier = modifier,
-        fontSize = fontSize,
-        textAlign = TextAlign.Center
-    )
 }

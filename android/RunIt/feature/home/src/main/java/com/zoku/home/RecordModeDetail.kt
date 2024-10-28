@@ -49,6 +49,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.zoku.util.ScreenDestinations
 import kotlin.random.Random
 
 @Composable
@@ -181,7 +182,7 @@ fun RecordMap(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun RecordDetailInfo(modifier: Modifier = Modifier) {
+fun RecordDetailInfo(modifier: Modifier = Modifier, startDestination: Int = 0) {
     // 전체 box
     Box(
         modifier = modifier
@@ -191,8 +192,9 @@ fun RecordDetailInfo(modifier: Modifier = Modifier) {
     ) {
         // 길이가 길어 지면 scroll
         Column(
-            modifier = Modifier
+            modifier = if(startDestination == 0) Modifier
                 .verticalScroll(rememberScrollState())
+            else Modifier
         ) {
             // 날짜 및 시간
             RecordDate(
@@ -208,16 +210,18 @@ fun RecordDetailInfo(modifier: Modifier = Modifier) {
 
             RecordGraph("구간별 페이스")
 
-            // 도전하기 버튼
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    onClick = {},
-                    modifier = Modifier
+            if(startDestination == 0) {
+                // 도전하기 버튼
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "도전하기")
+                    Button(
+                        onClick = {},
+                        modifier = Modifier
+                    ) {
+                        Text(text = "도전하기")
+                    }
                 }
             }
         }
