@@ -7,4 +7,6 @@ sealed class ScreenDestinations(
     data object home : ScreenDestinations(route = "home")
     data object runHistory : ScreenDestinations(route = "home/run-history")
     data object RecordMode : ScreenDestinations(route = "home/record-mode")
+    data object RecordModeDetail : ScreenDestinations(route = "home/record-mode/detail")
+
 }

@@ -13,8 +13,10 @@ import androidx.navigation.compose.NavHost
 import com.zoku.login.navigation.loginScreen
 import com.zoku.navigatinon.homeScreen
 import com.zoku.navigatinon.navigateToHome
+import com.zoku.navigatinon.navigateToRecordModeDetail
 import com.zoku.navigatinon.navigateToRecordModeScreen
 import com.zoku.navigatinon.navigateToRunHistory
+import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
 
@@ -40,11 +42,14 @@ fun RunItMainNavHost(
             moveToRecordMode = {navController.navigateToRecordModeScreen()}
             )
         this.runHistory()
-        this.recordMode()
+        this.recordMode(
+            moveToDetail = {navController.navigateToRecordModeDetail()}
+        )
         this.loginScreen(onLoginSuccess = {
             // 로그인 성공 시, 상태 업데이트
             isUserLoggedIn = true
         })
+        this.recordDetail()
     }
 
     // 로그인 성공 시 홈 화면으로 이동
