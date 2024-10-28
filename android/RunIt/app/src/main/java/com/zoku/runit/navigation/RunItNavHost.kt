@@ -6,14 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.zoku.login.navigation.loginScreen
 import com.zoku.navigatinon.homeScreen
-import com.zoku.running.navigation.runningScreen
 import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.runHistory
+import com.zoku.running.navigation.navigateToPause
+import com.zoku.running.navigation.navigateToRunning
+import com.zoku.running.navigation.pauseScreen
+import com.zoku.running.navigation.runningScreen
 import com.zoku.util.ScreenDestinations
 
 @Composable
@@ -37,15 +39,17 @@ fun RunItMainNavHost(
         this.runHistory()
         this.loginScreen(onLoginSuccess = {
             // 로그인 성공 시, 상태 업데이트
-            isUserLoggedIn = true
+//            isUserLoggedIn = true
             navController.navigate("home")
-//            navController.navigate("running")
+//            navController.navigateToRunning()
+//            navController.navigateToPause()
         })
         this.runningScreen(modifier = modifier)
+        this.pauseScreen(modifier = modifier)
 
     }
 
-    if(isUserLoggedIn) navController.navigate(ScreenDestinations.home.route)
+    if (isUserLoggedIn) navController.navigate(ScreenDestinations.home.route)
 }
 
 
