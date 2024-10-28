@@ -67,44 +67,51 @@ fun RecordList(modifier: Modifier, moveToDetail :()->Unit){
             color = Color.White,
             modifier = Modifier.fillMaxWidth())
 
-        //가록 Surface
-        Surface(
-            onClick = { moveToDetail() },
+        RecordDataView(modifier =  Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(top = 5.dp)
+            .clip(RoundedCornerShape(16.dp))
+                ,moveToDetail = moveToDetail)
+
+    }
+}
+
+@Composable
+fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit){
+    //가록 Surface
+    Surface(
+        onClick = { moveToDetail() },
+        modifier = modifier
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .padding(top = 5.dp)
-                .clip(RoundedCornerShape(16.dp))
+                .fillMaxHeight()
         ) {
-            Column(
+            // 시간
+            Text(
+                text = "오후 3:37 ~ 오후 3:52",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.End
+            )
+
+            // 지도 및 데이터
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
+                    .weight(1f)
             ) {
-                // 시간
-                Text(
-                    text = "오후 3:37 ~ 오후 3:52",
+                Image(painter = painterResource(id = R.drawable.sample_map_history_icon),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.End
+                        .weight(3f)
+                        .padding(10.dp))
+                RecordTextView(
+                    modifier = Modifier.weight(1f)
                 )
-
-                // 지도 및 데이터
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Image(painter = painterResource(id = R.drawable.sample_map_history_icon),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .weight(3f)
-                            .padding(10.dp))
-                    RecordTextView(
-                        modifier = Modifier.weight(1f)
-                    )
-                }
             }
         }
     }
