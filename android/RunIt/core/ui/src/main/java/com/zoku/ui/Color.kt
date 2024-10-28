@@ -15,3 +15,5 @@ val BaseDarkBackground = Color(0xFF111931)
 val BaseWhiteBackground = Color(0xFFF3F7FF)
 val BaseYellow = Color(0xFFDDEF3F)
 val Black = Color(color = 0xFF000000)
+
+val RoundButtonGray = Color(0xFF535353)

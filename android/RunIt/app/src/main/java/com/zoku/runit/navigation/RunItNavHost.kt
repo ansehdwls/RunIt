@@ -13,6 +13,7 @@ import com.zoku.navigatinon.homeScreen
 import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.runHistory
 import com.zoku.running.navigation.navigateToPause
+import com.zoku.running.navigation.navigateToRunning
 import com.zoku.running.navigation.pauseScreen
 import com.zoku.running.navigation.runningScreen
 import com.zoku.util.ScreenDestinations
@@ -39,9 +40,9 @@ fun RunItMainNavHost(
         this.loginScreen(onLoginSuccess = {
             // 로그인 성공 시, 상태 업데이트
 //            isUserLoggedIn = true
-//            navController.navigate("home")
+            navController.navigate("home")
 //            navController.navigateToRunning()
-            navController.navigateToPause()
+//            navController.navigateToPause()
         })
         this.runningScreen(modifier = modifier)
         this.pauseScreen(modifier = modifier)

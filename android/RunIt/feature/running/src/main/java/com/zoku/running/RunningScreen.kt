@@ -10,17 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.componenet.RobotoText
+import com.zoku.ui.componenet.RoundRunButton
 
 
 @Composable
@@ -107,27 +102,13 @@ fun RunningScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.weight(0.2f))
 
-        RoundPauseButton()
+        RoundRunButton(
+            containerColor = BaseYellow,
+            resourceId = R.drawable.baseline_pause_24,
+            resourceColor = Color.Black
+        )
 
         Spacer(modifier = Modifier.weight(0.4f))
-    }
-}
-
-@Composable
-fun RoundPauseButton(modifier: Modifier = Modifier) {
-    Button(
-        onClick = { /*TODO: Add functionality*/ },
-        shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(containerColor = BaseYellow),
-        modifier = modifier.size(100.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.baseline_pause_24),
-            contentDescription = "Pause",
-            modifier = Modifier.size(24.dp),
-            contentScale = ContentScale.Fit,
-            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.Black)
-        )
     }
 }
 
