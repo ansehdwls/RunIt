@@ -71,7 +71,7 @@ dependencies {
     //wear
     implementation(libs.wear.compose.material)
     implementation(libs.wear.compose.foundation)
-
+    implementation(libs.androidx.material.icons.extended)
     coreLibraryDesugaring(libs.core.desugaring)
 
     //horologist
