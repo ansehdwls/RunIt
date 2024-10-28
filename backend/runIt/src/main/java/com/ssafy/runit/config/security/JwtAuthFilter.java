@@ -5,7 +5,6 @@ import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.ErrorCodeType;
 import com.ssafy.runit.exception.ErrorResponse;
 import com.ssafy.runit.exception.code.AuthErrorCode;
-import com.ssafy.runit.exception.code.ServerErrorCode;
 import com.ssafy.runit.util.JwtTokenProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -34,11 +33,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static final List<String> EXCLUDE_URLS = Arrays.asList(
-            "/api/auth/",
-            "/api/swagger-ui",
-            "/error-docs"
-    );
+    private static final List<String> EXCLUDE_URLS = Arrays.asList("/api/auth/", "/api/swagger-ui", "/error-docs");
 
 
     @Override
@@ -56,17 +51,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             SecurityContextHolder.clearContext();
             sendErrorResponse(response, e.getErrorCodeType());
             return;
-        } catch (io.jsonwebtoken.security.SignatureException e) {
-            SecurityContextHolder.clearContext();
-            sendErrorResponse(response, AuthErrorCode.INVALID_TOKEN_ERROR);
-            return;
         } catch (ExpiredJwtException e) {
             SecurityContextHolder.clearContext();
             sendErrorResponse(response, AuthErrorCode.EXPIRED_TOKEN_ERROR);
             return;
         } catch (Exception e) {
             SecurityContextHolder.clearContext();
-            sendErrorResponse(response, ServerErrorCode.UNKNOWN_SERVER_ERROR);
+            sendErrorResponse(response, AuthErrorCode.INVALID_TOKEN_ERROR);
             return;
         }
 
