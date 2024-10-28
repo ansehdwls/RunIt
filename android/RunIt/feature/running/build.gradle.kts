@@ -1,26 +1,19 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.plugin)
     id("kotlin-kapt")
-    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.zoku.runit"
+    namespace = "com.zoku.running"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.zoku.runit"
         minSdk = 28
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -45,21 +38,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 dependencies {
-    implementation(projects.core.network)
-    implementation(projects.core.data)
-    implementation(projects.feature.home)
-    implementation(projects.core.ui)
-    implementation(projects.feature.login)
-    implementation(projects.feature.running)
 
+    implementation(projects.core.ui)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -69,6 +52,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.runtime.ktx)
+
+    implementation(libs.nav)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,15 +62,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
     //hilt
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
-
-    //jetpack navigation
-    implementation(libs.bundles.nav)
-
-    //fcm
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.messaging.ktx)
 }

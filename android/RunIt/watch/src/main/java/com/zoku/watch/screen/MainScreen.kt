@@ -2,12 +2,14 @@ package com.zoku.watch.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zoku.watch.screen.HomeScreen
+import androidx.navigation.compose.rememberNavController
+import com.zoku.watch.navigation.WatchNavHost
 
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
-    HomeScreen(modifier)
+    val navController = rememberNavController()
+    WatchNavHost(navController, modifier)
 }
 
 

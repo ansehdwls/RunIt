@@ -8,5 +8,8 @@ import com.zoku.runit.navigation.RunItMainNavHost
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    RunItMainNavHost(navController)
+    RunItMainNavHost(
+        modifier = modifier,
+        navController = navController
+    )
 }
