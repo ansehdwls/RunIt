@@ -22,6 +22,5 @@ public class League {
 
 
     @OneToMany(mappedBy = "groupLeague")
-    @JsonBackReference
     private Set<Group> groups;
 }

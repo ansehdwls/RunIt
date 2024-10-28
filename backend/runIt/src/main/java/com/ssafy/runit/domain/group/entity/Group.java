@@ -23,11 +23,9 @@ public class Group {
 
     @ManyToOne
     @JoinColumn(name = "league_id", nullable = false)
-    @JsonManagedReference
     private League groupLeague;
 
 
     @OneToMany(mappedBy = "userGroup")
-    @JsonBackReference
     private Set<User> users;
 }

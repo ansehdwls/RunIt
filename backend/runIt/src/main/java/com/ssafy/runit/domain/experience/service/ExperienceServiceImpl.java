@@ -2,6 +2,7 @@ package com.ssafy.runit.domain.experience.service;
 
 
 import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
+import com.ssafy.runit.domain.experience.dto.response.ExperienceGetListResponse;
 import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.experience.repository.ExperienceRepository;
 
@@ -35,12 +36,13 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     @Transactional
-    public void experienceSave(Long userId, ExperienceSaveRequest request) {
+    public Long experienceSave(Long userId, ExperienceSaveRequest request) {
 
 //      기존의 user id 받아서 처리하는 부분
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Experience exp = request.Mapper(user);
         experienceRepository.save(exp);
+        return userId;
     }
 
     public Long experienceChangedSum(Long id) {
@@ -52,9 +54,6 @@ public class ExperienceServiceImpl implements ExperienceService {
 
         Timestamp convertMonday = Timestamp.valueOf(monday.atTime(LocalTime.MIN));
 
-        log.debug("id = {}", id);
-        log.debug("today = {} , monday = {}, convet = {}, cmonday = {}", today, monday, convertToday, convertMonday);
-
         String jpql = "SELECT SUM(e.changed) \n" +
                         "FROM Experience e \n" +
                         "WHERE e.user.id = :id \n" +
@@ -65,7 +64,6 @@ public class ExperienceServiceImpl implements ExperienceService {
                 .setParameter("startDate", convertMonday)
                 .getSingleResult();
 
-        log.debug("result = {}", result);
 
         return result;
     }
@@ -75,10 +73,8 @@ public class ExperienceServiceImpl implements ExperienceService {
     }
 
     @Override
-    public List<Experience> experienceList(Long userId) {
-        List<Experience> t = experienceRepository.findByUser_Id(userId);
-
-        log.debug("list = {}", t.get(0).getActivity()   );
+    public List<ExperienceGetListResponse> experienceList(Long userId) {
+        List<ExperienceGetListResponse> t = experienceRepository.findByUser_Id(userId);
 
         return t;
     }

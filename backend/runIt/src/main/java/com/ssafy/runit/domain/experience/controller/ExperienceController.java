@@ -2,6 +2,7 @@ package com.ssafy.runit.domain.experience.controller;
 
 import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
+import com.ssafy.runit.domain.experience.dto.response.ExperienceGetListResponse;
 import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.experience.service.ExperienceService;
 import com.ssafy.runit.domain.user.entity.User;
@@ -26,17 +27,17 @@ public class ExperienceController implements ExperienceDocs{
 
     @Override
     @PostMapping("/exp")
-    public RunItApiResponse<Void> saveExperience(@RequestBody ExperienceSaveRequest experienceSaveRequest) {
+    public RunItApiResponse<Long> saveExperience(@RequestBody ExperienceSaveRequest experienceSaveRequest) {
         experienceService.experienceSave(experienceSaveRequest.getUserId(), experienceSaveRequest);
-        return null;
+        return new RunItApiResponse<>(experienceSaveRequest.getUserId(), "성공");
     }
 
     @Override
     @GetMapping("/exp")
-    public RunItApiResponse<List<Experience>> getListExperience(@AuthenticationPrincipal UserDetails userDetails) {
+    public RunItApiResponse<List<ExperienceGetListResponse>> getListExperience(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByUserEmail(userDetails.getUsername()).orElseThrow();
 
-        List<Experience> experienceList = experienceService.experienceList(user.getId());
+        List<ExperienceGetListResponse> experienceList =  experienceService.experienceList(user.getId());
         return new RunItApiResponse<>(experienceList, "성공");
     }
 

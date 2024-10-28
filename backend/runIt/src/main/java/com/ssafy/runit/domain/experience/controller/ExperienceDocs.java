@@ -2,6 +2,7 @@ package com.ssafy.runit.domain.experience.controller;
 
 import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
+import com.ssafy.runit.domain.experience.dto.response.ExperienceGetListResponse;
 import com.ssafy.runit.domain.experience.entity.Experience;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,12 +20,12 @@ import java.util.List;
 public interface ExperienceDocs {
     @Operation(summary = "경험치 api", description = "경험치")
     @ApiResponse(responseCode = "200", description = "경험치 저장", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
-    RunItApiResponse<Void> saveExperience(@RequestBody ExperienceSaveRequest experienceSaveRequest);
+    RunItApiResponse<Long> saveExperience(@RequestBody ExperienceSaveRequest experienceSaveRequest);
 
 
     @Operation(summary = "경험치 api", description = "경험치 조회 api")
     @ApiResponse(responseCode = "200", description = "경험치 조회", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
-    RunItApiResponse<List<Experience>> getListExperience(@AuthenticationPrincipal UserDetails userDetails);
+    RunItApiResponse<List<ExperienceGetListResponse>> getListExperience(@AuthenticationPrincipal UserDetails userDetails);
 
     @Operation(summary = "경험치 api", description = "경험치 조회 api")
     @ApiResponse(responseCode = "200", description = "경험치 합계", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
