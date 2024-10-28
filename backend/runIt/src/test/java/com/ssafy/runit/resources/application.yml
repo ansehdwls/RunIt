@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: runIt
+
+  output:
+    ansi:
+      enabled: always
+
+  logging:
+    level:
+      org.hibernate.SQL: debug
+      org.hibernate.type: trace
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true

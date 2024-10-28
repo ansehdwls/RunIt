@@ -1,5 +1,7 @@
 package com.ssafy.runit.domain.group.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.league.entity.League;
 import jakarta.persistence.*;

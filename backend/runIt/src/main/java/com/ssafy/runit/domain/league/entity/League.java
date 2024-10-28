@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.league.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ssafy.runit.domain.group.entity.Group;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

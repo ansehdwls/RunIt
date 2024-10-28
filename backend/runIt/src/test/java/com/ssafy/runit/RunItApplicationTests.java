@@ -1,4 +1,4 @@
-package com.ssafyt.runit;
+package com.ssafy.runit;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
