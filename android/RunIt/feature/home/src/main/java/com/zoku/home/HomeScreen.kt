@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +37,7 @@ fun HomeScreen(modifier: Modifier = Modifier, moveToHistory :() -> Unit, moveToR
         modifier = modifier
             .fillMaxSize()
             .background(com.zoku.ui.BaseGray)
+            .verticalScroll(rememberScrollState())
             .systemBarsPadding()
     ) {
         Spacer(modifier = Modifier.height(36.dp))

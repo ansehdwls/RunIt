@@ -34,22 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
-import kotlin.random.Random
+import com.zoku.ui.componenet.RecordGraph
+import com.zoku.ui.componenet.RecordMap
 
 @Composable
 fun RecordModeDetail(modifier: Modifier = Modifier) {
@@ -169,19 +160,9 @@ fun RecordDetailTitle(modifier: Modifier = Modifier) {
     }
 }
 
-@Composable
-fun RecordMap(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(id = R.drawable.sample_map_history_icon),
-        contentDescription = null,
-        modifier = modifier
-            .fillMaxWidth(),
-        contentScale = ContentScale.Crop
-    )
-}
 
 @Composable
-fun RecordDetailInfo(modifier: Modifier = Modifier) {
+fun RecordDetailInfo(modifier: Modifier = Modifier, startDestination: Int = 0) {
     // 전체 box
     Box(
         modifier = modifier
@@ -191,8 +172,9 @@ fun RecordDetailInfo(modifier: Modifier = Modifier) {
     ) {
         // 길이가 길어 지면 scroll
         Column(
-            modifier = Modifier
+            modifier = if(startDestination == 0) Modifier
                 .verticalScroll(rememberScrollState())
+            else Modifier
         ) {
             // 날짜 및 시간
             RecordDate(
@@ -208,16 +190,18 @@ fun RecordDetailInfo(modifier: Modifier = Modifier) {
 
             RecordGraph("구간별 페이스")
 
-            // 도전하기 버튼
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    onClick = {},
-                    modifier = Modifier
+            if(startDestination == 0) {
+                // 도전하기 버튼
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "도전하기")
+                    Button(
+                        onClick = {},
+                        modifier = Modifier
+                    ) {
+                        Text(text = "도전하기")
+                    }
                 }
             }
         }
@@ -257,58 +241,4 @@ fun AverageData(modifier: Modifier = Modifier, data: String, type: String) {
         Text(text = data, fontSize = 20.sp, textAlign = TextAlign.Center)
         Text(text = type, modifier = Modifier.padding(start = 5.dp))
     }
-}
-
-@Composable
-fun RecordGraph(title: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 10.dp)
-    ) {
-        Text(text = title)
-        // 예시 데이터
-        LineChartView()
-    }
-}
-
-@Composable
-fun LineChartView() {
-    AndroidView(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp)
-            .padding(16.dp),
-        factory = { context ->
-            LineChart(context).apply {
-                // X축 설정
-                xAxis.position = XAxis.XAxisPosition.BOTTOM
-                xAxis.setDrawGridLines(false)
-                xAxis.granularity = 1f  // X축 레이블 간격
-
-                // Y축 설정
-                axisRight.isEnabled = false
-                axisLeft.setDrawGridLines(false)
-
-                // 기타 설정
-                description.isEnabled = false
-                setTouchEnabled(true)
-                setPinchZoom(true)
-                animateX(1000)  // X축 애니메이션
-            }
-        },
-        update = { lineChart ->
-            val entries = (1..10).map { Entry(it.toFloat(), Random.nextFloat() * 10) }
-            val lineDataSet = LineDataSet(entries, "Sample Data").apply {
-                color = com.zoku.ui.BaseYellow.toArgb()
-                lineWidth = 2f
-                circleRadius = 4f
-                setDrawCircleHole(false)
-                setDrawCircles(false)
-                setDrawValues(false)  // 각 점의 값 숨기기
-            }
-            lineChart.data = LineData(lineDataSet)
-            lineChart.invalidate()  // 차트 갱신
-        }
-    )
 }

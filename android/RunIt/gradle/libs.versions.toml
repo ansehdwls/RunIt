@@ -2,7 +2,7 @@
 agp = "8.5.0"
 #piechart
 firebaseBom = "33.5.1"
-piechart = "v3.1.0"
+piechart = "3.1.0"
 
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
