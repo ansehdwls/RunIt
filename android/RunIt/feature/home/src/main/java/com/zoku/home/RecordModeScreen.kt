@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -26,12 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun RecordModeScreen(modifier: Modifier = Modifier){
+fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :()->Unit){
   Column(
       modifier = modifier
           .fillMaxWidth()
           .fillMaxHeight()
           .background(com.zoku.ui.BaseGray)
+          .systemBarsPadding()
   ) {
       // 타이틀
         Text(text = "기록갱신",
@@ -47,12 +49,14 @@ fun RecordModeScreen(modifier: Modifier = Modifier){
       RecordList(
           modifier
               .weight(1f)
-              .padding(horizontal = 20.dp))
+              .padding(horizontal = 20.dp)
+          , moveToDetail= moveToDetail
+      )
   }
 }
 
 @Composable
-fun RecordList(modifier: Modifier){
+fun RecordList(modifier: Modifier, moveToDetail :()->Unit){
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -65,7 +69,7 @@ fun RecordList(modifier: Modifier){
 
         //가록 Surface
         Surface(
-            onClick = {},
+            onClick = { moveToDetail() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)

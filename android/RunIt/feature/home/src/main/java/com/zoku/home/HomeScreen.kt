@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,6 +35,7 @@ fun HomeScreen(modifier: Modifier = Modifier, moveToHistory :() -> Unit, moveToR
         modifier = modifier
             .fillMaxSize()
             .background(com.zoku.ui.BaseGray)
+            .systemBarsPadding()
     ) {
         Spacer(modifier = Modifier.height(36.dp))
 

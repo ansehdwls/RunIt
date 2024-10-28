@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -41,6 +42,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit){
             .background(
             color = com.zoku.ui.BaseDarkBackground
         )
+            .systemBarsPadding()
     ) {
         Spacer(modifier = Modifier.padding(top = 60.dp))
             Box(  modifier = Modifier

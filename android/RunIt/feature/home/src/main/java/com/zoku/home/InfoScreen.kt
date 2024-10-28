@@ -52,6 +52,7 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.LargeValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
@@ -568,7 +569,7 @@ fun getBarData1(): BarData {
 }
 
 // X축 레이블을 요일로 변환하는 Formatter
-class DayAxisFormatter : com.github.mikephil.charting.formatter.ValueFormatter() {
+class DayAxisFormatter : ValueFormatter() {
     private val days = arrayOf("월", "화", "수", "목", "금", "토", "일")
 
     override fun getFormattedValue(value: Float): String {
