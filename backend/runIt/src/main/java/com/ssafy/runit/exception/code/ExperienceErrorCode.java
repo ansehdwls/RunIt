@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ExperienceErrorCode implements ErrorCodeType {
 
-    SAVE_EXPERIENCE_FAIL(HttpStatus.UNAUTHORIZED, "Experience-001", "경험치 저장에 실패했습니다.");
+    FIND_USER_FAIL(HttpStatus.UNAUTHORIZED, "Experience-001", "유저 찾기에 실패했습니다.");
 
     private final HttpStatus status;
     private final String errorCode;
@@ -17,16 +17,16 @@ public enum ExperienceErrorCode implements ErrorCodeType {
 
     @Override
     public HttpStatus httpStatus() {
-        return null;
+        return this.status;
     }
 
     @Override
     public String message() {
-        return "";
+        return this.message;
     }
 
     @Override
     public String errorCode() {
-        return "";
+        return this.errorCode;
     }
 }

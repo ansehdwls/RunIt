@@ -38,13 +38,12 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     @Transactional
-    public Long experienceSave(Long userId, ExperienceSaveRequest request) {
+    public void experienceSave(Long userId, ExperienceSaveRequest request) {
 
 //      기존의 user id 받아서 처리하는 부분
-        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ExperienceErrorCode.SAVE_EXPERIENCE_FAIL));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ExperienceErrorCode.FIND_USER_FAIL));
         Experience exp = request.Mapper(user);
         experienceRepository.save(exp);
-        return userId;
     }
 
     public Long experienceChangedSum(Long id) {

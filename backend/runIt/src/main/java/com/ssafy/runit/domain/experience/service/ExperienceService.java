@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ExperienceService {
-    Long experienceSave(Long userId, ExperienceSaveRequest request);
+    void experienceSave(Long userId, ExperienceSaveRequest request);
 
     Long experienceChangedSum(Long userId);
 

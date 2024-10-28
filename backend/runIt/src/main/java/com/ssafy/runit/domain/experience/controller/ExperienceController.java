@@ -27,9 +27,9 @@ public class ExperienceController implements ExperienceDocs{
 
     @Override
     @PostMapping("/exp")
-    public RunItApiResponse<Long> saveExperience(@RequestBody ExperienceSaveRequest experienceSaveRequest) {
+    public RunItApiResponse<Void> saveExperience(@RequestBody ExperienceSaveRequest experienceSaveRequest) {
         experienceService.experienceSave(experienceSaveRequest.getUserId(), experienceSaveRequest);
-        return new RunItApiResponse<>(experienceSaveRequest.getUserId(), "성공");
+        return new RunItApiResponse<>(null, "성공");
     }
 
     @Override

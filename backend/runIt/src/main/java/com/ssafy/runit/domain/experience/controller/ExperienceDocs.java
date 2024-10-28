@@ -20,7 +20,7 @@ import java.util.List;
 public interface ExperienceDocs {
     @Operation(summary = "경험치 api", description = "경험치")
     @ApiResponse(responseCode = "200", description = "경험치 저장", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
-    RunItApiResponse<Long> saveExperience(@RequestBody ExperienceSaveRequest experienceSaveRequest);
+    RunItApiResponse<Void> saveExperience(@RequestBody ExperienceSaveRequest experienceSaveRequest);
 
 
     @Operation(summary = "경험치 api", description = "경험치 조회 api")
