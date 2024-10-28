@@ -1,7 +1,3 @@
-logging:
-  level:
-    root: INFO
-    com.ssafy.runit: DEBUG
 
 springdoc:
   swagger-ui:
@@ -18,16 +14,32 @@ spring:
       enabled: always
 
   datasource:
-    url: jdbc:mysql://localhost:3306/localdb
+    url: jdbc:mysql://localhost:3306/localdb?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
     username: ssafy
     password: ssafy
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  jpa:
-    hibernate:
-      ddl-auto: create
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
 
+  jpa:
     properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+logging:
+  level:
+    root: INFO
+    com.ssafy.runit: DEBUG
+
+jwt:
+  secret: a9V3x6Bz1QeTauYcrF0epL2gfsD52hJ8kM11nC4zG7wK9
+  access-token-expiration: 7200000 # 2h
+  refresh-token-expiration: 604800000 # 7d
