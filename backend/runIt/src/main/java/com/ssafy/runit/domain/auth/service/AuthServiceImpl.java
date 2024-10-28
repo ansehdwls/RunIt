@@ -5,11 +5,11 @@ import com.ssafy.runit.domain.auth.dto.request.UserLoginRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
 import com.ssafy.runit.domain.auth.dto.response.LoginResponse;
 import com.ssafy.runit.domain.auth.entity.RefreshToken;
-import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.auth.repository.RefreshTokenRepository;
-import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
+import com.ssafy.runit.domain.user.entity.User;
+import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.exception.code.GroupErrorCode;
@@ -21,7 +21,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,8 +35,6 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final CustomUserDetailsService customUserDetailsService;
     private static final String TOKEN_PREFIX = "Bearer ";
-
-    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -72,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = TOKEN_PREFIX + jwtTokenProvider.generateRefreshToken(userEmail);
         String accessToken = TOKEN_PREFIX + jwtTokenProvider.generateAccessToken(userEmail);
         saveRefreshToken(userEmail, refreshToken);
-        return new LoginResponse(refreshToken, accessToken);
+        return new LoginResponse(accessToken, refreshToken);
     }
 
     @Override
