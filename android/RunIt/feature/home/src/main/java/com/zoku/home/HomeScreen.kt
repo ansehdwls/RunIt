@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +25,7 @@ import com.zoku.ui.componenet.MenuButton
 
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, moveToHistory :() -> Unit) {
+fun HomeScreen(modifier: Modifier = Modifier, moveToHistory :() -> Unit, moveToRecordMode : ()->Unit) {
 
     var isInfo by remember { mutableStateOf(true) }
     var isHistory by remember {
@@ -34,6 +35,7 @@ fun HomeScreen(modifier: Modifier = Modifier, moveToHistory :() -> Unit) {
         modifier = modifier
             .fillMaxSize()
             .background(com.zoku.ui.BaseGray)
+            .systemBarsPadding()
     ) {
         Spacer(modifier = Modifier.height(36.dp))
 
@@ -75,7 +77,9 @@ fun HomeScreen(modifier: Modifier = Modifier, moveToHistory :() -> Unit) {
         if (isInfo) {
             InfoScreen(modifier = modifier
                 .background(com.zoku.ui.BaseGray)
-                .padding(horizontal = 10.dp), moveToHistory = moveToHistory)
+                .padding(horizontal = 10.dp),
+                moveToHistory = moveToHistory,
+                moveToRecordMode = moveToRecordMode)
         }
 
         else {

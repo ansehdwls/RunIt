@@ -52,13 +52,14 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.LargeValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import kotlin.random.Random
 
 @Composable
-fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit) {
+fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit, moveToRecordMode : ()-> Unit) {
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -129,7 +130,9 @@ fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit) {
 
                 HomeFunctionButton(modifier = buttonModifier
                     .background(Color.White)
-                    , onClick = {}
+                    , onClick = {
+                        moveToRecordMode()
+                    }
                 , icon = R.drawable.record_info_icon
                 ,"기록 갱신"
                 ,iconModifier)
@@ -566,7 +569,7 @@ fun getBarData1(): BarData {
 }
 
 // X축 레이블을 요일로 변환하는 Formatter
-class DayAxisFormatter : com.github.mikephil.charting.formatter.ValueFormatter() {
+class DayAxisFormatter : ValueFormatter() {
     private val days = arrayOf("월", "화", "수", "목", "금", "토", "일")
 
     override fun getFormattedValue(value: Float): String {
