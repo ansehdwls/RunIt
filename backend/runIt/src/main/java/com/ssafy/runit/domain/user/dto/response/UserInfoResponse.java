@@ -1,4 +1,4 @@
-package com.ssafy.runit.domain.user.dto;
+package com.ssafy.runit.domain.user.dto.response;
 
 import com.ssafy.runit.domain.user.entity.User;
 import lombok.Builder;

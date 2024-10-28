@@ -29,4 +29,13 @@ public class UserServiceImpl implements UserService {
     public List<String> findAllFcmTokens() {
         return userRepository.findAllFcmTokens();
     }
+
+    @Override
+    @Transactional
+    public void saveFcmToken(String userEmail, String fcmToken) {
+        User user = userRepository.findByUserEmail(userEmail).orElseThrow(
+                () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
+        );
+        userRepository.updateFcmTokenByUserId(user.getId(), fcmToken);
+    }
 }

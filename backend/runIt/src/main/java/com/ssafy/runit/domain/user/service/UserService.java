@@ -9,4 +9,6 @@ public interface UserService {
     User findByEmail(String userEmail);
 
     List<String> findAllFcmTokens();
+
+    void saveFcmToken(String userEmail, String fcmToken);
 }
