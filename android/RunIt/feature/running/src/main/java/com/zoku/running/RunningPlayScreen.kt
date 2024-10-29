@@ -98,7 +98,7 @@ fun RunningPlayScreen(onPauseClick: () -> Unit) {
 
         TempHeartGraph()
 
-        Spacer(modifier = Modifier.weight(0.2f))
+        Spacer(modifier = Modifier.weight(0.3f))
 
         RoundRunButton(
             containerColor = BaseYellow,
@@ -107,7 +107,7 @@ fun RunningPlayScreen(onPauseClick: () -> Unit) {
             onClick = { onPauseClick() }
         )
 
-        Spacer(modifier = Modifier.weight(0.4f))
+        Spacer(modifier = Modifier.weight(0.3f))
     }
 }
 

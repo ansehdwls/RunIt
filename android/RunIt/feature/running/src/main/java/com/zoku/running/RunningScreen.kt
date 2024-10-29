@@ -1,5 +1,6 @@
 package com.zoku.running
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,9 +14,11 @@ fun RunningScreen(modifier: Modifier = Modifier) {
 
     var isPlay by remember { mutableStateOf(true) }
 
-    if (isPlay) {
-        RunningPlayScreen(onPauseClick = { isPlay = false })
-    } else {
-        RunningPauseScreen(onPlayClick = { isPlay = true })
+    Crossfade(targetState = isPlay, label = "") { isPlaying ->
+        if (isPlaying) {
+            RunningPlayScreen(onPauseClick = { isPlay = false })
+        } else {
+            RunningPauseScreen(onPlayClick = { isPlay = true })
+        }
     }
 }
