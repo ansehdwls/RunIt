@@ -17,6 +17,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 
+
 @Composable
 fun RecordGraph(title: String) {
     Column(
