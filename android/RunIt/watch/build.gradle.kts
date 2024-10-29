@@ -55,6 +55,8 @@ dependencies {
     implementation(projects.core.ui)
 
     //androidx
+    implementation(libs.androidx.lifecycle.service)
+
     implementation(libs.play.services.wearable)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
