@@ -1,11 +1,12 @@
 package com.ssafy.runit.domain.experience.service;
 
-import com.ssafy.runit.domain.auth.entity.User;
-import com.ssafy.runit.domain.auth.repository.UserRepository;
+
 import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
 import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.experience.repository.ExperienceRepository;
 import com.ssafy.runit.domain.group.entity.Group;
+import com.ssafy.runit.domain.user.entity.User;
+import com.ssafy.runit.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
