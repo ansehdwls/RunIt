@@ -28,7 +28,7 @@ import com.zoku.util.ScreenDestinations
 fun RunItMainNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = ScreenDestinations.runningResult.route
+    startDestination: String = ScreenDestinations.login.route
 ) {
 
     var isUserLoggedIn by remember { mutableStateOf(false) }
