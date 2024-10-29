@@ -33,14 +33,16 @@ fun HomeScreen(modifier: Modifier = Modifier, moveToHistory :() -> Unit, moveToR
     var isHistory by remember {
         mutableStateOf(false)
     }
+    val baseModifier = Modifier
+        .fillMaxSize()
+        .background(com.zoku.ui.BaseGray)
+        .systemBarsPadding()
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(com.zoku.ui.BaseGray)
+        modifier = if(isInfo) baseModifier
             .verticalScroll(rememberScrollState())
-            .systemBarsPadding()
+            else baseModifier
     ) {
-        Spacer(modifier = Modifier.height(36.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         Row(
             modifier = Modifier

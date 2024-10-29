@@ -56,10 +56,14 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.zoku.home.component.DropDownMenu
 import kotlin.random.Random
 
 @Composable
 fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit, moveToRecordMode : ()-> Unit) {
+
+    val runningDiaryMenu = arrayOf("거리","시간","페이스")
+    val runningRecordMenu = arrayOf("전체","일주일")
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -81,13 +85,13 @@ fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit, moveToRe
 
             Spacer(modifier = modifier.height(20.dp))
 
-            HomeTitle(modifier.padding(bottom = 5.dp), "러닝 일지", "거리", 1)
+            HomeTitle(modifier.padding(bottom = 5.dp), "러닝 일지", "거리", runningDiaryMenu)
 
             RunningDiary(modifier.align(Alignment.CenterHorizontally))
 
             Spacer(modifier = modifier.height(20.dp))
 
-            HomeTitle(modifier.padding(bottom = 5.dp), "러닝 기록", "전체", 2)
+            HomeTitle(modifier.padding(bottom = 5.dp), "러닝 기록", "전체", runningRecordMenu)
 
             RunningRecord(modifier,"1,600","104")
 
@@ -122,7 +126,7 @@ fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit, moveToRe
                     , onClick = {}
                 , icon = R.drawable.run_info_icon
                 ,""
-                ,iconModifier
+                , iconModifier
                         .height(60.dp)
                         .width(40.dp))
 
@@ -245,7 +249,7 @@ fun TodayRecord(
 }
 
 @Composable
-fun HomeTitle(modifier: Modifier = Modifier, title: String, firstSelect: String, option: Int) {
+fun HomeTitle(modifier: Modifier = Modifier, title: String, firstSelect: String, menu: Array<String>) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf(firstSelect) }
 
@@ -275,23 +279,15 @@ fun HomeTitle(modifier: Modifier = Modifier, title: String, firstSelect: String,
                     modifier = Modifier
                         .clickable { expanded = !expanded }  // 클릭 시 드롭다운 열기/닫기
                 )
-                when (option) {
-                    1 -> RunningMDiaryMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        onItemSelected = { option ->
-                            selectedOption = option // 선택된 옵션 업데이트
-                        }
-                    )
+                DropDownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    onItemSelected = { option ->
+                        selectedOption = option // 선택된 옵션 업데이트
+                    },
+                    itemList = menu
+                )
 
-                    2 -> RunningRecordMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        onItemSelected = { option ->
-                            selectedOption = option // 선택된 옵션 업데이트
-                        }
-                    )
-                }
 
 
             }
@@ -310,74 +306,6 @@ fun RunningDiary(modifier: Modifier = Modifier) {
             .background(com.zoku.ui.BaseWhiteBackground)
     ){
         BarChartScreen()
-    }
-}
-
-@Composable
-fun RunningMDiaryMenu(
-    expanded: Boolean,
-    onDismissRequest: () -> Unit,   // 메뉴가 닫힐 때 호출되는 콜백
-    onItemSelected: (String) -> Unit  // 아이템 선택 시 호출되는 콜백
-) {
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = onDismissRequest, // 메뉴 외부를 클릭하면 닫히도록 처리
-        modifier = Modifier.background(com.zoku.ui.BaseDarkBackground)
-    ) {
-        DropdownMenuItem(
-            text = { Text("거리", color = Color.White) },
-            onClick = {
-                onItemSelected("거리") // 아이템이 선택되었을 때 콜백 호출
-                onDismissRequest()     // 메뉴 닫기
-            },
-            modifier = Modifier.background(com.zoku.ui.BaseDarkBackground)
-        )
-        DropdownMenuItem(
-            text = { Text("시간", color = Color.White) },
-            onClick = {
-                onItemSelected("시간")
-                onDismissRequest()
-            },
-            modifier = Modifier.background(com.zoku.ui.BaseDarkBackground)
-        )
-        DropdownMenuItem(
-            text = { Text("페이스", color = Color.White) },
-            onClick = {
-                onItemSelected("페이스")
-                onDismissRequest()
-            },
-            modifier = Modifier.background(com.zoku.ui.BaseDarkBackground)
-        )
-    }
-}
-
-@Composable
-fun RunningRecordMenu(
-    expanded: Boolean,
-    onDismissRequest: () -> Unit,   // 메뉴가 닫힐 때 호출되는 콜백
-    onItemSelected: (String) -> Unit  // 아이템 선택 시 호출되는 콜백
-) {
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = onDismissRequest, // 메뉴 외부를 클릭하면 닫히도록 처리
-        modifier = Modifier.background(com.zoku.ui.BaseDarkBackground)
-    ) {
-        DropdownMenuItem(
-            text = { Text("전체", color = Color.White) },
-            onClick = {
-                onItemSelected("전체") // 아이템이 선택되었을 때 콜백 호출
-                onDismissRequest()     // 메뉴 닫기
-            },
-            modifier = Modifier.background(com.zoku.ui.BaseDarkBackground)
-        )
-        DropdownMenuItem(
-            text = { Text("일주일", color = Color.White) },
-            onClick = {
-                onItemSelected("일주일")
-                onDismissRequest()
-            },
-            modifier = Modifier.background(com.zoku.ui.BaseDarkBackground)
-        )
     }
 }
 
