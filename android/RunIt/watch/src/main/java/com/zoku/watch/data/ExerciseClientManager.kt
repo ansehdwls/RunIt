@@ -17,11 +17,13 @@ import androidx.health.services.client.data.ExerciseType
 import androidx.health.services.client.data.ExerciseTypeCapabilities
 import androidx.health.services.client.data.ExerciseUpdate
 import androidx.health.services.client.data.LocationAvailability
+import androidx.health.services.client.data.WarmUpConfig
 import androidx.health.services.client.endExercise
 import androidx.health.services.client.getCapabilities
 import androidx.health.services.client.getCurrentExerciseInfo
 import androidx.health.services.client.markLap
 import androidx.health.services.client.pauseExercise
+import androidx.health.services.client.prepareExercise
 import androidx.health.services.client.resumeExercise
 import androidx.health.services.client.startExercise
 import kotlinx.coroutines.channels.awaitClose
@@ -36,7 +38,7 @@ import javax.inject.Singleton
 class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServicesClient) {
 
     //HealthServicesClient에서 운동 관련 기능을 제공하는 ExerciseClient를 가져옴.
-    private val exerciseClient: ExerciseClient = healthServicesClient.exerciseClient
+    val exerciseClient: ExerciseClient = healthServicesClient.exerciseClient
 
     //러닝이 지원되는 운동 타입 목록에 있는지 확인하고, 지원될 경우 해당 운동 타입의 기능을 리턴
     suspend fun getExerciseCapabilities(): ExerciseTypeCapabilities? {
@@ -107,6 +109,16 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
 
         }
     }
+
+    //운동 연습
+    suspend fun prepareExercise() {
+        val warmUpConfig = WarmUpConfig(
+            exerciseType = ExerciseType.RUNNING,
+            dataTypes = setOf(DataType.HEART_RATE_BPM, DataType.LOCATION)
+        )
+        exerciseClient.prepareExercise(warmUpConfig)
+    }
+
 
     //운동 세션 종료
     suspend fun endExercise() {
