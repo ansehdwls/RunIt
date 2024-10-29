@@ -5,12 +5,15 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.zoku.running.PauseScreen
+import com.zoku.running.RunningResultScreen
 import com.zoku.running.RunningScreen
 import com.zoku.util.ScreenDestinations
 
 fun NavController.navigateToRunning() = navigate(route = ScreenDestinations.running.route)
 
 fun NavController.navigateToPause() = navigate(route = ScreenDestinations.pause.route)
+
+fun NavController.navigateToRunningResult() = navigate(route = ScreenDestinations.runningResult.route)
 
 fun NavGraphBuilder.runningScreen(modifier: Modifier = Modifier) {
     composable(route = ScreenDestinations.running.route) {
@@ -21,5 +24,11 @@ fun NavGraphBuilder.runningScreen(modifier: Modifier = Modifier) {
 fun NavGraphBuilder.pauseScreen(modifier: Modifier = Modifier) {
     composable(route = ScreenDestinations.pause.route) {
         PauseScreen(modifier)
+    }
+}
+
+fun NavGraphBuilder.runningResultScreen(modifier: Modifier = Modifier){
+    composable(route = ScreenDestinations.runningResult.route){
+        RunningResultScreen()
     }
 }

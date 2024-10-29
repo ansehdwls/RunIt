@@ -18,9 +18,9 @@ import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
-import com.zoku.running.navigation.navigateToPause
-import com.zoku.running.navigation.navigateToRunning
+import com.zoku.running.navigation.navigateToRunningResult
 import com.zoku.running.navigation.pauseScreen
+import com.zoku.running.navigation.runningResultScreen
 import com.zoku.running.navigation.runningScreen
 import com.zoku.util.ScreenDestinations
 
@@ -28,7 +28,7 @@ import com.zoku.util.ScreenDestinations
 fun RunItMainNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = ScreenDestinations.login.route
+    startDestination: String = ScreenDestinations.runningResult.route
 ) {
 
     var isUserLoggedIn by remember { mutableStateOf(false) }
@@ -40,23 +40,22 @@ fun RunItMainNavHost(
     ) {
 
         this.homeScreen(
-            moveToHistory = {navController.navigateToRunHistory()},
-            moveToRecordMode = {navController.navigateToRecordModeScreen()}
-            )
+            moveToHistory = { navController.navigateToRunHistory() },
+            moveToRecordMode = { navController.navigateToRecordModeScreen() }
+        )
         this.runHistory()
         this.recordMode(
-            moveToDetail = {navController.navigateToRecordModeDetail()}
+            moveToDetail = { navController.navigateToRecordModeDetail() }
         )
         this.loginScreen(onLoginSuccess = {
             // 로그인 성공 시, 상태 업데이트
 //            isUserLoggedIn = true
             navController.navigate("home")
-//            navController.navigateToRunning()
-//            navController.navigateToPause()
         })
         this.recordDetail()
         this.runningScreen(modifier = modifier)
         this.pauseScreen(modifier = modifier)
+        this.runningResultScreen(modifier = modifier)
 
     }
 

@@ -10,4 +10,5 @@ sealed class ScreenDestinations(
     data object RecordMode : ScreenDestinations(route = "home/record-mode")
     data object RecordModeDetail : ScreenDestinations(route = "home/record-mode/detail")
     data object pause: ScreenDestinations(route = "pause")
+    data object runningResult: ScreenDestinations(route = "running-result")
 }
