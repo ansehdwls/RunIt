@@ -81,7 +81,8 @@ dependencies {
     implementation(libs.horologist.composables)
     implementation(libs.horologist.compose.layout)
     implementation(libs.horologist.compose.material)
-
+    implementation(libs.horologist.health.composables)
+    implementation(libs.horologist.health.service)
     //navigation
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.nav)
