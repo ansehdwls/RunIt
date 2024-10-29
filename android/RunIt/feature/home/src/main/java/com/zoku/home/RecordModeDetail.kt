@@ -39,6 +39,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zoku.ui.componenet.RecordDetailInfo
 import com.zoku.ui.componenet.RecordGraph
 import com.zoku.ui.componenet.RecordMap
 
@@ -49,7 +50,6 @@ fun RecordModeDetail(modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
             .background(com.zoku.ui.BaseGray)
-            .systemBarsPadding()
     ) {
         // title
         RecordDetailTitle(
@@ -62,9 +62,12 @@ fun RecordModeDetail(modifier: Modifier = Modifier) {
         RecordMap()
 
         // 세부 기록 표시
-        RecordDetailInfo(
+        Box(
             modifier.weight(1f)
-        )
+        ) {
+            RecordDetailInfo(
+            )
+        }
     }
 }
 
@@ -157,88 +160,5 @@ fun RecordDetailTitle(modifier: Modifier = Modifier) {
                 tint = Color.Red
             )
         }
-    }
-}
-
-
-@Composable
-fun RecordDetailInfo(modifier: Modifier = Modifier, startDestination: Int = 0) {
-    // 전체 box
-    Box(
-        modifier = modifier
-            .padding(10.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-    ) {
-        // 길이가 길어 지면 scroll
-        Column(
-            modifier = if(startDestination == 0) Modifier
-                .verticalScroll(rememberScrollState())
-            else Modifier
-        ) {
-            // 날짜 및 시간
-            RecordDate(
-                "2024-10-27",
-                "오후 3:37 ~ 오후 3:52"
-            )
-
-            // 평균 기록 데이터
-            RecordData(modifier.fillMaxWidth(), 20.1f, "20", 100)
-
-            // 그래프
-            RecordGraph("구간별 심박수")
-
-            RecordGraph("구간별 페이스")
-
-            if(startDestination == 0) {
-                // 도전하기 버튼
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Button(
-                        onClick = {},
-                        modifier = Modifier
-                    ) {
-                        Text(text = "도전하기")
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun RecordDate(today: String, time: String) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(20.dp)
-    ) {
-        Text(text = today, textAlign = TextAlign.Start, modifier = Modifier.weight(1f))
-        Text(text = time, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
-    }
-}
-
-@Composable
-fun RecordData(modifier: Modifier = Modifier, distance: Float, time: String, bpm: Int) {
-    Row(
-        modifier = modifier
-            .padding(10.dp)
-    ) {
-        AverageData(modifier.weight(1f), data = "$distance", "km")
-        AverageData(modifier.weight(1f), data = "$time", "hr")
-        AverageData(modifier.weight(1f), data = "$bpm", "bpm")
-    }
-}
-
-@Composable
-fun AverageData(modifier: Modifier = Modifier, data: String, type: String) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(text = data, fontSize = 20.sp, textAlign = TextAlign.Center)
-        Text(text = type, modifier = Modifier.padding(start = 5.dp))
     }
 }

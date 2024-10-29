@@ -10,6 +10,7 @@ import com.zoku.ui.R
 
 @Composable
 fun RecordMap(modifier: Modifier = Modifier) {
+
     Image(
         painter = painterResource(id = R.drawable.sample_map_history_icon),
         contentDescription = null,
