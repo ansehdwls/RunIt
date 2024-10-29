@@ -34,9 +34,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit){
+fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel){
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -73,7 +76,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit){
         KakaoLoginButton(
             onKakaoLoginClick = {
                 Toast.makeText(context, "로그인 버튼 클릭됨", Toast.LENGTH_SHORT).show()
-                onLoginSuccess()
+                viewModel.handleKaKaoLogin()
+//                onLoginSuccess()
                 // 여기에 카카오 로그인 로직을 추가
             }
         )
@@ -99,4 +103,6 @@ fun KakaoLoginButton(onKakaoLoginClick: () -> Unit) {
         )
     }
 }
+
+
 

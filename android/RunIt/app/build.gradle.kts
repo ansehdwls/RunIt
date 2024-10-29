@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -5,6 +7,9 @@ plugins {
     id("kotlin-kapt")
     id("com.google.gms.google-services")
 }
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.zoku.runit"
@@ -21,6 +26,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String","KAKAO_API_KEY",properties["KAKAO_API_KEY"] as String)
+        resValue("string", "KAKAO_REDIRECT_URI", properties["KAKAO_REDIRECT_URI"] as String)
+
     }
 
     buildTypes {
@@ -41,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -80,11 +89,19 @@ dependencies {
     //hilt
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
-
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     //jetpack navigation
     implementation(libs.bundles.nav)
 
     //fcm
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging.ktx)
+
+    implementation (libs.v2.all) // 전체 모듈 설치, 2.11.0 버전부터 지원
+    implementation (libs.v2.user) // 카카오 로그인 API 모듈
+    implementation (libs.v2.share) // 카카오톡 공유 API 모듈
+    implementation (libs.v2.talk) // 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 모듈
+    implementation (libs.v2.friend) // 피커 API 모듈
+    implementation (libs.v2.navi) // 카카오내비 API 모듈
+    implementation (libs.v2.cert) // 카카오톡 인증 서비스 API 모듈
 }

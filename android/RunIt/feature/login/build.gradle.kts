@@ -1,9 +1,15 @@
+import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.plugin)
     id("kotlin-kapt")
 }
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.zoku.login"
@@ -14,6 +20,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String","KAKAO_API_KEY",properties["KAKAO_API_KEY"] as String)
+        resValue("string", "KAKAO_REDIRECT_URI", properties["KAKAO_REDIRECT_URI"] as String)
     }
 
     buildTypes {
@@ -34,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -65,4 +75,8 @@ dependencies {
     //hilt
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
+
+
+    implementation (libs.v2.all) // 전체 모듈 설치, 2.11.0 버전부터 지원
+
 }
