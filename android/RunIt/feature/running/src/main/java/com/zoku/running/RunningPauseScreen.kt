@@ -26,7 +26,7 @@ import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 
 @Composable
-fun PauseScreen(modifier: Modifier = Modifier) {
+fun RunningPauseScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .fillMaxSize()
