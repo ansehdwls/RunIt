@@ -26,7 +26,7 @@ import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 
 @Composable
-fun RunningPauseScreen(modifier: Modifier = Modifier) {
+fun RunningPauseScreen(onPlayClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -68,7 +68,8 @@ fun RunningPauseScreen(modifier: Modifier = Modifier) {
                 RoundRunButton(
                     containerColor = RoundButtonGray,
                     resourceId = R.drawable.baseline_stop_24,
-                    resourceColor = Color.White
+                    resourceColor = Color.White,
+                    onClick = { onPlayClick() }
                 )
 
                 Spacer(modifier = Modifier.width(24.dp))
@@ -76,7 +77,8 @@ fun RunningPauseScreen(modifier: Modifier = Modifier) {
                 RoundRunButton(
                     containerColor = BaseYellow,
                     resourceId = R.drawable.baseline_play_arrow_24,
-                    resourceColor = Color.Black
+                    resourceColor = Color.Black,
+                    onClick = { onPlayClick() }
                 )
             }
         }

@@ -18,12 +18,13 @@ fun RoundRunButton(
     containerColor: Color,
     resourceId: Int,
     resourceColor: Color,
+    onClick: () -> Unit,
 ) {
     Button(
-        onClick = { /*TODO: Add functionality*/ },
+        onClick = { onClick() },
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(containerColor = containerColor),
-        modifier = modifier.size(100.dp)
+        modifier = modifier.size(100.dp),
     ) {
         Image(
             painter = painterResource(id = resourceId),
