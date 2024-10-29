@@ -25,6 +25,9 @@ nav-material = "1.7.4"
 playServicesWearable = "18.2.0"
 navigationRuntimeKtx = "2.8.3"
 
+#Health
+healthServicesClient = "1.1.0-alpha04"
+
 #Watch
 androidx-wear-compose = "1.4.0"
 horologist = "0.5.26"
@@ -84,6 +87,9 @@ androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscree
 androidx-navigation-runtime = { group = "androidx.navigation", name = "navigation-runtime", version.ref = "navigationRuntime" }
 core-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desguaring" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+
+#Health
+androidx-health-services-client = { module = "androidx.health:health-services-client", version.ref = "healthServicesClient" }
 
 #fcm
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }

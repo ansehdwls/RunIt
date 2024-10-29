@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
@@ -82,4 +83,11 @@ dependencies {
     //navigation
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.nav)
+
+    //health
+    implementation(libs.androidx.health.services.client)
+
+    //hilt
+    implementation(libs.hilt)
+    kapt(libs.hilt.compiler)
 }
