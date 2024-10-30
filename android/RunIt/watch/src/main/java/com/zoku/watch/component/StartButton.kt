@@ -23,7 +23,8 @@ import com.zoku.watch.R
 @Composable
 fun StartButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    runningStart: () -> Unit
 ) {
     Row(
         modifier = modifier.padding(35.dp),
@@ -32,7 +33,10 @@ fun StartButton(
     ) {
         Button(
             modifier = modifier,
-            onClick = { onClick() },
+            onClick = {
+                onClick()
+                runningStart()
+            },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = BaseYellow
             ),
@@ -50,5 +54,5 @@ fun StartButton(
 @Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true, apiLevel = 33)
 @Composable
 fun RunningPreview() {
-    StartButton() { }
+    StartButton(modifier = Modifier,{}){}
 }

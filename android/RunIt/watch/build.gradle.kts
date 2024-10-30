@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.hilt.plugin)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -54,6 +57,8 @@ dependencies {
     implementation(projects.core.ui)
 
     //androidx
+    implementation(libs.androidx.lifecycle.service)
+
     implementation(libs.play.services.wearable)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -78,8 +83,18 @@ dependencies {
     implementation(libs.horologist.composables)
     implementation(libs.horologist.compose.layout)
     implementation(libs.horologist.compose.material)
-
+    implementation(libs.horologist.health.composables)
+    implementation(libs.horologist.health.service)
     //navigation
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.nav)
+
+    //health
+    implementation(libs.androidx.health.services.client)
+
+    //hilt
+    implementation(libs.hilt)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
 }

@@ -5,7 +5,8 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.plugin)
-    id("kotlin-kapt")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.compose.compiler)
 }
 
 val properties = Properties()
@@ -81,4 +82,5 @@ dependencies {
     // kakao
     implementation (libs.v2.all) // 전체 모듈 설치, 2.11.0 버전부터 지원
 
+    ksp(libs.hilt.compiler)
 }

@@ -29,7 +29,7 @@ import com.zoku.util.ScreenDestinations
 fun RunItMainNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = ScreenDestinations.login.route
+    startDestination: String = ScreenDestinations.running.route
 ) {
 
     var isUserLoggedIn by remember { mutableStateOf(false) }
@@ -55,7 +55,6 @@ fun RunItMainNavHost(
         },viewModel = loginViewModel)
         this.recordDetail()
         this.runningScreen(modifier = modifier)
-        this.pauseScreen(modifier = modifier)
         this.runningResultScreen(modifier = modifier)
 
     }
