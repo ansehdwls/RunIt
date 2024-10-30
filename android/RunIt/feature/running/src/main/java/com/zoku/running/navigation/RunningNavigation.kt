@@ -11,19 +11,11 @@ import com.zoku.util.ScreenDestinations
 
 fun NavController.navigateToRunning() = navigate(route = ScreenDestinations.running.route)
 
-fun NavController.navigateToRunningPause() = navigate(route = ScreenDestinations.runningPause.route)
-
 fun NavController.navigateToRunningResult() = navigate(route = ScreenDestinations.runningResult.route)
 
 fun NavGraphBuilder.runningScreen(modifier: Modifier = Modifier) {
     composable(route = ScreenDestinations.running.route) {
         RunningScreen(modifier)
-    }
-}
-
-fun NavGraphBuilder.pauseScreen(modifier: Modifier = Modifier) {
-    composable(route = ScreenDestinations.runningPause.route) {
-        RunningPauseScreen(modifier)
     }
 }
 
