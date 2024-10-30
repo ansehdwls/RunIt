@@ -126,17 +126,15 @@ fun RunningPlayScreen(onPauseClick: () -> Unit, isFirstPlay: Boolean = true) {
 
 @Composable
 fun GatherButtonBox(onPauseClick: () -> Unit) {
-    // 애니메이션을 위한 상태 변수
     var spread by remember { mutableStateOf(true) }
 
-    // 애니메이션 오프셋 설정 (퍼짐이 아니라 모이기 효과)
     val offsetValue by animateDpAsState(
         targetValue = if (spread) 72.dp else 0.dp,
         animationSpec = tween(durationMillis = 500)
     )
 
     LaunchedEffect(Unit) {
-        spread = false  // 컴포저블이 표시될 때 중앙으로 모이도록 설정
+        spread = false
     }
 
     Box(

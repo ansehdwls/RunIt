@@ -1,7 +1,9 @@
 package com.zoku.running
 
+import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,9 +34,10 @@ import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
+import com.zoku.ui.componenet.RoundStopButton
 
 @Composable
-fun RunningPauseScreen(onPlayClick: () -> Unit) {
+fun RunningPauseScreen(onPlayClick: () -> Unit, onStopLongPress: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,39 +69,19 @@ fun RunningPauseScreen(onPlayClick: () -> Unit) {
                 ValueColumn()
             }
 
-            SpreadButtonBox(onPlayClick)
-
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .weight(2f),
-//                horizontalArrangement = Arrangement.Center,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                RoundRunButton(
-//                    containerColor = RoundButtonGray,
-//                    resourceId = R.drawable.baseline_stop_24,
-//                    resourceColor = Color.White,
-//                    onClick = { onPlayClick() }
-//                )
-//
-//                Spacer(modifier = Modifier.width(24.dp))
-//
-//                RoundRunButton(
-//                    containerColor = BaseYellow,
-//                    resourceId = R.drawable.baseline_play_arrow_24,
-//                    resourceColor = Color.Black,
-//                    onClick = { onPlayClick() }
-//                )
-//            }
+            SpreadButtonBox(
+                onPlayClick = onPlayClick,
+                onStopLongPress = onStopLongPress
+            )
         }
 
         Spacer(modifier = Modifier.weight(0.05f))
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SpreadButtonBox(onPlayClick: () -> Unit) {
+fun SpreadButtonBox(onPlayClick: () -> Unit, onStopLongPress: () -> Unit) {
 
     var spread by remember { mutableStateOf(false) }
 
@@ -110,18 +94,22 @@ fun SpreadButtonBox(onPlayClick: () -> Unit) {
         spread = true
     }
 
+    val haptics = LocalHapticFeedback.current
+
     Box(
         modifier = Modifier
             .fillMaxWidth(),
     ) {
-        RoundRunButton(
+        RoundStopButton(
             containerColor = RoundButtonGray,
             resourceId = R.drawable.baseline_stop_24,
             resourceColor = Color.White,
             modifier = Modifier
                 .align(Alignment.Center)
                 .offset(x = -offsetValue),
-            onClick = { }
+            onStopLongPress = {
+                onStopLongPress()
+            }
         )
 
         RoundRunButton(

@@ -1,5 +1,6 @@
 package com.zoku.running
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,13 +14,22 @@ fun RunningScreen(modifier: Modifier = Modifier) {
 
     var isPlay by remember { mutableStateOf(true) }
     var isFirstPlay by remember { mutableStateOf(true) }
+    var isResult by remember { mutableStateOf(false) }
 
-    if (isPlay) {
-        RunningPlayScreen(onPauseClick = { isPlay = false }, isFirstPlay = isFirstPlay)
-    } else {
-        RunningPauseScreen(onPlayClick = {
-            isPlay = true
-            isFirstPlay = false
-        })
+    if(isResult){
+        RunningResultScreen()
+    }else {
+        if (isPlay) {
+            RunningPlayScreen(onPauseClick = { isPlay = false }, isFirstPlay = isFirstPlay)
+        } else {
+            RunningPauseScreen(
+                onPlayClick = {
+                    isPlay = true
+                    isFirstPlay = false
+                }, onStopLongPress = {
+                    isResult = true
+                }
+            )
+        }
     }
 }
