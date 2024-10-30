@@ -1,7 +1,11 @@
+server:
+  port: 8081
 
 springdoc:
+  api-docs:
+    path: /api/api-docs
   swagger-ui:
-    path: /api/swagger
+    path: /api/swagger-ui
     operations-sorter: alpha
     tags-sorter: alpha
 
@@ -32,7 +36,7 @@ spring:
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    #show-sql: true
 
 logging:
   level:

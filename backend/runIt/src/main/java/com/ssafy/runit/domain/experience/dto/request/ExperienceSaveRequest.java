@@ -5,7 +5,7 @@ import com.ssafy.runit.domain.user.entity.User;
 import lombok.*;
 
 import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -16,10 +16,10 @@ public class ExperienceSaveRequest {
     private long userId;
     private String activity;
     private long changed;
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
     private Date startDate;
 
-    public Experience Mapper(User user){
+    public Experience Mapper(User user) {
         return Experience.builder()
                 .createAt(createdAt)
                 .activity(activity)
@@ -28,6 +28,4 @@ public class ExperienceSaveRequest {
                 .user(user)
                 .build();
     }
-
-
 }
