@@ -1,7 +1,11 @@
+server:
+  port: 8081
 
 springdoc:
+  api-docs:
+    path: /api/api-docs
   swagger-ui:
-    path: /api/swagger
+    path: /api/swagger-ui
     operations-sorter: alpha
     tags-sorter: alpha
 
@@ -14,9 +18,9 @@ spring:
       enabled: always
 
   datasource:
-    url: jdbc:mysql://localhost:3306/localdb?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
-    username: ssafy
-    password: ssafy
+    url: jdbc:mysql://3.35.169.202:3306/runit?useSSL=false
+    username: root
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   thymeleaf:
@@ -32,7 +36,7 @@ spring:
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    #show-sql: true
 
 logging:
   level:
@@ -43,3 +47,11 @@ jwt:
   secret: a9V3x6Bz1QeTauYcrF0epL2gfsD52hJ8kM11nC4zG7wK9
   access-token-expiration: 7200000 # 2h
   refresh-token-expiration: 604800000 # 7d
+
+firebase:
+  config:
+    path: classpath:/firebase/runit-firebase-key.json
+
+schedule:
+  week-start:
+    cron: 0 0 0 ? * MON
