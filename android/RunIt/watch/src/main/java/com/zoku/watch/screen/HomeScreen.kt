@@ -13,23 +13,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.zoku.ui.CustomTypo
 import com.zoku.watch.component.PagerScreen
 import com.zoku.watch.component.StartButton
+import com.zoku.watch.viewmodel.HomeViewModel
 
 @Composable
 fun HomeScreen(
     modifier: Modifier,
     onStartClick: () -> Unit
 ) {
-
+    val homeViewModel = hiltViewModel<HomeViewModel>()
     val items: List<@Composable () -> Unit> =
         listOf({
-            StartButton(modifier) {
+            StartButton(modifier, {
                 onStartClick()
-            }
+            }, {
+                homeViewModel.startRunning()
+            })
         }, { UserInfoRow(modifier) })
     val pagerState = rememberPagerState(pageCount = { items.size })
     PagerScreen(

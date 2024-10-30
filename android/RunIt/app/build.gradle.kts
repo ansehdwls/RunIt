@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.plugin)
-    id("kotlin-kapt")
+    alias(libs.plugins.compose.compiler)
     id("com.google.gms.google-services")
 }
 
@@ -79,7 +80,7 @@ dependencies {
 
     //hilt
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     //jetpack navigation
     implementation(libs.bundles.nav)
