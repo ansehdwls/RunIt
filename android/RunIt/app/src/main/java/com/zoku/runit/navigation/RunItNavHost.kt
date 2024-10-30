@@ -1,6 +1,5 @@
 package com.zoku.runit.navigation
 
-import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -9,7 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.zoku.login.LoginViewModel
@@ -22,7 +20,6 @@ import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
-import com.zoku.running.navigation.navigateToRunningResult
 import com.zoku.running.navigation.pauseScreen
 import com.zoku.running.navigation.runningResultScreen
 import com.zoku.running.navigation.runningScreen
@@ -55,7 +52,7 @@ fun RunItMainNavHost(
             // 로그인 성공 시, 상태 업데이트
 //            isUserLoggedIn = true
             navController.navigate("home")
-        }, viewModel = loginViewModel)
+        },viewModel = loginViewModel)
         this.recordDetail()
         this.runningScreen(modifier = modifier)
         this.pauseScreen(modifier = modifier)
