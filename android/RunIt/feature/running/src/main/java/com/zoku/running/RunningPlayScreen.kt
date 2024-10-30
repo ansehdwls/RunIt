@@ -107,7 +107,7 @@ fun RunningPlayScreen(onPauseClick: () -> Unit) {
             onClick = { onPauseClick() }
         )
 
-        Spacer(modifier = Modifier.weight(0.3f))
+        Spacer(modifier = Modifier.weight(0.12f))
     }
 }
 

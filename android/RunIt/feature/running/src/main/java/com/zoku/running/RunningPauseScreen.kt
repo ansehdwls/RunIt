@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,7 +31,6 @@ import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
-import kotlinx.coroutines.delay
 
 @Composable
 fun RunningPauseScreen(onPlayClick: () -> Unit) {
@@ -67,29 +65,31 @@ fun RunningPauseScreen(onPlayClick: () -> Unit) {
                 ValueColumn()
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(2f),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RoundRunButton(
-                    containerColor = RoundButtonGray,
-                    resourceId = R.drawable.baseline_stop_24,
-                    resourceColor = Color.White,
-                    onClick = { onPlayClick() }
-                )
+            SpreadButtonBox(onPlayClick)
 
-                Spacer(modifier = Modifier.width(24.dp))
-
-                RoundRunButton(
-                    containerColor = BaseYellow,
-                    resourceId = R.drawable.baseline_play_arrow_24,
-                    resourceColor = Color.Black,
-                    onClick = { onPlayClick() }
-                )
-            }
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .weight(2f),
+//                horizontalArrangement = Arrangement.Center,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                RoundRunButton(
+//                    containerColor = RoundButtonGray,
+//                    resourceId = R.drawable.baseline_stop_24,
+//                    resourceColor = Color.White,
+//                    onClick = { onPlayClick() }
+//                )
+//
+//                Spacer(modifier = Modifier.width(24.dp))
+//
+//                RoundRunButton(
+//                    containerColor = BaseYellow,
+//                    resourceId = R.drawable.baseline_play_arrow_24,
+//                    resourceColor = Color.Black,
+//                    onClick = { onPlayClick() }
+//                )
+//            }
         }
 
         Spacer(modifier = Modifier.weight(0.05f))
@@ -97,42 +97,41 @@ fun RunningPauseScreen(onPlayClick: () -> Unit) {
 }
 
 @Composable
-fun SpreadButtonRow() {
+fun SpreadButtonBox(onPlayClick: () -> Unit) {
 
     var spread by remember { mutableStateOf(false) }
 
     val offsetValue by animateDpAsState(
-        targetValue = if (spread) 48.dp else 0.dp,
+        targetValue = if (spread) 72.dp else 0.dp,
         animationSpec = tween(durationMillis = 500)
     )
 
     LaunchedEffect(Unit) {
-        delay(300) // 약간의 지연 후 퍼지기 시작
         spread = true
     }
 
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
     ) {
         RoundRunButton(
             containerColor = RoundButtonGray,
             resourceId = R.drawable.baseline_stop_24,
             resourceColor = Color.White,
-            modifier = Modifier.offset(x = -offsetValue),
-            onClick = {  }
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(x = -offsetValue),
+            onClick = { }
         )
-
-        Spacer(modifier = Modifier.width(24.dp))
 
         RoundRunButton(
             containerColor = BaseYellow,
             resourceId = R.drawable.baseline_play_arrow_24,
             resourceColor = Color.Black,
-            modifier = Modifier.offset(x = offsetValue),
-            onClick = {  }
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(x = offsetValue),
+            onClick = { onPlayClick() }
         )
     }
 }
