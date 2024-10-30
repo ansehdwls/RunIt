@@ -1,13 +1,15 @@
 package com.ssafy.runit.domain.experience.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.runit.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,7 +31,7 @@ public class Experience {
 
     private long changed;
 
-    private Timestamp createAt;
+    private LocalDateTime createAt;
 
     private Date startDate;
 
