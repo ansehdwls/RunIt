@@ -1,12 +1,15 @@
 package com.ssafy.runit.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.group.entity.Group;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -32,4 +35,7 @@ public class User {
     @JoinColumn(name = "group_id", nullable = false)
     @JsonManagedReference
     private Group userGroup;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Experience> experiences;
 }
