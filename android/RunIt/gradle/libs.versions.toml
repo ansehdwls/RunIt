@@ -35,6 +35,13 @@ healthServicesClient = "1.1.0-alpha04"
 #Watch
 androidx-wear-compose = "1.4.0"
 horologist = "0.5.26"
+v2All = "2.20.1"
+v2Cert = "2.20.1"
+v2Friend = "2.20.1"
+v2Navi = "2.20.1"
+v2Share = "2.20.1"
+v2Talk = "2.20.1"
+v2User = "2.20.1"
 wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.0.1"
 navigationRuntime = "2.8.3"
@@ -83,6 +90,10 @@ nav = { group = "androidx.navigation", name = "navigation-compose", version.ref 
 nav-material = { group = "androidx.compose.material", name = "material", version.ref = "nav-material" }
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+
+
+#Kakao
+v2-all = { module = "com.kakao.sdk:v2-all", version.ref = "v2All" }
 
 #Wear
 wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "androidx-wear-compose" }
