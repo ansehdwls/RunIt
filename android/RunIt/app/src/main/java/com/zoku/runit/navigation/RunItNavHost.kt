@@ -18,8 +18,6 @@ import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
-import com.zoku.running.navigation.navigateToRunningResult
-import com.zoku.running.navigation.pauseScreen
 import com.zoku.running.navigation.runningResultScreen
 import com.zoku.running.navigation.runningScreen
 import com.zoku.util.ScreenDestinations
@@ -28,7 +26,7 @@ import com.zoku.util.ScreenDestinations
 fun RunItMainNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = ScreenDestinations.login.route
+    startDestination: String = ScreenDestinations.running.route
 ) {
 
     var isUserLoggedIn by remember { mutableStateOf(false) }
@@ -54,7 +52,6 @@ fun RunItMainNavHost(
         })
         this.recordDetail()
         this.runningScreen(modifier = modifier)
-        this.pauseScreen(modifier = modifier)
         this.runningResultScreen(modifier = modifier)
 
     }
