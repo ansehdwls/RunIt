@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,23 +25,35 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.OutlinedButton
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.health.composables.ActiveDurationText
 import com.zoku.ui.BaseYellow
 import com.zoku.watch.component.PagerScreen
 import com.zoku.watch.component.StatusText
+import com.zoku.watch.model.ExerciseScreenState
+import com.zoku.watch.util.formatElapsedTime
+import com.zoku.watch.viewmodel.RunViewModel
+import timber.log.Timber
 
 @Composable
 fun RunningScreen(
     modifier: Modifier = Modifier
 ) {
+    val viewModel = hiltViewModel<RunViewModel>()
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     val scrollState = rememberScrollState()
     val items: List<@Composable () -> Unit> =
         listOf({
-            RunningStatus()
+            RunningStatus(uiState = uiState)
         }, { RunningPause(scrollState = scrollState) })
     val pagerState = rememberPagerState(pageCount = { items.size })
     PagerScreen(
@@ -90,11 +103,15 @@ fun RunningPause(
     }
 }
 
-
+@OptIn(ExperimentalHorologistApi::class)
 @Composable
 fun RunningStatus(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    uiState: ExerciseScreenState
 ) {
+    val lastActiveDurationCheckpoint = uiState.exerciseState?.activeDurationCheckpoint
+    val exerciseState = uiState.exerciseState?.exerciseState
+    Timber.tag("runningStatus").d("$lastActiveDurationCheckpoint")
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -112,11 +129,21 @@ fun RunningStatus(
             fontSize = 20.sp,
         )
         Spacer(Modifier.height(20.dp))
-        Text(
-            modifier = Modifier,
-            text = "13:50",
-            fontSize = 20.sp,
-        )
+        if (lastActiveDurationCheckpoint != null && exerciseState != null) {
+            ActiveDurationText(
+                checkpoint = lastActiveDurationCheckpoint,
+                state = exerciseState
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = formatElapsedTime(it),
+                    fontSize = 20.sp,
+                )
+            }
+
+
+        }
+
     }
 
 }
@@ -156,6 +183,6 @@ fun RunningPreview() {
 @Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true, apiLevel = 33)
 @Composable
 fun RunningStatusPreview() {
-    RunningStatus()
+
 }
 

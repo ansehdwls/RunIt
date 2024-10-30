@@ -39,10 +39,13 @@ wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.0.1"
 navigationRuntime = "2.8.3"
 desguaring = "2.1.2"
-
+wearOngoing = "1.0.0"
 #FCM
 fcm = "4.4.2"
 firebaseMessagingKtx = "24.0.3"
+
+# Logging
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -67,6 +70,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycleService" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
+# Logging
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 #hilt
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -88,6 +93,7 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "androidx-wear-compose" }
 wear-compose-material = { module = "androidx.wear.compose:compose-material", version.ref = "androidx-wear-compose" }
 wear-compose-pager = { module = "androidx.wear.compose:compose-pager", version.ref = "androidx-wear-compose" }
+androidx-wear-ongoing = { module = "androidx.wear:wear-ongoing", version.ref = "wearOngoing" }
 horologist-composables = { module = "com.google.android.horologist:horologist-composables", version.ref = "horologist" }
 horologist-compose-layout = { module = "com.google.android.horologist:horologist-compose-layout", version.ref = "horologist" }
 horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologist" }
