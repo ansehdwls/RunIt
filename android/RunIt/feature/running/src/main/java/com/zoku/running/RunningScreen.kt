@@ -12,10 +12,14 @@ import androidx.compose.ui.Modifier
 fun RunningScreen(modifier: Modifier = Modifier) {
 
     var isPlay by remember { mutableStateOf(true) }
+    var isFirstPlay by remember { mutableStateOf(true) }
 
     if (isPlay) {
-        RunningPlayScreen(onPauseClick = { isPlay = false })
+        RunningPlayScreen(onPauseClick = { isPlay = false }, isFirstPlay = isFirstPlay)
     } else {
-        RunningPauseScreen(onPlayClick = { isPlay = true })
+        RunningPauseScreen(onPlayClick = {
+            isPlay = true
+            isFirstPlay = false
+        })
     }
 }

@@ -1,8 +1,11 @@
 package com.zoku.running
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +15,11 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,11 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
+import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 
 @Composable
-fun RunningPlayScreen(onPauseClick: () -> Unit) {
+fun RunningPlayScreen(onPauseClick: () -> Unit, isFirstPlay: Boolean = true) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -100,16 +109,61 @@ fun RunningPlayScreen(onPauseClick: () -> Unit) {
 
         Spacer(modifier = Modifier.weight(0.3f))
 
-        RoundRunButton(
-            containerColor = BaseYellow,
-            resourceId = R.drawable.baseline_pause_24,
-            resourceColor = Color.Black,
-            onClick = { onPauseClick() }
-        )
+        if (isFirstPlay) {
+            RoundRunButton(
+                containerColor = BaseYellow,
+                resourceId = R.drawable.baseline_pause_24,
+                resourceColor = Color.Black,
+                onClick = { onPauseClick() }
+            )
+        } else {
+            GatherButtonBox(onPauseClick)
+        }
 
         Spacer(modifier = Modifier.weight(0.12f))
     }
 }
+
+@Composable
+fun GatherButtonBox(onPauseClick: () -> Unit) {
+    // 애니메이션을 위한 상태 변수
+    var spread by remember { mutableStateOf(true) }
+
+    // 애니메이션 오프셋 설정 (퍼짐이 아니라 모이기 효과)
+    val offsetValue by animateDpAsState(
+        targetValue = if (spread) 72.dp else 0.dp,
+        animationSpec = tween(durationMillis = 500)
+    )
+
+    LaunchedEffect(Unit) {
+        spread = false  // 컴포저블이 표시될 때 중앙으로 모이도록 설정
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+    ) {
+        RoundRunButton(
+            containerColor = RoundButtonGray,
+            resourceId = R.drawable.baseline_stop_24,
+            resourceColor = Color.White,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(x = -offsetValue),
+            onClick = { onPauseClick() }
+        )
+
+        RoundRunButton(
+            containerColor = BaseYellow,
+            resourceId = R.drawable.baseline_pause_24,
+            resourceColor = Color.Black,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(x = offsetValue),
+            onClick = { onPauseClick() })
+    }
+}
+
 
 @Composable
 fun TempHeartGraph() {
