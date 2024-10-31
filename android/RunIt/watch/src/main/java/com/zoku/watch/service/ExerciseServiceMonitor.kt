@@ -51,7 +51,7 @@ class ExerciseServiceMonitor @Inject constructor(
     private fun processExerciseUpdate(exerciseUpdate: ExerciseUpdate) { //운동 업데이트 메시지 처리 함수
         // Dismiss any ongoing activity notification.
         if (exerciseUpdate.exerciseStateInfo.state.isEnded) {
-//            exerciseService.removeOngoingActivityNotification()
+            exerciseService.removeOngoingActivityNotification()
         }
 
         exerciseServiceState.update { old ->
