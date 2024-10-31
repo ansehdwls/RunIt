@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.plugin)
     alias(libs.plugins.compose.compiler)
+
     id("com.google.gms.google-services")
 }
 
@@ -89,7 +90,6 @@ dependencies {
 
     //hilt
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     ksp(libs.hilt.compiler)

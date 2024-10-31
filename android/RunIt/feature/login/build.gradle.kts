@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.hilt.plugin)
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
+
+//    id("kotlin-kapt")
 }
 
 val properties = Properties()
@@ -74,13 +76,12 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
     //hilt
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
-
+//    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // kakao
     implementation (libs.v2.all) // 전체 모듈 설치, 2.11.0 버전부터 지원
-
-    ksp(libs.hilt.compiler)
 }
