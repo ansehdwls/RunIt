@@ -33,9 +33,11 @@ fun RunningScreen(
                 onPlayClick = {
                     isPlay = true
                     isFirstPlay = false
-                }, onStopLongPress = {
+                },
+                onStopLongPress = {
                     isResult = true
-                }
+                },
+                runningViewModel = runningViewModel
             )
         }
     }
