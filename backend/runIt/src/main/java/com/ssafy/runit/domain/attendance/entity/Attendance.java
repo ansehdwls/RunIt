@@ -1,5 +1,4 @@
-package com.ssafy.runit.domain.experience.entity;
-
+package com.ssafy.runit.domain.attendance.entity;
 
 import com.ssafy.runit.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -7,32 +6,26 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
+@Table(name = "attendance")
 @Entity
-@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class Experience {
+@Getter
+@AllArgsConstructor
+public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "experience_id")
     private long id;
 
-
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String activity;
-
-    private long changed;
-
-    private LocalDateTime createAt;
-
-    private LocalDate startDate;
-
+    @Column(updatable = false, nullable = false)
+    @CreationTimestamp()
+    private LocalDate createdAt;
 }
