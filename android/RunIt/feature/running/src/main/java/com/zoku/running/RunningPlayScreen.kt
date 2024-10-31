@@ -1,6 +1,11 @@
 package com.zoku.running
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -31,21 +36,37 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.zoku.running.service.LocationService
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RunningPlayScreen(
     onPauseClick: () -> Unit,
     isFirstPlay: Boolean = true,
     runningViewModel: RunningViewModel
 ) {
-
-    LaunchedEffect(Unit) {
-        runningViewModel.startMeasuringDistance()
+    val locationPermissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.FOREGROUND_SERVICE,
+            Manifest.permission.FOREGROUND_SERVICE_LOCATION
+        )
+    )
+    LaunchedEffect(locationPermissionsState.allPermissionsGranted) {
+        if (locationPermissionsState.allPermissionsGranted) {
+            runningViewModel.startLocationService()
+        } else {
+            locationPermissionsState.launchMultiplePermissionRequest()
+        }
     }
     val uiState by runningViewModel.uiState.collectAsState()
 
@@ -83,7 +104,7 @@ fun RunningPlayScreen(
             verticalAlignment = Alignment.Bottom
         ) {
             RobotoText(
-                text = "${uiState.distance / 1000}.${(uiState.distance/10)%100}",
+                text = "${uiState.distance}",
                 fontSize = 80.sp,
                 color = BaseYellow,
                 style = "Bold"
@@ -128,7 +149,7 @@ fun RunningPlayScreen(
                 resourceId = R.drawable.baseline_pause_24,
                 resourceColor = Color.Black,
                 onClick = {
-                    runningViewModel.pauseMeasuringDistance()
+                    runningViewModel.stopLocationService()
                     onPauseClick()
                 }
             )
@@ -144,7 +165,7 @@ fun RunningPlayScreen(
 }
 
 @Composable
-fun GatherButtonBox(onPauseClick: () -> Unit, runningViewModel: RunningViewModel?) {
+fun GatherButtonBox(onPauseClick: () -> Unit, runningViewModel: RunningViewModel) {
     var spread by remember { mutableStateOf(true) }
 
     val offsetValue by animateDpAsState(
@@ -178,7 +199,7 @@ fun GatherButtonBox(onPauseClick: () -> Unit, runningViewModel: RunningViewModel
                 .align(Alignment.Center)
                 .offset(x = offsetValue),
             onClick = {
-                runningViewModel?.pauseMeasuringDistance()
+                runningViewModel.stopLocationService()
                 onPauseClick()
             })
     }
@@ -211,6 +232,16 @@ fun TopInfoWithText(topName: String, bottomName: String) {
             fontSize = 20.sp,
         )
     }
+}
+
+fun startLocationService(context: Context) {
+    val intent = Intent(context, LocationService::class.java)
+    context.startForegroundService(intent)
+}
+
+fun stopLocationService(context: Context) {
+    val intent = Intent(context, LocationService::class.java)
+    context.stopService(intent)
 }
 
 @Preview(showBackground = true)

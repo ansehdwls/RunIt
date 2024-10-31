@@ -47,6 +47,9 @@ firebaseMessagingKtx = "24.0.3"
 #location
 locations = "21.3.0"
 
+#permission
+permission = "0.36.0"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -112,6 +115,9 @@ firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messa
 
 #locations
 locations = { group = "com.google.android.gms", name = "play-services-location", version.ref = "locations" }
+
+#permission
+permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "permission" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

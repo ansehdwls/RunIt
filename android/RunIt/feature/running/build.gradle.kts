@@ -70,4 +70,7 @@ dependencies {
 
     //gms location
     implementation(libs.locations)
+
+    //permission
+    implementation(libs.permissions)
 }

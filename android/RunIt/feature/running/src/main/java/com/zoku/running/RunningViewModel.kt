@@ -1,27 +1,28 @@
 package com.zoku.running
 
 import android.app.Application
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
-import android.os.Looper
-import androidx.lifecycle.ViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.lifecycle.AndroidViewModel
 import com.zoku.running.model.RunningUIState
+import com.zoku.running.service.LocationService
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @HiltViewModel
 class RunningViewModel @Inject constructor(
     application: Application
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     // UI variable
     private val _uiState = MutableStateFlow(
@@ -34,12 +35,34 @@ class RunningViewModel @Inject constructor(
     )
     val uiState: StateFlow<RunningUIState> = _uiState
 
-    // Measure variable
-    private var distanceJob: Job? = null
-    private var isMeasure = false
-    private val fusedLocationClient: FusedLocationProviderClient =
-        LocationServices.getFusedLocationProviderClient(application)
     private var lastLocation: Location? = null
+    private val locationReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val latitude = intent.getDoubleExtra("latitude", 0.0)
+            val longitude = intent.getDoubleExtra("longitude", 0.0)
+
+            val newLocation = Location("provider").apply {
+                this.latitude = latitude
+                this.longitude = longitude
+            }
+
+            if (lastLocation != null) {
+                val distance = lastLocation!!.distanceTo(newLocation)
+                Log.d("확인", "거리를 재고 있어요 $distance")
+                updateUIState(
+                    newDistance = uiState.value.distance + distance.toInt(),
+                    newTime = uiState.value.time + 1
+                )
+            }
+
+            lastLocation = newLocation
+        }
+    }
+
+    init {
+        val filter = IntentFilter("com.zoku.running.LOCATION_UPDATE")
+        application.registerReceiver(locationReceiver, filter, Context.RECEIVER_EXPORTED)
+    }
 
 
     private fun updateUIState(
@@ -58,40 +81,21 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-    fun startMeasuringDistance() {
-        if (isMeasure) return
-        isMeasure = true
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
-            .build()
-
-        val locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                val newLocation = locationResult.lastLocation
-                if (lastLocation != null && newLocation != null) {
-                    val distance = lastLocation!!.distanceTo(newLocation)
-                    updateUIState(
-                        newDistance = uiState.value.distance + distance.toInt(),
-                        newTime = uiState.value.time + 1
-                    )
-                }
-                lastLocation = newLocation
-            }
-        }
-
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-
-        distanceJob?.invokeOnCompletion {
-            fusedLocationClient.removeLocationUpdates(locationCallback)
-            isMeasure = false
-        }
+    fun startLocationService() {
+        val context = getApplication<Application>()
+        val intent = Intent(context, LocationService::class.java)
+        context.startForegroundService(intent)
     }
 
-    fun pauseMeasuringDistance() {
-        distanceJob?.cancel()
-        isMeasure = false
+    fun stopLocationService() {
+        val context = getApplication<Application>()
+        val intent = Intent(context, LocationService::class.java)
+        context.stopService(intent)
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        getApplication<Application>().unregisterReceiver(locationReceiver)
+    }
+
 }
