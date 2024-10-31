@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
@@ -218,7 +219,7 @@ fun GreetingPreview() {
     com.zoku.ui.RunItTheme {
         RunningPlayScreen(
             onPauseClick = { Log.d("Zz", "Zzz") },
-            runningViewModel = RunningViewModel()
+            runningViewModel = hiltViewModel<RunningViewModel>()
         )
     }
 }
