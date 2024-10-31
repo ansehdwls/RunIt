@@ -35,7 +35,14 @@ import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 
 @Composable
-fun RunningPlayScreen(onPauseClick: () -> Unit, isFirstPlay: Boolean = true) {
+fun RunningPlayScreen(
+    onPauseClick: () -> Unit,
+    isFirstPlay: Boolean = true,
+    runningViewModel: RunningViewModel
+) {
+
+    runningViewModel.startViewModel()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
