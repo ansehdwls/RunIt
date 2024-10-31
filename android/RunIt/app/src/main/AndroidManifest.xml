@@ -2,12 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+<<<<<<< android/RunIt/app/src/main/AndroidManifest.xml
     <uses-feature android:name="android.hardware.type.watch" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <uses-feature android:name="android.hardware.type.watch"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".ApplicationClass"
@@ -43,6 +47,20 @@
             android:exported="false"
             android:foregroundServiceType="location"
             tools:ignore="ForegroundServicePermission" />
+
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
+                <data android:host="oauth"
+                    android:scheme="@string/KAKAO_REDIRECT_URI" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

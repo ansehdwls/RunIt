@@ -35,11 +35,18 @@ healthServicesClient = "1.1.0-alpha04"
 #Watch
 androidx-wear-compose = "1.4.0"
 horologist = "0.5.26"
+v2All = "2.20.1"
+v2Cert = "2.20.1"
+v2Friend = "2.20.1"
+v2Navi = "2.20.1"
+v2Share = "2.20.1"
+v2Talk = "2.20.1"
+v2User = "2.20.1"
 wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.0.1"
 navigationRuntime = "2.8.3"
 desguaring = "2.1.2"
-
+wearOngoing = "1.0.0"
 #FCM
 fcm = "4.4.2"
 firebaseMessagingKtx = "24.0.3"
@@ -50,6 +57,8 @@ locations = "21.3.0"
 #permission
 permission = "0.36.0"
 
+# Logging
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -74,6 +83,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycleService" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
+# Logging
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 #hilt
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -91,10 +102,15 @@ nav-material = { group = "androidx.compose.material", name = "material", version
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 
+
+#Kakao
+v2-all = { module = "com.kakao.sdk:v2-all", version.ref = "v2All" }
+
 #Wear
 wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "androidx-wear-compose" }
 wear-compose-material = { module = "androidx.wear.compose:compose-material", version.ref = "androidx-wear-compose" }
 wear-compose-pager = { module = "androidx.wear.compose:compose-pager", version.ref = "androidx-wear-compose" }
+androidx-wear-ongoing = { module = "androidx.wear:wear-ongoing", version.ref = "wearOngoing" }
 horologist-composables = { module = "com.google.android.horologist:horologist-composables", version.ref = "horologist" }
 horologist-compose-layout = { module = "com.google.android.horologist:horologist-compose-layout", version.ref = "horologist" }
 horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologist" }

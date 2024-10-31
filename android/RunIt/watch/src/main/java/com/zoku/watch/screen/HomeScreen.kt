@@ -18,7 +18,7 @@ import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.zoku.ui.CustomTypo
 import com.zoku.watch.component.PagerScreen
-import com.zoku.watch.component.StartButton
+import com.zoku.watch.component.button.StartButton
 import com.zoku.watch.viewmodel.HomeViewModel
 
 @Composable

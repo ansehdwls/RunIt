@@ -30,6 +30,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.runBlocking
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -73,6 +74,7 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
             OTHER_APP_IN_PROGRESS -> {}
             OWNED_EXERCISE_IN_PROGRESS -> {}
             NO_EXERCISE_IN_PROGRESS -> {
+                Timber.tag("ExerciseClientManager").d("운동 시작")
                 val dataTypes = setOf(
                     DataType.HEART_RATE_BPM,
                     DataType.HEART_RATE_BPM_STATS,
@@ -179,7 +181,6 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                 exerciseClient.clearUpdateCallback(callback)
             }
         }
-
     }
 
 }

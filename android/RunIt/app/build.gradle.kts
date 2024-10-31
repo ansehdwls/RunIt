@@ -1,11 +1,17 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.plugin)
     alias(libs.plugins.compose.compiler)
+
     id("com.google.gms.google-services")
 }
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.zoku.runit"
@@ -22,6 +28,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String","KAKAO_API_KEY",properties["KAKAO_API_KEY"] as String)
+        resValue("string", "KAKAO_REDIRECT_URI", properties["KAKAO_REDIRECT_URI"] as String)
+
     }
 
     buildTypes {
@@ -42,6 +51,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -80,6 +90,8 @@ dependencies {
 
     //hilt
     implementation(libs.hilt)
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
     ksp(libs.hilt.compiler)
 
     //jetpack navigation
@@ -88,4 +100,8 @@ dependencies {
     //fcm
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging.ktx)
+
+    // kakao
+    implementation (libs.v2.all) // 전체 모듈 설치, 2.11.0 버전부터 지원
+
 }

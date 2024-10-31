@@ -11,6 +11,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.google.android.horologist.compose.layout.AppScaffold
 import com.zoku.watch.ui.MainScreen
+import com.zoku.watch.util.PermissionHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -18,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-
+        PermissionHelper(this, PERMISSIONS, ::finish).launchPermission()
         super.onCreate(savedInstanceState)
         setContent {
             AppScaffold {
