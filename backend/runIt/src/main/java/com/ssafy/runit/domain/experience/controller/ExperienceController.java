@@ -26,8 +26,9 @@ public class ExperienceController implements ExperienceDocs {
 
     @Override
     @PostMapping("/exp")
-    public RunItApiResponse<Void> saveExperience(@RequestBody ExperienceSaveRequest experienceSaveRequest) {
-        experienceService.experienceSave(experienceSaveRequest.getUserId(), experienceSaveRequest);
+    public RunItApiResponse<Void> saveExperience(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ExperienceSaveRequest experienceSaveRequest) {
+        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+        experienceService.experienceSave(findUser, experienceSaveRequest);
         return new RunItApiResponse<>(null, "성공");
     }
 
@@ -35,7 +36,6 @@ public class ExperienceController implements ExperienceDocs {
     @GetMapping("/exp")
     public RunItApiResponse<List<ExperienceGetListResponse>> getListExperience(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
-
         List<ExperienceGetListResponse> experienceList = experienceService.experienceList(user.getId());
         return new RunItApiResponse<>(experienceList, "성공");
     }

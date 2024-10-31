@@ -13,18 +13,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExperienceSaveRequest {
-    private long userId;
     private String activity;
     private long changed;
-    private LocalDateTime createdAt;
-    private LocalDate startDate;
 
-    public Experience Mapper(User user) {
+    public Experience Mapper(User user, LocalDateTime createAt) {
         return Experience.builder()
-                .createAt(createdAt)
                 .activity(activity)
                 .changed(changed)
-                .startDate(startDate)
+                .createAt(createAt)
                 .user(user)
                 .build();
     }

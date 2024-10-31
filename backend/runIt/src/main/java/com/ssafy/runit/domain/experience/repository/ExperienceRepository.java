@@ -11,6 +11,10 @@ import java.util.List;
 
 public interface ExperienceRepository extends JpaRepository<Experience, Long> {
 
+    @Query("SELECT SUM(e.changed) FROM Experience e " +
+            "WHERE e.user.id IN :userId AND e.createAt >= :startDate")
+    Long experienceChangedSum(@Param("userId") Long userId, @Param("startDate") LocalDateTime startDate);
+
     List<ExperienceGetListResponse> findByUser_Id(Long userId);
 
     @Query("SELECT e.user.id, SUM(e.changed) FROM Experience e " +
