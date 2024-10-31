@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zoku.running.model.RunningUIState
+import com.zoku.running.util.formatTime
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
@@ -184,7 +185,7 @@ fun ValueColumn(
         )
 
         RobotoText(
-            text = "${uiState.time}",
+            text = formatTime(uiState.time),
             color = BaseYellow,
             fontSize = 40.sp
         )

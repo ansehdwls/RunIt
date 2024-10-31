@@ -10,12 +10,16 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.service.LocationService
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -35,6 +39,7 @@ class RunningViewModel @Inject constructor(
     )
     val uiState: StateFlow<RunningUIState> = _uiState
 
+    // GPS
     private var lastLocation: Location? = null
     private val locationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -50,14 +55,16 @@ class RunningViewModel @Inject constructor(
                 val distance = lastLocation!!.distanceTo(newLocation)
                 Log.d("확인", "거리를 재고 있어요 $distance")
                 updateUIState(
-                    newDistance = uiState.value.distance + distance.toInt(),
-                    newTime = uiState.value.time + 1
+                    newDistance = uiState.value.distance + distance.toInt()
                 )
             }
 
             lastLocation = newLocation
         }
     }
+
+    //Timer
+    private var timerJob: Job? = null
 
     init {
         val filter = IntentFilter("com.zoku.running.LOCATION_UPDATE")
@@ -93,8 +100,27 @@ class RunningViewModel @Inject constructor(
         context.stopService(intent)
     }
 
+    fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (true) {
+                val startTime = System.currentTimeMillis()
+                delay(1000)
+                val currentTime = System.currentTimeMillis()
+
+                val newTimeInSeconds = ((currentTime - startTime) / 1000).toInt()
+                updateUIState(newTime = uiState.value.time + newTimeInSeconds)
+            }
+        }
+    }
+
+
+    fun stopTimer() {
+        timerJob?.cancel()
+    }
+
     override fun onCleared() {
         super.onCleared()
+        stopTimer()
         getApplication<Application>().unregisterReceiver(locationReceiver)
     }
 

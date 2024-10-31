@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.zoku.running.service.LocationService
+import com.zoku.running.util.formatTime
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
@@ -63,6 +64,7 @@ fun RunningPlayScreen(
     )
     LaunchedEffect(locationPermissionsState.allPermissionsGranted) {
         if (locationPermissionsState.allPermissionsGranted) {
+            runningViewModel.startTimer()
             runningViewModel.startLocationService()
         } else {
             locationPermissionsState.launchMultiplePermissionRequest()
@@ -91,7 +93,7 @@ fun RunningPlayScreen(
                 bottomName = "BPM"
             )
             TopInfoWithText(
-                topName = "${uiState.time}",
+                topName = formatTime(seconds = uiState.time),
                 bottomName = "시간"
             )
         }
@@ -150,6 +152,7 @@ fun RunningPlayScreen(
                 resourceColor = Color.Black,
                 onClick = {
                     runningViewModel.stopLocationService()
+                    runningViewModel.stopTimer()
                     onPauseClick()
                 }
             )
@@ -200,6 +203,7 @@ fun GatherButtonBox(onPauseClick: () -> Unit, runningViewModel: RunningViewModel
                 .offset(x = offsetValue),
             onClick = {
                 runningViewModel.stopLocationService()
+                runningViewModel.stopTimer()
                 onPauseClick()
             })
     }

@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -40,8 +39,6 @@ class LocationService : Service() {
             }
         }
 
-        Log.d("확인", "서비스가 실행되었어요")
-
         startLocationUpdates()
     }
 
@@ -72,8 +69,8 @@ class LocationService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification = NotificationCompat.Builder(this, "location_channel")
-            .setContentTitle("거리 측정 중")
-            .setContentText("앱이 실행 중입니다.")
+            .setContentTitle("RunIt")
+            .setContentText("달리기 거리 측정을 위해 앱이 실행중 입니다..")
             .setSmallIcon(com.zoku.ui.R.drawable.sample_map_history_icon)
             .build()
 
