@@ -17,14 +17,12 @@ public class ExperienceSaveRequest {
     private String activity;
     private long changed;
     private LocalDateTime createdAt;
-    private LocalDate startDate;
 
     public Experience Mapper(User user) {
         return Experience.builder()
                 .createAt(createdAt)
                 .activity(activity)
                 .changed(changed)
-                .startDate(startDate)
                 .user(user)
                 .build();
     }
