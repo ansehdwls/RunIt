@@ -46,21 +46,21 @@ public class JwtTokenProvider {
     /**
      * accessToken 생성
      *
-     * @param userEmail
+     * @param userNumber
      * @return accessToken
      */
-    public String generateAccessToken(String userEmail) {
-        return generateToken(userEmail, accessTokenExpiration);
+    public String generateAccessToken(String userNumber) {
+        return generateToken(userNumber, accessTokenExpiration);
     }
 
     /**
      * refreshToken 생성
      *
-     * @param userEmail
+     * @param userNumber
      * @return refreshToken
      */
-    public String generateRefreshToken(String userEmail) {
-        return generateToken(userEmail, refreshTokenExpiration);
+    public String generateRefreshToken(String userNumber) {
+        return generateToken(userNumber, refreshTokenExpiration);
     }
 
     /**
@@ -99,14 +99,14 @@ public class JwtTokenProvider {
      * @param token
      * @return
      */
-    public String extractUserEmail(String token) {
+    public String extractUserNumber(String token) {
         return extractClaims(token).getSubject();
     }
 
 
     public Authentication getAuthentication(String token) {
-        String userEmail = extractUserEmail(token);
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
+        String userNumber = extractUserNumber(token);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(userNumber);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
@@ -114,14 +114,14 @@ public class JwtTokenProvider {
     /**
      * 토큰 생성
      *
-     * @param userEmail
+     * @param userNumber
      * @param expiration
      * @return
      */
-    public String generateToken(String userEmail, long expiration) {
+    public String generateToken(String userNumber, long expiration) {
         return Jwts.builder()
                 .issuer("RunIt")
-                .subject(userEmail)
+                .subject(userNumber)
                 .issuedAt(new Date())
                 .expiration(new Date(new Date().getTime() + expiration))
                 .signWith(secretKey)

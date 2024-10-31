@@ -6,7 +6,7 @@ import lombok.Builder;
 @Builder
 public record UserInfoResponse(
         long userId,
-        String userEmail,
+        String userNumber,
         String userName,
         String imageUrl,
         long groupId) {
@@ -14,7 +14,7 @@ public record UserInfoResponse(
     public static UserInfoResponse fromEntity(User user) {
         return UserInfoResponse.builder()
                 .userId(user.getId())
-                .userEmail(user.getUserEmail())
+                .userNumber(user.getUserNumber())
                 .userName(user.getUserName())
                 .imageUrl(user.getImageUrl())
                 .groupId(user.getUserGroup().getId())

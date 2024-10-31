@@ -41,12 +41,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void registerUser(UserRegisterRequest request) {
         if (!request.isValid()) {
-            log.error("잘못된 입력 형식 : email:{} name : {} image:{}", request.getUserEmail(), request.getUserName(), request.getUserImageUrl());
+            log.error("잘못된 입력 형식 : email:{} name : {} image:{}", request.getUserNumber(), request.getUserName(), request.getUserImageUrl());
             throw new CustomException(AuthErrorCode.INVALID_DATA_FORM);
         }
 
-        if (userRepository.existsByUserEmail(request.getUserEmail())) {
-            log.error("가입된 사용자 : email : {}", request.getUserEmail());
+        if (userRepository.existsByUserNumber(request.getUserNumber())) {
+            log.error("가입된 사용자 : email : {}", request.getUserNumber());
             throw new CustomException(AuthErrorCode.DUPLICATED_USER_ERROR);
         }
         Group group = groupRepository.findDefaultGroup().orElseThrow(
@@ -68,10 +68,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponse login(UserLoginRequest request) {
         if (!request.isValid()) {
-            log.error("잘못된 입력 형식 : {}", request.getUserEmail());
+            log.error("잘못된 입력 형식 : {}", request.getUserNumber());
             throw new CustomException(AuthErrorCode.INVALID_DATA_FORM);
         }
-        String userEmail = request.getUserEmail();
+        String userEmail = request.getUserNumber();
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
@@ -80,8 +80,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void saveRefreshToken(String userEmail, String refreshToken) {
-        User user = userRepository.findByUserEmail(userEmail).orElseThrow(
+    public void saveRefreshToken(String userNumber, String refreshToken) {
+        User user = userRepository.findByUserNumber(userNumber).orElseThrow(
                 () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
         );
         refreshTokenRepository.findByUserId(user.getId())
@@ -102,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(AuthErrorCode.EXPIRED_TOKEN_ERROR);
         }
 
-        String userEmail = jwtTokenProvider.extractUserEmail(refreshToken);
+        String userEmail = jwtTokenProvider.extractUserNumber(refreshToken);
         return createJwtToken(userEmail);
     }
 }

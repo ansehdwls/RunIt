@@ -7,10 +7,10 @@ import lombok.Getter;
 @Getter
 public class UserLoginRequest {
     @NotNull
-    private String userEmail;
+    private String userNumber;
 
     @Schema(hidden = true)
     public boolean isValid() {
-        return userEmail != null && !userEmail.isEmpty() && userEmail.contains("@");
+        return userNumber != null && !userNumber.isEmpty();
     }
 }
