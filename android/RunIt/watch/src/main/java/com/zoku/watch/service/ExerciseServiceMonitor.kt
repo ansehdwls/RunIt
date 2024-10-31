@@ -6,13 +6,17 @@ import javax.inject.Inject
 import android.app.Service
 import androidx.health.services.client.data.ExerciseUpdate
 import com.zoku.watch.data.ExerciseMessage
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 //운동 서비스로부터의 업데이트를 모니터링
 class ExerciseServiceMonitor @Inject constructor(
     val exerciseClientManager : ExerciseClientManager,
-    val service : Service
+    val service : Service,
+    val coroutineScope: CoroutineScope
 ){
 
     val exerciseService = service as ExerciseService
@@ -25,24 +29,26 @@ class ExerciseServiceMonitor @Inject constructor(
     )
 
     suspend fun monitor() { //운동 업데이트를 지속적으로 수집하고 처리
-        exerciseClientManager.exerciseUpdateFlow.collect {
-            when (it) {
-                is ExerciseMessage.ExerciseUpdateMessage ->
-                    processExerciseUpdate(it.exerciseUpdate)
+        coroutineScope.launch{
+            exerciseClientManager.exerciseUpdateFlow.collect {
+                when (it) {
+                    is ExerciseMessage.ExerciseUpdateMessage ->
+                        processExerciseUpdate(it.exerciseUpdate)
 
-                is ExerciseMessage.LapSummaryMessage ->
-                    exerciseServiceState.update { oldState ->
-                        oldState.copy(
-                            exerciseLaps = it.lapSummary.lapCount
-                        )
-                    }
+                    is ExerciseMessage.LapSummaryMessage ->
+                        exerciseServiceState.update { oldState ->
+                            oldState.copy(
+                                exerciseLaps = it.lapSummary.lapCount
+                            )
+                        }
 
-                is ExerciseMessage.LocationAvailabilityMessage ->
-                    exerciseServiceState.update { oldState ->
-                        oldState.copy(
-                            locationAvailability = it.locationAvailability
-                        )
-                    }
+                    is ExerciseMessage.LocationAvailabilityMessage ->
+                        exerciseServiceState.update { oldState ->
+                            oldState.copy(
+                                locationAvailability = it.locationAvailability
+                            )
+                        }
+                }
             }
         }
     }
@@ -53,7 +59,7 @@ class ExerciseServiceMonitor @Inject constructor(
         if (exerciseUpdate.exerciseStateInfo.state.isEnded) {
             exerciseService.removeOngoingActivityNotification()
         }
-
+        Timber.tag("ExerciseServiceMonitor").d(exerciseUpdate.activeDurationCheckpoint?.activeDuration.toString())
         exerciseServiceState.update { old ->
             old.copy(
                 exerciseState = exerciseUpdate.exerciseStateInfo.state,

@@ -40,4 +40,9 @@ class RunViewModel @Inject constructor(
         }
     )
 
+
+    fun pauseRunning() {
+        Timber.tag("homeViewModel").d("startExercise")
+        healthServicesRepository.pauseExercise()
+    }
 }

@@ -29,7 +29,6 @@ import androidx.health.services.client.startExercise
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -152,34 +151,30 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
     //운동 업데이트를 비동기적으로 수집하고, 이를 Flow로 변환해 ExerciseService에서 관찰할 수 있게 함.
     val exerciseUpdateFlow = callbackFlow {
         val callback = object : ExerciseUpdateCallback {
-            override fun onExerciseUpdateReceived(update: ExerciseUpdate) { //운동 업데이트
+            override fun onExerciseUpdateReceived(update: ExerciseUpdate) {
                 trySendBlocking(ExerciseMessage.ExerciseUpdateMessage(update))
             }
 
-            override fun onLapSummaryReceived(lapSummary: ExerciseLapSummary) { // 랩 요약
+            override fun onLapSummaryReceived(lapSummary: ExerciseLapSummary) {
                 trySendBlocking(ExerciseMessage.LapSummaryMessage(lapSummary))
             }
 
-            override fun onRegistered() { //등록 상태 처리
-
-            }
+            override fun onRegistered() {}
 
             override fun onRegistrationFailed(throwable: Throwable) {}
 
             override fun onAvailabilityChanged(
                 dataType: DataType<*, *>, availability: Availability
-            ) { //위치 가용성 변경
+            ) {
                 if (availability is LocationAvailability) {
                     trySendBlocking(ExerciseMessage.LocationAvailabilityMessage(availability))
                 }
             }
         }
 
-        exerciseClient.setUpdateCallback(callback) //콜백을 설정해 운동 업데이트를 수신
-        awaitClose { // Flow 종료시 콜백 해제
-            runBlocking {
-                exerciseClient.clearUpdateCallback(callback)
-            }
+        exerciseClient.setUpdateCallback(callback)
+        awaitClose {
+            exerciseClient.clearUpdateCallback(callback = callback)
         }
     }
 
