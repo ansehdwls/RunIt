@@ -1,6 +1,5 @@
 package com.zoku.ui.componenet
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -71,7 +70,7 @@ fun RoundStopButton(
             pressStartTime = System.currentTimeMillis()
             while (isActive && isPressed) {
                 pressDuration = System.currentTimeMillis() - pressStartTime
-                if(pressDuration >= 1100){
+                if (pressDuration >= 1100) {
                     onStopLongPress()
                 }
                 delay(16)

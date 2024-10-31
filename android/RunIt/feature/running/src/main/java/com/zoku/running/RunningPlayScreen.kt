@@ -1,5 +1,6 @@
 package com.zoku.running
 
+import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +43,10 @@ fun RunningPlayScreen(
     runningViewModel: RunningViewModel
 ) {
 
-    runningViewModel.startViewModel()
+    LaunchedEffect(Unit) {
+        runningViewModel.startMeasuringDistance()
+    }
+    val uiState by runningViewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -60,11 +65,11 @@ fun RunningPlayScreen(
                 bottomName = "페이스"
             )
             TopInfoWithText(
-                topName = "0",
+                topName = "${uiState.bpm}",
                 bottomName = "BPM"
             )
             TopInfoWithText(
-                topName = "-'--'",
+                topName = "${uiState.time}",
                 bottomName = "시간"
             )
         }
@@ -77,7 +82,7 @@ fun RunningPlayScreen(
             verticalAlignment = Alignment.Bottom
         ) {
             RobotoText(
-                text = "3.14",
+                text = "${uiState.distance / 1000}.${(uiState.distance/10)%100}",
                 fontSize = 80.sp,
                 color = BaseYellow,
                 style = "Bold"
@@ -121,10 +126,16 @@ fun RunningPlayScreen(
                 containerColor = BaseYellow,
                 resourceId = R.drawable.baseline_pause_24,
                 resourceColor = Color.Black,
-                onClick = { onPauseClick() }
+                onClick = {
+                    runningViewModel.pauseMeasuringDistance()
+                    onPauseClick()
+                }
             )
         } else {
-            GatherButtonBox(onPauseClick)
+            GatherButtonBox(
+                onPauseClick = onPauseClick,
+                runningViewModel = runningViewModel
+            )
         }
 
         Spacer(modifier = Modifier.weight(0.12f))
@@ -132,7 +143,7 @@ fun RunningPlayScreen(
 }
 
 @Composable
-fun GatherButtonBox(onPauseClick: () -> Unit) {
+fun GatherButtonBox(onPauseClick: () -> Unit, runningViewModel: RunningViewModel?) {
     var spread by remember { mutableStateOf(true) }
 
     val offsetValue by animateDpAsState(
@@ -165,7 +176,10 @@ fun GatherButtonBox(onPauseClick: () -> Unit) {
             modifier = Modifier
                 .align(Alignment.Center)
                 .offset(x = offsetValue),
-            onClick = { onPauseClick() })
+            onClick = {
+                runningViewModel?.pauseMeasuringDistance()
+                onPauseClick()
+            })
     }
 }
 
@@ -202,7 +216,10 @@ fun TopInfoWithText(topName: String, bottomName: String) {
 @Composable
 fun GreetingPreview() {
     com.zoku.ui.RunItTheme {
-        RunningScreen()
+        RunningPlayScreen(
+            onPauseClick = { Log.d("Zz", "Zzz") },
+            runningViewModel = RunningViewModel()
+        )
     }
 }
 
