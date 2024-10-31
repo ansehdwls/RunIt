@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,6 +33,6 @@ public class Experience {
 
     private LocalDateTime createAt;
 
-    private Date startDate;
+    private LocalDate startDate;
 
 }

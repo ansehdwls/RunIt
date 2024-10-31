@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,12 +27,12 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional(readOnly = true)
     public List<GetGroupUsersResponse> findUsersByGroup(Long groupId) {
-        LocalDateTime lastMonday = DateUtils.getLastMonday();
+        LocalDate lastMonday = DateUtils.getLastMonday();
         Group group = groupRepository.findById(groupId).orElseThrow(
                 () -> new CustomException(GroupErrorCode.GROUP_NOT_FOUND_ERROR)
         );
         List<Long> userIds = group.getUsers().stream().map(User::getId).toList();
-        List<Long[]> experienceSums = experienceRepository.sumExperienceByUserIdsAndStartDate(userIds, lastMonday);
+        List<Long[]> experienceSums = experienceRepository.sumExperienceByUserIdsAndStartDate(userIds, lastMonday.atStartOfDay());
         Map<Long, Long> map = experienceSums.stream().collect(
                 Collectors.toMap(
                         row -> row[0],
