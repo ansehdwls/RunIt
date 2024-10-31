@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="distance">거리</string>
+    <string name="today">오늘</string>
+    <string name="running_diary">러닝 일지</string>
+    <string name="running_record">러닝 기록</string>
+    <string name="history">거리</string>
+</resources>

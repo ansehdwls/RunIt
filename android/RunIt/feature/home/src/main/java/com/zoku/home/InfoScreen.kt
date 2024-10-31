@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -61,7 +62,7 @@ import kotlin.random.Random
 
 @Composable
 fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit, moveToRecordMode : ()-> Unit) {
-
+    val context = LocalContext.current
     val runningDiaryMenu = arrayOf("거리","시간","페이스")
     val runningRecordMenu = arrayOf("전체","일주일")
     Surface(
@@ -77,7 +78,7 @@ fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit, moveToRe
             Spacer(modifier = modifier.height(20.dp))
 
             Text(
-                text = "오늘",
+                text = context.getString(R.string.today),
                 color = androidx.compose.ui.graphics.Color.White,
                 modifier = modifier.padding(bottom = 5.dp)
             )
@@ -85,7 +86,7 @@ fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit, moveToRe
 
             Spacer(modifier = modifier.height(20.dp))
 
-            HomeTitle(modifier.padding(bottom = 5.dp), "러닝 일지", "거리", runningDiaryMenu)
+            HomeTitle(modifier.padding(bottom = 5.dp), context.getString(R.string.running_diary), "거리", runningDiaryMenu)
 
             RunningDiary(modifier.align(Alignment.CenterHorizontally))
 

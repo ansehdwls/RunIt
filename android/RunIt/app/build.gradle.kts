@@ -103,5 +103,7 @@ dependencies {
 
     // kakao
     implementation (libs.v2.all) // 전체 모듈 설치, 2.11.0 버전부터 지원
+    // kakaoMap
+    implementation (libs.android)
 
 }

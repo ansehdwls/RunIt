@@ -62,4 +62,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // kakao
+    implementation (libs.v2.all) // 전체 모듈 설치, 2.11.0 버전부터 지원
+    // kakaoMap
+    implementation (libs.android)
+    implementation (libs.map)
 }
