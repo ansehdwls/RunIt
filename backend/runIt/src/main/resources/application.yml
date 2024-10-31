@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: ${RUNIT_PORT}
 
 springdoc:
   api-docs:
@@ -18,9 +18,9 @@ spring:
       enabled: always
 
   datasource:
-    url: jdbc:mysql://3.35.169.202:3306/runit?useSSL=false
-    username: root
-    password: root
+    url: ${DATABASE_URL}
+    username: ${DATABASE_ID}
+    password: ${DATABASE_ID}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   thymeleaf:
@@ -44,7 +44,7 @@ logging:
     com.ssafy.runit: DEBUG
 
 jwt:
-  secret: a9V3x6Bz1QeTauYcrF0epL2gfsD52hJ8kM11nC4zG7wK9
+  secret: ${JWT_SECRET}
   access-token-expiration: 7200000 # 2h
   refresh-token-expiration: 604800000 # 7d
 
