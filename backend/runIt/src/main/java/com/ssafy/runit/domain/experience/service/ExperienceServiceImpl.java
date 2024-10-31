@@ -9,6 +9,7 @@ import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
+import com.ssafy.runit.util.DateUtils;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,28 +42,8 @@ public class ExperienceServiceImpl implements ExperienceService {
     }
 
     public Long experienceChangedSum(Long id) {
-
-        LocalDate today = LocalDate.now();
-        LocalDate monday = getStartOfWeek(today);
-
-        Timestamp convertToday = Timestamp.valueOf(today.atTime(LocalTime.now()));
-
-        Timestamp convertMonday = Timestamp.valueOf(monday.atTime(LocalTime.MIN));
-
-        String jpql = "SELECT SUM(e.changed) \n" +
-                "FROM Experience e \n" +
-                "WHERE e.user.id = :id \n" +
-                "AND e.createAt >= :startDate";
-
-        Long result = em.createQuery(jpql, Long.class)
-                .setParameter("id", id)
-                .setParameter("startDate", convertMonday)
-                .getSingleResult();
-        return result;
-    }
-
-    public static LocalDate getStartOfWeek(LocalDate date) {
-        return date.with(DayOfWeek.MONDAY); // 해당 주의 월요일 날짜 반환
+        LocalDate lastMonday = DateUtils.getLastMonday();
+        return experienceRepository.experienceChangedSum(id, lastMonday.atStartOfDay());
     }
 
     @Override
