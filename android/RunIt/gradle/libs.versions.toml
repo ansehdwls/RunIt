@@ -44,6 +44,10 @@ desguaring = "2.1.2"
 fcm = "4.4.2"
 firebaseMessagingKtx = "24.0.3"
 
+#location
+locations = "21.3.0"
+
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
@@ -105,6 +109,9 @@ androidx-health-services-client = { module = "androidx.health:health-services-cl
 #fcm
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
+
+#locations
+locations = { group = "com.google.android.gms", name = "play-services-location", version.ref = "locations" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

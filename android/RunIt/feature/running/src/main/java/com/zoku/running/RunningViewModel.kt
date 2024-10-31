@@ -28,6 +28,8 @@ class RunningViewModel @Inject constructor(
     val uiState: StateFlow<RunningUIState> = _uiState
     private var distanceJob: Job? = null
     private var isMeasure = false
+    private val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
+
 
     private fun updateUIState(
         newTime: Int? = null,
