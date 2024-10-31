@@ -38,6 +38,7 @@ import com.zoku.ui.BaseYellow
 import com.zoku.watch.component.PagerScreen
 import com.zoku.watch.component.StatusText
 import com.zoku.watch.model.ExerciseScreenState
+import com.zoku.watch.util.formatDistanceKm
 import com.zoku.watch.util.formatElapsedTime
 import com.zoku.watch.viewmodel.RunViewModel
 import timber.log.Timber
@@ -119,7 +120,7 @@ fun RunningStatus(
         Spacer(Modifier.height(50.dp))
         Text(
             modifier = Modifier,
-            text = "6.39",
+            text = formatDistanceKm(uiState.exerciseState?.exerciseMetrics?.distance),
             fontSize = 50.sp,
             color = BaseYellow
         )

@@ -12,7 +12,8 @@ data class ExerciseMetrics(
     val distance: Double? = null,
     val calories: Double? = null,
     val heartRateAverage: Double? = null,
-) {
+) { //메트릭 데이터를 저장하고 update함
+    //DataPointContaner -> 운동 데이터 포인트를 저장하는 컨테이너
     fun update(latestMetrics: DataPointContainer): ExerciseMetrics {
         return copy(
             heartRate = latestMetrics.getData(DataType.HEART_RATE_BPM).lastOrNull()?.value

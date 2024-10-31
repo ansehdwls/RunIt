@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @ActivityRetainedScoped
@@ -44,10 +45,7 @@ class HealthServicesRepository @Inject constructor(
         )
 
     //운동 기능이 가능한지
-    suspend fun hasExerciseCapability(): Boolean = getExerciseCapabilities() != null
-
-    //운동 기능의 가능 여부
-    private suspend fun getExerciseCapabilities() = exerciseClientManager.getExerciseCapabilities()
+    suspend fun hasExerciseCapability(): Boolean = exerciseClientManager.getExerciseCapabilities() != null
 
     //현재 운동이 진행 중인지
     suspend fun isExerciseInProgress(): Boolean =
@@ -60,16 +58,21 @@ class HealthServicesRepository @Inject constructor(
     fun prepareExercise() = serviceCall { prepareExercise() }
 
     private fun serviceCall(function: suspend ExerciseService.() -> Unit) = coroutineScope.launch {
+        Timber.tag("healthServiceRepo start").d("serviceCall first")
         binderConnection.runWhenConnected {
+            Timber.tag("healthServiceRepo start").d("serviceCall function")
             function(it.getService())
         }
     }
 
     fun startExercise() = serviceCall {
+        Timber.tag("healthServiceRepo start").d("Top start")
         try {
             errorState.value = null
             startExercise()
+            Timber.tag("healthServiceRepo start").d("start")
         } catch (e: Exception) {
+            Timber.tag("healthServiceRepo start").d(e)
             errorState.value = e.message
         }
     }
