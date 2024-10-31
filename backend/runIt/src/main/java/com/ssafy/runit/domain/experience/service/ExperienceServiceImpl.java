@@ -16,10 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.DayOfWeek;
+
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -29,15 +28,13 @@ import java.util.List;
 public class ExperienceServiceImpl implements ExperienceService {
 
     private final ExperienceRepository experienceRepository;
-    private final UserRepository userRepository;
-    private final EntityManager em;
+
 
     @Override
     @Transactional
-    public void experienceSave(Long userId, ExperienceSaveRequest request) {
+    public void experienceSave(User user, ExperienceSaveRequest request) {
 //      기존의 user id 받아서 처리하는 부분
-        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR));
-        Experience exp = request.Mapper(user);
+        Experience exp = request.Mapper(user, LocalDateTime.now());
         experienceRepository.save(exp);
     }
 
