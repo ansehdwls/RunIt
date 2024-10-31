@@ -3,7 +3,6 @@ package com.ssafy.runit.domain.experience.controller;
 import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
 import com.ssafy.runit.domain.experience.dto.response.ExperienceGetListResponse;
-import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.experience.service.ExperienceService;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
@@ -19,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class ExperienceController implements ExperienceDocs{
+public class ExperienceController implements ExperienceDocs {
 
     private final ExperienceService experienceService;
 
@@ -35,19 +34,16 @@ public class ExperienceController implements ExperienceDocs{
     @Override
     @GetMapping("/exp")
     public RunItApiResponse<List<ExperienceGetListResponse>> getListExperience(@AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUserEmail(userDetails.getUsername()).orElseThrow();
+        User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
 
-        List<ExperienceGetListResponse> experienceList =  experienceService.experienceList(user.getId());
+        List<ExperienceGetListResponse> experienceList = experienceService.experienceList(user.getId());
         return new RunItApiResponse<>(experienceList, "성공");
     }
 
     @Override
     @GetMapping("/week/exp")
     public RunItApiResponse<Long> getWeekSumExperience(@AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUserEmail(userDetails.getUsername()).orElseThrow();
-
+        User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
         return new RunItApiResponse<>(experienceService.experienceChangedSum(user.getId()), "성공");
     }
-
-
 }

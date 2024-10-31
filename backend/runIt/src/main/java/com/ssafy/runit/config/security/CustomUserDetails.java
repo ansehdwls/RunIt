@@ -24,7 +24,7 @@ public class CustomUserDetails implements UserDetails {
 
     public CustomUserDetails(User user) {
         this.id = user.getId();
-        this.email = user.getUserEmail();
+        this.email = user.getUserNumber();
         this.userName = user.getUserName();
         this.profileImageUrl = user.getImageUrl();
         this.authorities = Collections.emptyList();

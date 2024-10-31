@@ -29,7 +29,7 @@ public class User {
     @Column
     private String fcmToken;
     @Column(nullable = false)
-    private String userEmail;
+    private String userNumber;
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)

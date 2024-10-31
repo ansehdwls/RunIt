@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface UserService {
 
-    User findByEmail(String userEmail);
+    User findByUserNumber(String userNumber);
 
     List<String> findAllFcmTokens();
 
-    void saveFcmToken(String userEmail, String fcmToken);
+    void saveFcmToken(String userNumber, String fcmToken);
 }

@@ -4,7 +4,6 @@ import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.user.dto.request.FcmTokenRequest;
 import com.ssafy.runit.domain.user.dto.response.UserInfoResponse;
 import com.ssafy.runit.domain.user.entity.User;
-import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ public class UserController implements UserDocs {
     @Override
     @GetMapping("/me")
     public RunItApiResponse<UserInfoResponse> geyMyInfo(@AuthenticationPrincipal UserDetails userDetails) {
-        User user = userService.findByEmail(userDetails.getUsername());
+        User user = userService.findByUserNumber(userDetails.getUsername());
         UserInfoResponse responseDTO = UserInfoResponse.fromEntity(user);
         return RunItApiResponse.create(responseDTO, "사용자 정보 조회에 성공했습니다.");
     }

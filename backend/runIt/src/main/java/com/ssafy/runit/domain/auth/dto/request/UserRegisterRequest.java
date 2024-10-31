@@ -1,7 +1,7 @@
 package com.ssafy.runit.domain.auth.dto.request;
 
-import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.group.entity.Group;
+import com.ssafy.runit.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -13,12 +13,12 @@ import lombok.*;
 public class UserRegisterRequest {
     private String userName;
     private String userImageUrl;
-    private String userEmail;
+    private String userNumber;
 
     public User Mapper(Group group) {
         return User.builder()
                 .userName(userName)
-                .userEmail(userEmail)
+                .userNumber(userNumber)
                 .imageUrl(userImageUrl)
                 .userGroup(group)
                 .build();
@@ -26,6 +26,6 @@ public class UserRegisterRequest {
 
     @Schema(hidden = true)
     public boolean isValid() {
-        return userName != null && userImageUrl != null && userEmail != null;
+        return userName != null && userImageUrl != null && userNumber != null;
     }
 }
