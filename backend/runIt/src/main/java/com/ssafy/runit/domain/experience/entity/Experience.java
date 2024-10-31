@@ -22,7 +22,6 @@ public class Experience {
     @Column(name = "experience_id")
     private long id;
 
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
@@ -32,7 +31,5 @@ public class Experience {
     private long changed;
 
     private LocalDateTime createAt;
-
-    private LocalDate startDate;
 
 }
