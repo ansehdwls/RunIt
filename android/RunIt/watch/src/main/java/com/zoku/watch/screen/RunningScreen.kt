@@ -1,21 +1,12 @@
 package com.zoku.watch.screen
 
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -35,11 +26,11 @@ import androidx.wear.tooling.preview.devices.WearDevices
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.health.composables.ActiveDurationText
 import com.zoku.ui.BaseYellow
-import com.zoku.watch.component.PagerScreen
-import com.zoku.watch.component.StatusText
+import com.zoku.ui.CustomTypo
+import com.zoku.watch.component.text.BpmText
+import com.zoku.watch.component.text.RunningTimeText
 import com.zoku.watch.model.ExerciseScreenState
 import com.zoku.watch.util.formatDistanceKm
-import com.zoku.watch.util.formatElapsedTime
 import com.zoku.watch.viewmodel.RunViewModel
 import timber.log.Timber
 
@@ -52,57 +43,9 @@ fun RunningScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val scrollState = rememberScrollState()
-    val items: List<@Composable () -> Unit> =
-        listOf({
-            RunningStatus(uiState = uiState)
-        }, { RunningPause(scrollState = scrollState) })
-    val pagerState = rememberPagerState(pageCount = { items.size })
-    PagerScreen(
-        modifier = modifier,
-        state = pagerState,
-        items = items
-    )
-
+    RunningStatus(uiState = uiState)
 }
 
-@Composable
-fun RunningPause(
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState),
-    ) {
-        Spacer(modifier = Modifier.height(40.dp))
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            RunningButton(icon = Icons.Rounded.Stop)
-
-            RunningButton(icon = Icons.Rounded.PlayArrow)
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            StatusText(value = "6.39", type = "km")
-            StatusText(value = "5`28", type = "페이스")
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            StatusText(value = "6:30", type = "시간")
-            StatusText(value = "130", type = "BPM")
-        }
-        Spacer(modifier = Modifier.height(100.dp))
-    }
-}
 
 @OptIn(ExperimentalHorologistApi::class)
 @Composable
@@ -112,38 +55,31 @@ fun RunningStatus(
 ) {
     val lastActiveDurationCheckpoint = uiState.exerciseState?.activeDurationCheckpoint
     val exerciseState = uiState.exerciseState?.exerciseState
+    val metrics = uiState.exerciseState?.exerciseMetrics
     Timber.tag("runningStatus").d("$lastActiveDurationCheckpoint")
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.height(50.dp))
+        Spacer(Modifier.height(35.dp))
         Text(
             modifier = Modifier,
-            text = formatDistanceKm(uiState.exerciseState?.exerciseMetrics?.distance),
-            fontSize = 50.sp,
+            style = CustomTypo().jalnan.copy(fontSize = 35.sp),
+            text = formatDistanceKm(metrics?.distance),
             color = BaseYellow
         )
-        Text(
-            modifier = Modifier,
-            text = "KM",
-            fontSize = 20.sp,
-        )
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(15.dp))
         if (lastActiveDurationCheckpoint != null && exerciseState != null) {
             ActiveDurationText(
                 checkpoint = lastActiveDurationCheckpoint,
                 state = exerciseState
             ) {
-                Text(
-                    modifier = Modifier,
-                    text = formatElapsedTime(it),
-                    fontSize = 20.sp,
-                )
+                RunningTimeText(duration = lastActiveDurationCheckpoint.activeDuration)
             }
-
-
         }
+        Spacer(Modifier.height(15.dp))
+        BpmText(heartRate = metrics?.heartRate)
+
 
     }
 
@@ -178,12 +114,11 @@ fun RunningButton(
 @Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true, apiLevel = 33)
 @Composable
 fun RunningPreview() {
-    RunningScreen()
+    val viewModel = hiltViewModel<RunViewModel>()
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    RunningStatus(uiState = uiState)
 }
 
-@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true, apiLevel = 33)
-@Composable
-fun RunningStatusPreview() {
 
-}
 

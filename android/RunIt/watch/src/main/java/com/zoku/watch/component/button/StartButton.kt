@@ -1,4 +1,4 @@
-package com.zoku.watch.component
+package com.zoku.watch.component.button
 
 
 import androidx.compose.foundation.layout.Arrangement

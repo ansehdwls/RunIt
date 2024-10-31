@@ -23,19 +23,19 @@ fun formatElapsedTime(
         if (hours > 0) {
             append(hours.toString())
             withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-                append("h")
+                append("시간")
             }
         }
         val minutes = elapsedDuration.toMinutes() % MINUTES_PER_HOUR
         append("%02d".format(minutes))
         withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-            append("m")
+            append(" 분 ")
         }
         if (includeSeconds) {
             val seconds = elapsedDuration.seconds % SECONDS_PER_MINUTE
             append("%02d".format(seconds))
             withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-                append("s")
+                append(" 초 ")
             }
         }
     }
@@ -49,7 +49,20 @@ fun formatDistanceKm(meters: Double?) = buildAnnotatedString {
     } else {
         append("%02.2f".format(meters / 1_000))
         withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-            append("km")
+            append("KM")
         }
     }
+}
+
+@Composable
+fun formatBpm(heartRate: Double?) = buildAnnotatedString {
+    if (heartRate == null) {
+        append("--")
+    } else {
+        append("%.0f".format(heartRate))
+        withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
+            append("BPM")
+        }
+    }
+
 }
