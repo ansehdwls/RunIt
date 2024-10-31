@@ -1,12 +1,15 @@
 package com.zoku.watch.screen
 
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,7 +30,9 @@ import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.health.composables.ActiveDurationText
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.CustomTypo
+import com.zoku.watch.component.button.RunningButton
 import com.zoku.watch.component.text.BpmText
+import com.zoku.watch.component.text.PaceText
 import com.zoku.watch.component.text.RunningTimeText
 import com.zoku.watch.model.ExerciseScreenState
 import com.zoku.watch.util.formatDistanceKm
@@ -68,7 +73,7 @@ fun RunningStatus(
             text = formatDistanceKm(metrics?.distance),
             color = BaseYellow
         )
-        Spacer(Modifier.height(15.dp))
+        Spacer(Modifier.height(10.dp))
         if (lastActiveDurationCheckpoint != null && exerciseState != null) {
             ActiveDurationText(
                 checkpoint = lastActiveDurationCheckpoint,
@@ -77,38 +82,20 @@ fun RunningStatus(
                 RunningTimeText(duration = lastActiveDurationCheckpoint.activeDuration)
             }
         }
-        Spacer(Modifier.height(15.dp))
+        Spacer(Modifier.height(10.dp))
         BpmText(heartRate = metrics?.heartRate)
-
-
-    }
-
-}
-
-
-@Composable
-fun RunningButton(
-    modifier: Modifier = Modifier,
-    icon: ImageVector
-) {
-    OutlinedButton(
-        modifier = Modifier.size(ButtonDefaults.LargeButtonSize),
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Black,
-            contentColor = BaseYellow
-        ),
-        border = ButtonDefaults.outlinedButtonBorder(
-            borderColor = BaseYellow
-        ),
-        onClick = {}
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = "button trigger",
-            modifier = modifier
+        Spacer(Modifier.height(10.dp))
+        PaceText(pace = metrics?.pace)
+        Spacer(Modifier.height(10.dp))
+        RunningButton(icon = Icons.Rounded.Pause,
+            size = ButtonDefaults.ExtraSmallButtonSize
         )
     }
+
 }
+
+
+
 
 
 @Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true, apiLevel = 33)

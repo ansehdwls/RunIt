@@ -11,29 +11,30 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.zoku.ui.CustomTypo
-import com.zoku.watch.util.formatBpm
+import com.zoku.watch.util.formatPace
 
 @Composable
-fun BpmText(
+fun PaceText(
     modifier: Modifier = Modifier,
-    heartRate: Double?
+    pace: Double?
 ) {
     Text(
-        text = formatBpm(heartRate = heartRate),
+        text = formatPace(pace = pace),
         style = CustomTypo().jalnan.copy(fontSize = 20.sp)
     )
+
 }
 
 
 @Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true, apiLevel = 33)
 @Composable
-fun BpmTextPreview() {
+fun PaceText() {
     Row(
         modifier = Modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        BpmText(heartRate = 80.0)
+        PaceText(pace = 80.0)
     }
 
 }

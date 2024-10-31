@@ -42,9 +42,9 @@ fun RunningPause(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            RunningButton(icon = Icons.Rounded.Stop)
-
-            RunningButton(icon = Icons.Rounded.PlayArrow)
+//            RunningButton(icon = Icons.Rounded.Stop)
+//
+//            RunningButton(icon = Icons.Rounded.PlayArrow)
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row(

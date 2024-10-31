@@ -66,3 +66,21 @@ fun formatBpm(heartRate: Double?) = buildAnnotatedString {
     }
 
 }
+
+
+
+@Composable
+fun formatPace(pace: Double?) = buildAnnotatedString {
+    if (pace == null || pace.isNaN()) {
+        append("--")
+    } else {
+        val secondsPerKm = pace / 1000.0
+        val minutes = (secondsPerKm / 60).toInt()
+        val seconds = (secondsPerKm % 60).toInt()
+
+        append("%02d".format(minutes))
+        append("'")
+        append("%02d".format(seconds))
+        append('"')
+    }
+}
