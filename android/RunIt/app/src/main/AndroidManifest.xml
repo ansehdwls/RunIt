@@ -28,6 +28,10 @@
             android:name="com.google.android.wearable.standalone"
             android:value="false" />
 
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="${KAKAO_API_KEY}" />
+
 
         <activity
             android:name=".MainActivity"

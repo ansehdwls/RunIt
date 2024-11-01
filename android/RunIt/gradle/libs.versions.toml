@@ -60,6 +60,10 @@ permission = "0.36.0"
 # Logging
 timber = "5.0.1"
 
+# Kakao map
+kakao-map = "2.12.7"
+
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
@@ -105,6 +109,9 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 
 #Kakao
 v2-all = { module = "com.kakao.sdk:v2-all", version.ref = "v2All" }
+
+#kakao-map
+kakao-map = { group = "com.kakao.maps.open", name = "android", version.ref = "kakao-map" }
 
 #Wear
 wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "androidx-wear-compose" }

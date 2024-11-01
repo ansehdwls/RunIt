@@ -1,5 +1,7 @@
 package com.zoku.running
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -34,10 +36,12 @@ import com.zoku.running.util.formatTime
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
+import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.componenet.RoundStopButton
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun RunningPauseScreen(
     onPlayClick: () -> Unit,
@@ -45,6 +49,7 @@ fun RunningPauseScreen(
     runningViewModel: RunningViewModel
 ) {
     val uiState by runningViewModel.uiState.collectAsState()
+    val totalRunningList by runningViewModel.totalRunningList.collectAsState()
 
     Column(
         modifier = Modifier
@@ -56,7 +61,7 @@ fun RunningPauseScreen(
                 .fillMaxWidth()
                 .weight(0.3f)
         ) {
-            KakaoMapImage()
+            KakaoMapView(totalLocationList = totalRunningList)
         }
 
         Column(
@@ -161,7 +166,7 @@ fun InfoColumn(modifier: Modifier = Modifier) {
         )
 
         RobotoText(
-            text = "BPM",
+            text = "거리(km)",
             fontSize = 24.sp
         )
     }
@@ -191,7 +196,7 @@ fun ValueColumn(
         )
 
         RobotoText(
-            text = "${uiState.bpm}",
+            text = "${uiState.distance}",
             color = BaseYellow,
             fontSize = 40.sp
         )

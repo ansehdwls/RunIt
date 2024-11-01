@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoku.ui.model.LocationData
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.service.LocationService
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,28 +39,36 @@ class RunningViewModel @Inject constructor(
         )
     )
     val uiState: StateFlow<RunningUIState> = _uiState
+    private val _totalRunningList = MutableStateFlow<List<LocationData>>(emptyList())
+    val totalRunningList: StateFlow<List<LocationData>> = _totalRunningList
 
     // GPS
     private var lastLocation: Location? = null
     private val locationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val latitude = intent.getDoubleExtra("latitude", 0.0)
-            val longitude = intent.getDoubleExtra("longitude", 0.0)
-
-            val newLocation = Location("provider").apply {
-                this.latitude = latitude
-                this.longitude = longitude
+            val isPause = intent.getBooleanExtra("isPause", false)
+            if (isPause) {
+                val locationList =
+                    intent.getParcelableArrayListExtra("locationList", LocationData::class.java)
+                locationList?.let {
+                    _totalRunningList.value += it
+                }
+            } else {
+                val latitude = intent.getDoubleExtra("latitude", 0.0)
+                val longitude = intent.getDoubleExtra("longitude", 0.0)
+                val newLocation = Location("provider").apply {
+                    this.latitude = latitude
+                    this.longitude = longitude
+                }
+                if (lastLocation != null) {
+                    val distance = lastLocation!!.distanceTo(newLocation)
+                    Log.d("확인", "거리를 재고 있어요 $distance")
+                    updateUIState(
+                        newDistance = uiState.value.distance + distance.toInt()
+                    )
+                }
+                lastLocation = newLocation
             }
-
-            if (lastLocation != null) {
-                val distance = lastLocation!!.distanceTo(newLocation)
-                Log.d("확인", "거리를 재고 있어요 $distance")
-                updateUIState(
-                    newDistance = uiState.value.distance + distance.toInt()
-                )
-            }
-
-            lastLocation = newLocation
         }
     }
 
