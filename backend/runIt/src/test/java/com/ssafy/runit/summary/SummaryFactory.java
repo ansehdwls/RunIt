@@ -74,6 +74,36 @@ public class SummaryFactory {
         }
     }
 
+    @Transactional
+    public void crateAddTestData(int testUserSize) {
+        League testLeague = leagueRepository.findAllByOrderByRankAsc().stream().toList().get(0);
+        System.out.println("league : " + testLeague.getId() + " " + testLeague.getLeagueName() + " " + testLeague.getRank());
+        Group testGroup = Group.builder()
+                .groupLeague(testLeague)
+                .users(new HashSet<>())
+                .build();
+        groupRepository.save(testGroup);
+        testLeague.addGroup(testGroup);
+        for (int i = 0; i < testUserSize; i++) {
+            User user = User.builder()
+                    .userName("test-user" + i)
+                    .userNumber("test-num" + i)
+                    .experiences(new HashSet<>())
+                    .fcmToken("test-token" + i)
+                    .imageUrl("test-imageUrl" + i)
+                    .build();
+            user.updateGroup(testGroup);
+            userRepository.save(user);
+            Experience experience = Experience.builder()
+                    .changed(assignExperience(user.getId()))
+                    .createAt(LocalDateTime.now())
+                    .user(user)
+                    .build();
+            user.addExperience(experience);
+            experienceRepository.save(experience);
+        }
+    }
+
     public Long assignExperience(long userNum) {
         if (userNum % 5 == 0) {
             return 2000L * userNum;
