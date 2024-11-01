@@ -1,5 +1,7 @@
 package com.zoku.running
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -39,6 +41,7 @@ import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.componenet.RoundStopButton
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun RunningPauseScreen(
     onPlayClick: () -> Unit,
@@ -46,6 +49,7 @@ fun RunningPauseScreen(
     runningViewModel: RunningViewModel
 ) {
     val uiState by runningViewModel.uiState.collectAsState()
+    val totalRunningList by runningViewModel.totalRunningList.collectAsState()
 
     Column(
         modifier = Modifier
@@ -57,7 +61,7 @@ fun RunningPauseScreen(
                 .fillMaxWidth()
                 .weight(0.3f)
         ) {
-            KakaoMapView()
+            KakaoMapView(totalLocationList = totalRunningList)
         }
 
         Column(

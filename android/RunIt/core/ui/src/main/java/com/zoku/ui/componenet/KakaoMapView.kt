@@ -22,11 +22,13 @@ import com.kakao.vectormap.route.RouteLineSegment
 import com.kakao.vectormap.route.RouteLineStyle
 import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
+import com.zoku.ui.model.LocationData
 import com.zoku.ui.routeColor
 
 @Composable
 fun KakaoMapView(
     modifier: Modifier = Modifier,
+    totalLocationList: List<LocationData>
 ) {
 
     val context = LocalContext.current
@@ -61,25 +63,25 @@ fun KakaoMapView(
                             )
                             val stylesSet = RouteLineStylesSet.from(routeLineStyles)
 
-                            val startLatLng = LatLng.from(38.2070795, 128.5168879)
-                            val endLatLng = LatLng.from(35.2070795, 128.5168879)
+                            val latLngList = totalLocationList.map {
+                                LatLng.from(it.latitude, it.longitude)
+                            }
+                            if (latLngList.size > 1) {
+                                val segment = RouteLineSegment.from(latLngList)
+                                    .setStyles(stylesSet.getStyles(0))
 
-                            val segment = RouteLineSegment.from(listOf(startLatLng, endLatLng))
-                                .setStyles(stylesSet.getStyles(0))
+                                val routeLineOptions = RouteLineOptions.from(segment)
+                                    .setStylesSet(stylesSet)
 
-                            val routeLineOptions = RouteLineOptions.from(segment)
-                                .setStylesSet(stylesSet)
+                                routeLineLayer.addRouteLine(routeLineOptions)
 
-                            val routeLine: RouteLine = routeLineLayer.addRouteLine(routeLineOptions)
-
-                            val cameraUpdate = CameraUpdateFactory.newCenterPosition(
-                                LatLng.from(
-                                    (startLatLng.latitude + endLatLng.latitude) / 2,
-                                    (startLatLng.longitude + endLatLng.longitude) / 2
+                                val centerLat = latLngList.map { it.latitude }.average()
+                                val centerLng = latLngList.map { it.longitude }.average()
+                                val cameraUpdate = CameraUpdateFactory.newCenterPosition(
+                                    LatLng.from(centerLat, centerLng)
                                 )
-                            )
-                            kakaoMap.moveCamera(cameraUpdate)
-
+                                kakaoMap.moveCamera(cameraUpdate)
+                            }
                         }
                     },
                 )

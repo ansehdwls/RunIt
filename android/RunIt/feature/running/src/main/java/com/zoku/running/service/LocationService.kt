@@ -15,11 +15,14 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.zoku.ui.model.LocationData
 
 class LocationService : Service() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+
+    private val locationList = mutableListOf<LocationData>()
 
     override fun onCreate() {
         super.onCreate()
@@ -31,9 +34,12 @@ class LocationService : Service() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val lastLocation = locationResult.lastLocation
                 if (lastLocation != null) {
-                    val intent = Intent("com.zoku.running.LOCATION_UPDATE")
-                    intent.putExtra("latitude", lastLocation.latitude)
-                    intent.putExtra("longitude", lastLocation.longitude)
+                    locationList.add(LocationData(lastLocation.latitude, lastLocation.longitude))
+                    val intent = Intent("com.zoku.running.LOCATION_UPDATE").apply{
+                        putExtra("isPause", false)
+                        putExtra("latitude", lastLocation.latitude)
+                        putExtra("longitude", lastLocation.longitude)
+                    }
                     sendBroadcast(intent)
                 }
             }
@@ -80,6 +86,11 @@ class LocationService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        val intent = Intent("com.zoku.running.LOCATION_UPDATE").apply {
+            putExtra("isPause", true)
+            putParcelableArrayListExtra("locationList", ArrayList(locationList))
+        }
+        sendBroadcast(intent)
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
