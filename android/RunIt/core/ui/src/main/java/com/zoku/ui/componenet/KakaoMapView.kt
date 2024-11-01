@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.kakao.vectormap.KakaoMap
@@ -14,6 +15,14 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapType
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
+import com.kakao.vectormap.route.RouteLine
+import com.kakao.vectormap.route.RouteLineLayer
+import com.kakao.vectormap.route.RouteLineOptions
+import com.kakao.vectormap.route.RouteLineSegment
+import com.kakao.vectormap.route.RouteLineStyle
+import com.kakao.vectormap.route.RouteLineStyles
+import com.kakao.vectormap.route.RouteLineStylesSet
+import com.zoku.ui.routeColor
 
 @Composable
 fun KakaoMapView(
@@ -42,16 +51,34 @@ fun KakaoMapView(
                     object : KakaoMapReadyCallback() {
                         override fun onMapReady(kakaoMap: KakaoMap) {
 
-                            val cameraUpdate = CameraUpdateFactory.newCenterPosition(
-                                LatLng.from(
-                                    38.2070795,
-                                    128.5168879
-                                )
-                            )
-
-                            kakaoMap.moveCamera(cameraUpdate)
                             kakaoMap.changeMapType(MapType.NORMAL)
 
+                            val routeLineManager = kakaoMap.routeLineManager!!
+                            val routeLineLayer: RouteLineLayer = routeLineManager.layer
+
+                            val routeLineStyles = RouteLineStyles.from(
+                                RouteLineStyle.from(10f, routeColor.toArgb())
+                            )
+                            val stylesSet = RouteLineStylesSet.from(routeLineStyles)
+
+                            val startLatLng = LatLng.from(38.2070795, 128.5168879)
+                            val endLatLng = LatLng.from(35.2070795, 128.5168879)
+
+                            val segment = RouteLineSegment.from(listOf(startLatLng, endLatLng))
+                                .setStyles(stylesSet.getStyles(0))
+
+                            val routeLineOptions = RouteLineOptions.from(segment)
+                                .setStylesSet(stylesSet)
+
+                            val routeLine: RouteLine = routeLineLayer.addRouteLine(routeLineOptions)
+
+                            val cameraUpdate = CameraUpdateFactory.newCenterPosition(
+                                LatLng.from(
+                                    (startLatLng.latitude + endLatLng.latitude) / 2,
+                                    (startLatLng.longitude + endLatLng.longitude) / 2
+                                )
+                            )
+                            kakaoMap.moveCamera(cameraUpdate)
 
                         }
                     },
