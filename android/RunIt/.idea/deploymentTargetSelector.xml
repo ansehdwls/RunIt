@@ -15,7 +15,7 @@
       </SelectionState>
       <SelectionState runConfigName="watch">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-11-01T02:01:44.413154600Z">
+        <DropdownSelection timestamp="2024-11-01T07:26:30.876474300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="Default" identifier="serial=192.168.137.23:37661;connection=40e466b7" />

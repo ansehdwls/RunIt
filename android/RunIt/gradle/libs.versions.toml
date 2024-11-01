@@ -131,6 +131,8 @@ hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 fcm = { id = "com.google.gms.google-services", version.ref = "fcm" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+parcelize = {id="kotlin-parcelize"}
+
 
 [bundles]
 network = ["retrofit2", "okhttp3", "okhttp3-logging", "gson"]

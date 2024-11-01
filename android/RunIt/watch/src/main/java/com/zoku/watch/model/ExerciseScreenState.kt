@@ -4,6 +4,7 @@ import androidx.health.services.client.data.ExerciseState
 import com.zoku.watch.data.ServiceState
 import com.zoku.watch.service.ExerciseServiceState
 
+
 data class ExerciseScreenState(
     val hasExerciseCapabilities: Boolean,
     val isTrackingAnotherExercise: Boolean,

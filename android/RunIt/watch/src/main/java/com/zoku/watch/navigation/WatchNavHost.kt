@@ -2,10 +2,12 @@ package com.zoku.watch.navigation
 
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.zoku.watch.model.ExerciseScreenState
 import com.zoku.watch.screen.HomeScreen
 import com.zoku.watch.screen.RunningPauseScreen
 import com.zoku.watch.screen.RunningScreen
@@ -28,12 +30,18 @@ fun WatchNavHost(
         }
 
         composable(route = WatchScreenDestination.running.route) {
-            RunningScreen(modifier) {
-                navController.navigate(WatchScreenDestination.runningPause.route)
+            RunningScreen(modifier) { exerciseStatus ->
+                navController.run {
+                    this.currentBackStackEntry?.savedStateHandle?.set(key = "data", value = exerciseStatus )
+                    this.navigate(WatchScreenDestination.runningPause.route)
+                }
             }
         }
         composable(route = WatchScreenDestination.runningPause.route) {
-            RunningPauseScreen(modifier)
+            val data = remember {
+                navController.previousBackStackEntry?.savedStateHandle?.get<ExerciseScreenState>("data")
+            }
+            RunningPauseScreen(modifier, data)
         }
 
     }

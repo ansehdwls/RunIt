@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.runtime.Composable
@@ -36,17 +35,17 @@ import timber.log.Timber
 @Composable
 fun RunningScreen(
     modifier: Modifier = Modifier,
-    onPauseClick: () -> Unit
+    onPauseClick: (ExerciseScreenState) -> Unit
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val scrollState = rememberScrollState()
+
 
     RunningStatus(uiState = uiState) {
         viewModel.pauseRunning()
-        onPauseClick()
+        onPauseClick(it)
     }
 }
 
@@ -56,7 +55,7 @@ fun RunningScreen(
 fun RunningStatus(
     modifier: Modifier = Modifier,
     uiState: ExerciseScreenState,
-    onPauseClick: () -> Unit
+    onPauseClick: (ExerciseScreenState) -> Unit
 ) {
     val lastActiveDurationCheckpoint = uiState.exerciseState?.activeDurationCheckpoint
     val exerciseState = uiState.exerciseState?.exerciseState
@@ -91,7 +90,7 @@ fun RunningStatus(
         Spacer(Modifier.height(10.dp))
         RunningButton(icon = Icons.Rounded.Pause,
             size = ButtonDefaults.ExtraSmallButtonSize,
-            clickEvent = { onPauseClick() }
+            clickEvent = { onPauseClick(uiState) }
         )
     }
 

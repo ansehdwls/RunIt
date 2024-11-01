@@ -1,11 +1,14 @@
 package com.zoku.watch.service
 
+import android.os.Parcelable
 import androidx.health.services.client.data.DataPointContainer
 import androidx.health.services.client.data.DataType
 import androidx.health.services.client.data.ExerciseGoal
 import androidx.health.services.client.data.ExerciseState
 import androidx.health.services.client.data.ExerciseUpdate.ActiveDurationCheckpoint
 import androidx.health.services.client.data.LocationAvailability
+import kotlinx.parcelize.Parcelize
+
 
 data class ExerciseMetrics(
     val heartRate: Double? = null,
@@ -29,6 +32,7 @@ data class ExerciseMetrics(
 }
 
 //Capturing most of the values associated with our exercise in a data class
+
 data class ExerciseServiceState(
     val exerciseState: ExerciseState? = null,
     val exerciseMetrics: ExerciseMetrics = ExerciseMetrics(),
@@ -37,4 +41,4 @@ data class ExerciseServiceState(
     val locationAvailability: LocationAvailability = LocationAvailability.UNKNOWN,
     val error: String? = null,
     val exerciseGoal: Set<ExerciseGoal<out Number>> = emptySet()
-)
+) : Parcelable
