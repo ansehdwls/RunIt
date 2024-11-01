@@ -34,6 +34,7 @@ import com.zoku.running.util.formatTime
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
+import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.componenet.RoundStopButton
@@ -56,7 +57,7 @@ fun RunningPauseScreen(
                 .fillMaxWidth()
                 .weight(0.3f)
         ) {
-            KakaoMapImage()
+            KakaoMapView()
         }
 
         Column(
