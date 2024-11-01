@@ -64,6 +64,12 @@ public class LeagueServicePerformanceTest {
         leagueSummaryService.processWeeklySummary();
         // 4. 리그 인원 수 검사
         List<League> leagues = leagueRepository.findAll();
+        long totalUserSize = leagues.stream()
+                .mapToLong(league -> league.getGroups().stream()
+                        .mapToLong(group -> group.getUsers().size())
+                        .sum())
+                .sum();
+        long testUserSize = 0;
         for (League league : leagues) {
             long currentRank = league.getRank();
             System.out.println("league : " + league.getLeagueName() + " " + league.getRank() + " " + league.getGroups().size());
@@ -83,11 +89,15 @@ public class LeagueServicePerformanceTest {
             Long actualUserSize = league.getGroups().stream()
                     .mapToLong(group -> group.getUsers().size())
                     .sum();
-            long totalUserSize = advanceUser + waitUser + degradeUser;
-            System.out.println("실제 사용자 : " + actualUserSize);
-            System.out.println("승급 : " + advanceUser + " 강등 :" + degradeUser + " 대기: " + waitUser);
-            assertEquals("Promoted users count mismatch", actualUserSize, totalUserSize);
+            long currentUserSize = advanceUser + waitUser + degradeUser;
+            System.out.println("[실제] 사용자 수 : " + actualUserSize);
+            System.out.println("[예측] 사용자 수 : " + currentUserSize + " 승급 : " + advanceUser + " 강등 :" + degradeUser + " 대기: " + waitUser);
+            assertEquals("Promoted users count mismatch", actualUserSize, currentUserSize);
+            testUserSize += currentUserSize;
         }
+        System.out.println("[실제] 전체 유저 수 : " + totalUserSize);
+        System.out.println("[예측] 전체 유저 수 :" + testUserSize);
+        assertEquals("User Count mismatch", totalUserSize, testUserSize);
         // 5. 성능 측정
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
