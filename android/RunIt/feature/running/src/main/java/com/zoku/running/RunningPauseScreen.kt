@@ -166,7 +166,7 @@ fun InfoColumn(modifier: Modifier = Modifier) {
         )
 
         RobotoText(
-            text = "BPM",
+            text = "거리(km)",
             fontSize = 24.sp
         )
     }
@@ -196,7 +196,7 @@ fun ValueColumn(
         )
 
         RobotoText(
-            text = "${uiState.bpm}",
+            text = "${uiState.distance}",
             color = BaseYellow,
             fontSize = 40.sp
         )
