@@ -1,6 +1,5 @@
 package com.zoku.running
 
-import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +29,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zoku.running.model.RunningUIState
+import com.zoku.running.util.formatTime
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
@@ -37,7 +39,13 @@ import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.componenet.RoundStopButton
 
 @Composable
-fun RunningPauseScreen(onPlayClick: () -> Unit, onStopLongPress: () -> Unit) {
+fun RunningPauseScreen(
+    onPlayClick: () -> Unit,
+    onStopLongPress: () -> Unit,
+    runningViewModel: RunningViewModel
+) {
+    val uiState by runningViewModel.uiState.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,7 +74,7 @@ fun RunningPauseScreen(onPlayClick: () -> Unit, onStopLongPress: () -> Unit) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 InfoColumn()
-                ValueColumn()
+                ValueColumn(uiState = uiState)
             }
 
             SpreadButtonBox(
@@ -160,7 +168,10 @@ fun InfoColumn(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ValueColumn(modifier: Modifier = Modifier) {
+fun ValueColumn(
+    modifier: Modifier = Modifier,
+    uiState: RunningUIState
+) {
     Column(
         modifier = modifier
             .fillMaxHeight(),
@@ -174,13 +185,13 @@ fun ValueColumn(modifier: Modifier = Modifier) {
         )
 
         RobotoText(
-            text = "05:24",
+            text = formatTime(uiState.time),
             color = BaseYellow,
             fontSize = 40.sp
         )
 
         RobotoText(
-            text = "97",
+            text = "${uiState.bpm}",
             color = BaseYellow,
             fontSize = 40.sp
         )

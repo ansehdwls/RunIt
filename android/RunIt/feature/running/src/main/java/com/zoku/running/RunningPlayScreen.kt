@@ -1,5 +1,11 @@
 package com.zoku.running
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -16,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,14 +35,43 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.zoku.running.service.LocationService
+import com.zoku.running.util.formatTime
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun RunningPlayScreen(onPauseClick: () -> Unit, isFirstPlay: Boolean = true) {
+fun RunningPlayScreen(
+    onPauseClick: () -> Unit,
+    isFirstPlay: Boolean = true,
+    runningViewModel: RunningViewModel
+) {
+    val locationPermissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.FOREGROUND_SERVICE,
+            Manifest.permission.FOREGROUND_SERVICE_LOCATION
+        )
+    )
+    LaunchedEffect(locationPermissionsState.allPermissionsGranted) {
+        if (locationPermissionsState.allPermissionsGranted) {
+            runningViewModel.startTimer()
+            runningViewModel.startLocationService()
+        } else {
+            locationPermissionsState.launchMultiplePermissionRequest()
+        }
+    }
+    val uiState by runningViewModel.uiState.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -53,11 +89,11 @@ fun RunningPlayScreen(onPauseClick: () -> Unit, isFirstPlay: Boolean = true) {
                 bottomName = "페이스"
             )
             TopInfoWithText(
-                topName = "0",
+                topName = "${uiState.bpm}",
                 bottomName = "BPM"
             )
             TopInfoWithText(
-                topName = "-'--'",
+                topName = formatTime(seconds = uiState.time),
                 bottomName = "시간"
             )
         }
@@ -70,7 +106,7 @@ fun RunningPlayScreen(onPauseClick: () -> Unit, isFirstPlay: Boolean = true) {
             verticalAlignment = Alignment.Bottom
         ) {
             RobotoText(
-                text = "3.14",
+                text = "${uiState.distance}",
                 fontSize = 80.sp,
                 color = BaseYellow,
                 style = "Bold"
@@ -114,10 +150,17 @@ fun RunningPlayScreen(onPauseClick: () -> Unit, isFirstPlay: Boolean = true) {
                 containerColor = BaseYellow,
                 resourceId = R.drawable.baseline_pause_24,
                 resourceColor = Color.Black,
-                onClick = { onPauseClick() }
+                onClick = {
+                    runningViewModel.stopLocationService()
+                    runningViewModel.stopTimer()
+                    onPauseClick()
+                }
             )
         } else {
-            GatherButtonBox(onPauseClick)
+            GatherButtonBox(
+                onPauseClick = onPauseClick,
+                runningViewModel = runningViewModel
+            )
         }
 
         Spacer(modifier = Modifier.weight(0.12f))
@@ -125,7 +168,7 @@ fun RunningPlayScreen(onPauseClick: () -> Unit, isFirstPlay: Boolean = true) {
 }
 
 @Composable
-fun GatherButtonBox(onPauseClick: () -> Unit) {
+fun GatherButtonBox(onPauseClick: () -> Unit, runningViewModel: RunningViewModel) {
     var spread by remember { mutableStateOf(true) }
 
     val offsetValue by animateDpAsState(
@@ -158,7 +201,11 @@ fun GatherButtonBox(onPauseClick: () -> Unit) {
             modifier = Modifier
                 .align(Alignment.Center)
                 .offset(x = offsetValue),
-            onClick = { onPauseClick() })
+            onClick = {
+                runningViewModel.stopLocationService()
+                runningViewModel.stopTimer()
+                onPauseClick()
+            })
     }
 }
 
@@ -191,11 +238,24 @@ fun TopInfoWithText(topName: String, bottomName: String) {
     }
 }
 
+fun startLocationService(context: Context) {
+    val intent = Intent(context, LocationService::class.java)
+    context.startForegroundService(intent)
+}
+
+fun stopLocationService(context: Context) {
+    val intent = Intent(context, LocationService::class.java)
+    context.stopService(intent)
+}
+
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     com.zoku.ui.RunItTheme {
-        RunningScreen()
+        RunningPlayScreen(
+            onPauseClick = { Log.d("Zz", "Zzz") },
+            runningViewModel = hiltViewModel<RunningViewModel>()
+        )
     }
 }
 

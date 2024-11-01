@@ -2,9 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+<<<<<<< android/RunIt/app/src/main/AndroidManifest.xml
+    <uses-feature android:name="android.hardware.type.watch" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
     <uses-feature android:name="android.hardware.type.watch"/>
-    <!-- 인터넷 사용 권한 설정-->
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".ApplicationClass"
         android:allowBackup="true"
@@ -33,6 +41,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.zoku.running.service.LocationService"
+            android:exported="false"
+            android:foregroundServiceType="location"
+            tools:ignore="ForegroundServicePermission" />
 
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
