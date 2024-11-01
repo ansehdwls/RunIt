@@ -73,11 +73,12 @@ fun RunningStatus(
         )
         Spacer(Modifier.height(10.dp))
         if (lastActiveDurationCheckpoint != null && exerciseState != null) {
+            Timber.tag("RunningScreen").d("duration ${lastActiveDurationCheckpoint} ${exerciseState}")
             ActiveDurationText(
                 checkpoint = lastActiveDurationCheckpoint,
                 state = exerciseState
             ) {
-                RunningTimeText(duration = lastActiveDurationCheckpoint.activeDuration)
+                RunningTimeText(duration = it)
             }
         }
         Spacer(Modifier.height(10.dp))

@@ -6,8 +6,11 @@ import androidx.health.services.client.ExerciseUpdateCallback
 import androidx.health.services.client.HealthServicesClient
 import androidx.health.services.client.clearUpdateCallback
 import androidx.health.services.client.data.Availability
+import androidx.health.services.client.data.ComparisonType
 import androidx.health.services.client.data.DataType
+import androidx.health.services.client.data.DataTypeCondition
 import androidx.health.services.client.data.ExerciseConfig
+import androidx.health.services.client.data.ExerciseGoal
 import androidx.health.services.client.data.ExerciseLapSummary
 import androidx.health.services.client.data.ExerciseTrackedStatus
 import androidx.health.services.client.data.ExerciseTrackedStatus.Companion.NO_EXERCISE_IN_PROGRESS
@@ -29,9 +32,11 @@ import androidx.health.services.client.startExercise
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration
 
 @SuppressLint("RestrictedApi")
 @Singleton
@@ -49,6 +54,12 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
         } else {
             null
         }
+    }
+
+    private var thresholds = Thresholds(0.0, Duration.ZERO)
+
+    fun updateGoals(newThresholds: Thresholds) {
+        thresholds = newThresholds.copy()
     }
 
     //현재 사용자가 운동 중인지 확인함.
@@ -69,6 +80,8 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
         val capabilities = getExerciseCapabilities() ?: return
 
         val exerciseInfo = exerciseClient.getCurrentExerciseInfo()
+
+
         when (exerciseInfo.exerciseTrackedStatus) {
             OTHER_APP_IN_PROGRESS -> {}
             OWNED_EXERCISE_IN_PROGRESS -> {}
@@ -89,16 +102,18 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                     DataType.VO2_MAX,
                     DataType.VO2_MAX_STATS,
                     DataType.LOCATION,
+                    DataType.ACTIVE_EXERCISE_DURATION_TOTAL
                 ).intersect(capabilities.supportedDataTypes)
 
-                //자동 일시정지 및 재개 기능 지원되는지 확인
+                //자동 일시정지 및 재개 기능 지원되는지 확인 -> 이거 변경 필요
                 val supportsAutoPauseAndResume = capabilities.supportsAutoPauseAndResume
+
 
                 //운동 타입, 데이터 타입, 자동 일시정지/재개, GPS 사용 여부, 운동 목표 설정
                 val config = ExerciseConfig(
                     exerciseType = ExerciseType.RUNNING,
                     dataTypes = dataTypes,
-                    isAutoPauseAndResumeEnabled = supportsAutoPauseAndResume,
+                    isAutoPauseAndResumeEnabled = false,
                     isGpsEnabled = true,
                 )
 
@@ -152,6 +167,7 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
     val exerciseUpdateFlow = callbackFlow {
         val callback = object : ExerciseUpdateCallback {
             override fun onExerciseUpdateReceived(update: ExerciseUpdate) {
+                Timber.tag("ExerciseClientManager").d("update ${update.activeDurationCheckpoint}")
                 trySendBlocking(ExerciseMessage.ExerciseUpdateMessage(update))
             }
 
@@ -172,13 +188,29 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
             }
         }
 
+
+
+
         exerciseClient.setUpdateCallback(callback)
         awaitClose {
-            exerciseClient.clearUpdateCallback(callback = callback)
+            runBlocking {
+                exerciseClient.clearUpdateCallback(callback = callback)
+            }
         }
     }
 
+    private companion object {
+        const val CALORIES_THRESHOLD = 250.0
+    }
+
 }
+
+data class Thresholds(
+    var distance: Double,
+    var duration: Duration,
+    var durationIsSet: Boolean = duration != Duration.ZERO,
+    var distanceIsSet: Boolean = distance != 0.0,
+)
 
 sealed class ExerciseMessage {
     class ExerciseUpdateMessage(val exerciseUpdate: ExerciseUpdate) : ExerciseMessage()
