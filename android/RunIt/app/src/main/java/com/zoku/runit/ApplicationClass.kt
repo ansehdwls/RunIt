@@ -10,6 +10,6 @@ class ApplicationClass: Application(){
     override fun onCreate() {
         super.onCreate()
         KakaoSdk.init(this,BuildConfig.KAKAO_API_KEY)
-        KakaoMapSdk.init(this, BuildConfig.KAKAO_MAP_API_KEY)
+        KakaoMapSdk.init(this, BuildConfig.KAKAO_API_KEY)
     }
 }

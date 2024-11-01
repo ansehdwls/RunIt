@@ -31,8 +31,7 @@ android {
         }
         buildConfigField("String", "KAKAO_API_KEY", properties["KAKAO_API_KEY"] as String)
         resValue("string", "KAKAO_REDIRECT_URI", properties["KAKAO_REDIRECT_URI"] as String)
-        buildConfigField("String", "KAKAO_MAP_API_KEY", properties["KAKAO_MAP_API_KEY"] as String)
-        manifestPlaceholders["KAKAO_MAP_API_KEY"] = properties["KAKAO_MAP_API_KEY"] as String
+        manifestPlaceholders["KAKAO_API_KEY"] = properties["KAKAO_API_KEY"] as String
     }
 
     buildTypes {

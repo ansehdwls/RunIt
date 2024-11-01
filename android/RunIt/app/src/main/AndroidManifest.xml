@@ -30,7 +30,7 @@
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="${KAKAO_MAP_API_KEY}" />
+            android:value="${KAKAO_API_KEY}" />
 
 
         <activity
