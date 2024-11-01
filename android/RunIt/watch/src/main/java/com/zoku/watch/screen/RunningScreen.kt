@@ -35,7 +35,8 @@ import timber.log.Timber
 
 @Composable
 fun RunningScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPauseClick: () -> Unit
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
 
@@ -45,6 +46,7 @@ fun RunningScreen(
 
     RunningStatus(uiState = uiState) {
         viewModel.pauseRunning()
+        onPauseClick()
     }
 }
 
@@ -73,7 +75,8 @@ fun RunningStatus(
         )
         Spacer(Modifier.height(10.dp))
         if (lastActiveDurationCheckpoint != null && exerciseState != null) {
-            Timber.tag("RunningScreen").d("duration ${lastActiveDurationCheckpoint} ${exerciseState}")
+            Timber.tag("RunningScreen")
+                .d("duration ${lastActiveDurationCheckpoint} ${exerciseState}")
             ActiveDurationText(
                 checkpoint = lastActiveDurationCheckpoint,
                 state = exerciseState

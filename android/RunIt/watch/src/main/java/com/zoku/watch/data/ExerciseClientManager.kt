@@ -6,11 +6,8 @@ import androidx.health.services.client.ExerciseUpdateCallback
 import androidx.health.services.client.HealthServicesClient
 import androidx.health.services.client.clearUpdateCallback
 import androidx.health.services.client.data.Availability
-import androidx.health.services.client.data.ComparisonType
 import androidx.health.services.client.data.DataType
-import androidx.health.services.client.data.DataTypeCondition
 import androidx.health.services.client.data.ExerciseConfig
-import androidx.health.services.client.data.ExerciseGoal
 import androidx.health.services.client.data.ExerciseLapSummary
 import androidx.health.services.client.data.ExerciseTrackedStatus
 import androidx.health.services.client.data.ExerciseTrackedStatus.Companion.NO_EXERCISE_IN_PROGRESS
@@ -113,7 +110,7 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                 val config = ExerciseConfig(
                     exerciseType = ExerciseType.RUNNING,
                     dataTypes = dataTypes,
-                    isAutoPauseAndResumeEnabled = false,
+                    isAutoPauseAndResumeEnabled = supportsAutoPauseAndResume,
                     isGpsEnabled = true,
                 )
 

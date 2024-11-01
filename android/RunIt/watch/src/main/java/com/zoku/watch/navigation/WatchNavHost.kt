@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.zoku.watch.screen.HomeScreen
+import com.zoku.watch.screen.RunningPauseScreen
 import com.zoku.watch.screen.RunningScreen
 
 @Composable
@@ -27,8 +28,12 @@ fun WatchNavHost(
         }
 
         composable(route = WatchScreenDestination.running.route) {
-            RunningScreen(modifier)
-
+            RunningScreen(modifier) {
+                navController.navigate(WatchScreenDestination.runningPause.route)
+            }
+        }
+        composable(route = WatchScreenDestination.runningPause.route) {
+            RunningPauseScreen(modifier)
         }
 
     }
