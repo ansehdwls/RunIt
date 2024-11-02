@@ -3,12 +3,14 @@ package com.ssafy.runit.domain.user.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.group.entity.Group;
+import com.ssafy.runit.domain.record.entity.Record;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -50,4 +52,7 @@ public class User {
     public void addExperience(Experience experience) {
         experiences.add(experience);
     }
+
+    @OneToMany(mappedBy = "user")
+    private List<Record> recordList;
 }
