@@ -4,11 +4,20 @@ import com.ssafy.runit.domain.pace.entity.Pace;
 import com.ssafy.runit.domain.track.entity.Track;
 import com.ssafy.runit.domain.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Null;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Record {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,14 +28,15 @@ public class Record {
      @JoinColumn(name = "user_id")
      private User user;
 
-     @OneToOne(mappedBy = "record")
+     @OneToOne(mappedBy = "record", cascade = CascadeType.ALL)
      private Track track;
 
-     @OneToMany(mappedBy = "record")
+     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL)
      private List<Pace> paceList;
 
      private double distance;
 
+     @Null
      private int bpm;
 
      private LocalDateTime startTime;
