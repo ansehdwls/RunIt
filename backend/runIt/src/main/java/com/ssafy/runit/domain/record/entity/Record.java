@@ -19,8 +19,7 @@ public class Record {
      @JoinColumn(name = "user_id")
      private User user;
 
-     @OneToOne
-     @JoinColumn(name = "track_id")
+     @OneToOne(mappedBy = "record")
      private Track track;
 
      @OneToMany(mappedBy = "record")

@@ -13,6 +13,10 @@ public class Track {
     @Column(name = "track_id")
     private long id;
 
+    @OneToOne
+    @JoinColumn(name = "record_id")
+    private Record record;
+
     private String trackImageUrl;
 
     private String path;
