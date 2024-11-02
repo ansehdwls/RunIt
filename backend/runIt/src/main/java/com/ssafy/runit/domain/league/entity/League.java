@@ -1,9 +1,9 @@
 package com.ssafy.runit.domain.league.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ssafy.runit.domain.group.entity.Group;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +14,7 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class League {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +24,15 @@ public class League {
 
     @OneToMany(mappedBy = "groupLeague")
     private Set<Group> groups;
+
+    public void updateGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
+    public void addGroup(Group group) {
+        this.groups.add(group);
+    }
+
+    @Column(name = "league_rank")
+    private long rank;
 }

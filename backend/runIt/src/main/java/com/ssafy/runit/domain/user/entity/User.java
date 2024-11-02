@@ -36,6 +36,18 @@ public class User {
     @JsonManagedReference
     private Group userGroup;
 
+    public void updateGroup(Group group) {
+        if (this.userGroup != null) {
+            this.userGroup.getUsers().remove(this);
+        }
+        this.userGroup = group;
+        group.addUser(this);
+    }
+
     @OneToMany(mappedBy = "user")
     private Set<Experience> experiences;
+
+    public void addExperience(Experience experience) {
+        experiences.add(experience);
+    }
 }
