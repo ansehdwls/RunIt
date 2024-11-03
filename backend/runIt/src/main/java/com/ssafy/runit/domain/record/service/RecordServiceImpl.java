@@ -1,6 +1,7 @@
 package com.ssafy.runit.domain.record.service;
 
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
+import com.ssafy.runit.domain.record.dto.response.recordGetResponse;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.repository.RecordRepository;
 import com.ssafy.runit.domain.user.entity.User;
@@ -28,12 +29,12 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
-    public Record getRecord(Long userId) {
-        return new Record();
+    public recordGetResponse getRecord(Long userId) {
+        return recordRepository.recordFindByUserId(userId);
     }
 
     @Override
-    public List<Record> getRecordList(Long userId) {
-        return List.of();
+    public List<recordGetResponse> getRecordList(Long userId) {
+        return recordRepository.recordListFindByUserId(userId);
     }
 }
