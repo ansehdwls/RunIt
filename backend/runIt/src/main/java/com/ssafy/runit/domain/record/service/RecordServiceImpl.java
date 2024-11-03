@@ -1,13 +1,10 @@
 package com.ssafy.runit.domain.record.service;
 
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
-import com.ssafy.runit.domain.record.dto.response.recordGetResponse;
+import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.repository.RecordRepository;
 import com.ssafy.runit.domain.user.entity.User;
-import com.ssafy.runit.exception.CustomException;
-import com.ssafy.runit.exception.code.RecordErrorCode;
-import io.swagger.v3.oas.models.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,12 +26,12 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
-    public recordGetResponse getRecord(Long userId) {
+    public RecordGetResponse getRecord(Long userId) {
         return recordRepository.recordFindByUserId(userId);
     }
 
     @Override
-    public List<recordGetResponse> getRecordList(Long userId) {
+    public List<RecordGetResponse> getRecordList(Long userId) {
         return recordRepository.recordListFindByUserId(userId);
     }
 }
