@@ -11,9 +11,12 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.zoku.ui.model.LocationData
+import com.zoku.data.NetworkResult
+import com.zoku.data.repository.RunningRepository
+import com.zoku.network.model.request.TestSumRequest
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.service.LocationService
+import com.zoku.ui.model.LocationData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -26,7 +29,8 @@ import javax.inject.Inject
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @HiltViewModel
 class RunningViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val runningRepository: RunningRepository
 ) : AndroidViewModel(application) {
 
     // UI variable
@@ -126,6 +130,25 @@ class RunningViewModel @Inject constructor(
     fun stopTimer() {
         timerJob?.cancel()
     }
+
+    fun submitTestSum(testSumRequest: TestSumRequest) {
+        viewModelScope.launch {
+            when (val result = runningRepository.postTestSum(testSumRequest)) {
+                is NetworkResult.Success -> {
+                    Log.d("확인", " 성공 ${result}")
+                }
+
+                is NetworkResult.Error -> {
+                    Log.d("확인", "실패, 에러 ${result}")
+                }
+
+                is NetworkResult.Exception -> {
+                    Log.d("확인", "서버 연결 에러")
+                }
+            }
+        }
+    }
+
 
     override fun onCleared() {
         super.onCleared()

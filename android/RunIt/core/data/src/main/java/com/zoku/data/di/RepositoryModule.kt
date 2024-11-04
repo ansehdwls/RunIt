@@ -1,5 +1,7 @@
 package com.zoku.data.di
 
+import com.zoku.data.repository.RunningRepository
+import com.zoku.data.repository.RunningRepositoryImpl
 import com.zoku.data.repository.TestRepository
 import com.zoku.data.repository.TestRepositoryImpl
 import dagger.Binds
@@ -17,4 +19,10 @@ interface RepositoryModule {
     fun bindTestRepository(
         testRepositoryImpl: TestRepositoryImpl
     ): TestRepository
+
+    @Singleton
+    @Binds
+    fun bindRunningRepository(
+        runningRepositoryImpl: RunningRepositoryImpl
+    ): RunningRepository
 }

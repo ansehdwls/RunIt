@@ -1,9 +1,14 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.plugin)
     alias(libs.plugins.ksp)
 }
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.zoku.network"
@@ -12,6 +17,7 @@ android {
     defaultConfig {
         minSdk = 28
 
+        buildConfigField("String", "SERVER_URL", properties["SERVER_URL"] as String)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -32,6 +38,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures{
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -48,4 +57,5 @@ dependencies {
     ksp(libs.hilt.compiler)
     //retrofit
     implementation(libs.bundles.network)
+
 }

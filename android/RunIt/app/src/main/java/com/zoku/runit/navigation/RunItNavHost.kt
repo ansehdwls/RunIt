@@ -1,5 +1,7 @@
 package com.zoku.runit.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,10 +23,10 @@ import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
 import com.zoku.running.navigation.navigateToRunning
-import com.zoku.running.navigation.runningResultScreen
 import com.zoku.running.navigation.runningScreen
 import com.zoku.util.ScreenDestinations
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun RunItMainNavHost(
     navController: NavHostController,
@@ -56,7 +58,6 @@ fun RunItMainNavHost(
         },viewModel = loginViewModel)
         this.recordDetail()
         this.runningScreen(modifier = modifier)
-        this.runningResultScreen(modifier = modifier)
 
     }
 
