@@ -35,19 +35,26 @@ import java.time.Duration
 @Composable
 fun RunningPauseScreen(
     modifier: Modifier = Modifier,
-    runningData: ExerciseResult?
+    runningData: ExerciseResult?,
+    onStopClick: () -> Unit,
+    onResumeClick: () -> Unit
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
 
     Timber.tag("RunningPauseScreen").d("${runningData?.time}")
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val scrollState = rememberScrollState()
     RunningPause(
         modifier, scrollState, runningData,
-        onStopClick = {},
-        onResumeClick = {}
+        onStopClick = {
+            viewModel.stopRunning()
+            onStopClick()
+        },
+        onResumeClick = {
+            viewModel.resumeRunning()
+            onResumeClick()
+        }
     )
 
 }
@@ -74,7 +81,7 @@ fun RunningPause(
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             RunningButton(icon = Icons.Rounded.Stop, size = ButtonDefaults.LargeButtonSize) {
-
+                onStopClick()
             }
 
             RunningButton(icon = Icons.Rounded.PlayArrow, size = ButtonDefaults.LargeButtonSize) {
