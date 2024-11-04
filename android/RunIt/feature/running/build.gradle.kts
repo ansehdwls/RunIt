@@ -66,4 +66,11 @@ dependencies {
     //hilt
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    //gms location
+    implementation(libs.locations)
+
+    //permission
+    implementation(libs.permissions)
 }

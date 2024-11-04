@@ -97,4 +97,9 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    // Log
+    implementation(libs.timber)
+
+    // Ongoing Activity
+    implementation(libs.androidx.wear.ongoing)
 }

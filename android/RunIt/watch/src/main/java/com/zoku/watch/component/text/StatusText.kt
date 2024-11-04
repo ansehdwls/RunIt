@@ -1,4 +1,4 @@
-package com.zoku.watch.component
+package com.zoku.watch.component.text
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

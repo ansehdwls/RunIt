@@ -49,10 +49,23 @@ wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.0.1"
 navigationRuntime = "2.8.3"
 desguaring = "2.1.2"
-
+wearOngoing = "1.0.0"
 #FCM
 fcm = "4.4.2"
 firebaseMessagingKtx = "24.0.3"
+
+#location
+locations = "21.3.0"
+
+#permission
+permission = "0.36.0"
+
+# Logging
+timber = "5.0.1"
+
+# Kakao map
+kakao-map = "2.12.7"
+
 
 [libraries]
 #kakaoMap
@@ -80,6 +93,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycleService" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
+# Logging
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 #hilt
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -101,10 +116,14 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 #Kakao
 v2-all = { module = "com.kakao.sdk:v2-all", version.ref = "v2All" }
 
+#kakao-map
+kakao-map = { group = "com.kakao.maps.open", name = "android", version.ref = "kakao-map" }
+
 #Wear
 wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "androidx-wear-compose" }
 wear-compose-material = { module = "androidx.wear.compose:compose-material", version.ref = "androidx-wear-compose" }
 wear-compose-pager = { module = "androidx.wear.compose:compose-pager", version.ref = "androidx-wear-compose" }
+androidx-wear-ongoing = { module = "androidx.wear:wear-ongoing", version.ref = "wearOngoing" }
 horologist-composables = { module = "com.google.android.horologist:horologist-composables", version.ref = "horologist" }
 horologist-compose-layout = { module = "com.google.android.horologist:horologist-compose-layout", version.ref = "horologist" }
 horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologist" }
@@ -122,6 +141,12 @@ androidx-health-services-client = { module = "androidx.health:health-services-cl
 #fcm
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
+
+#locations
+locations = { group = "com.google.android.gms", name = "play-services-location", version.ref = "locations" }
+
+#permission
+permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "permission" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

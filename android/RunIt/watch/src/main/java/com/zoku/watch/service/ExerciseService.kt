@@ -1,8 +1,11 @@
 package com.zoku.watch.service
 
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
+import androidx.core.app.ServiceCompat
 import androidx.health.services.client.data.ExerciseState
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleService
@@ -14,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.time.Duration
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -21,6 +25,9 @@ class ExerciseService : LifecycleService() {
 
     @Inject
     lateinit var exerciseClientManager: ExerciseClientManager
+
+    @Inject
+    lateinit var exerciseNotificationManager: ExerciseNotificationManager
 
     @Inject
     lateinit var exerciseServiceMonitor: ExerciseServiceMonitor
@@ -94,7 +101,7 @@ class ExerciseService : LifecycleService() {
 
     //운동 시작 함수
     suspend fun startExercise() {
-//        postOngoingActivityNotification()
+        postOngoingActivityNotification()
         exerciseClientManager.startExercise()
     }
 
@@ -111,7 +118,7 @@ class ExerciseService : LifecycleService() {
     //운동 종료 함수
     suspend fun endExercise() {
         exerciseClientManager.endExercise()
-//        removeOngoingActivityNotification()
+        removeOngoingActivityNotification()
     }
 
     //랩 표시 함수
@@ -138,32 +145,26 @@ class ExerciseService : LifecycleService() {
         }
     }
 
-//    fun removeOngoingActivityNotification() { // 서비스가 포그라운드에서 실행 중인 경우, 진행 중인 활동 알림 제거
-//        if (serviceRunningInForeground) {
-//            Log.d(TAG, "Removing ongoing activity notification")
-//            stopForeground(STOP_FOREGROUND_REMOVE)
-//        }
-//    }
-//
-//    private fun postOngoingActivityNotification() {
-//        if (!serviceRunningInForeground) {
-//
-//            exerciseNotificationManager.createNotificationChannel()
-//            val serviceState = exerciseServiceMonitor.exerciseServiceState.value
-//            ServiceCompat.startForeground(
-//                this,
-//                ExerciseNotificationManager.NOTIFICATION_ID,
-//                exerciseNotificationManager.buildNotification(
-//                    serviceState.activeDurationCheckpoint?.activeDuration ?:
-//                    Duration.ZERO
-//                ),
-//                //Starting with Wear 5 (API 34), startForeground should be called with
-//                // foregroundServiceTypes
-//                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or if
-//                                                                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-//                    ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH else 0
-//            )
-//        }
+    fun removeOngoingActivityNotification() { // 서비스가 포그라운드에서 실행 중인 경우, 진행 중인 활동 알림 제거
+        stopForeground(STOP_FOREGROUND_REMOVE)
+    }
+
+    private fun postOngoingActivityNotification() {
+
+        exerciseNotificationManager.createNotificationChannel()
+        val serviceState = exerciseServiceMonitor.exerciseServiceState.value
+        ServiceCompat.startForeground(
+            this,
+            ExerciseNotificationManager.NOTIFICATION_ID,
+            exerciseNotificationManager.buildNotification(
+                serviceState.activeDurationCheckpoint?.activeDuration ?: Duration.ZERO
+            ),
+
+            // foregroundServiceTypes
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH else 0
+        )
+    }
 
     inner class LocalBinder : Binder() {
         fun getService() = this@ExerciseService
