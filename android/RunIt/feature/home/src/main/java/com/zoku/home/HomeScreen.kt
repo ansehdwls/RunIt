@@ -1,5 +1,6 @@
 package com.zoku.home
 
+import android.service.autofill.FillEventHistory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +31,8 @@ import com.zoku.ui.componenet.MenuButton
 fun HomeScreen(modifier: Modifier = Modifier,
                moveToHistory :() -> Unit,
                moveToRecordMode : ()->Unit,
-               moveToRunning : () -> Unit) {
+               moveToRunning : () -> Unit,
+               moveToExpHistory: () -> Unit) {
 
     var isInfo by remember { mutableStateOf(true) }
     var isHistory by remember {
@@ -92,7 +94,7 @@ fun HomeScreen(modifier: Modifier = Modifier,
         }
 
         else {
-            RankScreen()
+            RankScreen(moveToExpHistory= moveToExpHistory)
         }
 
     }

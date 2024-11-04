@@ -3,6 +3,7 @@ package com.zoku.navigatinon
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.zoku.home.ExpHistory
 import com.zoku.home.HomeScreen
 import com.zoku.home.RecordModeDetail
 import com.zoku.home.RecordModeScreen
@@ -14,12 +15,18 @@ fun NavController.navigateToHome() = navigate(route = ScreenDestinations.home.ro
 fun NavController.navigateToRunHistory() = navigate(route = ScreenDestinations.runHistory.route)
 fun NavController.navigateToRecordModeScreen() = navigate(route = ScreenDestinations.RecordMode.route)
 fun NavController.navigateToRecordModeDetail() = navigate(route = ScreenDestinations.RecordModeDetail.route)
+fun NavController.navigateToExpHistory() = navigate(route = ScreenDestinations.expHistory.route)
+
 
 fun NavGraphBuilder.homeScreen( moveToHistory :()->Unit ,
                                 moveToRecordMode : ()->Unit ,
-                                moveToRunning:()->Unit) {
+                                moveToRunning:()->Unit,
+                                moveToExpHistory: () -> Unit) {
     composable(route = ScreenDestinations.home.route) {
-        HomeScreen(moveToHistory = moveToHistory, moveToRecordMode = moveToRecordMode, moveToRunning = moveToRunning)
+        HomeScreen(moveToHistory = moveToHistory,
+            moveToRecordMode = moveToRecordMode,
+            moveToRunning = moveToRunning,
+            moveToExpHistory =  moveToExpHistory)
     }
 }
 
@@ -38,5 +45,11 @@ fun NavGraphBuilder.recordMode( moveToDetail :()->Unit ){
 fun NavGraphBuilder.recordDetail(){
     composable(route = ScreenDestinations.RecordModeDetail.route) {
         RecordModeDetail()
+    }
+}
+
+fun NavGraphBuilder.expHistory(){
+    composable(route = ScreenDestinations.expHistory.route){
+        ExpHistory()
     }
 }

@@ -36,18 +36,19 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.zoku.home.component.DropDownMenu
 import org.w3c.dom.Text
 
 @Composable
-fun RankScreen(modifier: Modifier = Modifier) {
+fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
     val rankMenu = arrayOf("종합 순위", "페이스 순위", "거리 순위")
     Column(
         modifier = modifier
             .padding(horizontal = 10.dp)
             .fillMaxSize()
     ) {
-        RankingInfo()
+        RankingInfo(moveToExpHistory)
 
         HomeTitle(modifier.padding(top = 10.dp, bottom = 5.dp), "그룹 내 순위", "종합 순위", rankMenu)
 
@@ -56,7 +57,7 @@ fun RankScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun RankingInfo() {
+fun RankingInfo(moveToExpHistory : () -> Unit) {
     val baseModifier = Modifier.fillMaxWidth()
     Box(
         modifier = baseModifier
@@ -76,7 +77,7 @@ fun RankingInfo() {
                     .padding(top = 10.dp)
             )
 
-            ExpView(baseModifier)
+            ExpView(baseModifier,moveToExpHistory)
 
             InfoIconButton("경험치 획득 방법", onClick = {})
         }
@@ -216,7 +217,7 @@ fun DailyCheck(modifier: Modifier = Modifier, type: Int = 0, day: String) {
 }
 
 @Composable
-fun ExpView(modifier: Modifier = Modifier) {
+fun ExpView(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
     Row(
         modifier = modifier
             .padding(vertical = 5.dp)
@@ -228,7 +229,9 @@ fun ExpView(modifier: Modifier = Modifier) {
 
             Row {
                 Surface(
-                    onClick = {}
+                    onClick = {
+                        moveToExpHistory()
+                    }
                 ) {
                     RankText(text = "획득경험치")
                 }

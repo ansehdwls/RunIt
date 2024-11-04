@@ -12,7 +12,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.zoku.login.LoginViewModel
 import com.zoku.login.navigation.loginScreen
+import com.zoku.navigatinon.expHistory
 import com.zoku.navigatinon.homeScreen
+import com.zoku.navigatinon.navigateToExpHistory
 import com.zoku.navigatinon.navigateToHome
 import com.zoku.navigatinon.navigateToRecordModeDetail
 import com.zoku.navigatinon.navigateToRecordModeScreen
@@ -43,7 +45,8 @@ fun RunItMainNavHost(
         this.homeScreen(
             moveToHistory = { navController.navigateToRunHistory() },
             moveToRecordMode = { navController.navigateToRecordModeScreen() },
-            moveToRunning = { navController.navigateToRunning() }
+            moveToRunning = { navController.navigateToRunning() },
+            moveToExpHistory = {navController.navigateToExpHistory()}
         )
         this.runHistory()
         this.recordMode(
@@ -57,6 +60,7 @@ fun RunItMainNavHost(
         this.recordDetail()
         this.runningScreen(modifier = modifier)
         this.runningResultScreen(modifier = modifier)
+        this.expHistory()
 
     }
 
