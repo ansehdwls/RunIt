@@ -12,14 +12,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material.ButtonDefaults
+import androidx.wear.tooling.preview.devices.WearDevices
+import com.zoku.watch.component.button.LongClickStopButton
 import com.zoku.watch.component.button.RunningButton
 import com.zoku.watch.component.text.StatusText
 import com.zoku.watch.model.ExerciseResult
@@ -80,9 +80,12 @@ fun RunningPause(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            RunningButton(icon = Icons.Rounded.Stop, size = ButtonDefaults.LargeButtonSize) {
-                onStopClick()
-            }
+            LongClickStopButton(
+                onStop = {
+                    onStopClick()
+                },
+                buttonSize = ButtonDefaults.LargeButtonSize
+            )
 
             RunningButton(icon = Icons.Rounded.PlayArrow, size = ButtonDefaults.LargeButtonSize) {
                 onResumeClick()
@@ -126,4 +129,15 @@ fun RunningPause(
         }
         Spacer(modifier = Modifier.height(100.dp))
     }
+}
+
+@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true, apiLevel = 33)
+@Composable
+fun RunningPausePreview() {
+    RunningPauseScreen(
+        runningData = null,
+        onStopClick = {},
+        onResumeClick = {}
+    )
+
 }
