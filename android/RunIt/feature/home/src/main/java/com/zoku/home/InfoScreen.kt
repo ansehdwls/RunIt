@@ -61,7 +61,10 @@ import com.zoku.home.component.DropDownMenu
 import kotlin.random.Random
 
 @Composable
-fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit, moveToRecordMode : ()-> Unit) {
+fun InfoScreen(modifier: Modifier = Modifier,
+               moveToHistory :() -> Unit,
+               moveToRecordMode : ()-> Unit,
+               moveToRunning : ()->Unit) {
     val context = LocalContext.current
     val runningDiaryMenu = arrayOf("거리","시간","페이스")
     val runningRecordMenu = arrayOf("전체","일주일")
@@ -124,7 +127,7 @@ fun InfoScreen(modifier: Modifier = Modifier,moveToHistory :() -> Unit, moveToRe
 
                 HomeFunctionButton(modifier = buttonModifier
                     .background(com.zoku.ui.BaseYellow)
-                    , onClick = {}
+                    , onClick = {moveToRunning()}
                 , icon = R.drawable.run_info_icon
                 ,""
                 , iconModifier
