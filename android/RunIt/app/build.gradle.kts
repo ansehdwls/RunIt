@@ -28,9 +28,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField("String","KAKAO_API_KEY",properties["KAKAO_API_KEY"] as String)
+        buildConfigField("String", "KAKAO_API_KEY", properties["KAKAO_API_KEY"] as String)
         resValue("string", "KAKAO_REDIRECT_URI", properties["KAKAO_REDIRECT_URI"] as String)
-
+        manifestPlaceholders["KAKAO_API_KEY"] = properties["KAKAO_API_KEY"] as String
     }
 
     buildTypes {
@@ -102,8 +102,8 @@ dependencies {
     implementation(libs.firebase.messaging.ktx)
 
     // kakao
-    implementation (libs.v2.all) // 전체 모듈 설치, 2.11.0 버전부터 지원
-    // kakaoMap
-    implementation (libs.android)
+    implementation(libs.v2.all) // 전체 모듈 설치, 2.11.0 버전부터 지원
+    // kakao map
+    implementation(libs.kakao.map)
 
 }
