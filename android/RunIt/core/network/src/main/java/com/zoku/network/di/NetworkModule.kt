@@ -38,6 +38,15 @@ object NetworkModule {
 
     @Singleton
     @Provides
+    @Named("runit")
+    fun provideRunitRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit = Retrofit.Builder()
+        .baseUrl("https://jsonplaceholder.typicode.com/")
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    @Singleton
+    @Provides
     fun provideTestApiService(@Named("test") retrofit: Retrofit): TestApi =
         retrofit.create(TestApi::class.java)
 
