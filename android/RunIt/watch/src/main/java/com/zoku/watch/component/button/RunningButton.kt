@@ -15,7 +15,8 @@ import com.zoku.ui.BaseYellow
 fun RunningButton(
     modifier: Modifier = Modifier,
     icon: ImageVector,
-    size: Dp
+    size: Dp,
+    clickEvent: () -> Unit
 ) {
     OutlinedButton(
         modifier = Modifier.size(size),
@@ -26,7 +27,7 @@ fun RunningButton(
         border = ButtonDefaults.outlinedButtonBorder(
             borderColor = BaseYellow
         ),
-        onClick = {}
+        onClick = { clickEvent() }
     ) {
         Icon(
             imageVector = icon,

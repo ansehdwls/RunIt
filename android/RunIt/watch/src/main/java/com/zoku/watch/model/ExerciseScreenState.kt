@@ -3,12 +3,14 @@ package com.zoku.watch.model
 import androidx.health.services.client.data.ExerciseState
 import com.zoku.watch.data.ServiceState
 import com.zoku.watch.service.ExerciseServiceState
+import java.time.Duration
+
 
 data class ExerciseScreenState(
     val hasExerciseCapabilities: Boolean,
     val isTrackingAnotherExercise: Boolean,
     val serviceState: ServiceState,
-    val exerciseState: ExerciseServiceState?
+    val exerciseState: ExerciseServiceState?,
 ) {
     val isEnding: Boolean
         get() = exerciseState?.exerciseState?.isEnding == true
@@ -27,4 +29,13 @@ data class ExerciseScreenState(
             is ServiceState.Connected -> serviceState.exerciseServiceState.error
             else -> null
         }
+}
+
+fun ExerciseScreenState.toExerciseResult(duration: Duration?): ExerciseResult {
+    return ExerciseResult(
+        distance = this.exerciseState?.exerciseMetrics?.distance ?: 0.0,
+        pace = this.exerciseState?.exerciseMetrics?.pace ?: 0.0,
+        time = duration?.toMillis(),
+        bpm = this.exerciseState?.exerciseMetrics?.heartRate ?: 0.0
+    )
 }
