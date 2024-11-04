@@ -28,16 +28,15 @@ public class Record {
      @JoinColumn(name = "user_id")
      private User user;
 
-     @OneToOne(mappedBy = "record", cascade = CascadeType.ALL)
+     @OneToOne(mappedBy = "record", cascade = CascadeType.PERSIST)
      private Track track;
 
-     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL)
+     @OneToMany(mappedBy = "record")
      private List<Pace> paceList;
 
      private double distance;
 
-     @Null
-     private int bpm;
+     private Integer bpm;
 
      private LocalDateTime startTime;
 
