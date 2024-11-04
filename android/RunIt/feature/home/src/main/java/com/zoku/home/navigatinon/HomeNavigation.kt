@@ -15,9 +15,11 @@ fun NavController.navigateToRunHistory() = navigate(route = ScreenDestinations.r
 fun NavController.navigateToRecordModeScreen() = navigate(route = ScreenDestinations.RecordMode.route)
 fun NavController.navigateToRecordModeDetail() = navigate(route = ScreenDestinations.RecordModeDetail.route)
 
-fun NavGraphBuilder.homeScreen( moveToHistory :()->Unit , moveToRecordMode : ()->Unit ) {
+fun NavGraphBuilder.homeScreen( moveToHistory :()->Unit ,
+                                moveToRecordMode : ()->Unit ,
+                                moveToRunning:()->Unit) {
     composable(route = ScreenDestinations.home.route) {
-        HomeScreen(moveToHistory = moveToHistory, moveToRecordMode = moveToRecordMode)
+        HomeScreen(moveToHistory = moveToHistory, moveToRecordMode = moveToRecordMode, moveToRunning = moveToRunning)
     }
 }
 

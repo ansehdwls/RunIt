@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.hilt.plugin)
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -102,4 +103,7 @@ dependencies {
 
     // Ongoing Activity
     implementation(libs.androidx.wear.ongoing)
+
+    //gson
+    implementation(libs.gson)
 }

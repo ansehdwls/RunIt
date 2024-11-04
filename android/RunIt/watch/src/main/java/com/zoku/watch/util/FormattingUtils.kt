@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.wear.compose.material.MaterialTheme
+import com.zoku.watch.navigation.WatchScreenDestination
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
@@ -11,31 +12,51 @@ private val MINUTES_PER_HOUR = TimeUnit.HOURS.toMinutes(1)
 private val SECONDS_PER_MINUTE = TimeUnit.MINUTES.toSeconds(1)
 
 
+
+
 @Composable
 fun formatElapsedTime(
     elapsedDuration: Duration?,
-    includeSeconds: Boolean = false
+    includeSeconds: Boolean = false,
+    screenType: WatchScreenDestination = WatchScreenDestination.running
 ) = buildAnnotatedString {
     if (elapsedDuration == null) {
         append("--")
     } else {
         val hours = elapsedDuration.toHours()
+
+
         if (hours > 0) {
             append(hours.toString())
             withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-                append("시간")
+                val hour = if (screenType == WatchScreenDestination.running) {
+                    "시간"
+                } else {
+                    ":"
+                }
+                append(hour)
             }
         }
         val minutes = elapsedDuration.toMinutes() % MINUTES_PER_HOUR
         append("%02d".format(minutes))
         withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-            append(" 분 ")
+            val minute = if (screenType == WatchScreenDestination.running) {
+                "분"
+            } else {
+                ": "
+            }
+            append(minute)
         }
         if (includeSeconds) {
             val seconds = elapsedDuration.seconds % SECONDS_PER_MINUTE
             append("%02d".format(seconds))
             withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-                append(" 초 ")
+                val second = if (screenType == WatchScreenDestination.running) {
+                    "초"
+                } else {
+                    ""
+                }
+                append(second)
             }
         }
     }
@@ -43,34 +64,47 @@ fun formatElapsedTime(
 
 
 @Composable
-fun formatDistanceKm(meters: Double?) = buildAnnotatedString {
+fun formatDistanceKm(
+    meters: Double?,
+    screenType: WatchScreenDestination = WatchScreenDestination.running
+) = buildAnnotatedString {
     if (meters == null) {
         append("--")
     } else {
         append("%02.2f".format(meters / 1_000))
-        withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-            append("KM")
+        if (screenType == WatchScreenDestination.running) {
+            withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
+                append("KM")
+            }
         }
+
     }
 }
 
 @Composable
-fun formatBpm(heartRate: Double?) = buildAnnotatedString {
+fun formatBpm(
+    heartRate: Double?,
+    screenType: WatchScreenDestination = WatchScreenDestination.running
+) = buildAnnotatedString {
     if (heartRate == null) {
         append("--")
     } else {
         append("%.0f".format(heartRate))
-        withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-            append("BPM")
+        if (screenType == WatchScreenDestination.running) {
+            withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
+                append("BPM")
+            }
         }
+
     }
 
 }
 
 
-
 @Composable
-fun formatPace(pace: Double?) = buildAnnotatedString {
+fun formatPace(
+    pace: Double?,
+) = buildAnnotatedString {
     if (pace == null || pace.isNaN()) {
         append("--")
     } else {

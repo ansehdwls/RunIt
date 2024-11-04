@@ -27,7 +27,10 @@ import com.zoku.ui.componenet.MenuButton
 
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, moveToHistory :() -> Unit, moveToRecordMode : ()->Unit) {
+fun HomeScreen(modifier: Modifier = Modifier,
+               moveToHistory :() -> Unit,
+               moveToRecordMode : ()->Unit,
+               moveToRunning : () -> Unit) {
 
     var isInfo by remember { mutableStateOf(true) }
     var isHistory by remember {
@@ -84,7 +87,8 @@ fun HomeScreen(modifier: Modifier = Modifier, moveToHistory :() -> Unit, moveToR
                 .background(com.zoku.ui.BaseGray)
                 .padding(horizontal = 10.dp),
                 moveToHistory = moveToHistory,
-                moveToRecordMode = moveToRecordMode)
+                moveToRecordMode = moveToRecordMode,
+                moveToRunning = moveToRunning)
         }
 
         else {
