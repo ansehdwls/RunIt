@@ -2,10 +2,14 @@ package com.ssafy.runit.domain.pace.entity;
 
 import com.ssafy.runit.domain.record.entity.Record;
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Builder
 public class Pace {
 
     @Id
