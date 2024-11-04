@@ -14,33 +14,33 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
+@ActiveProfiles("test")
 @SpringBootTest
-@Transactional // 테스트 시 트랜잭션 롤백을 원할 경우 사용
 public class LeagueServicePerformanceTest {
 
     @Autowired
-    private SummaryFactory testDataFactory;
-
+    private SummaryFactory summaryFactory;
     @Autowired
     private LeagueSummaryService leagueSummaryService;
-
     @Autowired
     private GroupRepository groupRepository;
-
     @Autowired
     private LeagueRepository leagueRepository;
-
     @Autowired
     private LeagueSummaryRepository leagueSummaryRepository;
 
+
     @BeforeEach
+    @Transactional
     public void before() {
+        summaryFactory.createTestData();
         System.out.println("Test Start");
     }
 
@@ -52,6 +52,7 @@ public class LeagueServicePerformanceTest {
 
     @Test
     @DisplayName("주간 리그 결산 테스트")
+    @Transactional // 테스트 시 트랜잭션 롤백을 원할 경우 사용
     public void weeklyLeagueSummaryTest() {
         // 1. 테스트 데이터 생성
         int groupsPerLeague = 13;
@@ -59,7 +60,7 @@ public class LeagueServicePerformanceTest {
         // 2. 성능 측정 시작
         long startTime = System.currentTimeMillis();
         System.out.println("processWeeklySummary Start");
-        testDataFactory.createLeagues(groupsPerLeague, usersPerGroup);
+        summaryFactory.createLeagues(groupsPerLeague, usersPerGroup);
         // 3. 주간 요약 처리 메서드 호출
         leagueSummaryService.processWeeklySummary();
         // 4. 리그 인원 수 검사
@@ -113,7 +114,7 @@ public class LeagueServicePerformanceTest {
         // 2. 성능 측정
         long startTime = System.currentTimeMillis();
         System.out.println("GroupAddTest Start");
-        testDataFactory.crateAddTestData(testUserSize);
+        summaryFactory.crateAddTestData(testUserSize);
         // 3. 주간 결산 메서드 실행
         leagueSummaryService.processWeeklySummary();
 
