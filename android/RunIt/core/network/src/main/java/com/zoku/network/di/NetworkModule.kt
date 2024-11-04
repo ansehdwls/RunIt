@@ -2,6 +2,7 @@ package com.zoku.network.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.zoku.network.BuildConfig
 import com.zoku.network.api.RunningApi
 import com.zoku.network.api.TestApi
 import dagger.Module
@@ -49,7 +50,7 @@ object NetworkModule {
     @Named("runit")
     fun provideRunitRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit = Retrofit.Builder()
 //        .baseUrl("https://jsonplaceholder.typicode.com/")
-        .baseUrl("http://192.168.100.131:8081/")
+        .baseUrl(BuildConfig.SERVER_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
