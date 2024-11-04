@@ -22,13 +22,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material.ButtonDefaults
 import com.zoku.watch.component.button.RunningButton
 import com.zoku.watch.component.text.StatusText
-import com.zoku.watch.model.ExerciseScreenState
+import com.zoku.watch.model.ExerciseResult
 import com.zoku.watch.viewmodel.RunViewModel
 
 @Composable
 fun RunningPauseScreen(
     modifier: Modifier = Modifier,
-    runningData : ExerciseScreenState?
+    runningData: ExerciseResult?
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
 
@@ -36,7 +36,7 @@ fun RunningPauseScreen(
 
     val scrollState = rememberScrollState()
     RunningPause(
-        modifier, scrollState, uiState
+        modifier, scrollState, runningData
     )
 
 }
@@ -46,9 +46,9 @@ fun RunningPauseScreen(
 fun RunningPause(
     modifier: Modifier = Modifier,
     scrollState: ScrollState,
-    uiState: ExerciseScreenState
+    runningData: ExerciseResult?
 ) {
-    val metrics = uiState.exerciseState?.exerciseMetrics
+
 
     Column(
         modifier = modifier
@@ -73,17 +73,17 @@ fun RunningPause(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            StatusText(value = "2424", type = "km")
-            StatusText(value = "5`28", type = "페이스")
+            StatusText(value = "${runningData?.distance}", type = "km")
+            StatusText(value = "${runningData?.pace}", type = "페이스")
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            StatusText(value = "6:30", type = "시간")
+            StatusText(value = "${runningData?.time}", type = "시간")
             StatusText(
-                value = uiState.exerciseState?.exerciseMetrics?.heartRate.toString(),
+                value = "${runningData?.bpm}",
                 type = "BPM"
             )
         }

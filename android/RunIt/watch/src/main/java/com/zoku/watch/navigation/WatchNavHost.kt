@@ -1,13 +1,15 @@
 package com.zoku.watch.navigation
 
 
+import android.os.Build
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.zoku.watch.model.ExerciseScreenState
+import androidx.navigation.navArgument
+import androidx.navigation.toRoute
+import com.zoku.watch.model.ExerciseResult
 import com.zoku.watch.screen.HomeScreen
 import com.zoku.watch.screen.RunningPauseScreen
 import com.zoku.watch.screen.RunningScreen
@@ -30,16 +32,19 @@ fun WatchNavHost(
         }
 
         composable(route = WatchScreenDestination.running.route) {
-            RunningScreen(modifier) { exerciseStatus ->
+            RunningScreen(modifier) { exerciseResult ->
                 navController.run {
-                    this.currentBackStackEntry?.savedStateHandle?.set(key = "data", value = exerciseStatus )
-                    this.navigate(WatchScreenDestination.runningPause.route)
+                    this.navigate(WatchScreenDestination.runningPause.createRoute(exerciseResult))
                 }
             }
         }
-        composable(route = WatchScreenDestination.runningPause.route) {
-            val data = remember {
-                navController.previousBackStackEntry?.savedStateHandle?.get<ExerciseScreenState>("data")
+        composable(route = WatchScreenDestination.runningPause.route,
+            WatchScreenDestination.runningPause.arguments
+        ) { backStackEntry ->
+            val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                backStackEntry.arguments?.getParcelable("result", ExerciseResult::class.java)
+            } else {
+                backStackEntry.arguments?.getParcelable("result")
             }
             RunningPauseScreen(modifier, data)
         }

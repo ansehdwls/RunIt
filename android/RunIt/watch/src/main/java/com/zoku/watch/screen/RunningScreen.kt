@@ -27,7 +27,9 @@ import com.zoku.watch.component.button.RunningButton
 import com.zoku.watch.component.text.BpmText
 import com.zoku.watch.component.text.PaceText
 import com.zoku.watch.component.text.RunningTimeText
+import com.zoku.watch.model.ExerciseResult
 import com.zoku.watch.model.ExerciseScreenState
+import com.zoku.watch.model.toExerciseResult
 import com.zoku.watch.util.formatDistanceKm
 import com.zoku.watch.viewmodel.RunViewModel
 import timber.log.Timber
@@ -35,7 +37,7 @@ import timber.log.Timber
 @Composable
 fun RunningScreen(
     modifier: Modifier = Modifier,
-    onPauseClick: (ExerciseScreenState) -> Unit
+    onPauseClick: (ExerciseResult) -> Unit
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
 
@@ -45,7 +47,7 @@ fun RunningScreen(
 
     RunningStatus(uiState = uiState) {
         viewModel.pauseRunning()
-        onPauseClick(it)
+        onPauseClick(it.toExerciseResult())
     }
 }
 

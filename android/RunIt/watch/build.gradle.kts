@@ -103,4 +103,7 @@ dependencies {
 
     // Ongoing Activity
     implementation(libs.androidx.wear.ongoing)
+
+    //gson
+    implementation(libs.gson)
 }
