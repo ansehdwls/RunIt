@@ -1,4 +1,4 @@
-package com.zoku.network.model
+package com.zoku.network.model.response
 
 data class TestApiResponse(
     val postId: Int,

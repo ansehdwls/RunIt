@@ -1,5 +1,7 @@
 package com.zoku.running
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,13 +18,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.zoku.network.model.request.TestSumRequest
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.CustomTypo
 import com.zoku.ui.componenet.RecordDetailInfo
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun RunningResultScreen(modifier: Modifier = Modifier) {
+fun RunningResultScreen(
+    modifier: Modifier = Modifier,
+    runningViewModel: RunningViewModel
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -54,7 +62,7 @@ fun RunningResultScreen(modifier: Modifier = Modifier) {
             contentAlignment = Alignment.TopCenter
         ) {
             Button(
-                onClick = { },
+                onClick = { runningViewModel.submitTestSum(TestSumRequest(1, 3)) },
                 colors = ButtonDefaults.buttonColors(BaseYellow),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
@@ -71,10 +79,11 @@ fun RunningResultScreen(modifier: Modifier = Modifier) {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview
 @Composable
 fun RunningResultPreview() {
     com.zoku.ui.RunItTheme {
-        RunningResultScreen()
+        RunningResultScreen(runningViewModel = hiltViewModel<RunningViewModel>())
     }
 }
