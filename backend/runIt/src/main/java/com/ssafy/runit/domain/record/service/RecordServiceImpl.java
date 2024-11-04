@@ -1,10 +1,13 @@
 package com.ssafy.runit.domain.record.service;
 
+import com.ssafy.runit.domain.pace.entity.Pace;
+import com.ssafy.runit.domain.pace.repository.PaceRepository;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.repository.RecordRepository;
 import com.ssafy.runit.domain.track.entity.Track;
+import com.ssafy.runit.domain.track.repository.TrackRepository;
 import com.ssafy.runit.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +24,18 @@ import java.util.Optional;
 public class RecordServiceImpl implements RecordService{
 
     private final RecordRepository recordRepository;
+    private final TrackRepository trackRepository;
+    private final PaceRepository paceRepository;
 
     @Override
     @Transactional
     public void saveRunningRecord(User user, RecordSaveRequest request) {
         Record record = request.mapper(user);
         Track track = record.getTrack();
-        log.debug("track = {}", track.getTrackImageUrl());
+        List<Pace> paceList = record.getPaceList();
+
+        log.debug("record = {}", record.getDistance());
+
         recordRepository.save(record);
 
     }

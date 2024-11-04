@@ -13,6 +13,4 @@ public interface RecordService {
     Optional<RecordGetResponse> getRecord(Long userId);
 
     List<RecordGetResponse> getRecordList(Long userId);
-
-
 }

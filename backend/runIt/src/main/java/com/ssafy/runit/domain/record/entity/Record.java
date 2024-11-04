@@ -28,10 +28,10 @@ public class Record {
      @JoinColumn(name = "user_id")
      private User user;
 
-     @OneToOne(mappedBy = "record", cascade = CascadeType.PERSIST)
+     @OneToOne(mappedBy = "record", cascade = CascadeType.ALL)
      private Track track;
 
-     @OneToMany(mappedBy = "record")
+     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL)
      private List<Pace> paceList;
 
      private double distance;
