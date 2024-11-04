@@ -31,7 +31,7 @@ public class User {
     @Column(nullable = false)
     private String userNumber;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
     @JsonManagedReference
     private Group userGroup;
