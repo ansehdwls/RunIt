@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(SecurityConstants.PUBLIC_ENDPOINTS).permitAll()
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .exceptionHandling(exception ->
                         exception
                                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
