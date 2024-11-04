@@ -61,13 +61,15 @@ import com.zoku.home.component.DropDownMenu
 import kotlin.random.Random
 
 @Composable
-fun InfoScreen(modifier: Modifier = Modifier,
-               moveToHistory :() -> Unit,
-               moveToRecordMode : ()-> Unit,
-               moveToRunning : ()->Unit) {
+fun InfoScreen(
+    modifier: Modifier = Modifier,
+    moveToHistory: () -> Unit,
+    moveToRecordMode: () -> Unit,
+    moveToRunning: () -> Unit
+) {
     val context = LocalContext.current
-    val runningDiaryMenu = arrayOf("거리","시간","페이스")
-    val runningRecordMenu = arrayOf("전체","일주일")
+    val runningDiaryMenu = arrayOf("거리", "시간", "페이스")
+    val runningRecordMenu = arrayOf("전체", "일주일")
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -82,14 +84,20 @@ fun InfoScreen(modifier: Modifier = Modifier,
 
             Text(
                 text = context.getString(R.string.today),
-                color = androidx.compose.ui.graphics.Color.White,
-                modifier = modifier.padding(bottom = 5.dp)
+                color = Color.White,
+                modifier = modifier.padding(bottom = 5.dp),
+                fontFamily = com.zoku.ui.ZokuFamily
             )
             TodayDashBoard(modifier.align(Alignment.CenterHorizontally))
 
             Spacer(modifier = modifier.height(20.dp))
 
-            HomeTitle(modifier.padding(bottom = 5.dp), context.getString(R.string.running_diary), "거리", runningDiaryMenu)
+            HomeTitle(
+                modifier.padding(bottom = 5.dp),
+                context.getString(R.string.running_diary),
+                "거리",
+                runningDiaryMenu
+            )
 
             RunningDiary(modifier.align(Alignment.CenterHorizontally))
 
@@ -97,7 +105,7 @@ fun InfoScreen(modifier: Modifier = Modifier,
 
             HomeTitle(modifier.padding(bottom = 5.dp), "러닝 기록", "전체", runningRecordMenu)
 
-            RunningRecord(modifier,"1,600","104")
+            RunningRecord(modifier, "1,600", "104")
 
             Spacer(modifier = modifier.height(30.dp))
 
@@ -115,35 +123,27 @@ fun InfoScreen(modifier: Modifier = Modifier,
                     .weight(1f)
 
                 HomeFunctionButton(modifier = buttonModifier
-                    .background(Color.White)
-                    , onClick = {
-                        moveToHistory()
-                    }
-                , icon = R.drawable.calendar_info_icon
-                ,"히스토리"
-                ,iconModifier)
+                    .background(Color.White), onClick = {
+                    moveToHistory()
+                }, icon = R.drawable.calendar_info_icon, "히스토리", iconModifier)
 
                 Spacer(modifier = Modifier.width(20.dp))
 
                 HomeFunctionButton(modifier = buttonModifier
-                    .background(com.zoku.ui.BaseYellow)
-                    , onClick = {moveToRunning()}
-                , icon = R.drawable.run_info_icon
-                ,""
-                , iconModifier
+                    .background(com.zoku.ui.BaseYellow),
+                    onClick = { moveToRunning() },
+                    icon = R.drawable.run_info_icon,
+                    "",
+                    iconModifier
                         .height(60.dp)
                         .width(40.dp))
 
                 Spacer(modifier = Modifier.width(20.dp))
 
                 HomeFunctionButton(modifier = buttonModifier
-                    .background(Color.White)
-                    , onClick = {
-                        moveToRecordMode()
-                    }
-                , icon = R.drawable.record_info_icon
-                ,"기록 갱신"
-                ,iconModifier)
+                    .background(Color.White), onClick = {
+                    moveToRecordMode()
+                }, icon = R.drawable.record_info_icon, "기록 갱신", iconModifier)
             }
         }
     }
@@ -241,19 +241,26 @@ fun TodayRecord(
             Text(
                 text = result,
                 modifier = Modifier.align(Alignment.Start), // 왼쪽 정렬
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                fontFamily = com.zoku.ui.ZokuFamily
             )
             Text(
                 text = unit,
                 modifier = Modifier.align(Alignment.End), // 오른쪽 정렬
-                fontSize = 12.sp
+                fontSize = 12.sp,
+                fontFamily = com.zoku.ui.ZokuFamily
             )
         }
     }
 }
 
 @Composable
-fun HomeTitle(modifier: Modifier = Modifier, title: String, firstSelect: String, menu: Array<String>) {
+fun HomeTitle(
+    modifier: Modifier = Modifier,
+    title: String,
+    firstSelect: String,
+    menu: Array<String>
+) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf(firstSelect) }
 
@@ -264,10 +271,11 @@ fun HomeTitle(modifier: Modifier = Modifier, title: String, firstSelect: String,
     ) {
         Text(
             text = title,
-            color = androidx.compose.ui.graphics.Color.White,
+            color = Color.White,
             modifier = modifier
                 .weight(1f) // Text는 전체 너비 중 1의 비율로 공간을 차지
-                .align(Alignment.CenterVertically)
+                .align(Alignment.CenterVertically),
+            fontFamily = com.zoku.ui.ZokuFamily
         )
 
         Box(
@@ -279,9 +287,10 @@ fun HomeTitle(modifier: Modifier = Modifier, title: String, firstSelect: String,
             Row {
                 Text(
                     text = selectedOption,  // 선택된 옵션 텍스트로 표시
-                    color = androidx.compose.ui.graphics.Color.White,
+                    color = Color.White,
                     modifier = Modifier
-                        .clickable { expanded = !expanded }  // 클릭 시 드롭다운 열기/닫기
+                        .clickable { expanded = !expanded },  // 클릭 시 드롭다운 열기/닫기
+                    fontFamily = com.zoku.ui.ZokuFamily
                 )
                 DropDownMenu(
                     expanded = expanded,
@@ -291,7 +300,6 @@ fun HomeTitle(modifier: Modifier = Modifier, title: String, firstSelect: String,
                     },
                     itemList = menu
                 )
-
 
 
             }
@@ -308,13 +316,13 @@ fun RunningDiary(modifier: Modifier = Modifier) {
             .clip(RoundedCornerShape(16.dp))
             .height(200.dp)
             .background(com.zoku.ui.BaseWhiteBackground)
-    ){
+    ) {
         BarChartScreen()
     }
 }
 
 @Composable
-fun RunningRecord(modifier: Modifier = Modifier, distance : String, time : String) {
+fun RunningRecord(modifier: Modifier = Modifier, distance: String, time: String) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -326,26 +334,32 @@ fun RunningRecord(modifier: Modifier = Modifier, distance : String, time : Strin
                 .weight(1f)
                 .height(110.dp)
                 .background(com.zoku.ui.BaseWhiteBackground)
-        ){
+        ) {
             Column(
                 Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.padding(top=  35.dp))
-                Text(text = distance, modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(com.zoku.ui.BaseWhiteBackground)
-                    , textAlign = TextAlign.Center
-                    , fontSize = 26.sp)
-                Text(text = "거리/km",modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(com.zoku.ui.BaseWhiteBackground),
-                    textAlign = TextAlign.Center
-                    , fontSize = 12.sp)
-                Spacer(modifier = Modifier.padding(top=  20.dp))
+                Spacer(modifier = Modifier.padding(top = 35.dp))
+                Text(
+                    text = distance,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .background(com.zoku.ui.BaseWhiteBackground),
+                    textAlign = TextAlign.Center,
+                    fontSize = 26.sp,
+                    fontFamily = com.zoku.ui.ZokuFamily
+                )
+                Text(
+                    text = "거리/km", modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .background(com.zoku.ui.BaseWhiteBackground),
+                    textAlign = TextAlign.Center, fontSize = 12.sp,
+                    fontFamily = com.zoku.ui.ZokuFamily
+                )
+                Spacer(modifier = Modifier.padding(top = 20.dp))
             }
         }
 
@@ -360,26 +374,32 @@ fun RunningRecord(modifier: Modifier = Modifier, distance : String, time : Strin
                 .clip(RoundedCornerShape(16.dp))
                 .height(110.dp)
                 .background(com.zoku.ui.BaseWhiteBackground)
-        ){
+        ) {
             Column(
                 Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.padding(top=  35 .dp))
-                Text(text = time, modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(com.zoku.ui.BaseWhiteBackground)
-                    , textAlign = TextAlign.Center
-                , fontSize = 26.sp)
-                Text(text = "시간/hr",modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(com.zoku.ui.BaseWhiteBackground),
-                    textAlign = TextAlign.Center
-                , fontSize = 12.sp)
-                Spacer(modifier = Modifier.padding(top=  20.dp))
+                Spacer(modifier = Modifier.padding(top = 35.dp))
+                Text(
+                    text = time,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .background(com.zoku.ui.BaseWhiteBackground),
+                    textAlign = TextAlign.Center,
+                    fontSize = 26.sp,
+                    fontFamily = com.zoku.ui.ZokuFamily
+                )
+                Text(
+                    text = "시간/hr", modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .background(com.zoku.ui.BaseWhiteBackground),
+                    textAlign = TextAlign.Center, fontSize = 12.sp,
+                    fontFamily = com.zoku.ui.ZokuFamily
+                )
+                Spacer(modifier = Modifier.padding(top = 20.dp))
             }
         }
     }
@@ -388,27 +408,36 @@ fun RunningRecord(modifier: Modifier = Modifier, distance : String, time : Strin
 
 
 @Composable
-fun HomeFunctionButton(modifier: Modifier = Modifier, onClick :() -> Unit, icon : Int, info:String, iconModifier: Modifier)
-{
+fun HomeFunctionButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    icon: Int,
+    info: String,
+    iconModifier: Modifier
+) {
     Surface(
         modifier = modifier,
         color = Color.Transparent,
         onClick = onClick
     ) {
         Column {
-            Spacer(modifier = Modifier.padding(top=  20.dp))
-            Image(painter = painterResource(id = icon), contentDescription = null,modifier = iconModifier
-                .align(Alignment.CenterHorizontally)
+            Spacer(modifier = Modifier.padding(top = 20.dp))
+            Image(
+                painter = painterResource(id = icon),
+                contentDescription = null,
+                modifier = iconModifier
+                    .align(Alignment.CenterHorizontally)
             )
-            if(info.isNotEmpty()) {
+            if (info.isNotEmpty()) {
                 Text(
                     text = info, modifier = Modifier
                         .height(20.dp)
                         .fillMaxWidth(),
-                    textAlign = TextAlign.Center, fontSize = 12.sp
+                    textAlign = TextAlign.Center, fontSize = 12.sp,
+                    fontFamily = com.zoku.ui.ZokuFamily
                 )
             }
-            Spacer(modifier = Modifier.padding(top=  20.dp))
+            Spacer(modifier = Modifier.padding(top = 20.dp))
         }
     }
 }
@@ -421,7 +450,7 @@ fun BarChartScreen() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        BasicText(text = "10 월 1주")
+        Text(text = "10 월 1주",fontFamily = com.zoku.ui.ZokuFamily)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -457,7 +486,9 @@ fun BarChartScreen() {
                                 Log.d("BarChart", "Selected Y Value: ${e.y}")
 
                                 // 강조된 항목 색상 변경
-                                (data.getDataSetByIndex(h?.dataSetIndex ?: 0) as BarDataSet).highLightColor = com.zoku.ui.BaseYellow.toArgb()
+                                (data.getDataSetByIndex(
+                                    h?.dataSetIndex ?: 0
+                                ) as BarDataSet).highLightColor = com.zoku.ui.BaseYellow.toArgb()
                                 highlightValue(h)  // 선택한 항목 강조
                             }
                         }

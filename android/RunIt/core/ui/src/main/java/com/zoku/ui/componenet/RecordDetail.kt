@@ -68,7 +68,7 @@ fun RecordDetailInfo(modifier: Modifier = Modifier, startDestination: Int = 0) {
                         onClick = {},
                         modifier = Modifier
                     ) {
-                        Text(text = "도전하기")
+                        Text(text = "도전하기",fontFamily = com.zoku.ui.ZokuFamily)
                     }
                 }
             }
@@ -83,8 +83,8 @@ fun RecordDate(today: String, time: String) {
             .fillMaxWidth()
             .padding(20.dp)
     ) {
-        Text(text = today, textAlign = TextAlign.Start, modifier = Modifier.weight(1f))
-        Text(text = time, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
+        Text(text = today, textAlign = TextAlign.Start, modifier = Modifier.weight(1f),fontFamily = com.zoku.ui.ZokuFamily)
+        Text(text = time, textAlign = TextAlign.End, modifier = Modifier.weight(1f),fontFamily = com.zoku.ui.ZokuFamily)
     }
 }
 
@@ -106,8 +106,8 @@ fun AverageData(modifier: Modifier = Modifier, data: String, type: String) {
         modifier = modifier,
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(text = data, fontSize = 20.sp, textAlign = TextAlign.Center)
-        Text(text = type, modifier = Modifier.padding(start = 5.dp))
+        Text(text = data, fontSize = 20.sp, textAlign = TextAlign.Center,fontFamily = com.zoku.ui.ZokuFamily)
+        Text(text = type, modifier = Modifier.padding(start = 5.dp),fontFamily = com.zoku.ui.ZokuFamily)
     }
 }
 
@@ -119,7 +119,7 @@ fun RecordGraph(title: String) {
             .fillMaxWidth()
             .padding(start = 10.dp)
     ) {
-        Text(text = title)
+        Text(text = title,fontFamily = com.zoku.ui.ZokuFamily)
         // 예시 데이터
         LineChartView()
     }

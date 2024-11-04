@@ -11,4 +11,5 @@ sealed class ScreenDestinations(
     data object RecordModeDetail : ScreenDestinations(route = "home/record-mode/detail")
     data object runningPause: ScreenDestinations(route = "pause")
     data object runningResult: ScreenDestinations(route = "running-result")
+    data object expHistory: ScreenDestinations(route = "home/rank/exp-history")
 }
