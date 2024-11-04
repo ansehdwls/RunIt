@@ -4,6 +4,7 @@ package com.ssafy.runit.exception;
 import com.ssafy.runit.exception.code.ServerErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -22,6 +23,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        ErrorCodeType errorCode = ServerErrorCode.METHOD_ARGUMENT_ERROR;
+        return new ResponseEntity<>(ErrorResponse.error(errorCode), errorCode.httpStatus());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         ErrorCodeType errorCode = ServerErrorCode.METHOD_ARGUMENT_ERROR;
         return new ResponseEntity<>(ErrorResponse.error(errorCode), errorCode.httpStatus());
     }
