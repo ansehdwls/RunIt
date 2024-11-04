@@ -1,5 +1,7 @@
 package com.zoku.running.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -11,16 +13,9 @@ import com.zoku.util.ScreenDestinations
 
 fun NavController.navigateToRunning() = navigate(route = ScreenDestinations.running.route)
 
-fun NavController.navigateToRunningResult() = navigate(route = ScreenDestinations.runningResult.route)
-
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun NavGraphBuilder.runningScreen(modifier: Modifier = Modifier) {
     composable(route = ScreenDestinations.running.route) {
         RunningScreen(modifier)
-    }
-}
-
-fun NavGraphBuilder.runningResultScreen(modifier: Modifier = Modifier){
-    composable(route = ScreenDestinations.runningResult.route){
-        RunningResultScreen()
     }
 }

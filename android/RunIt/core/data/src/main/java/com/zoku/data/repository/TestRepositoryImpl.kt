@@ -30,3 +30,7 @@ class TestRepositoryImpl @Inject constructor(
 
     }
 }
+
+// 1번. 서버 URL 잘못 지정했을 때
+// 2번. Request 잘못 보냈을떄 (서버가 오류 이류를 알려줌)
+// 3번 성공

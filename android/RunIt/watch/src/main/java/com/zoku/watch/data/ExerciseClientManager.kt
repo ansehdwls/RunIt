@@ -33,6 +33,7 @@ import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration
 
 @SuppressLint("RestrictedApi")
 @Singleton
@@ -50,6 +51,12 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
         } else {
             null
         }
+    }
+
+    private var thresholds = Thresholds(0.0, Duration.ZERO)
+
+    fun updateGoals(newThresholds: Thresholds) {
+        thresholds = newThresholds.copy()
     }
 
     //현재 사용자가 운동 중인지 확인함.
@@ -70,6 +77,8 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
         val capabilities = getExerciseCapabilities() ?: return
 
         val exerciseInfo = exerciseClient.getCurrentExerciseInfo()
+
+
         when (exerciseInfo.exerciseTrackedStatus) {
             OTHER_APP_IN_PROGRESS -> {}
             OWNED_EXERCISE_IN_PROGRESS -> {}
@@ -90,10 +99,12 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                     DataType.VO2_MAX,
                     DataType.VO2_MAX_STATS,
                     DataType.LOCATION,
+                    DataType.ACTIVE_EXERCISE_DURATION_TOTAL
                 ).intersect(capabilities.supportedDataTypes)
 
-                //자동 일시정지 및 재개 기능 지원되는지 확인
+                //자동 일시정지 및 재개 기능 지원되는지 확인 -> 이거 변경 필요
                 val supportsAutoPauseAndResume = capabilities.supportsAutoPauseAndResume
+
 
                 //운동 타입, 데이터 타입, 자동 일시정지/재개, GPS 사용 여부, 운동 목표 설정
                 val config = ExerciseConfig(
@@ -152,38 +163,51 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
     //운동 업데이트를 비동기적으로 수집하고, 이를 Flow로 변환해 ExerciseService에서 관찰할 수 있게 함.
     val exerciseUpdateFlow = callbackFlow {
         val callback = object : ExerciseUpdateCallback {
-            override fun onExerciseUpdateReceived(update: ExerciseUpdate) { //운동 업데이트
+            override fun onExerciseUpdateReceived(update: ExerciseUpdate) {
+                Timber.tag("ExerciseClientManager").d("update ${update.activeDurationCheckpoint}")
                 trySendBlocking(ExerciseMessage.ExerciseUpdateMessage(update))
             }
 
-            override fun onLapSummaryReceived(lapSummary: ExerciseLapSummary) { // 랩 요약
+            override fun onLapSummaryReceived(lapSummary: ExerciseLapSummary) {
                 trySendBlocking(ExerciseMessage.LapSummaryMessage(lapSummary))
             }
 
-            override fun onRegistered() { //등록 상태 처리
-
-            }
+            override fun onRegistered() {}
 
             override fun onRegistrationFailed(throwable: Throwable) {}
 
             override fun onAvailabilityChanged(
                 dataType: DataType<*, *>, availability: Availability
-            ) { //위치 가용성 변경
+            ) {
                 if (availability is LocationAvailability) {
                     trySendBlocking(ExerciseMessage.LocationAvailabilityMessage(availability))
                 }
             }
         }
 
-        exerciseClient.setUpdateCallback(callback) //콜백을 설정해 운동 업데이트를 수신
-        awaitClose { // Flow 종료시 콜백 해제
+
+
+
+        exerciseClient.setUpdateCallback(callback)
+        awaitClose {
             runBlocking {
-                exerciseClient.clearUpdateCallback(callback)
+                exerciseClient.clearUpdateCallback(callback = callback)
             }
         }
     }
 
+    private companion object {
+        const val CALORIES_THRESHOLD = 250.0
+    }
+
 }
+
+data class Thresholds(
+    var distance: Double,
+    var duration: Duration,
+    var durationIsSet: Boolean = duration != Duration.ZERO,
+    var distanceIsSet: Boolean = distance != 0.0,
+)
 
 sealed class ExerciseMessage {
     class ExerciseUpdateMessage(val exerciseUpdate: ExerciseUpdate) : ExerciseMessage()

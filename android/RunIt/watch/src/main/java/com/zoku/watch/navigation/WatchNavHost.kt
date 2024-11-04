@@ -1,13 +1,19 @@
 package com.zoku.watch.navigation
 
 
+import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import androidx.navigation.toRoute
+import com.zoku.watch.model.ExerciseResult
 import com.zoku.watch.screen.HomeScreen
+import com.zoku.watch.screen.RunningPauseScreen
 import com.zoku.watch.screen.RunningScreen
+import timber.log.Timber
 
 @Composable
 fun WatchNavHost(
@@ -27,8 +33,24 @@ fun WatchNavHost(
         }
 
         composable(route = WatchScreenDestination.running.route) {
-            RunningScreen(modifier)
+            RunningScreen(modifier) { exerciseResult ->
+                navController.run {
+                    Timber.tag("WatchNavHost RunningScreen Result").d("${exerciseResult}")
+                    this.navigate(WatchScreenDestination.runningPause.createRoute(exerciseResult))
+                }
+            }
+        }
+        composable(route = WatchScreenDestination.runningPause.route,
+            WatchScreenDestination.runningPause.arguments
+        ) { backStackEntry ->
+            val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                backStackEntry.arguments?.getParcelable("result", ExerciseResult::class.java)
+            } else {
+                backStackEntry.arguments?.getParcelable("result")
+            }
 
+            Timber.tag("WatchNavHost").d("result $data")
+            RunningPauseScreen(modifier, data)
         }
 
     }

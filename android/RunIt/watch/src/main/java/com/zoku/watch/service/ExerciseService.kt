@@ -101,7 +101,7 @@ class ExerciseService : LifecycleService() {
 
     //운동 시작 함수
     suspend fun startExercise() {
-        postOngoingActivityNotification()
+//        postOngoingActivityNotification()
         exerciseClientManager.startExercise()
     }
 
@@ -118,7 +118,7 @@ class ExerciseService : LifecycleService() {
     //운동 종료 함수
     suspend fun endExercise() {
         exerciseClientManager.endExercise()
-        removeOngoingActivityNotification()
+//        removeOngoingActivityNotification()
     }
 
     //랩 표시 함수
@@ -131,9 +131,7 @@ class ExerciseService : LifecycleService() {
 
     private fun stopSelfIfNotRunning() { //서비스가 실제 수행중인지 확인하고, 그렇지 않으면 서비스 중지
         lifecycleScope.launch {
-
             if (!isExerciseInProgress()) {
-
                 if (exerciseServiceMonitor.exerciseServiceState.value.exerciseState == ExerciseState.PREPARING) {
                     lifecycleScope.launch {
                         endExercise()
