@@ -33,6 +33,21 @@ public class SummaryFactory {
         this.experienceRepository = experienceRepository;
     }
 
+    public void createTestData() {
+        String[] list = {"알", "나무늘보", "거북이", "토끼", "말", "치타"};
+        for (int i = 0; i < 6; i++) {
+            League league = League.builder()
+                    .leagueName(list[i])
+                    .groups(new HashSet<>())
+                    .rank(i + 1).build();
+            leagueRepository.save(league);
+            if (i == 0) {
+                groupRepository
+                        .save(Group.builder().groupLeague(league).users(new HashSet<>()).build());
+            }
+        }
+    }
+
     public void createLeagues(int groupsPerLeague, int usersPerGroup) {
         List<League> leagues = leagueRepository.findAllByOrderByRankAsc();
 
