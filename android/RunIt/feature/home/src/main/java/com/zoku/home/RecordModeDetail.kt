@@ -59,11 +59,15 @@ fun RecordModeDetail(modifier: Modifier = Modifier) {
         )
 
         // 지도 경로 표시
-        RecordMap()
+        Box(
+            modifier.weight(3f)
+        ) {
+            RecordMap()
+        }
 
         // 세부 기록 표시
         Box(
-            modifier.weight(1f)
+            modifier.weight(7f)
         ) {
             RecordDetailInfo(
             )

@@ -1,7 +1,10 @@
 [versions]
 agp = "8.5.0"
 #piechart
+android = "2.12.8"
 firebaseBom = "33.5.1"
+map = "2.4.0"
+mapSdk = "1.4.1"
 piechart = "3.1.0"
 
 kotlin = "2.0.10"
@@ -65,6 +68,9 @@ kakao-map = "2.12.7"
 
 
 [libraries]
+#kakaoMap
+android = { module = "com.kakao.maps.open:android", version.ref = "android" }
+map = { module = "net.daum.android:map", version.ref = "map" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 #piechart
