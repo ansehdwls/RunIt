@@ -33,6 +33,7 @@ import com.zoku.watch.model.toExerciseResult
 import com.zoku.watch.util.formatDistanceKm
 import com.zoku.watch.viewmodel.RunViewModel
 import timber.log.Timber
+import java.time.Duration
 
 @Composable
 fun RunningScreen(
@@ -43,11 +44,10 @@ fun RunningScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-
-
-    RunningStatus(uiState = uiState) {
+    RunningStatus(uiState = uiState) { state, duration ->
+        Timber.tag("RunningScreen RunningStatus").d("$duration")
         viewModel.pauseRunning()
-        onPauseClick(it.toExerciseResult())
+        onPauseClick(state.toExerciseResult(duration))
     }
 }
 
@@ -57,11 +57,12 @@ fun RunningScreen(
 fun RunningStatus(
     modifier: Modifier = Modifier,
     uiState: ExerciseScreenState,
-    onPauseClick: (ExerciseScreenState) -> Unit
+    onPauseClick: (ExerciseScreenState, Duration?) -> Unit
 ) {
     val lastActiveDurationCheckpoint = uiState.exerciseState?.activeDurationCheckpoint
     val exerciseState = uiState.exerciseState?.exerciseState
     val metrics = uiState.exerciseState?.exerciseMetrics
+    var duration : Duration? = null
     Timber.tag("runningStatus").d("$lastActiveDurationCheckpoint")
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -76,12 +77,12 @@ fun RunningStatus(
         )
         Spacer(Modifier.height(10.dp))
         if (lastActiveDurationCheckpoint != null && exerciseState != null) {
-            Timber.tag("RunningScreen")
-                .d("duration ${lastActiveDurationCheckpoint} ${exerciseState}")
             ActiveDurationText(
                 checkpoint = lastActiveDurationCheckpoint,
                 state = exerciseState
             ) {
+                duration = it
+                Timber.tag("RunningScreen").d("duration $it")
                 RunningTimeText(duration = it)
             }
         }
@@ -92,7 +93,9 @@ fun RunningStatus(
         Spacer(Modifier.height(10.dp))
         RunningButton(icon = Icons.Rounded.Pause,
             size = ButtonDefaults.ExtraSmallButtonSize,
-            clickEvent = { onPauseClick(uiState) }
+            clickEvent = {
+                Timber.tag("RunningScreen Stop").d("$duration")
+                onPauseClick(uiState, duration) }
         )
     }
 
@@ -105,8 +108,7 @@ fun RunningPreview() {
     val viewModel = hiltViewModel<RunViewModel>()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    RunningStatus(uiState = uiState,
-        onPauseClick = {})
+
 }
 
 

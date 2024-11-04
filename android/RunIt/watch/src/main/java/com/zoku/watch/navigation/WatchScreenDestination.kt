@@ -41,7 +41,6 @@ class ExerciseResultType : NavType<ExerciseResult>(isNullableAllowed = false){
     ): ExerciseResult? = bundle.getParcelable(key, ExerciseResult::class.java)
 
     override fun parseValue(value: String): ExerciseResult {
-        Timber.tag("watchScreenDestination").d(value)
         return Gson().fromJson(value, ExerciseResult::class.java)
     }
 

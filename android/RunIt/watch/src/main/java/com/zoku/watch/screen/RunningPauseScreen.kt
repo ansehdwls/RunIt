@@ -23,7 +23,14 @@ import androidx.wear.compose.material.ButtonDefaults
 import com.zoku.watch.component.button.RunningButton
 import com.zoku.watch.component.text.StatusText
 import com.zoku.watch.model.ExerciseResult
+import com.zoku.watch.navigation.WatchScreenDestination
+import com.zoku.watch.util.formatBpm
+import com.zoku.watch.util.formatDistanceKm
+import com.zoku.watch.util.formatElapsedTime
+import com.zoku.watch.util.formatPace
 import com.zoku.watch.viewmodel.RunViewModel
+import timber.log.Timber
+import java.time.Duration
 
 @Composable
 fun RunningPauseScreen(
@@ -32,11 +39,15 @@ fun RunningPauseScreen(
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
 
+    Timber.tag("RunningPauseScreen").d("${runningData?.time}")
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val scrollState = rememberScrollState()
     RunningPause(
-        modifier, scrollState, runningData
+        modifier, scrollState, runningData,
+        onStopClick = {},
+        onResumeClick = {}
     )
 
 }
@@ -46,7 +57,9 @@ fun RunningPauseScreen(
 fun RunningPause(
     modifier: Modifier = Modifier,
     scrollState: ScrollState,
-    runningData: ExerciseResult?
+    runningData: ExerciseResult?,
+    onStopClick: () -> Unit,
+    onResumeClick: () -> Unit,
 ) {
 
 
@@ -65,7 +78,7 @@ fun RunningPause(
             }
 
             RunningButton(icon = Icons.Rounded.PlayArrow, size = ButtonDefaults.LargeButtonSize) {
-
+                onResumeClick()
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -73,17 +86,34 @@ fun RunningPause(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            StatusText(value = "${runningData?.distance}", type = "km")
-            StatusText(value = "${runningData?.pace}", type = "페이스")
+            StatusText(
+                buildString = formatDistanceKm(
+                    runningData?.distance,
+                    screenType = WatchScreenDestination.runningPause
+                ),
+                type = "km"
+            )
+            StatusText(buildString = formatPace(runningData?.pace), type = "페이스")
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            StatusText(value = "${runningData?.time}", type = "시간")
+            Timber.tag("RunningPauseScreen").d("${runningData?.time}")
+
             StatusText(
-                value = "${runningData?.bpm}",
+                buildString = formatElapsedTime(
+                    Duration.ofMillis(runningData?.time ?: 0L),
+                    screenType = WatchScreenDestination.runningPause,
+                    includeSeconds = true
+                ), type = "시간"
+            )
+            StatusText(
+                buildString = formatBpm(
+                    runningData?.bpm,
+                    screenType = WatchScreenDestination.runningPause
+                ),
                 type = "BPM"
             )
         }

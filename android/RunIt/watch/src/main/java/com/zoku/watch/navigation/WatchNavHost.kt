@@ -13,6 +13,7 @@ import com.zoku.watch.model.ExerciseResult
 import com.zoku.watch.screen.HomeScreen
 import com.zoku.watch.screen.RunningPauseScreen
 import com.zoku.watch.screen.RunningScreen
+import timber.log.Timber
 
 @Composable
 fun WatchNavHost(
@@ -34,6 +35,7 @@ fun WatchNavHost(
         composable(route = WatchScreenDestination.running.route) {
             RunningScreen(modifier) { exerciseResult ->
                 navController.run {
+                    Timber.tag("WatchNavHost RunningScreen Result").d("${exerciseResult}")
                     this.navigate(WatchScreenDestination.runningPause.createRoute(exerciseResult))
                 }
             }
@@ -46,6 +48,8 @@ fun WatchNavHost(
             } else {
                 backStackEntry.arguments?.getParcelable("result")
             }
+
+            Timber.tag("WatchNavHost").d("result $data")
             RunningPauseScreen(modifier, data)
         }
 
