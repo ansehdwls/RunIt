@@ -114,7 +114,8 @@ fun RecordDetailTitle(modifier: Modifier = Modifier) {
                                     Text(
                                         text = "코스명을 입력하세요",
                                         color = Color.Gray,
-                                        style = TextStyle(fontSize = 20.sp)
+                                        style = TextStyle(fontSize = 20.sp),
+                                        fontFamily = com.zoku.ui.ZokuFamily
                                     )
                                 }
                                 innerTextField()  // 실제 입력 필드
@@ -134,7 +135,8 @@ fun RecordDetailTitle(modifier: Modifier = Modifier) {
                         text = title,
                         color = Color.White,
                         fontSize = 32.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontFamily = com.zoku.ui.ZokuFamily
                     )
                     IconButton(
                         onClick = { isEditing = true }

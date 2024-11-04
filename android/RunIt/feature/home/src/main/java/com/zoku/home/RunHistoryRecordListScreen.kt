@@ -43,7 +43,8 @@ fun RunHistoryRecordListScreen(selectedDay: Int, onClick: (Int) -> Unit) {
                     text = "2024-10-${selectedDay}",
                     color = Color.White,
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(top = 10.dp, start = 20.dp, bottom = 5.dp)
+                    modifier = Modifier.padding(top = 10.dp, start = 20.dp, bottom = 5.dp),
+                    fontFamily = com.zoku.ui.ZokuFamily
                 )
             }
 
@@ -107,6 +108,7 @@ fun DailyRouteText(modifier: Modifier, text: String, fontSize: TextUnit) {
         text = text,
         modifier = modifier,
         fontSize = fontSize,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
+        fontFamily = com.zoku.ui.ZokuFamily
     )
 }

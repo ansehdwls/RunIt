@@ -42,7 +42,8 @@ fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :()->Unit){
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 20.dp),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            fontFamily = com.zoku.ui.ZokuFamily
         )
 
       // 기록 리스트
@@ -65,7 +66,8 @@ fun RecordList(modifier: Modifier, moveToDetail :()->Unit){
         // 날짜
         Text(text = "2024-10-27",
             color = Color.White,
-            modifier = Modifier.fillMaxWidth())
+            modifier = Modifier.fillMaxWidth(),
+            fontFamily = com.zoku.ui.ZokuFamily)
 
         RecordDataView(modifier =  Modifier
             .fillMaxWidth()
@@ -94,7 +96,8 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit){
                 text = "오후 3:37 ~ 오후 3:52",
                 modifier = Modifier
                     .fillMaxWidth(),
-                textAlign = TextAlign.End
+                textAlign = TextAlign.End,
+                fontFamily = com.zoku.ui.ZokuFamily
             )
 
             // 지도 및 데이터
@@ -125,12 +128,15 @@ fun RecordTextView(modifier: Modifier){
         Box(modifier = Modifier.weight(2f)){
             Text(text = "시용지 이름",
                 textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center))
+                modifier = Modifier.align(Alignment.Center),
+                fontFamily = com.zoku.ui.ZokuFamily)
         }
         Box(modifier = Modifier.weight(3f)){
             Column {
-                Text(text = "거리 : 3km")
-                Text(text = "시간 : 15분")
+                Text(text = "거리 : 3km",
+                    fontFamily = com.zoku.ui.ZokuFamily)
+                Text(text = "시간 : 15분",
+                    fontFamily = com.zoku.ui.ZokuFamily)
             }
         }
     }

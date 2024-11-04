@@ -26,6 +26,6 @@ fun MenuButton(modifier : Modifier = Modifier, name : String, backgroundColor : 
         ),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Text(text = name)
+        Text(text = name,fontFamily = com.zoku.ui.ZokuFamily)
     }
 }
