@@ -51,10 +51,17 @@ fun WatchNavHost(
             Timber.tag("WatchNavHost").d("result $data")
             RunningPauseScreen(modifier, data,
                 onStopClick = {
-                    navController.navigate(WatchScreenDestination.home.route)
+                    navController.popBackStack(
+                        route = WatchScreenDestination.home.route,
+                        inclusive = false
+                    )
                 },
                 onResumeClick = {
-                    navController.navigate(WatchScreenDestination.running.route)
+                    navController.popBackStack(
+                        route = WatchScreenDestination.running.route,
+                        inclusive = false
+                    )
+
                 }
             )
         }
