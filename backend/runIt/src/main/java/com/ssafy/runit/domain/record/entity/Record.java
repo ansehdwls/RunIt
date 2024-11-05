@@ -5,10 +5,7 @@ import com.ssafy.runit.domain.track.entity.Track;
 import com.ssafy.runit.domain.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Null;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Record {
@@ -28,10 +26,10 @@ public class Record {
      @JoinColumn(name = "user_id")
      private User user;
 
-     @OneToOne(mappedBy = "record", cascade = CascadeType.ALL)
+     @OneToOne(mappedBy = "record")
      private Track track;
 
-     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL)
+     @OneToMany(mappedBy = "record")
      private List<Pace> paceList;
 
      private double distance;

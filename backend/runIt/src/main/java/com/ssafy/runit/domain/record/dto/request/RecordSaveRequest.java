@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,30 +25,38 @@ public class RecordSaveRequest {
 
     private TrackSaveDto track;
     private RecordSaveDto record;
-    private List<PaceSaveDto> paceList ;
+    private List<PaceSaveDto> paceList;
+
 
     public Record mapper(User user){
 
         Record recordEntity = record.toEntity(user);
 
-        List<Pace> paceEntity = paceList.stream()
-                                .map(paceSaveDto -> paceSaveDto.toEntity(recordEntity))
-                                .collect(Collectors.toList());
-
-        Track trackEntity = track.toEntity(recordEntity);
-
         Record recordResult = Record.builder()
+                .user(user)
                 .bpm(recordEntity.getBpm())
                 .distance(recordEntity.getDistance())
                 .startTime(recordEntity.getStartTime())
                 .endTime(recordEntity.getEndTime())
-                .paceList(paceEntity)
-                .track(trackEntity)
                 .build();
 
 
         return recordResult;
+    }
 
+    public Record toEntity(Record record){
+        List<Pace> paceEntity = paceList.stream()
+                        .map(paceSaveDto -> paceSaveDto.toEntity(record))
+                        .collect(Collectors.toList());
+
+        Track trackEntity = track.toEntity(record);
+
+        Record recordResult = Record.builder()
+                .track(trackEntity)
+                .paceList(paceEntity)
+                .build();
+
+        return recordResult;
     }
 
 }

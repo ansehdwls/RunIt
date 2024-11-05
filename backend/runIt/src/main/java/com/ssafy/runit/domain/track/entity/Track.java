@@ -3,14 +3,15 @@ package com.ssafy.runit.domain.track.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.runit.domain.record.entity.Record;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Track {
 
     @Id
