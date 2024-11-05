@@ -7,8 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import androidx.navigation.toRoute
 import com.zoku.watch.model.ExerciseResult
 import com.zoku.watch.screen.HomeScreen
 import com.zoku.watch.screen.RunningPauseScreen
@@ -40,7 +38,8 @@ fun WatchNavHost(
                 }
             }
         }
-        composable(route = WatchScreenDestination.runningPause.route,
+        composable(
+            route = WatchScreenDestination.runningPause.route,
             WatchScreenDestination.runningPause.arguments
         ) { backStackEntry ->
             val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -50,7 +49,21 @@ fun WatchNavHost(
             }
 
             Timber.tag("WatchNavHost").d("result $data")
-            RunningPauseScreen(modifier, data)
+            RunningPauseScreen(modifier, data,
+                onStopClick = {
+                    navController.popBackStack(
+                        route = WatchScreenDestination.home.route,
+                        inclusive = false
+                    )
+                },
+                onResumeClick = {
+                    navController.popBackStack(
+                        route = WatchScreenDestination.running.route,
+                        inclusive = false
+                    )
+
+                }
+            )
         }
 
     }
