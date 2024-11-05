@@ -104,6 +104,7 @@ class RunningViewModel @Inject constructor(
     fun startLocationService() {
         val context = getApplication<Application>()
         val intent = Intent(context, LocationService::class.java)
+        Log.d("확인","서비스 실행할거에요 ${intent}")
         context.startForegroundService(intent)
     }
 

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -26,6 +27,7 @@ class LocationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("확인","서비스가 만들어 졌어요")
         createNotificationChannel()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
