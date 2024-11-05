@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaceSaveDto {
-    private Long id;
+
     private LocalDateTime duration;
 
     public Pace toEntity(Record record){
         return Pace.builder()
-                .id(record.getId())
+                .record(record)
                 .duration(duration)
                 .build();
     }
