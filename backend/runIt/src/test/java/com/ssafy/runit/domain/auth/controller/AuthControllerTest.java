@@ -1,6 +1,7 @@
 package com.ssafy.runit.domain.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.runit.domain.auth.dto.request.UserLoginRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
 import com.ssafy.runit.domain.auth.service.AuthService;
 import com.ssafy.runit.exception.CustomException;
@@ -85,6 +86,7 @@ public class AuthControllerTest {
                 .body("message", equalTo(AuthErrorCode.DUPLICATED_USER_ERROR.message()))
                 .body("errorCode", equalTo(AuthErrorCode.DUPLICATED_USER_ERROR.errorCode()));
     }
+
     @Test
     @DisplayName("[회원가입] - 데이터 유효성 검증")
     void registerUser_Invalid_Data_Form_ThrowsException() throws Exception {
@@ -105,4 +107,18 @@ public class AuthControllerTest {
                 .body("errorCode", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.errorCode()));
     }
 
+    @Test
+    @DisplayName("[로그인] - 성공 검증")
+    void loginUser_Success() throws Exception {
+        UserLoginRequest request = new UserLoginRequest(TEST_NUMBER);
+        given()
+                .port(port)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(request))
+                .when().post(BASE_URL + "login")
+                .then().log().all()
+                .statusCode(200)
+                .body("message", equalTo("로그인에 성공했습니다"))
+                .body("data", nullValue());
+    }
 }
