@@ -57,6 +57,9 @@ class AuthServiceImplTest {
     private GroupRepository groupRepository;
 
     private final String testNumber = "1234";
+    private final String refreshToken = "refresh_token";
+    private final String accessToken = "access_token";
+    private static final String TOKEN_PREFIX = "Bearer ";
 
     @Test
     @DisplayName("회원가입 성공 테스트")
@@ -122,5 +125,36 @@ class AuthServiceImplTest {
         assertEquals(AuthErrorCode.INVALID_DATA_FORM, exception.getErrorCodeType());
         assertEquals(AuthErrorCode.INVALID_DATA_FORM.message(), exception.getErrorCodeType().message());
         verify(customUserDetailsService, never()).loadUserByUsername(anyString());
+    }
+
+    @Test
+    @DisplayName("유저 로그인 성공 테스트")
+    void userLoginSuccessTest() {
+        UserLoginRequest request = new UserLoginRequest(testNumber);
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                .username(testNumber)
+                .password(anyString())
+                .authorities(new ArrayList<>())
+                .build();
+        User user = User.builder()
+                .id(1L)
+                .userNumber(testNumber)
+                .build();
+        when(customUserDetailsService.loadUserByUsername(testNumber)).thenReturn(userDetails);
+        when(jwtTokenProvider.generateAccessToken(testNumber)).thenReturn(accessToken);
+        when(jwtTokenProvider.generateRefreshToken(testNumber)).thenReturn(refreshToken);
+        when(userRepository.findByUserNumber(testNumber)).thenReturn(Optional.of(user));
+        LoginResponse response = authService.login(request);
+        assertNotNull(response);
+        assertEquals(TOKEN_PREFIX + accessToken, response.accessToken());
+        assertEquals(TOKEN_PREFIX + refreshToken, response.refreshToken());
+        System.out.println("[예상] refreshToken: " + TOKEN_PREFIX + refreshToken);
+        System.out.println("[실제] refreshToken: " + response.refreshToken());
+        System.out.println("[예상] accessToken: " + TOKEN_PREFIX + accessToken);
+        System.out.println("[실제] accessToken: " + response.accessToken());
+        verify(customUserDetailsService).loadUserByUsername(testNumber);
+        verify(jwtTokenProvider).generateAccessToken(testNumber);
+        verify(jwtTokenProvider).generateRefreshToken(testNumber);
+        verify(userRepository).findByUserNumber(testNumber);
     }
 }
