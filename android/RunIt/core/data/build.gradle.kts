@@ -49,4 +49,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     //retrofit
     implementation(libs.bundles.network)
+
+    // dataStore
+    implementation(libs.androidx.datastore.preferences)
 }

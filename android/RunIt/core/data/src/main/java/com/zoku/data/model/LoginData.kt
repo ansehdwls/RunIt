@@ -1,6 +1,6 @@
 package com.zoku.data.model
 
-data class LoginResponse(
+data class LoginData(
     var userId : String,
     var nickName : String,
     var image : String,
