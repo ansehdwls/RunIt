@@ -76,4 +76,21 @@ class AuthServiceImplTest {
         verify(groupRepository).findDefaultGroup();
         verify(userRepository).save(any(User.class));
     }
+
+    @Test
+    @DisplayName("중복된 회원가입이 진행될 경우 에러를 반환합니다.")
+    void registerUser_DuplicateUser_ThrowsException() {
+        UserRegisterRequest request = UserRegisterRequest
+                .builder()
+                .userNumber(testNumber)
+                .userImageUrl("image")
+                .userName("test").build();
+        when(userRepository.existsByUserNumber(testNumber)).thenReturn(true);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            authService.registerUser(request);
+        });
+        assertEquals(AuthErrorCode.DUPLICATED_USER_ERROR, exception.getErrorCodeType());
+        verify(userRepository).existsByUserNumber(anyString());
+        verify(userRepository, never()).save(any(User.class));
+    }
 }
