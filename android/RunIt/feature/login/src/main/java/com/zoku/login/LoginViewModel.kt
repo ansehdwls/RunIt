@@ -45,7 +45,10 @@ class LoginViewModel @Inject constructor(
     val uiState: StateFlow<LoginData> = _uiState
 
     init {
+        loginHistoryCheck()
+    }
 
+    private fun loginHistoryCheck(){
         // 앱 시작 시 토큰의 존재 여부를 확인하여 로그인 상태 결정
         viewModelScope.launch {
             dataStoreRepository.refreshTokenFlow.collect { refreshToken ->
@@ -76,8 +79,6 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-
     fun handleKaKaoLogin() {
 
         // 카카오계정으로 로그인 공통 callback 구성
