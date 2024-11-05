@@ -121,4 +121,21 @@ public class AuthControllerTest {
                 .body("message", equalTo("로그인에 성공했습니다"))
                 .body("data", nullValue());
     }
+
+    @Test
+    @DisplayName("[로그인] - 가입하지 않은 사용자 검증")
+    void loginUser_UNREGISTERED_USER_ThrowsException() throws Exception {
+        UserLoginRequest request = new UserLoginRequest(TEST_NUMBER);
+        doThrow(new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR))
+                .when(authService).login(argThat(argument -> argument.getUserNumber().equals(request.getUserNumber())));
+        given()
+                .port(port)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(request))
+                .when().post(BASE_URL + "login")
+                .then().log().all()
+                .statusCode(400)
+                .body("message", equalTo(AuthErrorCode.UNREGISTERED_USER_ERROR.message()))
+                .body("errorCode", equalTo(AuthErrorCode.UNREGISTERED_USER_ERROR.getErrorCode()));
+    }
 }
