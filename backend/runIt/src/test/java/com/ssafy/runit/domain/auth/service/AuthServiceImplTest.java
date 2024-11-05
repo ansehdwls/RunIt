@@ -176,4 +176,76 @@ class AuthServiceImplTest {
         verify(groupRepository).findDefaultGroup();
         verify(userRepository, never()).save(any(User.class));
     }
+
+    @Test
+    @DisplayName("리프레시 토큰 저장 - 기존 토큰 업데이트")
+    void saveRefreshToken_UpdateToken_Success() {
+        User user = User.builder()
+                .id(1L)
+                .userNumber(testNumber)
+                .build();
+        RefreshToken existingToken = RefreshToken.builder()
+                .id(1L)
+                .refreshToken("old_refresh_token")
+                .user(user)
+                .build();
+
+        when(userRepository.findByUserNumber(testNumber)).thenReturn(Optional.of(user));
+        when(refreshTokenRepository.findByUserId(user.getId())).thenReturn(Optional.of(existingToken));
+        when(refreshTokenRepository.save(existingToken)).thenReturn(existingToken);
+        authService.saveRefreshToken(testNumber, refreshToken);
+        assertEquals(refreshToken, existingToken.getRefreshToken());
+        verify(userRepository).findByUserNumber(testNumber);
+        verify(refreshTokenRepository).findByUserId(user.getId());
+        verify(refreshTokenRepository).save(existingToken);
+    }
+
+    @Test
+    @DisplayName("JWT 토큰 생성 성공 테스트")
+    void createJwtToken_Success() {
+        String newAccessToken = "new_access_token";
+        String newRefreshToken = "new_refresh_token";
+        User user = User.builder()
+                .id(1L)
+                .userNumber(testNumber)
+                .build();
+        when(jwtTokenProvider.generateAccessToken(testNumber)).thenReturn(newAccessToken);
+        when(jwtTokenProvider.generateRefreshToken(testNumber)).thenReturn(newRefreshToken);
+        when(userRepository.findByUserNumber(testNumber)).thenReturn(Optional.of(user));
+        when(refreshTokenRepository.findByUserId(user.getId())).thenReturn(Optional.empty());
+        when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(null);
+        LoginResponse response = authService.createJwtToken(testNumber);
+        assertNotNull(response);
+        assertEquals(TOKEN_PREFIX + newAccessToken, response.accessToken());
+        assertEquals(TOKEN_PREFIX + newRefreshToken, response.refreshToken());
+        verify(jwtTokenProvider).generateAccessToken(anyString());
+        verify(jwtTokenProvider).generateRefreshToken(anyString());
+        verify(userRepository).findByUserNumber(testNumber);
+        verify(refreshTokenRepository).findByUserId(user.getId());
+        verify(refreshTokenRepository).save(any(RefreshToken.class));
+    }
+
+    @Test
+    @DisplayName("리프래시 토큰 갱신 성공 테스트")
+    void getNewRefreshToken_Success() {
+        UpdateJwtRequest request = new UpdateJwtRequest(refreshToken);
+        String newRefreshToken = "new_refresh_token";
+        User user = User.builder()
+                .id(1L)
+                .userNumber(testNumber)
+                .build();
+        when(jwtTokenProvider.validateToken(anyString())).thenReturn(true);
+        when(jwtTokenProvider.extractUserNumber(anyString())).thenReturn(testNumber);
+        when(jwtTokenProvider.generateAccessToken(anyString())).thenReturn(accessToken);
+        when(jwtTokenProvider.generateRefreshToken(anyString())).thenReturn(newRefreshToken);
+        when(userRepository.findByUserNumber(anyString())).thenReturn(Optional.of(user));
+        newRefreshToken = authService.getNewRefreshToken(request).refreshToken();
+        System.out.println("[갱신 전]: " + TOKEN_PREFIX + refreshToken);
+        System.out.println("[갱신 후]: " + newRefreshToken);
+        assertNotEquals(refreshToken, newRefreshToken);
+        verify(jwtTokenProvider).validateToken(anyString());
+        verify(jwtTokenProvider).extractUserNumber(anyString());
+        verify(jwtTokenProvider).generateAccessToken(anyString());
+        verify(jwtTokenProvider).generateRefreshToken(anyString());
+    }
 }
