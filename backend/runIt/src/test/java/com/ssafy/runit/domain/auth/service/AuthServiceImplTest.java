@@ -7,6 +7,7 @@ import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
 import com.ssafy.runit.domain.auth.dto.response.LoginResponse;
 import com.ssafy.runit.domain.auth.entity.RefreshToken;
 import com.ssafy.runit.domain.auth.repository.RefreshTokenRepository;
+import com.ssafy.runit.domain.auth.service.AuthServiceImpl;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.league.entity.League;
@@ -92,5 +93,22 @@ class AuthServiceImplTest {
         assertEquals(AuthErrorCode.DUPLICATED_USER_ERROR, exception.getErrorCodeType());
         verify(userRepository).existsByUserNumber(anyString());
         verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("회원가입 요청 유효성 검사")
+    void registerUser_Invalid_Data_Form_ThrowsException() {
+        UserRegisterRequest request = UserRegisterRequest
+                .builder()
+                .userNumber(null)
+                .userImageUrl(null)
+                .userName(null).build();
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            authService.registerUser(request);
+        });
+        assertEquals(AuthErrorCode.INVALID_DATA_FORM, exception.getErrorCodeType());
+        verify(userRepository, never()).save(any(User.class));
+        verify(userRepository, never()).existsByUserNumber(anyString());
+        verify(groupRepository, never()).findDefaultGroup();
     }
 }
