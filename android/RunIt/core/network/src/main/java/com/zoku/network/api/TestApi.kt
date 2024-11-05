@@ -1,6 +1,6 @@
 package com.zoku.network.api
 
-import com.zoku.network.model.TestApiResponse
+import com.zoku.network.model.response.TestApiResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

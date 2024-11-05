@@ -23,7 +23,7 @@ fun RunningScreen(
     var isResult by remember { mutableStateOf(false) }
 
     if (isResult) {
-        RunningResultScreen()
+        RunningResultScreen(runningViewModel = runningViewModel)
     } else {
         if (isPlay) {
             RunningPlayScreen(

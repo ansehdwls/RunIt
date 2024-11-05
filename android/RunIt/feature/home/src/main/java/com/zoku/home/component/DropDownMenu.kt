@@ -24,7 +24,7 @@ fun DropDownMenu(
 
         for(s in itemList){
             DropdownMenuItem(
-                text = { Text(s, color = Color.White) },
+                text = { Text(s, color = Color.White, fontFamily = com.zoku.ui.ZokuFamily) },
                 onClick = {
                     onItemSelected(s) // 아이템이 선택되었을 때 콜백 호출
                     onDismissRequest()     // 메뉴 닫기

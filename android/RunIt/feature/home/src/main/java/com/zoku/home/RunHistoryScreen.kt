@@ -136,7 +136,8 @@ fun RunHistoryTitle(modifier: Modifier = Modifier) {
                 text = "10월",
                 color = Color.White,
                 fontSize = 30.sp,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
+                fontFamily = com.zoku.ui.ZokuFamily
             )
         }
 
@@ -184,7 +185,8 @@ fun WeekView(modifier: Modifier) {
                 text = day, modifier = Modifier
                     .weight(1f),
                 color = Color.White,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = com.zoku.ui.ZokuFamily
             )
         }
     }
@@ -228,7 +230,8 @@ fun WeeklyDateView(
                         text = i.toString(),
                         color = Color.White,
                         textAlign = TextAlign.Center,
-                        fontSize = 13.sp, modifier = Modifier.padding(top = 5.dp)
+                        fontSize = 13.sp, modifier = Modifier.padding(top = 5.dp),
+                        fontFamily = com.zoku.ui.ZokuFamily
                     )
                 }
             }
