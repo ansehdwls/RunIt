@@ -35,9 +35,9 @@ public class RecordController implements RecordDocs{
 
     @Override
     @GetMapping("/run/{recordId}")
-    public RunItApiResponse<Optional<RecordGetResponse>> recordFindOne(UserDetails userDetails, Long recordId) {
+    public RunItApiResponse<RecordGetResponse> recordFindOne(UserDetails userDetails, Long recordId) {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
-        Optional<RecordGetResponse> record = recordService.getRecord(findUser.getId(), recordId);
+        RecordGetResponse record = recordService.getRecord(findUser.getId(), recordId);
 
         return new RunItApiResponse<>(record, "성공");
     }

@@ -28,7 +28,7 @@ public interface RecordDocs {
 
     @Operation(summary = "러닝 개별 기록 호출 Api", description = "러닝")
     @ApiResponse(responseCode = "200", description = "러닝 개별 기록 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
-    RunItApiResponse<Optional<RecordGetResponse>> recordFindOne(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name="recordId") Long recordId);
+    RunItApiResponse<RecordGetResponse> recordFindOne(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name="recordId") Long recordId);
 
     @Operation(summary = "러닝 전체 기록 호출 Api", description = "러닝")
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
