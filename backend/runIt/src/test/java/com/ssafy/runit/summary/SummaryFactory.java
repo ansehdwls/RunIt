@@ -5,6 +5,7 @@ import com.ssafy.runit.domain.experience.repository.ExperienceRepository;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.league.entity.League;
+import com.ssafy.runit.domain.rank.LeagueRank;
 import com.ssafy.runit.domain.league.repository.LeagueRepository;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
@@ -33,21 +34,26 @@ public class SummaryFactory {
         this.experienceRepository = experienceRepository;
     }
 
+    @Transactional
     public void createTestData() {
-        String[] list = {"알", "나무늘보", "거북이", "토끼", "말", "치타"};
+        System.out.println("createTestData!");
         for (int i = 0; i < 6; i++) {
+            LeagueRank rank = LeagueRank.fromRank(i + 1);
             League league = League.builder()
-                    .leagueName(list[i])
+                    .leagueName(rank.getLeagueName())
                     .groups(new HashSet<>())
-                    .rank(i + 1).build();
+                    .rank(rank).build();
             leagueRepository.save(league);
             if (i == 0) {
+                Group newGroup = Group.builder().groupLeague(league).users(new HashSet<>()).build();
                 groupRepository
-                        .save(Group.builder().groupLeague(league).users(new HashSet<>()).build());
+                        .save(newGroup);
+                league.addGroup(newGroup);
             }
         }
     }
 
+    @Transactional
     public void createLeagues(int groupsPerLeague, int usersPerGroup) {
         List<League> leagues = leagueRepository.findAllByOrderByRankAsc();
 
@@ -91,14 +97,8 @@ public class SummaryFactory {
 
     @Transactional
     public void crateAddTestData(int testUserSize) {
-        League testLeague = leagueRepository.findAllByOrderByRankAsc().stream().toList().get(0);
-        System.out.println("league : " + testLeague.getId() + " " + testLeague.getLeagueName() + " " + testLeague.getRank());
-        Group testGroup = Group.builder()
-                .groupLeague(testLeague)
-                .users(new HashSet<>())
-                .build();
-        groupRepository.save(testGroup);
-        testLeague.addGroup(testGroup);
+        League testLeague = leagueRepository.findLeagueWithGroups(LeagueRank.fromRank(1));
+        Group testGroup = testLeague.getGroups().stream().findFirst().get();
         for (int i = 0; i < testUserSize; i++) {
             User user = User.builder()
                     .userName("test-user" + i)

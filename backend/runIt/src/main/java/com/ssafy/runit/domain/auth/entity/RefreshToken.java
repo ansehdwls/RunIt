@@ -19,11 +19,11 @@ public class RefreshToken {
 
     private String refreshToken;
 
-    @OneToOne()
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    public void setRefreshToken(String refreshToken){
+    public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 }
