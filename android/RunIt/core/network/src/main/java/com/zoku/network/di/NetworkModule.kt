@@ -3,6 +3,7 @@ package com.zoku.network.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.zoku.network.BuildConfig
+import com.zoku.network.api.LoginApi
 import com.zoku.network.api.RunningApi
 import com.zoku.network.api.TestApi
 import dagger.Module
@@ -65,4 +66,8 @@ object NetworkModule {
     fun provideRunningApiService(@Named("runit") retrofit: Retrofit): RunningApi =
         retrofit.create(RunningApi::class.java)
 
+    @Singleton
+    @Provides
+    fun provideLoginApiService(@Named("runit") retrofit: Retrofit): LoginApi =
+        retrofit.create(LoginApi::class.java)
 }
