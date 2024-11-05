@@ -112,8 +112,6 @@ fun BackOnPressed() {
 
     BackHandler(enabled = backPressedState) {
         if(System.currentTimeMillis() - backPressedTime <= 1000L) {
-            // 앱 종료
-            Toast.makeText(context, "앱종료.", Toast.LENGTH_SHORT).show()
             (context as Activity).finish()
         } else {
             backPressedState = true
