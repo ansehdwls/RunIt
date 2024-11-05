@@ -62,6 +62,7 @@ fun RunItMainNavHost(
         this.recordDetail()
         this.runningScreen(modifier = modifier)
 //        this.runningResultScreen(modifier = modifier)
+
         this.expHistory()
 
     }

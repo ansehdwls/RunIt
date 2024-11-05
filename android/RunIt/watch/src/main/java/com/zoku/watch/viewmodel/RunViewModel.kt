@@ -6,13 +6,11 @@ import com.zoku.watch.data.HealthServicesRepository
 import com.zoku.watch.data.ServiceState
 import com.zoku.watch.model.ExerciseScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
-import java.time.Duration
 import javax.inject.Inject
 
 
@@ -20,7 +18,6 @@ import javax.inject.Inject
 class RunViewModel @Inject constructor(
     private val healthServicesRepository: HealthServicesRepository
 ) : ViewModel() {
-
 
 
     val uiState: StateFlow<ExerciseScreenState> = healthServicesRepository.serviceState.map {
@@ -45,10 +42,16 @@ class RunViewModel @Inject constructor(
     )
 
 
-
-
     fun pauseRunning() {
         Timber.tag("homeViewModel").d("startExercise")
         healthServicesRepository.pauseExercise()
+    }
+
+    fun resumeRunning() {
+        healthServicesRepository.resumeExercise()
+    }
+
+    fun stopRunning(){
+        healthServicesRepository.stopExercise()
     }
 }

@@ -78,7 +78,7 @@ class HealthServicesRepository @Inject constructor(
     }
 
     fun pauseExercise() = serviceCall { pauseExercise() }
-    fun endExercise() = serviceCall { endExercise() }
+    fun stopExercise() = serviceCall { endExercise() }
     fun resumeExercise() = serviceCall { resumeExercise() }
 
 
