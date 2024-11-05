@@ -27,7 +27,6 @@ class LocationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("확인","서비스가 만들어 졌어요")
         createNotificationChannel()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)

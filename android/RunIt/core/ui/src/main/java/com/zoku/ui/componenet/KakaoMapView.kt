@@ -1,8 +1,11 @@
 package com.zoku.ui.componenet
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -24,11 +27,16 @@ import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
 import com.zoku.ui.model.LocationData
 import com.zoku.ui.routeColor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 
 @Composable
 fun KakaoMapView(
     modifier: Modifier = Modifier,
-    totalLocationList: List<LocationData>
+    totalLocationList: List<LocationData>,
+    onCaptureReady: suspend (File) -> Unit = {}
 ) {
 
     val context = LocalContext.current
@@ -90,4 +98,24 @@ fun KakaoMapView(
         }
     )
 
+    LaunchedEffect(Unit) {
+        onCaptureReady(File(context.cacheDir, "map_capture.png").apply {
+            val bitmap = captureMapBitmap(mapView)
+            saveBitmapAsFile(this, bitmap)
+        })
+    }
+
+}
+
+suspend fun captureMapBitmap(mapView: MapView): Bitmap = withContext(Dispatchers.Main) {
+    Bitmap.createBitmap(mapView.width, mapView.height, Bitmap.Config.ARGB_8888).apply {
+        val canvas = Canvas(this)
+        mapView.draw(canvas)
+    }
+}
+
+suspend fun saveBitmapAsFile(file: File, bitmap: Bitmap) = withContext(Dispatchers.IO) {
+    FileOutputStream(file).use { out ->
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+    }
 }

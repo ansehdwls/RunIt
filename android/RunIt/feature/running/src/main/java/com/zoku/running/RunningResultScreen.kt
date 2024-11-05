@@ -13,6 +13,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,7 @@ import com.zoku.network.model.request.TestSumRequest
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.CustomTypo
+import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RecordDetailInfo
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -31,6 +34,9 @@ fun RunningResultScreen(
     modifier: Modifier = Modifier,
     runningViewModel: RunningViewModel
 ) {
+
+    val totalRunningList by runningViewModel.totalRunningList.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -44,7 +50,10 @@ fun RunningResultScreen(
                 .fillMaxWidth()
                 .weight(0.4f)
         ) {
-            KakaoMapImage()
+            KakaoMapView(
+                totalLocationList = totalRunningList,
+                onCaptureReady = {}
+            )
         }
 
         Box(
