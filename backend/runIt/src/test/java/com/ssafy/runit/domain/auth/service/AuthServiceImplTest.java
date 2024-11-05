@@ -248,4 +248,30 @@ class AuthServiceImplTest {
         verify(jwtTokenProvider).generateAccessToken(anyString());
         verify(jwtTokenProvider).generateRefreshToken(anyString());
     }
+
+    @Test
+    @DisplayName("리프레시 토큰 저장 - 등록되지 않은 사용자 예외")
+    void saveRefreshToken_UnregisteredUser_ThrowsException() {
+        when(userRepository.findByUserNumber(testNumber)).thenReturn(Optional.empty());
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            authService.saveRefreshToken(testNumber, refreshToken);
+        });
+        assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR, exception.getErrorCodeType());
+        assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR.message(), exception.getErrorCodeType().message());
+        verify(userRepository).findByUserNumber(testNumber);
+        verify(refreshTokenRepository, never()).findByUserId(anyLong());
+        verify(refreshTokenRepository, never()).save(any(RefreshToken.class));
+    }
+
+    @Test
+    @DisplayName("리프래시 토큰이 만료된 경우 에러를 반환합니다.")
+    void getNewRefreshToken_InvalidRefreshToken_ThrowsException() {
+        UpdateJwtRequest request = new UpdateJwtRequest(refreshToken);
+        when(jwtTokenProvider.validateToken(refreshToken)).thenReturn(false);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            authService.getNewRefreshToken(request);
+        });
+        assertEquals(exception.getErrorCodeType(), AuthErrorCode.EXPIRED_TOKEN_ERROR);
+        assertEquals(AuthErrorCode.EXPIRED_TOKEN_ERROR.message(), exception.getErrorCodeType().message());
+    }
 }
