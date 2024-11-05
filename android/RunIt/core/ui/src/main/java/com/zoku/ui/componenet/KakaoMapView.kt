@@ -2,10 +2,12 @@ package com.zoku.ui.componenet
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.PixelCopy
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -18,7 +20,6 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapType
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
-import com.kakao.vectormap.route.RouteLine
 import com.kakao.vectormap.route.RouteLineLayer
 import com.kakao.vectormap.route.RouteLineOptions
 import com.kakao.vectormap.route.RouteLineSegment
@@ -27,7 +28,10 @@ import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
 import com.zoku.ui.model.LocationData
 import com.zoku.ui.routeColor
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -36,18 +40,16 @@ import java.io.FileOutputStream
 fun KakaoMapView(
     modifier: Modifier = Modifier,
     totalLocationList: List<LocationData>,
-    onCaptureReady: suspend (File) -> Unit = {}
+    isOnCapture: Boolean = false,
+    onCaptureReady: (File) -> Unit = {}
 ) {
-
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
-
-    Log.d("확인","어떤 순서 ${totalLocationList}")
 
     AndroidView(
         modifier = modifier
             .fillMaxSize(),
-        factory = { _ ->
+        factory = { context ->
             mapView.apply {
                 mapView.start(
                     object : MapLifeCycleCallback() {
@@ -91,6 +93,30 @@ fun KakaoMapView(
                                 )
                                 kakaoMap.moveCamera(cameraUpdate)
                             }
+
+
+                            mapView.surfaceView?.let {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    delay(1000)
+                                    val bitmap = Bitmap.createBitmap(
+                                        it.width,
+                                        it.height,
+                                        Bitmap.Config.ARGB_8888
+                                    )
+                                    PixelCopy.request(it, bitmap, { copyResult ->
+                                        if (copyResult == PixelCopy.SUCCESS) {
+                                            val file = File(context.cacheDir, "map_capture.png")
+                                            CoroutineScope(Dispatchers.IO).launch {
+                                                saveBitmapAsFile(file, bitmap)
+                                            }
+                                        } else {
+                                            Log.d("확인","KakaoMapView PixelCopy SUCCESS ")
+                                        }
+                                    }, Handler(Looper.getMainLooper()))
+                                }
+
+                            }
+
                         }
                     },
                 )
@@ -98,22 +124,8 @@ fun KakaoMapView(
 
         }
     )
-
-    LaunchedEffect(Unit) {
-        onCaptureReady(File(context.cacheDir, "map_capture.png").apply {
-            val bitmap = captureMapBitmap(mapView)
-            saveBitmapAsFile(this, bitmap)
-        })
-    }
-
 }
 
-suspend fun captureMapBitmap(mapView: MapView): Bitmap = withContext(Dispatchers.Main) {
-    Bitmap.createBitmap(mapView.width, mapView.height, Bitmap.Config.ARGB_8888).apply {
-        val canvas = Canvas(this)
-        mapView.draw(canvas)
-    }
-}
 
 suspend fun saveBitmapAsFile(file: File, bitmap: Bitmap) = withContext(Dispatchers.IO) {
     FileOutputStream(file).use { out ->

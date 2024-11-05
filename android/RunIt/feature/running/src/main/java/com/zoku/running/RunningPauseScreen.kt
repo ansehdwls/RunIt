@@ -56,7 +56,7 @@ fun RunningPauseScreen(
 
     LaunchedEffect(Unit) {
         //의미 없는 값이 collect 되는 거 무시하기
-        delay(100)
+        delay(300)
         showMap = true
     }
 
@@ -146,16 +146,6 @@ fun SpreadButtonBox(onPlayClick: () -> Unit, onStopLongPress: () -> Unit) {
             onClick = { onPlayClick() }
         )
     }
-}
-
-@Composable
-fun KakaoMapImage() {
-    Image(
-        painter = painterResource(id = R.drawable.temp_map_image),
-        contentDescription = "image",
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.Crop
-    )
 }
 
 @Composable
