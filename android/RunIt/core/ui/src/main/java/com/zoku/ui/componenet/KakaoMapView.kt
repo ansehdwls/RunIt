@@ -42,6 +42,8 @@ fun KakaoMapView(
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
 
+    Log.d("확인","어떤 순서 ${totalLocationList}")
+
     AndroidView(
         modifier = modifier
             .fillMaxSize(),
@@ -60,7 +62,6 @@ fun KakaoMapView(
 
                     object : KakaoMapReadyCallback() {
                         override fun onMapReady(kakaoMap: KakaoMap) {
-
                             kakaoMap.changeMapType(MapType.NORMAL)
 
                             val routeLineManager = kakaoMap.routeLineManager!!
