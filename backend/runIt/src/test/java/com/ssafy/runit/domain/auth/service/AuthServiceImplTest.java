@@ -157,4 +157,23 @@ class AuthServiceImplTest {
         verify(jwtTokenProvider).generateRefreshToken(testNumber);
         verify(userRepository).findByUserNumber(testNumber);
     }
+
+    @Test
+    @DisplayName("기본 그룹이 없을 경우 회원가입 실패 테스트")
+    void registerUser_NoDefaultGroup_ThrowsException() {
+        UserRegisterRequest request = UserRegisterRequest.builder()
+                .userNumber(testNumber)
+                .userImageUrl("image")
+                .userName("test")
+                .build();
+        when(userRepository.existsByUserNumber(testNumber)).thenReturn(false);
+        when(groupRepository.findDefaultGroup()).thenReturn(Optional.empty());
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            authService.registerUser(request);
+        });
+        assertEquals(GroupErrorCode.GROUP_NOT_FOUND_ERROR, exception.getErrorCodeType());
+        assertEquals(GroupErrorCode.GROUP_NOT_FOUND_ERROR.message(), exception.getErrorCodeType().message());
+        verify(groupRepository).findDefaultGroup();
+        verify(userRepository, never()).save(any(User.class));
+    }
 }
