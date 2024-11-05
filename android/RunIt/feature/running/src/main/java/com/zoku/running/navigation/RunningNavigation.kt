@@ -14,8 +14,8 @@ import com.zoku.util.ScreenDestinations
 fun NavController.navigateToRunning() = navigate(route = ScreenDestinations.running.route)
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-fun NavGraphBuilder.runningScreen(modifier: Modifier = Modifier) {
+fun NavGraphBuilder.runningScreen(modifier: Modifier = Modifier, onStartWearableActivityClick : () -> Unit) {
     composable(route = ScreenDestinations.running.route) {
-        RunningScreen(modifier)
+        RunningScreen(modifier, onStartWearableActivityClick)
     }
 }

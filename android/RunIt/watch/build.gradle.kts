@@ -60,7 +60,7 @@ dependencies {
     //androidx
     implementation(libs.androidx.lifecycle.service)
 
-    implementation(libs.play.services.wearable)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.tooling.preview)
@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.wear.compose.foundation)
     implementation(libs.androidx.material.icons.extended)
     coreLibraryDesugaring(libs.core.desugaring)
+    implementation(libs.play.services.wearable)
 
     //horologist
     implementation(libs.horologist.composables)

@@ -109,7 +109,6 @@ gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref 
 #jetpack navigation
 nav = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 nav-material = { group = "androidx.compose.material", name = "material", version.ref = "nav-material" }
-play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 
 
@@ -134,7 +133,7 @@ androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscree
 androidx-navigation-runtime = { group = "androidx.navigation", name = "navigation-runtime", version.ref = "navigationRuntime" }
 core-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desguaring" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
-
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 #Health
 androidx-health-services-client = { module = "androidx.health:health-services-client", version.ref = "healthServicesClient" }
 

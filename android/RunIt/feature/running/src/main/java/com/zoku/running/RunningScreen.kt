@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun RunningScreen(
     modifier: Modifier = Modifier,
+    onStartWearableActivityClick: () -> Unit
 ) {
 
     val runningViewModel = hiltViewModel<RunningViewModel>()
@@ -34,6 +35,7 @@ fun RunningScreen(
         } else {
             RunningPauseScreen(
                 onPlayClick = {
+                    onStartWearableActivityClick()
                     isPlay = true
                     isFirstPlay = false
                 },
