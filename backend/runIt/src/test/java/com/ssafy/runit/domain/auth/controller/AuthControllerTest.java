@@ -5,6 +5,7 @@ import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
 import com.ssafy.runit.domain.auth.service.AuthService;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
+import com.ssafy.runit.exception.code.ServerErrorCode;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -84,4 +85,24 @@ public class AuthControllerTest {
                 .body("message", equalTo(AuthErrorCode.DUPLICATED_USER_ERROR.message()))
                 .body("errorCode", equalTo(AuthErrorCode.DUPLICATED_USER_ERROR.errorCode()));
     }
+    @Test
+    @DisplayName("[회원가입] - 데이터 유효성 검증")
+    void registerUser_Invalid_Data_Form_ThrowsException() throws Exception {
+        UserRegisterRequest request = UserRegisterRequest.builder()
+                .userName(null)
+                .userNumber(TEST_NUMBER)
+                .userImageUrl(null)
+                .build();
+        given()
+                .port(port)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(request))
+                .when().post(BASE_URL + "register")
+                .then()
+                .log().all()
+                .statusCode(400)
+                .body("message", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.message()))
+                .body("errorCode", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.errorCode()));
+    }
+
 }
