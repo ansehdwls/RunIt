@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.OutlinedButton
@@ -25,6 +26,7 @@ fun RunningButton(
             contentColor = BaseYellow
         ),
         border = ButtonDefaults.outlinedButtonBorder(
+            borderWidth = 2.dp,
             borderColor = BaseYellow
         ),
         onClick = { clickEvent() }
