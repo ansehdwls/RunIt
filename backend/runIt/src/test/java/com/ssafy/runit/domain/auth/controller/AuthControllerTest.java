@@ -138,4 +138,19 @@ public class AuthControllerTest {
                 .body("message", equalTo(AuthErrorCode.UNREGISTERED_USER_ERROR.message()))
                 .body("errorCode", equalTo(AuthErrorCode.UNREGISTERED_USER_ERROR.getErrorCode()));
     }
+
+    @Test
+    @DisplayName("[로그인] - 데이터 유효성 검증")
+    void loginUser_Invalid_Data_Form_ThrowsException() throws Exception {
+        UserLoginRequest request = new UserLoginRequest(null);
+        given()
+                .port(port)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(request))
+                .when().post(BASE_URL + "login")
+                .then().log().all()
+                .statusCode(400)
+                .body("message", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.message()))
+                .body("errorCode", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.errorCode()));
+    }
 }
