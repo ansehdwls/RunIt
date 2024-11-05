@@ -111,4 +111,16 @@ class AuthServiceImplTest {
         verify(userRepository, never()).existsByUserNumber(anyString());
         verify(groupRepository, never()).findDefaultGroup();
     }
+
+    @Test
+    @DisplayName("로그인 요청 유효성 검사")
+    void loginUser_Invalid_Data_Form_ThrowsException() {
+        UserLoginRequest request = new UserLoginRequest(null);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            authService.login(request);
+        });
+        assertEquals(AuthErrorCode.INVALID_DATA_FORM, exception.getErrorCodeType());
+        assertEquals(AuthErrorCode.INVALID_DATA_FORM.message(), exception.getErrorCodeType().message());
+        verify(customUserDetailsService, never()).loadUserByUsername(anyString());
+    }
 }
