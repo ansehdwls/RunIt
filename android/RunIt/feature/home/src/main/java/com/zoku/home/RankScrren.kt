@@ -20,10 +20,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,19 +35,29 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.zoku.home.component.DropDownMenu
+import com.zoku.ui.CustomTypo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import org.w3c.dom.Text
 
 @Composable
 fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
     val rankMenu = arrayOf("종합 순위", "페이스 순위", "거리 순위")
+    val rankViewModel: RankViewModel = hiltViewModel()
+
+    // 이번주 획득 경험치
+    val weekExp by rankViewModel.currentExp.collectAsState()
+
+    rankViewModel.getAllExpHistory()
+    rankViewModel.getWeekExp()
     Column(
         modifier = modifier
             .padding(horizontal = 10.dp)
             .fillMaxSize()
     ) {
-        RankingInfo(moveToExpHistory)
+        RankingInfo(moveToExpHistory,weekExp)
 
         HomeTitle(modifier.padding(top = 10.dp, bottom = 5.dp), "그룹 내 순위", "종합 순위", rankMenu)
 
@@ -57,7 +66,8 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
 }
 
 @Composable
-fun RankingInfo(moveToExpHistory : () -> Unit) {
+fun RankingInfo(moveToExpHistory : () -> Unit,
+                weekExp: Int) {
     val baseModifier = Modifier.fillMaxWidth()
     Box(
         modifier = baseModifier
@@ -77,7 +87,7 @@ fun RankingInfo(moveToExpHistory : () -> Unit) {
                     .padding(top = 10.dp)
             )
 
-            ExpView(baseModifier,moveToExpHistory)
+            ExpView(baseModifier,moveToExpHistory, weekExp)
 
             InfoIconButton("경험치 획득 방법", onClick = {})
         }
@@ -101,10 +111,10 @@ fun UserProfile() {
             ) {
                 Text(
                     text = "콱씨",
-                    color = Color.White,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontFamily = com.zoku.ui.ZokuFamily,
-                    fontSize = 25.sp
+                    style = CustomTypo().mapleBold.copy(
+                        color = Color.White,
+                        fontSize = 25.sp
+                    )
                 )
                 RankText(
                     text = "님",
@@ -118,10 +128,11 @@ fun UserProfile() {
             modifier = Modifier
                 .weight(1f)
                 .align(Alignment.Bottom),
-            fontSize = 12.sp,
-            color = Color.White,
-            textAlign = TextAlign.End,
-            fontFamily = com.zoku.ui.ZokuFamily
+            style = CustomTypo().jalnan.copy(
+                fontSize = 12.sp,
+                color = Color.White,
+                textAlign = TextAlign.End,
+            )
         )
         Text(
             text = "거북이", modifier = Modifier
@@ -217,7 +228,9 @@ fun DailyCheck(modifier: Modifier = Modifier, type: Int = 0, day: String) {
 }
 
 @Composable
-fun ExpView(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
+fun ExpView(modifier: Modifier = Modifier,
+            moveToExpHistory : () -> Unit,
+            weekExp : Int) {
     Row(
         modifier = modifier
             .padding(vertical = 5.dp)
@@ -245,7 +258,7 @@ fun ExpView(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
                 )
             }
 
-            RankText(text = "34 xp")
+            RankText(text = "$weekExp xp")
 
         }
 
@@ -295,8 +308,10 @@ fun UserRanking() {
                     )
                 }
                 Text(
-                    text = "승급", color = Color.Green, fontSize = 24.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    text = "승급",
+                    style = CustomTypo().jalnan.copy(
+                        color = Color.Green, fontSize = 24.sp,
+                    )
                 )
                 Box(
                     modifier = Modifier.weight(1f),
@@ -344,9 +359,10 @@ fun UserRanking() {
                 }
                 Text(
                     text = "강등",
-                    color = Color.Red,
-                    fontSize = 24.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    style = CustomTypo().jalnan.copy(
+                        color = Color.Red,
+                        fontSize = 24.sp,
+                    )
                 )
                 Box(
                     modifier = Modifier.weight(1f),
@@ -436,9 +452,10 @@ fun UserRankingProfile(modifier: Modifier = Modifier) {
 fun RankText(modifier: Modifier = Modifier, text: String, fontSize: TextUnit = 15.sp) {
     Text(
         text = text,
-        fontSize = fontSize,
-        textAlign = TextAlign.Center,
-        fontFamily = com.zoku.ui.ZokuFamily,
-        color = Color.White
+        style = CustomTypo().jalnan.copy(
+            fontSize = fontSize,
+            textAlign = TextAlign.Center,
+            color = Color.White
+        ),
     )
 }
