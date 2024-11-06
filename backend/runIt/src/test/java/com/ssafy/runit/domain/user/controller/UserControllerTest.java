@@ -49,32 +49,33 @@ public class UserControllerTest {
     private static String refreshToken = "";
     private static final String INVALID_REFRESH_TOKEN = "invalid_refresh_token";
     private static final String TOKEN_PREFIX = "Bearer ";
+    private Group testGroup;
+    private User testUser;
+    private CustomUserDetails customUserDetails;
 
 
     @BeforeEach
-    void setPort() {
+    void setUp() {
         RestAssured.port = port;
         refreshToken = jwtTokenProvider.generateRefreshToken(TEST_NUMBER);
+        testGroup = Group.builder().id(1L).build();
+        testUser = User
+                .builder()
+                .id(1L)
+                .userNumber(TEST_NUMBER)
+                .userGroup(testGroup)
+                .userName("test user")
+                .imageUrl("http://test.com/image.png")
+                .fcmToken("fcmToken")
+                .build();
+        customUserDetails = new CustomUserDetails(testUser);
     }
 
     @Test
     @DisplayName("[내 정보 조회] - 인증된 사용자 검증")
     public void geyMyInfo_Success() {
-        Group group = Group.builder()
-                .id(1L)
-                .build();
-        User user = User.builder()
-                .id(1L)
-                .userNumber(TEST_NUMBER)
-                .userName("Test User")
-                .imageUrl("http://example.com/image.jpg")
-                .fcmToken("fcmToken")
-                .userGroup(group)
-                .build();
-
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
         when(customUserDetailsService.loadUserByUsername(TEST_NUMBER)).thenReturn(customUserDetails);
-        when(userService.findByUserNumber(TEST_NUMBER)).thenReturn(user);
+        when(userService.findByUserNumber(TEST_NUMBER)).thenReturn(testUser);
         given()
                 .header("Authorization", TOKEN_PREFIX + refreshToken) // JWT 토큰 포함
                 .contentType(ContentType.JSON)
@@ -83,11 +84,11 @@ public class UserControllerTest {
                 .then()
                 .log().all()
                 .statusCode(200)
-                .body("data.userNumber", equalTo(user.getUserNumber()))
-                .body("data.userName", equalTo(user.getUserName()))
-                .body("data.imageUrl", equalTo(user.getImageUrl()))
-                .body("data.userId", equalTo(user.getId().intValue()))
-                .body("data.groupId", equalTo(group.getId().intValue()))
+                .body("data.userNumber", equalTo(testUser.getUserNumber()))
+                .body("data.userName", equalTo(testUser.getUserName()))
+                .body("data.imageUrl", equalTo(testUser.getImageUrl()))
+                .body("data.userId", equalTo(testUser.getId().intValue()))
+                .body("data.groupId", equalTo(testGroup.getId().intValue()))
                 .body("message", equalTo("사용자 정보 조회에 성공했습니다."));
         verify(userService, times(1)).findByUserNumber(eq(TEST_NUMBER));
     }
@@ -128,14 +129,6 @@ public class UserControllerTest {
     @DisplayName("[Fcm Token] 성공 검증")
     public void saveFcmToken_Success() throws Exception {
         FcmTokenRequest request = new FcmTokenRequest("newFcmToken");
-        User user = User.builder()
-                .id(1L)
-                .userNumber(TEST_NUMBER)
-                .userName("Test User")
-                .imageUrl("http://example.com/image.jpg")
-                .fcmToken("fcmToken")
-                .build();
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
         when(customUserDetailsService.loadUserByUsername(TEST_NUMBER)).thenReturn(customUserDetails);
         given()
                 .header("Authorization", TOKEN_PREFIX + refreshToken) // JWT 토큰 포함
@@ -156,14 +149,6 @@ public class UserControllerTest {
     @DisplayName("[Fcm Token] 데이터 유효성 검증")
     public void saveFcmToken_Invalid_Data_Form_ThrowsException() throws Exception {
         FcmTokenRequest request = new FcmTokenRequest(null);
-        User user = User.builder()
-                .id(1L)
-                .userNumber(TEST_NUMBER)
-                .userName("Test User")
-                .imageUrl("http://example.com/image.jpg")
-                .fcmToken("fcmToken")
-                .build();
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
         when(customUserDetailsService.loadUserByUsername(TEST_NUMBER)).thenReturn(customUserDetails);
         given()
                 .header("Authorization", TOKEN_PREFIX + refreshToken) // JWT 토큰 포함
