@@ -28,7 +28,7 @@ public class UserController implements UserDocs {
 
     @Override
     @PatchMapping("/fcmToken")
-    public RunItApiResponse<Void> saveFcmToken(UserDetails userDetails, @Valid @RequestBody FcmTokenRequest request) {
+    public RunItApiResponse<Void> saveFcmToken(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody FcmTokenRequest request) {
         userService.saveFcmToken(userDetails.getUsername(), request.getFcmToken());
         return RunItApiResponse.create(null, "FcmToken이 저장되었습니다.");
     }
