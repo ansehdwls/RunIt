@@ -8,6 +8,7 @@ import com.ssafy.runit.domain.user.dto.request.FcmTokenRequest;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.service.UserService;
 import com.ssafy.runit.exception.code.AuthErrorCode;
+import com.ssafy.runit.exception.code.ServerErrorCode;
 import com.ssafy.runit.util.JwtTokenProvider;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -149,5 +150,33 @@ public class UserControllerTest {
                 .body("message", equalTo("FcmToken이 저장되었습니다."));
         verify(customUserDetailsService).loadUserByUsername(eq(TEST_NUMBER));
         verify(userService).saveFcmToken(eq(TEST_NUMBER), eq(request.getFcmToken()));
+    }
+
+    @Test
+    @DisplayName("[Fcm Token] 데이터 유효성 검증")
+    public void saveFcmToken_Invalid_Data_Form_ThrowsException() throws Exception {
+        FcmTokenRequest request = new FcmTokenRequest(null);
+        User user = User.builder()
+                .id(1L)
+                .userNumber(TEST_NUMBER)
+                .userName("Test User")
+                .imageUrl("http://example.com/image.jpg")
+                .fcmToken("fcmToken")
+                .build();
+        CustomUserDetails customUserDetails = new CustomUserDetails(user);
+        when(customUserDetailsService.loadUserByUsername(TEST_NUMBER)).thenReturn(customUserDetails);
+        given()
+                .header("Authorization", TOKEN_PREFIX + refreshToken) // JWT 토큰 포함
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(request))
+                .when()
+                .patch(BASE_URL + "fcmToken")
+                .then()
+                .log().all()
+                .statusCode(ServerErrorCode.METHOD_ARGUMENT_ERROR.getStatus().value())
+                .body("errorCode", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.errorCode()))
+                .body("message", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.message()));
+        verify(customUserDetailsService).loadUserByUsername(eq(TEST_NUMBER));
+        verify(userService, never()).saveFcmToken(eq(TEST_NUMBER), eq(request.getFcmToken()));
     }
 }
