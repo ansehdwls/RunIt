@@ -83,6 +83,7 @@ class MainActivity : ComponentActivity() {
                 Timber.tag("MainWearable").d("가능 노드 $nodes")
                 nodes.map { node ->
                     async {
+                        Timber.tag("MainWearable").d("메세지 전송 $nodes")
                         messageClient.sendMessage(node.id, START_ACTIVITY_PATH, byteArrayOf())
                             .await()
                     }

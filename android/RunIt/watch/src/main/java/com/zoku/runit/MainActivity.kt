@@ -38,20 +38,20 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        dataClient.addListener(mainViewModel)
-        messageClient.addListener(mainViewModel)
-        capabilityClient.addListener(
-            mainViewModel,
-            Uri.parse("wear://"),
-            CapabilityClient.FILTER_REACHABLE
-        )
+//        dataClient.addListener(mainViewModel)
+//        messageClient.addListener(mainViewModel)
+//        capabilityClient.addListener(
+//            mainViewModel,
+//            Uri.parse("wear://"),
+//            CapabilityClient.FILTER_REACHABLE
+//        )
     }
 
     override fun onPause() {
         super.onPause()
-        dataClient.removeListener(mainViewModel)
-        messageClient.removeListener(mainViewModel)
-        capabilityClient.removeListener(mainViewModel)
+//        dataClient.removeListener(mainViewModel)
+//        messageClient.removeListener(mainViewModel)
+//        capabilityClient.removeListener(mainViewModel)
     }
 
     companion object {

@@ -12,7 +12,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.zoku.watch"
+        applicationId = "com.zoku.runit"
         minSdk = 30
         targetSdk = 34
         versionCode = 1

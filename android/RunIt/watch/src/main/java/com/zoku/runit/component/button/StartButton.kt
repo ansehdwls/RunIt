@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Button
@@ -17,7 +16,6 @@ import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.Black
-import com.zoku.runit.R
 
 
 @Composable
@@ -44,7 +42,7 @@ fun StartButton(
         ) {
 
             Text(
-                stringResource(R.string.start),
+                text = "Start",
                 color = Black
             )
         }
@@ -54,5 +52,5 @@ fun StartButton(
 @Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true, apiLevel = 33)
 @Composable
 fun RunningPreview() {
-    StartButton(modifier = Modifier,{}){}
+    StartButton(modifier = Modifier, {}) {}
 }

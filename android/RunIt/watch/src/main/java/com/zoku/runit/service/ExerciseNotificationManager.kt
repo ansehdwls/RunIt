@@ -1,7 +1,6 @@
 package com.zoku.runit.service
 
-
-import com.zoku.runit.R
+import com.zoku.watch.R
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -19,11 +18,11 @@ import javax.inject.Inject
 
 
 class ExerciseNotificationManager @Inject constructor(
-    @ApplicationContext val applicationContext : Context,
-    val manager : NotificationManager
+    @ApplicationContext val applicationContext: Context,
+    val manager: NotificationManager
 ) {
 
-    fun createNotificationChannel(){
+    fun createNotificationChannel() {
         val notificationChannel = NotificationChannel(
             NOTIFICATION_CHANNEL,
             NOTIFICATION_CHANNEL_DISPLAY,
@@ -32,7 +31,7 @@ class ExerciseNotificationManager @Inject constructor(
         manager.createNotificationChannel(notificationChannel)
     }
 
-    fun buildNotification(duration : Duration) : Notification{
+    fun buildNotification(duration: Duration): Notification {
 
         val notificationIntent = Intent(applicationContext, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
@@ -69,7 +68,6 @@ class ExerciseNotificationManager @Inject constructor(
         return notificationBuilder.build()
 
     }
-
 
 
     companion object {
