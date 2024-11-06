@@ -143,12 +143,12 @@ class AuthServiceImplTest {
         when(userRepository.findByUserNumber(testNumber)).thenReturn(Optional.of(user));
         LoginResponse response = authService.login(request);
         assertNotNull(response);
-        assertEquals(TOKEN_PREFIX + accessToken, response.accessToken());
-        assertEquals(TOKEN_PREFIX + refreshToken, response.refreshToken());
+        assertEquals(TOKEN_PREFIX + accessToken, response.getAccessToken());
+        assertEquals(TOKEN_PREFIX + refreshToken, response.getAccessToken());
         System.out.println("[예상] refreshToken: " + TOKEN_PREFIX + refreshToken);
-        System.out.println("[실제] refreshToken: " + response.refreshToken());
+        System.out.println("[실제] refreshToken: " + response.getRefreshToken());
         System.out.println("[예상] accessToken: " + TOKEN_PREFIX + accessToken);
-        System.out.println("[실제] accessToken: " + response.accessToken());
+        System.out.println("[실제] accessToken: " + response.getAccessToken());
         verify(customUserDetailsService).loadUserByUsername(testNumber);
         verify(jwtTokenProvider).generateAccessToken(testNumber);
         verify(jwtTokenProvider).generateRefreshToken(testNumber);
@@ -213,8 +213,8 @@ class AuthServiceImplTest {
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(null);
         LoginResponse response = authService.createJwtToken(testNumber);
         assertNotNull(response);
-        assertEquals(TOKEN_PREFIX + newAccessToken, response.accessToken());
-        assertEquals(TOKEN_PREFIX + newRefreshToken, response.refreshToken());
+        assertEquals(TOKEN_PREFIX + newAccessToken, response.getAccessToken());
+        assertEquals(TOKEN_PREFIX + newRefreshToken, response.getRefreshToken());
         verify(jwtTokenProvider).generateAccessToken(anyString());
         verify(jwtTokenProvider).generateRefreshToken(anyString());
         verify(userRepository).findByUserNumber(testNumber);
@@ -236,7 +236,7 @@ class AuthServiceImplTest {
         when(jwtTokenProvider.generateAccessToken(anyString())).thenReturn(accessToken);
         when(jwtTokenProvider.generateRefreshToken(anyString())).thenReturn(newRefreshToken);
         when(userRepository.findByUserNumber(anyString())).thenReturn(Optional.of(user));
-        newRefreshToken = authService.getNewRefreshToken(request).refreshToken();
+        newRefreshToken = authService.getNewRefreshToken(request).getRefreshToken();
         System.out.println("[갱신 전]: " + TOKEN_PREFIX + refreshToken);
         System.out.println("[갱신 후]: " + newRefreshToken);
         assertNotEquals(refreshToken, newRefreshToken);
