@@ -6,6 +6,7 @@ import com.ssafy.runit.config.security.CustomUserDetailsService;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.service.UserService;
+import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.util.JwtTokenProvider;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.MediaType;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -42,6 +44,7 @@ public class UserControllerTest {
     private static final String BASE_URL = "api/user/";
     private static final String TEST_NUMBER = "1234";
     private static String refreshToken = "";
+    private static final String INVALID_REFRESH_TOKEN = "invalid_refresh_token";
     private static final String TOKEN_PREFIX = "Bearer ";
 
 
@@ -84,5 +87,20 @@ public class UserControllerTest {
                 .body("data.groupId", equalTo(group.getId().intValue()))
                 .body("message", equalTo("사용자 정보 조회에 성공했습니다."));
         verify(userService, times(1)).findByUserNumber(eq(TEST_NUMBER));
+    }
+
+    @Test
+    @DisplayName("[내 정보 조회] - 인증되지 않은 사용자 접근 검증")
+    public void geyMyInfo_Unauthenticated_ThrowsException() {
+        given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(BASE_URL + "me")
+                .then()
+                .log().all()
+                .statusCode(AuthErrorCode.AUTHENTICATION_FAIL_ERROR.getStatus().value()) // Unauthorized
+                .body("errorCode", equalTo(AuthErrorCode.AUTHENTICATION_FAIL_ERROR.getErrorCode()))
+                .body("message", equalTo(AuthErrorCode.AUTHENTICATION_FAIL_ERROR.getMessage()));
+        verify(userService, never()).findByUserNumber(eq(TEST_NUMBER));
     }
 }
