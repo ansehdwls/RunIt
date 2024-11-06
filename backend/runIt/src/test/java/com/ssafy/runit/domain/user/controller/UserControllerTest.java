@@ -103,4 +103,21 @@ public class UserControllerTest {
                 .body("message", equalTo(AuthErrorCode.AUTHENTICATION_FAIL_ERROR.getMessage()));
         verify(userService, never()).findByUserNumber(eq(TEST_NUMBER));
     }
+
+
+    @Test
+    @DisplayName("[내 정보 조회] - 유효하지 않은 토큰 검증")
+    public void geyMyInfo_Invalid_Token_ThrowsException() {
+        given()
+                .header("Authorization", TOKEN_PREFIX + INVALID_REFRESH_TOKEN) // JWT 토큰 포함
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(BASE_URL + "me")
+                .then()
+                .log().all()
+                .statusCode(AuthErrorCode.INVALID_TOKEN_ERROR.getStatus().value()) // Unauthorized
+                .body("errorCode", equalTo(AuthErrorCode.INVALID_TOKEN_ERROR.getErrorCode()))
+                .body("message", equalTo(AuthErrorCode.INVALID_TOKEN_ERROR.getMessage()));
+        verify(userService, never()).findByUserNumber(eq(TEST_NUMBER));
+    }
 }
