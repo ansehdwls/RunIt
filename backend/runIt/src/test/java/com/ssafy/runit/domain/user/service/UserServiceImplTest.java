@@ -1,0 +1,45 @@
+package com.ssafy.runit.domain.user.service;
+
+import com.ssafy.runit.domain.user.entity.User;
+import com.ssafy.runit.domain.user.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+public class UserServiceImplTest {
+
+    @InjectMocks
+    private UserServiceImpl userService;
+
+    @Mock
+    private UserRepository userRepository;
+
+    private final String TEST_NUMBER = "1234";
+
+
+    @Test
+    @DisplayName("등록된 유저를 조회할 수 있습니다.")
+    void findByUserNumber_Success() {
+        User user = User.builder()
+                .id(1L)
+                .userNumber(TEST_NUMBER)
+                .build();
+        when(userRepository.findByUserNumber(TEST_NUMBER)).thenReturn(Optional.of(user));
+        User findUser = userService.findByUserNumber(TEST_NUMBER);
+        verify(userRepository).findByUserNumber(anyString());
+        assertNotNull(findUser);
+        assertEquals(TEST_NUMBER, findUser.getUserNumber());
+    }
+}
