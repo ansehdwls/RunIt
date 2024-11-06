@@ -12,6 +12,10 @@ class HomeViewModel @Inject constructor(
     private val healthServicesRepository: HealthServicesRepository
 ) : ViewModel() {
 
+    fun prepareRunning(){
+        healthServicesRepository.prepareExercise()
+    }
+
     fun startRunning() {
         Timber.tag("homeViewModel").d("startExercise")
         healthServicesRepository.startExercise()

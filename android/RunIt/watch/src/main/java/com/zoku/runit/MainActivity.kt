@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.google.android.gms.wearable.Wearable
 import com.google.android.horologist.compose.layout.AppScaffold
@@ -23,14 +25,17 @@ class MainActivity : ComponentActivity() {
     private val messageClient by lazy { Wearable.getMessageClient(this) }
     private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
 
+    private lateinit var navController: NavHostController
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         PermissionHelper(this, PERMISSIONS, ::finish).launchPermission()
         super.onCreate(savedInstanceState)
         setContent {
+            navController = rememberNavController()
             AppScaffold {
-                MainScreen(Modifier.fillMaxSize())
+                MainScreen(Modifier.fillMaxSize(), navController)
             }
 
         }
@@ -55,11 +60,7 @@ class MainActivity : ComponentActivity() {
     }
 
     companion object {
-        private const val TAG = "MainActivity"
-
-        const val CAMERA_CAPABILITY = "camera"
-        const val WEAR_CAPABILITY = "wear"
-        const val MOBILE_CAPABILITY = "mobile"
+        const val RUNNING_ACTION = "com.zoku.runit.action.running"
     }
 
 }
@@ -68,5 +69,5 @@ class MainActivity : ComponentActivity() {
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true, apiLevel = 33)
 @Composable
 fun DefaultPreview() {
-    MainScreen()
+    MainScreen(navController = rememberNavController())
 }

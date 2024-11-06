@@ -16,9 +16,12 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class DataLayerListenerService : WearableListenerService() {
+class DataLayerListenerService @Inject constructor(
+
+) : WearableListenerService() {
 
     private val messageClient by lazy { Wearable.getMessageClient(this) }
 
@@ -62,8 +65,11 @@ class DataLayerListenerService : WearableListenerService() {
             START_ACTIVITY_PATH -> {
                 startActivity(
                     Intent(this, MainActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 )
+            }
+            START_RUNNING -> {
+                startService(Intent(this, ExerciseService::class.java))
             }
         }
     }
@@ -77,6 +83,7 @@ class DataLayerListenerService : WearableListenerService() {
         private const val TAG = "DataLayerService"
 
         private const val START_ACTIVITY_PATH = "/start-activity"
+        private const val START_RUNNING = "/start-running"
         private const val DATA_ITEM_RECEIVED_PATH = "/data-item-received"
         const val COUNT_PATH = "/count"
         const val IMAGE_PATH = "/image"

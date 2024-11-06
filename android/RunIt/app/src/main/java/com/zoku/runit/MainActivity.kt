@@ -1,10 +1,7 @@
 package com.zoku.runit
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,8 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Wearable
-import com.google.firebase.messaging.FirebaseMessaging
-import com.zoku.login.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -54,8 +49,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             com.zoku.ui.RunItTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(Modifier.padding(innerPadding),
-                        ::startWearableActivity)
+                    MainScreen(
+                        Modifier.padding(innerPadding),
+                        ::sendWearable
+                    )
                 }
             }
         }
@@ -65,14 +62,10 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         dataClient.addListener(clientDataViewModel)
         messageClient.addListener(clientDataViewModel)
-        capabilityClient.addListener(
-            clientDataViewModel,
-            Uri.parse("wear://"),
-            CapabilityClient.FILTER_REACHABLE
-        )
+        sendWearable(true)
     }
 
-    private fun startWearableActivity() {
+    private fun sendWearable(type: Boolean = false) {
         lifecycleScope.launch {
             try {
                 val nodes = capabilityClient
@@ -81,15 +74,22 @@ class MainActivity : ComponentActivity() {
                     .nodes
 
                 Timber.tag("MainWearable").d("가능 노드 $nodes")
+                val path = if (type) {
+                    START_ACTIVITY_PATH
+                } else {
+                    START_RUNNING
+                }
+
                 nodes.map { node ->
                     async {
-                        Timber.tag("MainWearable").d("메세지 전송 $nodes")
-                        messageClient.sendMessage(node.id, START_ACTIVITY_PATH, byteArrayOf())
+                        Timber.tag("MainWearable").d("메세지 전송 $nodes , $path")
+                        messageClient.sendMessage(node.id, path, byteArrayOf())
                             .await()
                     }
                 }.awaitAll()
                 Timber.tag("MainWearable").d("웨어러블 실행하도록 요청하는 것 이가능!")
             } catch (cancellationException: CancellationException) {
+                Timber.tag("MainWearable").d("웨어러블 실행하도록 요청하는 것 !")
                 throw cancellationException
             } catch (exception: Exception) {
                 Timber.tag("MainWearable").d("웨어러블 실행 오류 ${exception}")
@@ -101,6 +101,7 @@ class MainActivity : ComponentActivity() {
         private const val TAG = "MainActivity"
 
         private const val START_ACTIVITY_PATH = "/start-activity"
+        private const val START_RUNNING = "/start-running"
         private const val WEAR_CAPABILITY = "wear"
 
     }

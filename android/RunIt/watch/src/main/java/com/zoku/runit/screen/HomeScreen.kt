@@ -27,6 +27,8 @@ fun HomeScreen(
     onStartClick: () -> Unit
 ) {
     val homeViewModel = hiltViewModel<HomeViewModel>()
+    homeViewModel.prepareRunning()
+
     val items: List<@Composable () -> Unit> =
         listOf({
             StartButton(modifier, {

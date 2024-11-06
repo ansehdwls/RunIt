@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.Duration
 import javax.inject.Inject
 
@@ -32,16 +33,17 @@ class ExerciseService : LifecycleService() {
     @Inject
     lateinit var exerciseServiceMonitor: ExerciseServiceMonitor
 
-    private var isBound = false //서비스 바인디 여부
+    private var isBound = false //서비스 바인딩 여부
     private var isStarted = false //서비스 시작 여부
     private val localBinder = LocalBinder()
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-
+        Timber.tag("ExerciseService").d("onStartCommand 호출 $intent")
         if (!isStarted) {
             isStarted = true
+
 
             if (!isBound) {
                 stopSelfIfNotRunning()
@@ -52,6 +54,10 @@ class ExerciseService : LifecycleService() {
                     exerciseServiceMonitor.monitor()
                 }
             }
+        }
+
+        if (intent?.action == RUNNING_ACTION) {
+            lifecycleScope.launch { startExercise() }
         }
 
         return START_STICKY
@@ -83,6 +89,7 @@ class ExerciseService : LifecycleService() {
         return true
     }
 
+    //서비스가 바인딩되었음을 처리.
     private fun handleBind() {
         if (!isBound) {
             isBound = true
@@ -173,5 +180,6 @@ class ExerciseService : LifecycleService() {
 
     companion object {
         private val UNBIND_DELAY = 3000L
+        const val RUNNING_ACTION = "com.zoku.runit.action.running"
     }
 }

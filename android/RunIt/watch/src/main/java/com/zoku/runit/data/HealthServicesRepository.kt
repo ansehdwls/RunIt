@@ -58,7 +58,6 @@ class HealthServicesRepository @Inject constructor(
     fun prepareExercise() = serviceCall { prepareExercise() }
 
     private fun serviceCall(function: suspend ExerciseService.() -> Unit) = coroutineScope.launch {
-        Timber.tag("healthServiceRepo start").d("serviceCall first")
         binderConnection.runWhenConnected {
             Timber.tag("healthServiceRepo start").d("serviceCall function")
             function(it.getService())
