@@ -8,23 +8,25 @@ import com.ssafy.runit.domain.track.service.TrackService;
 import com.ssafy.runit.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-
+@RequestMapping("/api/route/")
 public class TrackController implements TrackDocs {
     private final UserRepository userRepository;
     private final TrackService trackService;
 
     @Override
-    @GetMapping()
+    @GetMapping("img/{recordId}")
     public RunItApiResponse<TrackImgResponse> trackFindImg(Long recordId) {
         TrackImgResponse image = trackService.getTrackImg(recordId);
         return new RunItApiResponse<>(image, "성공");
     }
 
     @Override
+    @GetMapping("coordinate/{recordId}")
     public RunItApiResponse<TrackRouteResponse> trackFindRoute(Long recordId) {
         TrackRouteResponse route = trackService.getTrackRoute(recordId);
         return new RunItApiResponse<>(route, "성공");
