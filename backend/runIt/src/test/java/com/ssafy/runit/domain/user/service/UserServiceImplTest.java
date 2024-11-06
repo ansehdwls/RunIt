@@ -85,4 +85,16 @@ public class UserServiceImplTest {
         assertEquals(user.getId(), userIdCaptor.getValue(), "User ID가 일치해야 합니다.");
         assertEquals("newFcmToken", fcmTokenCaptor.getValue(), "FCM Token이 갱신되어야 합니다.");
     }
+
+    @Test
+    @DisplayName("등록되지 않은 유저의 Fcm Token 갱신 시 예외가 발생합니다.")
+    void saveFcmToken_UserNotFound() {
+        when(userRepository.findByUserNumber(TEST_NUMBER)).thenReturn(Optional.empty());
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            userService.saveFcmToken(TEST_NUMBER, "newFcmToken");
+        });
+        verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
+        verify(userRepository, never()).updateFcmTokenByUserId(anyLong(), anyString());
+        assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR, exception.getErrorCodeType());
+    }
 }
