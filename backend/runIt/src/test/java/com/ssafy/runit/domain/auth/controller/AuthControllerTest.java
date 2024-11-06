@@ -86,7 +86,7 @@ public class AuthControllerTest {
                 .when().post(BASE_URL + "register")
                 .then()
                 .log().all()
-                .statusCode(400)
+                .statusCode(AuthErrorCode.DUPLICATED_USER_ERROR.getStatus().value())
                 .body("message", equalTo(AuthErrorCode.DUPLICATED_USER_ERROR.message()))
                 .body("errorCode", equalTo(AuthErrorCode.DUPLICATED_USER_ERROR.errorCode()));
     }
@@ -106,7 +106,7 @@ public class AuthControllerTest {
                 .when().post(BASE_URL + "register")
                 .then()
                 .log().all()
-                .statusCode(400)
+                .statusCode(ServerErrorCode.METHOD_ARGUMENT_ERROR.getStatus().value())
                 .body("message", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.message()))
                 .body("errorCode", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.errorCode()));
     }
@@ -142,7 +142,7 @@ public class AuthControllerTest {
                 .body(objectMapper.writeValueAsString(request))
                 .when().post(BASE_URL + "login")
                 .then().log().all()
-                .statusCode(400)
+                .statusCode(AuthErrorCode.UNREGISTERED_USER_ERROR.getStatus().value())
                 .body("message", equalTo(AuthErrorCode.UNREGISTERED_USER_ERROR.message()))
                 .body("errorCode", equalTo(AuthErrorCode.UNREGISTERED_USER_ERROR.getErrorCode()));
     }
@@ -157,7 +157,7 @@ public class AuthControllerTest {
                 .body(objectMapper.writeValueAsString(request))
                 .when().post(BASE_URL + "login")
                 .then().log().all()
-                .statusCode(400)
+                .statusCode(ServerErrorCode.METHOD_ARGUMENT_ERROR.getStatus().value())
                 .body("message", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.message()))
                 .body("errorCode", equalTo(ServerErrorCode.METHOD_ARGUMENT_ERROR.errorCode()));
     }
@@ -179,5 +179,22 @@ public class AuthControllerTest {
                 .body("message", equalTo("JWT Token 갱신에 성공했습니다"))
                 .body("data.accessToken", equalTo(response.getAccessToken()))
                 .body("data.refreshToken", equalTo(response.getRefreshToken()));
+    }
+
+    @Test
+    @DisplayName("[Jwt 토큰] - 만료 검증")
+    void updateJwtToken_InvalidRefreshToken_ThrowsException() throws Exception {
+        UpdateJwtRequest request = new UpdateJwtRequest(TEST_NUMBER);
+        doThrow(new CustomException(AuthErrorCode.EXPIRED_TOKEN_ERROR))
+                .when(authService).getNewRefreshToken(argThat(argument -> argument.getRefreshToken().equals(request.getRefreshToken())));
+        given()
+                .port(port)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(request))
+                .when().post(BASE_URL + "token")
+                .then().log().all()
+                .statusCode(AuthErrorCode.EXPIRED_TOKEN_ERROR.getStatus().value())
+                .body("message", equalTo(AuthErrorCode.EXPIRED_TOKEN_ERROR.message()))
+                .body("errorCode", equalTo(AuthErrorCode.EXPIRED_TOKEN_ERROR.errorCode()));
     }
 }
