@@ -17,14 +17,14 @@ import java.util.Collections;
 @ToString
 public class CustomUserDetails implements UserDetails {
     private Long id;
-    private String email;
+    private String userNumber;
     private String userName;
     private String profileImageUrl;
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(User user) {
         this.id = user.getId();
-        this.email = user.getUserNumber();
+        this.userNumber = user.getUserNumber();
         this.userName = user.getUserName();
         this.profileImageUrl = user.getImageUrl();
         this.authorities = Collections.emptyList();
@@ -37,7 +37,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return userNumber;
     }
 
 }
