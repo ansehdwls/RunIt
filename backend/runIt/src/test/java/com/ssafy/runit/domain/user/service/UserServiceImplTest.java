@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,5 +56,15 @@ public class UserServiceImplTest {
         });
         assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR, exception.getErrorCodeType());
         verify(userRepository).findByUserNumber(anyString());
+    }
+
+    @Test
+    @DisplayName("등록된 유저들의 Fcm Token을 조회할 수 있습니다.")
+    void findAllFcmTokens_Success() {
+        List<String> fcmTokens = Arrays.asList("1", "2", "3", "4");
+        when(userRepository.findAllFcmTokens()).thenReturn(fcmTokens);
+        List<String> getFcmTokens = userService.findAllFcmTokens();
+        verify(userRepository).findAllFcmTokens();
+        assertEquals(fcmTokens.size(), getFcmTokens.size());
     }
 }
