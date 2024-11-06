@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface TrackRepository extends JpaRepository<Track, Long> {
-    Optional<TrackImgResponse> findTrackImgByRecordId(Long recordId);
+    Optional<TrackImgResponse> findTrackImageUrlByRecordId(Long recordId);
 
-    Optional<TrackRouteResponse> findTrackRouteByRecordId(Long recordId);
+    Optional<TrackRouteResponse> findTrackPathByRecordId(Long recordId);
 }

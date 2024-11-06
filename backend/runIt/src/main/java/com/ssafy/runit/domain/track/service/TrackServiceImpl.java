@@ -19,14 +19,14 @@ public class TrackServiceImpl implements TrackService {
 
     @Override
     public TrackImgResponse getTrackImg(Long recordId) {
-        return trackRepository.findTrackImgByRecordId(recordId).orElseThrow(
+        return trackRepository.findTrackImageUrlByRecordId(recordId).orElseThrow(
                 () -> new CustomException(TrackErrorCode.NOT_FOUND_TRACK_IMG)
         );
     }
 
     @Override
     public TrackRouteResponse getTrackRoute(Long recordId) {
-        return trackRepository.findTrackRouteByRecordId(recordId).orElseThrow(
+        return trackRepository.findTrackPathByRecordId(recordId).orElseThrow(
                 () -> new CustomException(TrackErrorCode.NOT_FOUND_TRACK_ROUTE)
         );
     }
