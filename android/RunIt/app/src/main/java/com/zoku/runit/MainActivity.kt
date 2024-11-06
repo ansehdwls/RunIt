@@ -80,10 +80,7 @@ class MainActivity : ComponentActivity() {
                     .await()
                     .nodes
 
-                // Send a message to all nodes in parallel
-                // If you need an acknowledge for the start activity use case, you can alternatively use
-                // [MessageClient.sendRequest](https://developers.google.com/android/reference/com/google/android/gms/wearable/MessageClient#sendRequest(java.lang.String,%20java.lang.String,%20byte[]))
-                // See an implementation in Horologist DataHelper https://github.com/google/horologist/blob/release-0.5.x/datalayer/core/src/main/java/com/google/android/horologist/data/apphelper/DataLayerAppHelper.kt#L210
+                Timber.tag("MainWearable").d("가능 노드 $nodes")
                 nodes.map { node ->
                     async {
                         messageClient.sendMessage(node.id, START_ACTIVITY_PATH, byteArrayOf())

@@ -8,6 +8,7 @@ mapSdk = "1.4.1"
 piechart = "3.1.0"
 
 kotlin = "2.0.10"
+kotlinx = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -146,6 +147,11 @@ locations = { group = "com.google.android.gms", name = "play-services-location",
 
 #permission
 permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "permission" }
+
+#Coroutine
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

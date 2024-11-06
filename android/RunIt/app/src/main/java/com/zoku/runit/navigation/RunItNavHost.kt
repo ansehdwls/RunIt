@@ -47,8 +47,11 @@ fun RunItMainNavHost(
 
         this.homeScreen(
             moveToHistory = { navController.navigateToRunHistory() },
-            moveToRecordMode = { navController.navigateToRecordModeScreen() },
-            moveToRunning = { navController.navigateToRunning() },
+            moveToRecordMode = {
+                navController.navigateToRecordModeScreen() },
+            moveToRunning = {
+                onStartWearableActivityClick()
+                navController.navigateToRunning() },
             moveToExpHistory = {navController.navigateToExpHistory()}
         )
         this.runHistory()
@@ -61,7 +64,7 @@ fun RunItMainNavHost(
             navController.navigate("home")
         },viewModel = loginViewModel)
         this.recordDetail()
-        this.runningScreen(modifier = modifier, onStartWearableActivityClick)
+        this.runningScreen(modifier = modifier)
         this.expHistory()
 
     }
