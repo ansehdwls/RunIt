@@ -11,11 +11,15 @@ public record RecordGetResponse(
     double distance,
     Integer bpm,
     LocalDateTime startTime,
-    LocalDateTime endTime
+    LocalDateTime endTime,
+    String name,
+    String imageUrl
 ) {
-    public static RecordGetResponse fromEntity(Record record){
+    public static RecordGetResponse fromEntity(Record record, String name, String imageUrl){
         return RecordGetResponse.builder()
                 .id(record.getId())
+                .name(name)
+                .imageUrl(imageUrl)
                 .distance(record.getDistance())
                 .bpm(record.getBpm())
                 .startTime(record.getStartTime())
