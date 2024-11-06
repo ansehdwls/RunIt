@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.runit.config.security.CustomUserDetails;
 import com.ssafy.runit.config.security.CustomUserDetailsService;
 import com.ssafy.runit.domain.group.entity.Group;
+import com.ssafy.runit.domain.user.dto.request.FcmTokenRequest;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.service.UserService;
 import com.ssafy.runit.exception.code.AuthErrorCode;
@@ -21,6 +22,7 @@ import org.springframework.http.MediaType;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -119,5 +121,33 @@ public class UserControllerTest {
                 .body("errorCode", equalTo(AuthErrorCode.INVALID_TOKEN_ERROR.getErrorCode()))
                 .body("message", equalTo(AuthErrorCode.INVALID_TOKEN_ERROR.getMessage()));
         verify(userService, never()).findByUserNumber(eq(TEST_NUMBER));
+    }
+
+    @Test
+    @DisplayName("[Fcm Token] 성공 검증")
+    public void saveFcmToken_Success() throws Exception {
+        FcmTokenRequest request = new FcmTokenRequest("newFcmToken");
+        User user = User.builder()
+                .id(1L)
+                .userNumber(TEST_NUMBER)
+                .userName("Test User")
+                .imageUrl("http://example.com/image.jpg")
+                .fcmToken("fcmToken")
+                .build();
+        CustomUserDetails customUserDetails = new CustomUserDetails(user);
+        when(customUserDetailsService.loadUserByUsername(TEST_NUMBER)).thenReturn(customUserDetails);
+        given()
+                .header("Authorization", TOKEN_PREFIX + refreshToken) // JWT 토큰 포함
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(objectMapper.writeValueAsString(request))
+                .when()
+                .patch(BASE_URL + "fcmToken")
+                .then()
+                .log().all()
+                .statusCode(200)
+                .body("data", nullValue())
+                .body("message", equalTo("FcmToken이 저장되었습니다."));
+        verify(customUserDetailsService).loadUserByUsername(eq(TEST_NUMBER));
+        verify(userService).saveFcmToken(eq(TEST_NUMBER), eq(request.getFcmToken()));
     }
 }
