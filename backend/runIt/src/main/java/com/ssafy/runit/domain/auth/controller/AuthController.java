@@ -6,7 +6,6 @@ import com.ssafy.runit.domain.auth.dto.request.UserLoginRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
 import com.ssafy.runit.domain.auth.dto.response.LoginResponse;
 import com.ssafy.runit.domain.auth.service.AuthService;
-import com.ssafy.runit.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController implements AuthDocs {
 
     private final AuthService authService;
-    private final UserRepository userRepository;
 
     @Override
     @PostMapping("/register")

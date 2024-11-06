@@ -1,10 +1,10 @@
-package com.ssafy.runit.summary;
+package com.ssafy.runit.domain.summary;
 
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.league.entity.League;
-import com.ssafy.runit.domain.rank.LeagueRank;
 import com.ssafy.runit.domain.league.repository.LeagueRepository;
+import com.ssafy.runit.domain.rank.LeagueRank;
 import com.ssafy.runit.domain.summary.entity.LeagueSummary;
 import com.ssafy.runit.domain.summary.repository.LeagueSummaryRepository;
 import com.ssafy.runit.domain.summary.service.LeagueSummaryService;
@@ -24,7 +24,7 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @ActiveProfiles("test")
 @SpringBootTest
-public class LeagueServicePerformanceTest {
+public class LeagueServiceImplTest {
 
     @Autowired
     private SummaryFactory summaryFactory;

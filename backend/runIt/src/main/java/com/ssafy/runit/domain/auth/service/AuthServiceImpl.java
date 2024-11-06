@@ -17,12 +17,12 @@ import com.ssafy.runit.exception.code.GroupErrorCode;
 import com.ssafy.runit.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +31,6 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final CustomUserDetailsService customUserDetailsService;
@@ -39,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
+    @Transactional
     public void registerUser(UserRegisterRequest request) {
         if (!request.isValid()) {
             log.error("잘못된 입력 형식 : email:{} name : {} image:{}", request.getUserNumber(), request.getUserName(), request.getUserImageUrl());
@@ -66,6 +66,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
+    @Transactional
     public LoginResponse login(UserLoginRequest request) {
         if (!request.isValid()) {
             log.error("잘못된 입력 형식 : {}", request.getUserNumber());
@@ -80,6 +81,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public void saveRefreshToken(String userNumber, String refreshToken) {
         User user = userRepository.findByUserNumber(userNumber).orElseThrow(
                 () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
@@ -96,6 +98,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public LoginResponse getNewRefreshToken(UpdateJwtRequest request) {
         String refreshToken = request.getRefreshToken();
         if (!jwtTokenProvider.validateToken(refreshToken)) {
