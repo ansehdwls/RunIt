@@ -2,6 +2,7 @@ package com.ssafy.runit.domain.record.controller;
 
 import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
+import com.ssafy.runit.domain.record.dto.response.RecordGetListResponse;
 import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
 import com.ssafy.runit.domain.record.service.RecordService;
 import com.ssafy.runit.domain.user.entity.User;
@@ -23,34 +24,27 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RecordController implements RecordDocs{
 
-    private final UserRepository userRepository;
     private final RecordService recordService;
 
     @Override
     @PostMapping(value = "/run", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public RunItApiResponse<Void> saveRecord(UserDetails userDetails, RecordSaveRequest recordSaveRequest, MultipartFile file) {
-        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
-        recordService.saveRunningRecord(findUser, recordSaveRequest, file);
+    public RunItApiResponse<Void> saveRecord(@AuthenticationPrincipal UserDetails userDetails, RecordSaveRequest recordSaveRequest, MultipartFile file) {
+        recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
         return new RunItApiResponse<>(null, "성공");
     }
 
     @Override
     @GetMapping("/run/{recordId}")
-    public RunItApiResponse<RecordGetResponse> recordFindOne(UserDetails userDetails, Long recordId) {
-        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
-        RecordGetResponse record = recordService.getRecord(findUser.getId(), recordId);
+    public RunItApiResponse<RecordGetResponse> recordFindOne(@AuthenticationPrincipal UserDetails userDetails, Long recordId) {
+        RecordGetResponse record = recordService.getRecord(userDetails, recordId);
 
         return new RunItApiResponse<>(record, "성공");
     }
 
     @Override
     @GetMapping("/run")
-    public RunItApiResponse<List<RecordGetResponse>> recordFindList(@AuthenticationPrincipal UserDetails userDetails) {
-        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
-        List<RecordGetResponse> recordList = recordService.getRecordList(findUser.getId());
-
-
-
+    public RunItApiResponse<List<RecordGetListResponse>> recordFindList(@AuthenticationPrincipal UserDetails userDetails) {
+        List<RecordGetListResponse> recordList = recordService.getRecordList(userDetails);
         return new RunItApiResponse<>(recordList, "성공");
     }
 }
