@@ -41,7 +41,7 @@ public class UserServiceImplTest {
                 .build();
         when(userRepository.findByUserNumber(TEST_NUMBER)).thenReturn(Optional.of(user));
         User findUser = userService.findByUserNumber(TEST_NUMBER);
-        verify(userRepository).findByUserNumber(anyString());
+        verify(userRepository).findByUserNumber(eq(TEST_NUMBER));
         assertNotNull(findUser);
         assertEquals(TEST_NUMBER, findUser.getUserNumber());
     }
@@ -55,7 +55,7 @@ public class UserServiceImplTest {
             userService.findByUserNumber(TEST_NUMBER);
         });
         assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR, exception.getErrorCodeType());
-        verify(userRepository).findByUserNumber(anyString());
+        verify(userRepository).findByUserNumber(eq(TEST_NUMBER));
     }
 
     @Test
@@ -64,12 +64,24 @@ public class UserServiceImplTest {
         List<String> fcmTokens = Arrays.asList("1", "2", "3", "4");
         when(userRepository.findAllFcmTokens()).thenReturn(fcmTokens);
         List<String> getFcmTokens = userService.findAllFcmTokens();
-        verify(userRepository).findAllFcmTokens();
+        verify(userRepository, times(1)).findAllFcmTokens();
         assertEquals(fcmTokens.size(), getFcmTokens.size());
+        assertEquals(fcmTokens, getFcmTokens);
     }
 
     @Test
-    @DisplayName("등록된 유저의 Fcm Token을 갱신할 수 있습니다.")
+    @DisplayName("모든 Fcm Token을 성공적으로 조회할 수 있습니다.")
+    void findAllFcmTokens_EmptyList() {
+        List<String> fcmTokens = List.of();
+        when(userRepository.findAllFcmTokens()).thenReturn(fcmTokens);
+        List<String> getFcmTokens = userService.findAllFcmTokens();
+        verify(userRepository, times(1)).findAllFcmTokens();
+        assertNotNull(getFcmTokens);
+        assertTrue(getFcmTokens.isEmpty());
+    }
+
+    @Test
+    @DisplayName("등록된 유저들의 Fcm Token을 갱신할 수 있습니다.")
     void saveFcmToken_Success() {
         User user = User.builder()
                 .id(1L)
