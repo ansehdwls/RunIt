@@ -2,14 +2,16 @@ package com.ssafy.runit.domain.user.dto.response;
 
 import com.ssafy.runit.domain.user.entity.User;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
-public record UserInfoResponse(
-        long userId,
-        String userNumber,
-        String userName,
-        String imageUrl,
-        long groupId) {
+@Getter
+public class UserInfoResponse {
+    private long userId;
+    private String userNumber;
+    private String userName;
+    private String imageUrl;
+    private long groupId;
 
     public static UserInfoResponse fromEntity(User user) {
         return UserInfoResponse.builder()

@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<String> findAllFcmTokens() {
         return userRepository.findAllFcmTokens();
     }
@@ -33,9 +34,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void saveFcmToken(String userNumber, String fcmToken) {
-        User user = userRepository.findByUserNumber(userNumber).orElseThrow(
-                () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
-        );
+        User user = findByUserNumber(userNumber);
         userRepository.updateFcmTokenByUserId(user.getId(), fcmToken);
     }
 }

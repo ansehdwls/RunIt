@@ -17,7 +17,7 @@ public interface UserDocs {
     @Operation(summary = "사용자 정보 조회 API", description = "사용자 정보 조회")
     @ApiResponse(responseCode = "200", description = "정보조회에 성공했습니다", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     @ApiResponse(responseCode = "AUTH-006", description = "존재하지 않는 사용자입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    RunItApiResponse<UserInfoResponse> geyMyInfo(@AuthenticationPrincipal UserDetails userDetails);
+    RunItApiResponse<UserInfoResponse> getMyInfo(@AuthenticationPrincipal UserDetails userDetails);
 
 
     @Operation(summary = "사용자 FCM 토큰 저장 API", description = "사용자 FCM 토큰 저장")
