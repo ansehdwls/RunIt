@@ -50,10 +50,7 @@ public class RecordServiceImpl implements RecordService{
 
         List<Pace> paceList = afRecord.getPaceList();
 
-        for (Pace item : paceList){
-            log.debug("item = {} {}", item.getBpm(), item.getDuration());
-            paceRepository.save(item);
-        }
+        paceRepository.saveAll(paceList);
 
         log.debug(file.getOriginalFilename());
 
