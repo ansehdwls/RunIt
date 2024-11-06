@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -30,10 +31,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final ObjectMapper mapper = new ObjectMapper();
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static final List<String> EXCLUDE_URLS = Arrays.asList("/","/api/api-docs/**",
+    private static final List<String> EXCLUDE_URLS = Arrays.asList("/", "/api/api-docs/**",
             "/api/swagger-ui/**",
             "/api/auth/**",
             "/error-docs");
@@ -79,6 +81,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return EXCLUDE_URLS.stream().anyMatch(path::startsWith);
+        return EXCLUDE_URLS.stream()
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
 }
