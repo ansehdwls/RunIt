@@ -16,7 +16,7 @@ spring:
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_ID}
-    password: ${DATABASE_ID}
+    password: ${DATABASE_PW}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   thymeleaf:

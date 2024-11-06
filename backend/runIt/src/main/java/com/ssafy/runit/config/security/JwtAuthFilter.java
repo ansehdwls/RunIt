@@ -33,7 +33,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static final List<String> EXCLUDE_URLS = Arrays.asList("/api/auth/", "/api/swagger-ui", "/error-docs");
+    private static final List<String> EXCLUDE_URLS = Arrays.asList("/","/api/api-docs/**",
+            "/api/swagger-ui/**",
+            "/api/auth/**",
+            "/error-docs");
 
 
     @Override

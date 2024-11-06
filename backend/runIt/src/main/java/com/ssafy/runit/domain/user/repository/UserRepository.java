@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +22,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.fcmToken FROM User u WHERE u.fcmToken IS NOT NULL")
     List<String> findAllFcmTokens();
+
+    @Query("SELECT u FROM User u JOIN u.experiences e " +
+            "WHERE u.userGroup.id = :groupId AND e.createAt >= :startDate " +
+            "GROUP BY u.id " +
+            "ORDER BY SUM(e.changed) ASC")
+    List<User> findUsersWithExperienceSum(@Param("groupId") Long groupId, @Param("startDate") LocalDateTime startDate);
 }
