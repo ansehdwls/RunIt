@@ -18,7 +18,6 @@ public class Pace {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pace_id")
     private long id;
 
     @ManyToOne
