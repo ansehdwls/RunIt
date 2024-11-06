@@ -14,6 +14,6 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     @Query("SELECT r FROM Record r WHERE r.user.id IN :userId AND r.id IN :recordId")
     Optional<Record> findByUserIdAndRecordId(@Param("userId") Long userId, @Param("recordId") Long recordId);
 
-    Optional<List<RecordGetResponse>> findByUserId(Long userId);
+    List<Record> findByUserId(Long userId);
 
 }
