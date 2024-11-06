@@ -24,12 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class RecordServiceImpl implements RecordService{
+public class RecordServiceImpl implements RecordService {
 
     private final RecordRepository recordRepository;
     private final TrackRepository trackRepository;
@@ -54,24 +55,23 @@ public class RecordServiceImpl implements RecordService{
 
         log.debug(file.getOriginalFilename());
 
+        // S3 연결
+
     }
 
     @Override
     public RecordGetResponse getRecord(UserDetails userDetails, Long recordId) {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
 
-        log.debug("user = {}", findUser);
-
         Record record = recordRepository.findByUserIdAndRecordId(findUser.getId(), recordId).orElseThrow(
                 () -> new CustomException(RecordErrorCode.NOT_FOUND_RECORD_DATA)
         );
 
-        List<Pace> pace = paceRepository.findByRecordId(recordId);
-        List<PaceResponse> paceResponseList = new ArrayList<>();
-        for(Pace item : pace){
-            log.debug("item = {} {}", item.getDuration(), item.getBpm());
-            paceResponseList.add(PaceResponse.isEntity(item.getBpm(), item.getDuration()));
-        }
+        List<PaceResponse> paceResponseList = paceRepository.findByRecordId(recordId)
+                .stream()
+                .map(item -> PaceResponse.isEntity(item.getBpm(), item.getDuration()))
+                .collect(Collectors.toList());
+
 
         return RecordGetResponse.fromEntity(record, paceResponseList);
     }
@@ -81,14 +81,14 @@ public class RecordServiceImpl implements RecordService{
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
         List<Record> record = recordRepository.findByUserId(findUser.getId());
 
+        List<RecordGetListResponse> recordGetListResponses = recordRepository.findByUserId(findUser.getId())
+                .stream()
+                .map(item -> {
+                    Track track = trackRepository.findTrackImageUrlByRecordId(item.getId()).orElseThrow();
+                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), track.getTrackImageUrl());
 
-        List<RecordGetListResponse> recordGetListResponses = new ArrayList<>();
-
-        for(Record item : record){
-            Track track = trackRepository.findTrackImageUrlByRecordId(item.getId()).orElseThrow();
-            recordGetListResponses.add(RecordGetListResponse.fromEntity(item, findUser.getUserName(), track.getTrackImageUrl()));
-        }
-
+                })
+                .collect(Collectors.toList());
 
 
         return recordGetListResponses;
