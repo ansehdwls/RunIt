@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.zoku.data.model.PreferencesKeys
+import com.zoku.data.model.UserData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -26,6 +27,16 @@ class DataStoreRepositoryImpl @Inject constructor(
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.USER_TOKEN] = accessToken
             preferences[PreferencesKeys.USER_REFRESH] = refreshToken
+        }
+    }
+
+    override suspend fun saveUser(userData: UserData) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USER_ID] = userData.userId.toString()
+            preferences[PreferencesKeys.USER_NAME] = userData.userName
+            preferences[PreferencesKeys.USER_NUMBER] = userData.userNumber
+            preferences[PreferencesKeys.USER_IMAGE] = userData.imageUrl
+            preferences[PreferencesKeys.USER_GROUP_ID] = userData.groupId.toString()
         }
     }
 

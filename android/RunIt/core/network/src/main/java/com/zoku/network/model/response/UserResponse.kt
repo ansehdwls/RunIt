@@ -7,7 +7,7 @@ data class UserResponse(
 
 data class UserInfo(
     val userId : Long,
-    val userEmail : String,
+    val userName : String,
     val userNumber : String,
     val imageUrl : String,
     val groupId: Long,
