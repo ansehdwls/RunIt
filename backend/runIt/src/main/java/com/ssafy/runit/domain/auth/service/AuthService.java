@@ -15,4 +15,6 @@ public interface AuthService {
     LoginResponse getNewRefreshToken(UpdateJwtRequest request);
 
     LoginResponse createJwtToken(String userEmail);
+
+    boolean existsByUserNumber(String userNumber);
 }

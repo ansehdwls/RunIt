@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(AuthErrorCode.INVALID_DATA_FORM);
         }
 
-        if (userRepository.existsByUserNumber(request.getUserNumber())) {
+        if (existsByUserNumber(request.getUserNumber())) {
             log.error("가입된 사용자 : email : {}", request.getUserNumber());
             throw new CustomException(AuthErrorCode.DUPLICATED_USER_ERROR);
         }
@@ -62,6 +62,14 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = TOKEN_PREFIX + jwtTokenProvider.generateAccessToken(userEmail);
         saveRefreshToken(userEmail, refreshToken);
         return new LoginResponse(accessToken, refreshToken);
+    }
+
+    @Override
+    public boolean existsByUserNumber(String userNumber) {
+        if (userRepository.existsByUserNumber(userNumber)) {
+            return true;
+        }
+        return false;
     }
 
 
