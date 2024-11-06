@@ -22,4 +22,6 @@ public class Pace {
     private Record record;
 
     private LocalDateTime duration;
+
+    private Double bpm;
 }

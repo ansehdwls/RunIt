@@ -10,6 +10,7 @@ import com.ssafy.runit.domain.track.dto.TrackSaveDto;
 import com.ssafy.runit.domain.track.entity.Track;
 import com.ssafy.runit.domain.track.repository.TrackRepository;
 import com.ssafy.runit.domain.user.entity.User;
+import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.exception.code.RecordErrorCode;
@@ -31,6 +32,7 @@ public class RecordServiceImpl implements RecordService{
     private final RecordRepository recordRepository;
     private final TrackRepository trackRepository;
     private final PaceRepository paceRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -57,7 +59,10 @@ public class RecordServiceImpl implements RecordService{
         Record record = recordRepository.findByUserIdAndRecordId(userId, recordId).orElseThrow(
                 () -> new CustomException(RecordErrorCode.NOT_FOUND_RECORD_DATA)
         );
-        return RecordGetResponse.fromEntity(record);
+
+        User user = userRepository.findByUserNumber()
+
+        return RecordGetResponse.fromEntity(record,"" , "");
     }
 
     @Override

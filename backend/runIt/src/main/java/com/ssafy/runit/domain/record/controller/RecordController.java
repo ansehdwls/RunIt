@@ -9,6 +9,7 @@ import com.ssafy.runit.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,9 +45,12 @@ public class RecordController implements RecordDocs{
 
     @Override
     @GetMapping("/run")
-    public RunItApiResponse<List<RecordGetResponse>> recordFindList(UserDetails userDetails) {
+    public RunItApiResponse<List<RecordGetResponse>> recordFindList(@AuthenticationPrincipal UserDetails userDetails) {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
         List<RecordGetResponse> recordList = recordService.getRecordList(findUser.getId());
+
+
+
         return new RunItApiResponse<>(recordList, "성공");
     }
 }
