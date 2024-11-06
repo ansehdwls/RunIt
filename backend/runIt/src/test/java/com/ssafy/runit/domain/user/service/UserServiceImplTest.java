@@ -2,6 +2,8 @@ package com.ssafy.runit.domain.user.service;
 
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
+import com.ssafy.runit.exception.CustomException;
+import com.ssafy.runit.exception.code.AuthErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,8 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,5 +42,17 @@ public class UserServiceImplTest {
         verify(userRepository).findByUserNumber(anyString());
         assertNotNull(findUser);
         assertEquals(TEST_NUMBER, findUser.getUserNumber());
+    }
+
+
+    @Test
+    @DisplayName("등록되지 않는 유저를 조회할 경우 에러를 반환합니다.")
+    void findByUserNumber_NotFound() {
+        when(userRepository.findByUserNumber(TEST_NUMBER)).thenReturn(Optional.empty());
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            userService.findByUserNumber(TEST_NUMBER);
+        });
+        assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR, exception.getErrorCodeType());
+        verify(userRepository).findByUserNumber(anyString());
     }
 }
