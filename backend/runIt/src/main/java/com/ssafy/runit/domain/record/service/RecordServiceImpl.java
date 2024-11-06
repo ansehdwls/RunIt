@@ -54,12 +54,17 @@ public class RecordServiceImpl implements RecordService{
 
     @Override
     public RecordGetResponse getRecord(Long userId, Long recordId) {
-        Record record = recordRepository.findByUserIdAndRecordId(userId, recordId);
+        Record record = recordRepository.findByUserIdAndRecordId(userId, recordId).orElseThrow(
+                () -> new CustomException(RecordErrorCode.NOT_FOUND_RECORD_DATA)
+        );
         return RecordGetResponse.fromEntity(record);
     }
 
     @Override
     public List<RecordGetResponse> getRecordList(Long userId) {
-        return recordRepository.findByUserId(userId);
+
+        return recordRepository.findByUserId(userId).orElseThrow(
+                () -> new CustomException(RecordErrorCode.NOT_FOUND_RECORD_DATA_LIST)
+        );
     }
 }
