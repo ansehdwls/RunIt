@@ -7,6 +7,7 @@ import com.ssafy.runit.exception.code.AuthErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,8 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
@@ -66,5 +66,23 @@ public class UserServiceImplTest {
         List<String> getFcmTokens = userService.findAllFcmTokens();
         verify(userRepository).findAllFcmTokens();
         assertEquals(fcmTokens.size(), getFcmTokens.size());
+    }
+
+    @Test
+    @DisplayName("등록된 유저의 Fcm Token을 갱신할 수 있습니다.")
+    void saveFcmToken_Success() {
+        User user = User.builder()
+                .id(1L)
+                .fcmToken("fcmToken")
+                .userNumber(TEST_NUMBER)
+                .build();
+        when(userRepository.findByUserNumber(TEST_NUMBER)).thenReturn(Optional.of(user));
+        userService.saveFcmToken(TEST_NUMBER, "newFcmToken");
+        verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
+        ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<String> fcmTokenCaptor = ArgumentCaptor.forClass(String.class);
+        verify(userRepository, times(1)).updateFcmTokenByUserId(userIdCaptor.capture(), fcmTokenCaptor.capture());
+        assertEquals(user.getId(), userIdCaptor.getValue(), "User ID가 일치해야 합니다.");
+        assertEquals("newFcmToken", fcmTokenCaptor.getValue(), "FCM Token이 갱신되어야 합니다.");
     }
 }
