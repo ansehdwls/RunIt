@@ -1,9 +1,11 @@
 package com.ssafy.runit.domain.record.dto.response;
 
+import com.ssafy.runit.domain.pace.dto.response.PaceResponse;
 import com.ssafy.runit.domain.record.entity.Record;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 public record RecordGetResponse(
@@ -12,18 +14,17 @@ public record RecordGetResponse(
     Integer bpm,
     LocalDateTime startTime,
     LocalDateTime endTime,
-    String name,
-    String imageUrl
+    List<PaceResponse> paceList
+
 ) {
-    public static RecordGetResponse fromEntity(Record record, String name, String imageUrl){
+    public static RecordGetResponse fromEntity(Record record, List<PaceResponse> paceLs){
         return RecordGetResponse.builder()
                 .id(record.getId())
-                .name(name)
-                .imageUrl(imageUrl)
                 .distance(record.getDistance())
                 .bpm(record.getBpm())
                 .startTime(record.getStartTime())
                 .endTime(record.getEndTime())
+                .paceList(paceLs)
                 .build();
     }
 }
