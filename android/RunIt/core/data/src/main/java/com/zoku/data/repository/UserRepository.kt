@@ -7,5 +7,5 @@ import com.zoku.network.model.response.UserResponse
 interface UserRepository {
     suspend fun getUserData() : NetworkResult<UserResponse>
 
-    suspend fun patchFCMToken() : NetworkResult<RegisterResponse>
+    suspend fun patchFCMToken(token : String) : NetworkResult<RegisterResponse>
 }

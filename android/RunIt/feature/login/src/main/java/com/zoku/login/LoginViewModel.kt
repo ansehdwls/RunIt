@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.user.model.User
 import com.zoku.data.model.PreferencesKeys.USER_REFRESH
 import com.zoku.data.model.PreferencesKeys.USER_TOKEN
@@ -222,6 +223,7 @@ class LoginViewModel @Inject constructor(
                             groupId = result.data.data.groupId
 
                         ))
+                    SendFCM()
                 }
 
                 is NetworkResult.Error -> {
@@ -232,6 +234,33 @@ class LoginViewModel @Inject constructor(
                     Log.d("확인", "실패, 에러 ${result}")
                     Log.d("확인", "서버 연결 에러")
                 }
+            }
+        }
+    }
+
+    private fun SendFCM(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d("FCM Token", token)
+                viewModelScope.launch {
+                    when(val result = userRepository.patchFCMToken(token)){
+                        is NetworkResult.Success -> {
+                            Log.d("확인", "fcm 성공, ${result}")
+                        }
+
+                        is NetworkResult.Error -> {
+                            Log.d("확인", "실패, 에러 ${result}")
+                        }
+
+                        is NetworkResult.Exception -> {
+                            Log.d("확인", "실패, 에러 ${result}")
+                            Log.d("확인", "서버 연결 에러")
+                        }
+                    }
+                }
+            } else {
+                Log.w("FCM Token", "Fetching FCM registration token failed", task.exception)
             }
         }
     }

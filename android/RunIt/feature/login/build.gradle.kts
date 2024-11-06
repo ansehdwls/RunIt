@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
 
+    id("com.google.gms.google-services")
 //    id("kotlin-kapt")
 }
 
@@ -87,4 +88,9 @@ dependencies {
 
     // dataStore
     implementation(libs.androidx.datastore.preferences)
+
+    //fcm
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging.ktx)
+
 }

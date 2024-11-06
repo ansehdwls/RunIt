@@ -16,9 +16,9 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun patchFCMToken(): NetworkResult<RegisterResponse> {
+    override suspend fun patchFCMToken(token: String): NetworkResult<RegisterResponse> {
         return handleApi {
-            userApi.patchFCMToken()
+            userApi.patchFCMToken(mapOf(Pair("fcmToken",token)))
         }
     }
 }
