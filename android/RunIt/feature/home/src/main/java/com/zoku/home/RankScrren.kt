@@ -20,10 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,13 +33,18 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.zoku.home.component.DropDownMenu
+import dagger.hilt.android.lifecycle.HiltViewModel
 import org.w3c.dom.Text
 
 @Composable
 fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
     val rankMenu = arrayOf("종합 순위", "페이스 순위", "거리 순위")
+    val rankViewModel: RankViewModel = hiltViewModel()
+    rankViewModel.getAllExpHistory()
+
     Column(
         modifier = modifier
             .padding(horizontal = 10.dp)
