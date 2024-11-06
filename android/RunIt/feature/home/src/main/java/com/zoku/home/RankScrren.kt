@@ -37,9 +37,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.zoku.home.component.DropDownMenu
+import com.zoku.network.model.response.GroupMember
 import com.zoku.ui.CustomTypo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.withContext
 import org.w3c.dom.Text
 
 @Composable
@@ -50,8 +53,14 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
     // 이번주 획득 경험치
     val weekExp by rankViewModel.currentExp.collectAsState()
 
-    rankViewModel.getAllExpHistory()
-    rankViewModel.getWeekExp()
+    // 그룹 리스트
+    val groupList by rankViewModel.groupInfo.collectAsState()
+
+    with(rankViewModel){
+        getAllExpHistory()
+        getWeekExp()
+        getGroupList()
+    }
     Column(
         modifier = modifier
             .padding(horizontal = 10.dp)
@@ -61,7 +70,7 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
 
         HomeTitle(modifier.padding(top = 10.dp, bottom = 5.dp), "그룹 내 순위", "종합 순위", rankMenu)
 
-        UserRanking()
+        if(groupList.isNotEmpty()) UserRanking(groupList)
     }
 }
 
@@ -274,20 +283,32 @@ fun ExpView(modifier: Modifier = Modifier,
 }
 
 @Composable
-fun UserRanking() {
+fun UserRanking(groupList : List<GroupMember>) {
+
+    val groupSize = groupList.size
+    val promoteCount = (groupSize * 0.3).toInt().coerceAtLeast(1)
+    val demoteCount = (groupSize * 0.3).toInt().coerceAtLeast(1)
+
+
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 10.dp)
     ) {
-        items(3) {
+
+        // 승급 인원
+        items(promoteCount) { index ->
+            val item = groupList[index]
             UserRankingProfile(
                 Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                item,
+                index
             )
         }
 
-        item(1) {
+        // 승급 표시
+        item{
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -328,70 +349,83 @@ fun UserRanking() {
 
             }
         }
+        // 3명 이상 이면 적용
+        if(groupSize > 3){
 
-
-        items(2) {
-            UserRankingProfile(
-                Modifier
-                    .fillMaxWidth()
-            )
-        }
-
-        item(2) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 20.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .align(Alignment.CenterVertically),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.down_rank_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .width(20.dp)
-                            .height(20.dp)
-                    )
-                }
-                Text(
-                    text = "강등",
-                    style = CustomTypo().jalnan.copy(
-                        color = Color.Red,
-                        fontSize = 24.sp,
-                    )
+            // 유지 인원
+            items(groupSize - promoteCount - demoteCount) { index ->
+                val item = groupList[promoteCount + index]
+                UserRankingProfile(
+                    Modifier
+                        .fillMaxWidth(),
+                    item,
+                    index
                 )
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.down_rank_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .width(20.dp)
-                            .height(20.dp)
-                    )
-                }
-
             }
-        }
+
+            // 강등
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 20.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .align(Alignment.CenterVertically),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.down_rank_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
+                    }
+                    Text(
+                        text = "강등",
+                        style = CustomTypo().jalnan.copy(
+                            color = Color.Red,
+                            fontSize = 24.sp,
+                        )
+                    )
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.down_rank_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
+                    }
+
+                }
+            }
+
+            // 강등 인원
+            items(demoteCount) { index ->
+                val item = groupList[groupSize - demoteCount + index]
+                UserRankingProfile(
+                    Modifier
+                        .fillMaxWidth(),
+                    item,
+                    index
+                )
+            }
 
 
-        items(3) {
-            UserRankingProfile(
-                Modifier
-                    .fillMaxWidth()
-            )
         }
     }
 }
 
 @Composable
-fun UserRankingProfile(modifier: Modifier = Modifier) {
+fun UserRankingProfile(modifier: Modifier = Modifier,
+                       item : GroupMember,index : Int) {
     val baseModifier = Modifier.fillMaxHeight()
     Surface(
         modifier = modifier
@@ -406,22 +440,24 @@ fun UserRankingProfile(modifier: Modifier = Modifier) {
                 contentAlignment = Alignment.Center
             ) {
                 RankText(
-                    text = "1",
+                    text = "${index+1}",
                     fontSize = 24.sp
                 )
             }
             Image(
-                painter = painterResource(id = R.drawable.profile_example_rank_icon),
+                painter = rememberAsyncImagePainter(item.imageUrl),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = baseModifier
-                    .padding(horizontal = 10.dp, vertical = 20.dp)
+                    .padding(horizontal = 20.dp, vertical = 14.dp)
+                    .clip(RoundedCornerShape(50.dp))
+
             )
             Box(
                 modifier = baseModifier.weight(1f),
                 contentAlignment = Alignment.CenterStart
             ) {
-                RankText(text = "진평동 슈마허", fontSize = 20.sp)
+                RankText(text = item.userName, fontSize = 20.sp)
             }
             Box(
                 modifier = baseModifier,

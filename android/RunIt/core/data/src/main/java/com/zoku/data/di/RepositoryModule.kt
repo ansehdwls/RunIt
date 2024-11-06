@@ -4,6 +4,8 @@ import com.zoku.data.repository.DataStoreRepository
 import com.zoku.data.repository.DataStoreRepositoryImpl
 import com.zoku.data.repository.ExpRepository
 import com.zoku.data.repository.ExpRepositoryImpl
+import com.zoku.data.repository.GroupRepository
+import com.zoku.data.repository.GroupRepositoryImpl
 import com.zoku.data.repository.LoginRepository
 import com.zoku.data.repository.LoginRepositoryImpl
 import com.zoku.data.repository.RunningRepository
@@ -57,4 +59,10 @@ interface RepositoryModule {
     fun bindUserRepository(
         userRepositoryImpl: UserRepositoryImpl
     ) : UserRepository
+
+    @Binds
+    @Singleton
+    fun bindGroupRepository(
+        groupRepositoryImpl: GroupRepositoryImpl
+    ) : GroupRepository
 }
