@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
                     .getCapability(PHONE_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
                     .await()
                     .nodes
-
+                Timber.tag("sendPhone").d("노드 확인 $nodes , $path")
                 nodes.map { node ->
                     async {
                         Timber.tag("sendPhone").d("메세지 전송 $nodes , $path")
@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
                             .await()
                     }
                 }.awaitAll()
-                Timber.tag("sendPhone").d("핸드폰에 데이터 보내기")
+
             } catch (cancellationException: CancellationException) {
                 Timber.tag("sendPhone").d("핸드폰에 데이터 보내기 취소!")
                 throw cancellationException
