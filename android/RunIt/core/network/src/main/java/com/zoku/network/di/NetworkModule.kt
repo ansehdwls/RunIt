@@ -4,9 +4,11 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.zoku.network.BuildConfig
 import com.zoku.network.api.ExpApi
+import com.zoku.network.api.GroupApi
 import com.zoku.network.api.LoginApi
 import com.zoku.network.api.RunningApi
 import com.zoku.network.api.TestApi
+import com.zoku.network.api.UserApi
 import com.zoku.network.util.AuthInterceptor
 import dagger.Module
 import dagger.Provides
@@ -80,4 +82,14 @@ object NetworkModule {
     @Provides
     fun provideExpApiService(@Named("runit") retrofit: Retrofit) : ExpApi =
         retrofit.create(ExpApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideUserApiService(@Named("runit") retrofit: Retrofit) : UserApi =
+        retrofit.create(UserApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideGroupService(@Named("runit") retrofit: Retrofit) : GroupApi =
+        retrofit.create(GroupApi::class.java)
 }

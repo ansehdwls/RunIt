@@ -4,12 +4,16 @@ import com.zoku.data.repository.DataStoreRepository
 import com.zoku.data.repository.DataStoreRepositoryImpl
 import com.zoku.data.repository.ExpRepository
 import com.zoku.data.repository.ExpRepositoryImpl
+import com.zoku.data.repository.GroupRepository
+import com.zoku.data.repository.GroupRepositoryImpl
 import com.zoku.data.repository.LoginRepository
 import com.zoku.data.repository.LoginRepositoryImpl
 import com.zoku.data.repository.RunningRepository
 import com.zoku.data.repository.RunningRepositoryImpl
 import com.zoku.data.repository.TestRepository
 import com.zoku.data.repository.TestRepositoryImpl
+import com.zoku.data.repository.UserRepository
+import com.zoku.data.repository.UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -49,4 +53,16 @@ interface RepositoryModule {
     fun bindExpRepository(
         expRepositoryImpl: ExpRepositoryImpl
     ) : ExpRepository
+
+    @Binds
+    @Singleton
+    fun bindUserRepository(
+        userRepositoryImpl: UserRepositoryImpl
+    ) : UserRepository
+
+    @Binds
+    @Singleton
+    fun bindGroupRepository(
+        groupRepositoryImpl: GroupRepositoryImpl
+    ) : GroupRepository
 }

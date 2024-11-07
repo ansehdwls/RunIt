@@ -21,10 +21,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.user.model.User
 import com.zoku.data.model.PreferencesKeys.USER_REFRESH
 import com.zoku.data.model.PreferencesKeys.USER_TOKEN
+import com.zoku.data.model.UserData
 import com.zoku.data.repository.DataStoreRepository
+import com.zoku.data.repository.UserRepository
 import com.zoku.network.model.request.RegisterRequest
 import com.zoku.network.model.response.LoginResponse
 import kotlinx.coroutines.flow.map
@@ -37,7 +40,8 @@ private const val TAG = "카카오 로그인"
 class LoginViewModel @Inject constructor(
     application: Application,
     private val loginRepository: LoginRepository,
-    private val dataStoreRepository: DataStoreRepository
+    private val dataStoreRepository: DataStoreRepository,
+    private val userRepository: UserRepository
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(LoginData("", "", ""))
@@ -64,6 +68,7 @@ class LoginViewModel @Inject constructor(
                                 refreshToken = result.data.data.refreshToken
                             )
                             _uiState.value = _uiState.value.copy(isLogin = !refreshToken.isNullOrEmpty())
+                            saveUserData()
                         }
 
                         is NetworkResult.Error -> {
@@ -159,6 +164,7 @@ class LoginViewModel @Inject constructor(
                     dataStoreRepository.saveTokens(
                         accessToken = result.data.data.accessToken,
                         refreshToken = result.data.data.refreshToken)
+                    saveUserData()
                 }
 
                 is NetworkResult.Error -> {
@@ -200,6 +206,62 @@ class LoginViewModel @Inject constructor(
                 }
             }
 
+        }
+    }
+
+    private fun saveUserData(){
+        viewModelScope.launch {
+            when(val result = userRepository.getUserData()){
+                is NetworkResult.Success -> {
+
+                    dataStoreRepository.saveUser(
+                        UserData(
+                            userId = result.data.data.userId,
+                            userNumber = result.data.data.userNumber,
+                            userName = result.data.data.userName,
+                            imageUrl = result.data.data.imageUrl,
+                            groupId = result.data.data.groupId
+
+                        ))
+                    SendFCM()
+                }
+
+                is NetworkResult.Error -> {
+                    Log.d("확인", "실패, 에러 ${result}")
+                }
+
+                is NetworkResult.Exception -> {
+                    Log.d("확인", "실패, 에러 ${result}")
+                    Log.d("확인", "서버 연결 에러")
+                }
+            }
+        }
+    }
+
+    private fun SendFCM(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d("FCM Token", token)
+                viewModelScope.launch {
+                    when(val result = userRepository.patchFCMToken(token)){
+                        is NetworkResult.Success -> {
+                            Log.d("확인", "fcm 성공, ${result}")
+                        }
+
+                        is NetworkResult.Error -> {
+                            Log.d("확인", "실패, 에러 ${result}")
+                        }
+
+                        is NetworkResult.Exception -> {
+                            Log.d("확인", "실패, 에러 ${result}")
+                            Log.d("확인", "서버 연결 에러")
+                        }
+                    }
+                }
+            } else {
+                Log.w("FCM Token", "Fetching FCM registration token failed", task.exception)
+            }
         }
     }
 }
