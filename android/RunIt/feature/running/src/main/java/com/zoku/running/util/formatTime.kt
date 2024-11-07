@@ -1,6 +1,9 @@
 package com.zoku.running.util
 
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 fun formatTime(seconds: Int): String {
     val hours = seconds / 3600
@@ -8,8 +11,15 @@ fun formatTime(seconds: Int): String {
     val secs = seconds % 60
 
     return if (hours > 0) {
-        String.format(Locale.getDefault(),"%02d:%02d:%02d", hours, minutes, secs)
+        String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, secs)
     } else {
-        String.format(Locale.getDefault(),"%02d:%02d", minutes, secs)
+        String.format(Locale.getDefault(), "%02d:%02d", minutes, secs)
     }
+}
+
+fun getIso8601TimeString(timeMillis: Long): String {
+    val date = Date(timeMillis)
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'z'",Locale.getDefault())
+    dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+    return dateFormat.format(date)
 }

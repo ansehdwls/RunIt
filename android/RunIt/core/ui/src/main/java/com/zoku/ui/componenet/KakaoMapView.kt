@@ -1,7 +1,6 @@
 package com.zoku.ui.componenet
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -40,8 +39,8 @@ import java.io.FileOutputStream
 fun KakaoMapView(
     modifier: Modifier = Modifier,
     totalLocationList: List<LocationData>,
-    isOnCapture: Boolean = false,
-    onCaptureReady: (File) -> Unit = {}
+    isResult: Boolean = false,
+    onCaptureComplete: (File) -> Unit = {}
 ) {
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
@@ -95,26 +94,30 @@ fun KakaoMapView(
                             }
 
 
-                            mapView.surfaceView?.let {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    delay(1000)
-                                    val bitmap = Bitmap.createBitmap(
-                                        it.width,
-                                        it.height,
-                                        Bitmap.Config.ARGB_8888
-                                    )
-                                    PixelCopy.request(it, bitmap, { copyResult ->
-                                        if (copyResult == PixelCopy.SUCCESS) {
-                                            val file = File(context.cacheDir, "map_capture.png")
-                                            CoroutineScope(Dispatchers.IO).launch {
-                                                saveBitmapAsFile(file, bitmap)
+                            if (isResult) {
+                                mapView.surfaceView?.let {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        delay(1000)
+                                        val bitmap = Bitmap.createBitmap(
+                                            it.width,
+                                            it.height,
+                                            Bitmap.Config.ARGB_8888
+                                        )
+                                        PixelCopy.request(it, bitmap, { copyResult ->
+                                            if (copyResult == PixelCopy.SUCCESS) {
+                                                val file = File(context.cacheDir, "map_capture.png")
+                                                CoroutineScope(Dispatchers.IO).launch {
+                                                    Log.d("확인", "맵저장")
+                                                    saveBitmapAsFile(file, bitmap)
+                                                    onCaptureComplete(file)
+                                                }
+                                            } else {
+                                                Log.d("확인", "KakaoMapView PixelCopy 실패 ")
                                             }
-                                        } else {
-                                            Log.d("확인","KakaoMapView PixelCopy SUCCESS ")
-                                        }
-                                    }, Handler(Looper.getMainLooper()))
-                                }
+                                        }, Handler(Looper.getMainLooper()))
+                                    }
 
+                                }
                             }
 
                         }

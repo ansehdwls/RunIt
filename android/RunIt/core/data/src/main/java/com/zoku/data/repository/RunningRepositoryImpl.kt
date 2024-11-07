@@ -4,7 +4,9 @@ import com.zoku.data.ApiHandler
 import com.zoku.data.NetworkResult
 import com.zoku.data.model.MyTestData
 import com.zoku.network.api.RunningApi
+import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.TestSumRequest
+import com.zoku.network.model.response.PostRunningRecordResponse
 import com.zoku.network.model.response.TestSumResponse
 import java.util.Date
 import javax.inject.Inject
@@ -20,6 +22,10 @@ class RunningRepositoryImpl @Inject constructor(
 
     override suspend fun postTestSum(testSumRequest: TestSumRequest): NetworkResult<TestSumResponse> {
         return handleApi { runningApi.testSum(testSumRequest) }
+    }
+
+    override suspend fun postRunningRecord(dto: PostRunningRecordRequest): NetworkResult<PostRunningRecordResponse> {
+        return handleApi { runningApi.postRunningRecord(dto) }
     }
 
 }

@@ -13,9 +13,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoku.data.NetworkResult
 import com.zoku.data.repository.RunningRepository
+import com.zoku.network.model.request.Pace
+import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.TestSumRequest
+import com.zoku.network.model.request.Track
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.service.LocationService
+import com.zoku.running.util.getIso8601TimeString
 import com.zoku.ui.model.LocationData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -26,7 +30,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
@@ -42,7 +45,7 @@ class RunningViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         RunningUIState(
             time = 0,
-            distance = 0,
+            distance = 0.0,
             face = 0,
             bpm = 0
         )
@@ -92,7 +95,7 @@ class RunningViewModel @Inject constructor(
 
     private fun updateUIState(
         newTime: Int? = null,
-        newDistance: Int? = null,
+        newDistance: Double? = null,
         newFace: Int? = null,
         newBPM: Int? = null,
     ) {
@@ -136,6 +139,46 @@ class RunningViewModel @Inject constructor(
         timerJob?.cancel()
     }
 
+    fun postRunningRecord(captureFile: File, onSuccess: () -> Unit, onFail: (String) -> Unit) {
+        viewModelScope.launch {
+
+            val filePart = MultipartBody.Part.createFormData(
+                name = "mapCapture",
+                filename = captureFile.name,
+                body = captureFile.asRequestBody("image/png".toMediaTypeOrNull())
+            )
+
+            when (val result = runningRepository.postRunningRecord(
+                PostRunningRecordRequest(
+                    track = Track(
+                        path = totalRunningList.value.toString()
+                    ),
+                    record = com.zoku.network.model.request.Record(
+                        distance = uiState.value.distance,
+                        startTime = getIso8601TimeString(System.currentTimeMillis()),
+                        endTime = getIso8601TimeString(System.currentTimeMillis()),
+                        bpm = 100
+                    ),
+                    paceList = listOf(Pace(pace = 10, bpm = 10), Pace(pace = 20, bpm = 20))
+                )
+            )) {
+                is NetworkResult.Success -> {
+                    onSuccess()
+                }
+
+                is NetworkResult.Error -> {
+                    onFail("${result.errorMsg}")
+                }
+
+                is NetworkResult.Exception -> {
+                    onFail("서버가 연결이 되지 않았습니다.")
+                }
+            }
+
+        }
+    }
+
+
     fun submitTestSum(testSumRequest: TestSumRequest) {
         viewModelScope.launch {
             when (val result = runningRepository.postTestSum(testSumRequest)) {
@@ -153,7 +196,6 @@ class RunningViewModel @Inject constructor(
             }
         }
     }
-
 
 
     override fun onCleared() {
