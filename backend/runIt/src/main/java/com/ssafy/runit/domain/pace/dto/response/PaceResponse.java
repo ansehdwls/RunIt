@@ -6,10 +6,10 @@ import java.util.List;
 
 @Builder
 public record PaceResponse(
-    Double bpmList,
-    Double durationList
+    Integer bpmList,
+    Integer durationList
 ) {
-    public static PaceResponse isEntity(Double bpmLs, Double durationLs){
+    public static PaceResponse isEntity(Integer bpmLs, Integer durationLs){
         return PaceResponse.builder()
                 .bpmList(bpmLs)
                 .durationList(durationLs)

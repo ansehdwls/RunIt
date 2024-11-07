@@ -69,7 +69,7 @@ public class RecordServiceImpl implements RecordService {
 
         List<PaceResponse> paceResponseList = paceRepository.findByRecordId(recordId)
                 .stream()
-                .map(item -> PaceResponse.isEntity(item.getBpm(), item.getDuration()))
+                .map(item -> PaceResponse.isEntity(item.getBpm(), item.getPace()))
                 .collect(Collectors.toList());
 
 
