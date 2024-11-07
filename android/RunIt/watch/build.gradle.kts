@@ -12,7 +12,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.zoku.watch"
+        applicationId = "com.zoku.runit"
         minSdk = 30
         targetSdk = 34
         versionCode = 1
@@ -60,7 +60,7 @@ dependencies {
     //androidx
     implementation(libs.androidx.lifecycle.service)
 
-    implementation(libs.play.services.wearable)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.tooling.preview)
@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.wear.compose.foundation)
     implementation(libs.androidx.material.icons.extended)
     coreLibraryDesugaring(libs.core.desugaring)
+    implementation(libs.play.services.wearable)
 
     //horologist
     implementation(libs.horologist.composables)
@@ -106,4 +107,9 @@ dependencies {
 
     //gson
     implementation(libs.gson)
+
+    //coroutine
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
 }

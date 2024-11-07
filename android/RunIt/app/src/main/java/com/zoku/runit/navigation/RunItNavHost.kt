@@ -33,7 +33,8 @@ import com.zoku.util.ScreenDestinations
 fun RunItMainNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = ScreenDestinations.running.route
+    onStartWearableActivityClick : () -> Unit,
+    startDestination: String = ScreenDestinations.login.route
 ) {
 
     var isUserLoggedIn by remember { mutableStateOf(false) }
@@ -46,8 +47,11 @@ fun RunItMainNavHost(
 
         this.homeScreen(
             moveToHistory = { navController.navigateToRunHistory() },
-            moveToRecordMode = { navController.navigateToRecordModeScreen() },
-            moveToRunning = { navController.navigateToRunning() },
+            moveToRecordMode = {
+                navController.navigateToRecordModeScreen() },
+            moveToRunning = {
+                onStartWearableActivityClick()
+                navController.navigateToRunning() },
             moveToExpHistory = {navController.navigateToExpHistory()}
         )
         this.runHistory()
@@ -61,6 +65,8 @@ fun RunItMainNavHost(
         },viewModel = loginViewModel)
         this.recordDetail()
         this.runningScreen(modifier = modifier)
+//        this.runningResultScreen(modifier = modifier)
+
         this.expHistory()
 
     }

@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.nav)
+    implementation(project(":core:data"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,6 +69,10 @@ dependencies {
 
     //hilt
     implementation(libs.hilt)
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     ksp(libs.hilt.compiler)
+
+    // coil
+    implementation(libs.coil.compose)
 
 }

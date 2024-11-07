@@ -8,6 +8,7 @@ import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.response.PostRunningRecordResponse
 import com.zoku.network.model.response.TestSumResponse
+import retrofit2.Response
 import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,6 +17,8 @@ import javax.inject.Singleton
 class RunningRepositoryImpl @Inject constructor(
     private val runningApi: RunningApi
 ) : RunningRepository, ApiHandler {
+
+
     override suspend fun getRunningRecord(date: Date): Result<List<MyTestData>> {
         TODO("Not yet implemented")
     }
