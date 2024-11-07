@@ -13,10 +13,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.health.services.client.data.ExerciseState
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.zoku.runit.component.button.LongClickStopButton
@@ -40,9 +43,17 @@ fun RunningPauseScreen(
     onResumeClick: () -> Unit
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    Timber.tag("RunningPauseScreen").d("${uiState.exerciseState?.exerciseState}")
     Timber.tag("RunningPauseScreen").d("${runningData?.time}")
 
+
+//    if (uiState.exerciseState?.exerciseState == ExerciseState.USER_RESUMING) {
+//        onResumeClick()
+//    } else if (uiState.exerciseState?.exerciseState == ExerciseState.ENDED) {
+//        onStopClick()
+//    }
 
     val scrollState = rememberScrollState()
     RunningPause(

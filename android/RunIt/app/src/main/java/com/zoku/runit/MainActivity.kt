@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Wearable
+import com.zoku.ui.model.PhoneWatchConnection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -51,6 +52,9 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MainScreen(
                         Modifier.padding(innerPadding),
+                        ::sendWearable,
+                        ::sendWearable,
+                        ::sendWearable,
                         ::sendWearable
                     )
                 }
@@ -62,23 +66,16 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         dataClient.addListener(clientDataViewModel)
         messageClient.addListener(clientDataViewModel)
-        sendWearable(true)
+        sendWearable()
     }
 
-    private fun sendWearable(type: Boolean = false) {
+    private fun sendWearable(path: String = PhoneWatchConnection.START_ACTIVITY.route) {
         lifecycleScope.launch {
             try {
                 val nodes = capabilityClient
                     .getCapability(WEAR_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
                     .await()
                     .nodes
-
-                Timber.tag("MainWearable").d("가능 노드 $nodes")
-                val path = if (type) {
-                    START_ACTIVITY_PATH
-                } else {
-                    START_RUNNING
-                }
 
                 nodes.map { node ->
                     async {
@@ -99,9 +96,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
-
-        private const val START_ACTIVITY_PATH = "/start-activity"
-        private const val START_RUNNING = "/start-running"
         private const val WEAR_CAPABILITY = "wear"
 
     }
