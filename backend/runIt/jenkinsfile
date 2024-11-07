@@ -4,27 +4,28 @@ pipeline {
         jdk 'jdk17'
     }
 
-    stage('application.yml download') {
-        steps {
-            withCredentials([
-                file(credentialsId: 'application-prod-yml', variable: 'applicationProd'),
-                file(credentialsId: 'application-test-yml', variable: 'applicationTest')
-            ]) {
-                script {
-                    sh 'cp $applicationProd backend/runIt/src/main/resources/application-prod.yml'
-                    sh 'cp $applicationTest backend/runIt/src/test/resources/application-test.yml'
+    stages {
+
+       stage('application.yml download') {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'application-prod-yml', variable: 'applicationProd'),
+                    file(credentialsId: 'application-test-yml', variable: 'applicationTest')
+                ]) {
+                    script {
+                        sh 'cp $applicationProd backend/runIt/src/main/resources/application-prod.yml'
+                        sh 'cp $applicationTest backend/runIt/src/test/resources/application-test.yml'
+                    }
                 }
             }
         }
-    }
 
-    stages {
         stage('Build') {
             steps {
                 sh '''
                     chmod +x ./backend/runIt/gradlew
                     cd ./backend/runIt
-                    ./gradlew clean build -x test
+                    ./gradlew clean build
                 '''
             }
         }
@@ -87,10 +88,9 @@ pipeline {
                     sh '''
                         docker run -d -p 8081:8081 --name runit "rhkeh102416/runit"
                     '''
-                }
-                echo 'Deployment succeeded!'
+                    echo 'Deployment succeeded!'
             }
-        }
+       }
     }
 
     post {
