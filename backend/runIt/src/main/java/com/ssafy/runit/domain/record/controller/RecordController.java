@@ -5,19 +5,18 @@ import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.RecordGetListResponse;
 import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
 import com.ssafy.runit.domain.record.service.RecordService;
-import com.ssafy.runit.domain.user.entity.User;
-import com.ssafy.runit.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
+@Validated
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -28,7 +27,9 @@ public class RecordController implements RecordDocs{
 
     @Override
     @PostMapping(value = "/run", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public RunItApiResponse<Void> saveRecord(@AuthenticationPrincipal UserDetails userDetails, RecordSaveRequest recordSaveRequest, MultipartFile file) {
+    public RunItApiResponse<Void> saveRecord(@AuthenticationPrincipal UserDetails userDetails,
+                                             @RequestPart(value = "dto")  RecordSaveRequest recordSaveRequest,
+                                             @RequestPart(value = "images", required = false) MultipartFile file) {
         recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
         return new RunItApiResponse<>(null, "성공");
     }
