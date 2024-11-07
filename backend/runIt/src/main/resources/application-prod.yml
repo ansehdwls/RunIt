@@ -35,7 +35,7 @@ spring:
     #show-sql: true
   data:
     redis:
-      host: localhost
+      host: ${EC2_SERVER_IP_NO_PORT}
       port: ${RUNIT_REDIS_PORT}
       password: ${DATABASE_PW}
 

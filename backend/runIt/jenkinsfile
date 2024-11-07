@@ -77,11 +77,12 @@ pipeline {
                 string(credentialsId: 'S3_PROJECT',variable:'s3_project'),
                 string(credentialsId: 'S3_ACCESSKEY',variable:'S3_accessKey'),
                 string(credentialsId: 'S3_SECRETKEY',variable:'S3_secretKey'),
-                string(credentialsId: 'RUNIT_REDIS_PORT',variable:'RUNIT_REDIS_PORT')
+                string(credentialsId: 'RUNIT_REDIS_PORT',variable:'RUNIT_REDIS_PORT'),
+                string(credentialsId: 'EC2_SERVER_IP_NO_PORT',variable:'EC2_SERVER_IP_NO_PORT')
                 ]) {
                     sh '''
 
-                        docker run -d -p 8081:8081 --name runit -e DATABASE_URL=$database_url -e DATABASE_ID=$database_id -e DATABASE_PW=$database_pw -e RUNIT_PORT=$runit_port -e JWT_SECRET=$jwt_secret -e S3_PROJECT=$s3_project -e S3_ACCESSKEY=$S3_accessKey -e S3_SECRETKEY=$S3_secretKey -e RUNIT_REDIS_PORT=$RUNIT_REDIS_PORT "rhkeh102416/runit"
+                        docker run -d -p 8081:8081 --name runit -e DATABASE_URL=$database_url -e DATABASE_ID=$database_id -e DATABASE_PW=$database_pw -e RUNIT_PORT=$runit_port -e JWT_SECRET=$jwt_secret -e S3_PROJECT=$s3_project -e S3_ACCESSKEY=$S3_accessKey -e S3_SECRETKEY=$S3_secretKey -e RUNIT_REDIS_PORT=$RUNIT_REDIS_PORT -e EC2_SERVER_IP_NO_PORT=$EC2_SERVER_IP_NO_PORT "rhkeh102416/runit"
                     '''
                 }
                 echo 'Deployment succeeded!'
