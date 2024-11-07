@@ -44,12 +44,12 @@ public class RecordSaveRequest {
         return recordResult;
     }
 
-    public Record toEntity(Record record){
+    public Record toEntity(Record record, String url){
         List<Pace> paceEntity = paceList.stream()
                         .map(paceSaveDto -> paceSaveDto.toEntity(record))
                         .collect(Collectors.toList());
 
-        Track trackEntity = track.toEntity(record);
+        Track trackEntity = track.toEntity(record, url);
 
         Record recordResult = Record.builder()
                 .track(trackEntity)

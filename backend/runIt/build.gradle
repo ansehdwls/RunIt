@@ -62,6 +62,10 @@ dependencies {
     testImplementation 'io.rest-assured:xml-path:5.3.0'
     testImplementation 'io.rest-assured:json-schema-validator:5.3.0'
     testImplementation 'io.rest-assured:spring-mock-mvc:5.3.0'
+
+
+    //S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {

@@ -8,6 +8,7 @@ import com.ssafy.runit.domain.record.dto.response.RecordGetListResponse;
 import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.repository.RecordRepository;
+import com.ssafy.runit.util.S3UploadUtil;
 import com.ssafy.runit.domain.track.entity.Track;
 import com.ssafy.runit.domain.track.repository.TrackRepository;
 import com.ssafy.runit.domain.user.entity.User;
@@ -21,9 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,6 +35,7 @@ public class RecordServiceImpl implements RecordService {
     private final TrackRepository trackRepository;
     private final PaceRepository paceRepository;
     private final UserRepository userRepository;
+    private final S3UploadUtil s3UploadUtil;
 
     @Override
     @Transactional
@@ -45,7 +45,19 @@ public class RecordServiceImpl implements RecordService {
         Record record = request.mapper(findUser);
 
         recordRepository.save(record);
-        Record afRecord = request.toEntity(record);
+
+        String url = "";
+
+        try{
+            url = s3UploadUtil.saveFile(file);
+            log.debug("url = {}", url);
+        }catch (Exception e){
+
+        }
+
+
+
+        Record afRecord = request.toEntity(record, url);
 
         trackRepository.save(afRecord.getTrack());
 
@@ -53,7 +65,7 @@ public class RecordServiceImpl implements RecordService {
 
         paceRepository.saveAll(paceList);
 
-        log.debug(file.getOriginalFilename());
+
 
         // S3 연결
 
