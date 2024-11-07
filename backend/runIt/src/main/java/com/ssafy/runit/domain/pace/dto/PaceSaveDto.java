@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class PaceSaveDto {
 
-    private Double duration;
+    private Double pace;
     private Double bpm;
 
     public Pace toEntity(Record record){
         return Pace.builder()
                 .record(record)
-                .duration(duration)
+                .pace(pace)
                 .bpm(bpm)
                 .build();
     }
