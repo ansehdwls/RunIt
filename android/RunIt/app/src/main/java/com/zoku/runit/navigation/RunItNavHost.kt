@@ -26,6 +26,7 @@ import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
 import com.zoku.running.navigation.navigateToRunning
 import com.zoku.running.navigation.runningScreen
+import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.util.ScreenDestinations
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -33,7 +34,10 @@ import com.zoku.util.ScreenDestinations
 fun RunItMainNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    onStartWearableActivityClick : () -> Unit,
+    onStartWearableActivityClick: (String) -> Unit,
+    onPauseWearableActivityClick: (String) -> Unit,
+    onResumeWearableActivityClick: (String) -> Unit,
+    onStopWearableActivityClick: (String) -> Unit,
     startDestination: String = ScreenDestinations.login.route
 ) {
 
@@ -48,11 +52,13 @@ fun RunItMainNavHost(
         this.homeScreen(
             moveToHistory = { navController.navigateToRunHistory() },
             moveToRecordMode = {
-                navController.navigateToRecordModeScreen() },
+                navController.navigateToRecordModeScreen()
+            },
             moveToRunning = {
-                onStartWearableActivityClick()
-                navController.navigateToRunning() },
-            moveToExpHistory = {navController.navigateToExpHistory()}
+                onStartWearableActivityClick(PhoneWatchConnection.START_RUNNING.route)
+                navController.navigateToRunning()
+            },
+            moveToExpHistory = { navController.navigateToExpHistory() }
         )
         this.runHistory()
         this.recordMode(
@@ -62,9 +68,14 @@ fun RunItMainNavHost(
             // 로그인 성공 시, 상태 업데이트
 //            isUserLoggedIn = true
             navController.navigate("home")
-        },viewModel = loginViewModel)
+        }, viewModel = loginViewModel)
         this.recordDetail()
-        this.runningScreen(modifier = modifier)
+        this.runningScreen(
+            modifier = modifier,
+            onPauseWearableActivityClick = onPauseWearableActivityClick,
+            onResumeWearableActivityClick = onResumeWearableActivityClick,
+            onStopWearableActivityClick = onStopWearableActivityClick
+        )
 //        this.runningResultScreen(modifier = modifier)
 
         this.expHistory()

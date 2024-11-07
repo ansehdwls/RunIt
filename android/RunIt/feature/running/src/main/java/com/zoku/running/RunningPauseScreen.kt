@@ -40,6 +40,7 @@ import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.componenet.RoundStopButton
+import kotlinx.coroutines.delay
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -51,6 +52,14 @@ fun RunningPauseScreen(
     val uiState by runningViewModel.uiState.collectAsState()
     val totalRunningList by runningViewModel.totalRunningList.collectAsState()
 
+    var showMap by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        //의미 없는 값이 collect 되는 거 무시하기
+        delay(300)
+        showMap = true
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,7 +70,9 @@ fun RunningPauseScreen(
                 .fillMaxWidth()
                 .weight(0.3f)
         ) {
-            KakaoMapView(totalLocationList = totalRunningList)
+            if (showMap) {
+                KakaoMapView(totalLocationList = totalRunningList)
+            }
         }
 
         Column(
@@ -135,16 +146,6 @@ fun SpreadButtonBox(onPlayClick: () -> Unit, onStopLongPress: () -> Unit) {
             onClick = { onPlayClick() }
         )
     }
-}
-
-@Composable
-fun KakaoMapImage() {
-    Image(
-        painter = painterResource(id = R.drawable.temp_map_image),
-        contentDescription = "image",
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.Crop
-    )
 }
 
 @Composable

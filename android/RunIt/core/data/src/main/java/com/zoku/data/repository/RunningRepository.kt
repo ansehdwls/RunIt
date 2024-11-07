@@ -5,7 +5,9 @@ import com.zoku.data.model.MyTestData
 import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.response.RunningAllHistoryResponse
 import com.zoku.network.model.response.RunningHistoryResponse
+import com.zoku.network.model.response.PostRunningRecordResponse
 import com.zoku.network.model.response.TestSumResponse
+import okhttp3.MultipartBody
 import java.util.Date
 
 interface RunningRepository {
@@ -17,4 +19,10 @@ interface RunningRepository {
     suspend fun getRunningAllHistory() : NetworkResult<RunningAllHistoryResponse>
 
     suspend fun getRunningHistory(recordId : Int) : NetworkResult<RunningHistoryResponse>
+
+    suspend fun postRunningRecord(
+        dto: MultipartBody.Part,
+        images: MultipartBody.Part
+    ): NetworkResult<PostRunningRecordResponse>
+
 }

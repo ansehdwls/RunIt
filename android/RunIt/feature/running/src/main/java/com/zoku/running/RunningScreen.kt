@@ -9,12 +9,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.zoku.ui.model.PhoneWatchConnection
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun RunningScreen(
     modifier: Modifier = Modifier,
+    onPauseWearableActivityClick: (String) -> Unit,
+    onResumeWearableActivityClick: (String) -> Unit,
+    onStopWearableActivityClick: (String) -> Unit
 ) {
 
     val runningViewModel = hiltViewModel<RunningViewModel>()
@@ -27,17 +31,22 @@ fun RunningScreen(
     } else {
         if (isPlay) {
             RunningPlayScreen(
-                onPauseClick = { isPlay = false },
+                onPauseClick = {
+                    onPauseWearableActivityClick(PhoneWatchConnection.PAUSE_RUNNING.route)
+                    isPlay = false
+                },
                 isFirstPlay = isFirstPlay,
                 runningViewModel = runningViewModel
             )
         } else {
             RunningPauseScreen(
                 onPlayClick = {
+                    onResumeWearableActivityClick(PhoneWatchConnection.RESUME_RUNNING.route)
                     isPlay = true
                     isFirstPlay = false
                 },
                 onStopLongPress = {
+                    onStopWearableActivityClick(PhoneWatchConnection.STOP_RUNNING.route)
                     isResult = true
                 },
                 runningViewModel = runningViewModel
