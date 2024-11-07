@@ -30,6 +30,7 @@ class AuthInterceptor @Inject constructor(
             val newRequest = if (token.isNotEmpty()) {
                 originalRequest.newBuilder()
                     .header("Authorization", "$token")
+                    .header("Content-Type", "application/json")
                     .build()
             } else {
                 originalRequest

@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.zoku.data.NetworkResult
 import com.zoku.data.repository.RunningRepository
 import com.zoku.network.model.request.Pace
@@ -31,6 +32,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import javax.inject.Inject
 
@@ -143,12 +145,12 @@ class RunningViewModel @Inject constructor(
         viewModelScope.launch {
 
             val filePart = MultipartBody.Part.createFormData(
-                name = "mapCapture",
+                name = "images",
                 filename = captureFile.name,
                 body = captureFile.asRequestBody("image/png".toMediaTypeOrNull())
             )
 
-            when (val result = runningRepository.postRunningRecord(
+            val userJson = Gson().toJson(
                 PostRunningRecordRequest(
                     track = Track(
                         path = totalRunningList.value.toString()
@@ -161,7 +163,15 @@ class RunningViewModel @Inject constructor(
                     ),
                     paceList = listOf(Pace(pace = 10, bpm = 10), Pace(pace = 20, bpm = 20))
                 )
-            )) {
+            )
+
+            val userRequestBody = userJson.toRequestBody("application/json".toMediaTypeOrNull())
+
+            val requestBody = MultipartBody.Part.createFormData("dto", null,userRequestBody)
+
+
+
+            when (val result = runningRepository.postRunningRecord(requestBody,filePart)) {
                 is NetworkResult.Success -> {
                     onSuccess()
                 }

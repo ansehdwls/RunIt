@@ -8,6 +8,7 @@ import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.response.PostRunningRecordResponse
 import com.zoku.network.model.response.TestSumResponse
+import okhttp3.MultipartBody
 import retrofit2.Response
 import java.util.Date
 import javax.inject.Inject
@@ -27,8 +28,8 @@ class RunningRepositoryImpl @Inject constructor(
         return handleApi { runningApi.testSum(testSumRequest) }
     }
 
-    override suspend fun postRunningRecord(dto: PostRunningRecordRequest): NetworkResult<PostRunningRecordResponse> {
-        return handleApi { runningApi.postRunningRecord(dto) }
+    override suspend fun postRunningRecord(dto: MultipartBody.Part, images: MultipartBody.Part): NetworkResult<PostRunningRecordResponse> {
+        return handleApi { runningApi.postRunningRecord(dto, images) }
     }
 
 }

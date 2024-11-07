@@ -41,7 +41,6 @@ fun RunningResultScreen(
     runningViewModel: RunningViewModel
 ) {
     val context = LocalContext.current
-    val view = LocalView.current
     val totalRunningList by runningViewModel.totalRunningList.collectAsState()
     var captureFile by remember { mutableStateOf<File?>(null) }
     var isMapCompleted by remember { mutableStateOf(false) }
@@ -89,7 +88,7 @@ fun RunningResultScreen(
                         runningViewModel.postRunningRecord(
                             captureFile = file,
                             onSuccess = {
-                                Toast.makeText(context, "인수 바보", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "통신 성공", Toast.LENGTH_SHORT).show()
                             },
                             onFail = { message ->
                                 Toast.makeText(context, "API 실패 ${message}", Toast.LENGTH_SHORT)
