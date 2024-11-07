@@ -75,6 +75,9 @@ dependencies {
     //permission
     implementation(libs.permissions)
 
+    //retrofit
+    implementation(libs.bundles.network)
+
     //wear
     implementation(libs.play.services.wearable)
 
