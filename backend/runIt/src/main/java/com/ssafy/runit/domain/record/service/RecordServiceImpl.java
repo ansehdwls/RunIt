@@ -8,6 +8,8 @@ import com.ssafy.runit.domain.record.dto.response.RecordGetListResponse;
 import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.repository.RecordRepository;
+import com.ssafy.runit.exception.code.AuthErrorCode;
+import com.ssafy.runit.exception.code.TrackErrorCode;
 import com.ssafy.runit.util.S3UploadUtil;
 import com.ssafy.runit.domain.track.entity.Track;
 import com.ssafy.runit.domain.track.repository.TrackRepository;
@@ -40,35 +42,31 @@ public class RecordServiceImpl implements RecordService {
     @Override
     @Transactional
     public void saveRunningRecord(UserDetails userDetails, RecordSaveRequest request, MultipartFile file) {
-        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+        if (file == null){
+            throw new CustomException(TrackErrorCode.NOT_FOUND_TRACK_IMG);
+        }
+
+        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow(
+                () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
+        );
 
         Record record = request.mapper(findUser);
 
         recordRepository.save(record);
 
-        String url = "";
-
         try{
-            url = s3UploadUtil.saveFile(file);
-            log.debug("url = {}", url);
+            String url = s3UploadUtil.saveFile(file);
+            Record afRecord = request.toEntity(record, url);
+
+            trackRepository.save(afRecord.getTrack());
+
+            List<Pace> paceList = afRecord.getPaceList();
+
+            paceRepository.saveAll(paceList);
         }catch (Exception e){
-
+            log.debug("여기 걸리나");
+            throw new CustomException(TrackErrorCode.NOT_FOUND_TRACK_IMG);
         }
-
-
-
-        Record afRecord = request.toEntity(record, url);
-
-        trackRepository.save(afRecord.getTrack());
-
-        List<Pace> paceList = afRecord.getPaceList();
-
-        paceRepository.saveAll(paceList);
-
-
-
-        // S3 연결
-
     }
 
     @Override
