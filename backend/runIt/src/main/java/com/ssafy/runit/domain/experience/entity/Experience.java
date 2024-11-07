@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -32,6 +33,7 @@ public class Experience {
 
     private long changed;
 
+    @CreatedDate
     private LocalDateTime createAt;
 
 }
