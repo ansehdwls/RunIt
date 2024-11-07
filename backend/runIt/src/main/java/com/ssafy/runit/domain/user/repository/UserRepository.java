@@ -28,4 +28,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "GROUP BY u.id " +
             "ORDER BY SUM(e.changed) ASC")
     List<User> findUsersWithExperienceSum(@Param("groupId") Long groupId, @Param("startDate") LocalDateTime startDate);
+
+    List<User> findUserByUserGroup(Group group);
 }
