@@ -24,7 +24,7 @@ public class Pace {
     @JoinColumn(name = "record_id")
     private Record record;
 
-    private Double pace;
+    private Integer pace;
 
-    private Double bpm;
+    private Integer bpm;
 }
