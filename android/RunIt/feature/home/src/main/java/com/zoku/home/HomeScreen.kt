@@ -1,6 +1,9 @@
 package com.zoku.home
 
+import android.app.Activity
 import android.service.autofill.FillEventHistory
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.zoku.ui.BaseWhiteBackground
 import com.zoku.ui.componenet.MenuButton
@@ -33,7 +37,7 @@ fun HomeScreen(modifier: Modifier = Modifier,
                moveToRecordMode : ()->Unit,
                moveToRunning : () -> Unit,
                moveToExpHistory: () -> Unit) {
-
+    BackOnPressed()
     var isInfo by remember { mutableStateOf(true) }
     var isHistory by remember {
         mutableStateOf(false)
@@ -97,5 +101,22 @@ fun HomeScreen(modifier: Modifier = Modifier,
             RankScreen(moveToExpHistory= moveToExpHistory)
         }
 
+    }
+}
+
+@Composable
+fun BackOnPressed() {
+    val context = LocalContext.current
+    var backPressedState by remember { mutableStateOf(true) }
+    var backPressedTime = 0L
+
+    BackHandler(enabled = backPressedState) {
+        if(System.currentTimeMillis() - backPressedTime <= 1000L) {
+            (context as Activity).finish()
+        } else {
+            backPressedState = true
+            Toast.makeText(context, "한 번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+        }
+        backPressedTime = System.currentTimeMillis()
     }
 }

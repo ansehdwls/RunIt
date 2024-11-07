@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,22 +22,42 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.zoku.network.model.response.ExpDataHistory
+import com.zoku.ui.CustomTypo
 
 @Composable
 fun ExpHistory(modifier: Modifier = Modifier){
+    val rankViewModel: RankViewModel = hiltViewModel()
+
+    rankViewModel.getAllExpHistory()
+    // 이번주 획득 경험치
+    val list by rankViewModel.allExpHistoryDataList.collectAsState()
 
     LazyColumn(
         modifier.fillMaxSize()
     ) {
         item {
             Text(text = "획득경험치", modifier = Modifier
-                .fillMaxWidth().padding(vertical = 20.dp),
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
                 fontSize = 30.sp,
                 fontFamily = com.zoku.ui.ZokuFamily,
                 textAlign = TextAlign.Center)
+
+            if(list.isEmpty()){
+                Text(text = "획득한 경험치가 없습니다", modifier.fillMaxSize()
+                    .padding(top = 50.dp),
+                    style = CustomTypo().jalnan.copy(
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    ))
+            }
         }
 
-        items(3) {
+        items(list.size) {  index ->
+            val item = list[index]
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -49,14 +71,15 @@ fun ExpHistory(modifier: Modifier = Modifier){
                     verticalAlignment = Alignment.CenterVertically // Row의 내용물 가운데 정렬
                 ) {
                     Text(
-                        text = "2024-10-28",
-                        modifier = Modifier.padding(start = 8.dp, top = 8.dp)
+                        text = "${item.createAt}",
+                        modifier = Modifier
+                            .padding(start = 8.dp, top = 8.dp)
                             .align(Alignment.Top),
                         textAlign = TextAlign.Start,
                         fontFamily = com.zoku.ui.ZokuFamily
                     )
                     Text(
-                        text = "1KM 달성!",
+                        text = item.activity,
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 8.dp),
@@ -65,7 +88,7 @@ fun ExpHistory(modifier: Modifier = Modifier){
                         fontFamily = com.zoku.ui.ZokuFamily
                     )
                     Text(
-                        text = "+50xp",
+                        text = "+${item.changed}xp",
                         modifier = Modifier.padding(end = 8.dp),
                         textAlign = TextAlign.End,
                         fontFamily = com.zoku.ui.ZokuFamily
