@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
-    @Query("SELECT g FROM Group g WHERE g.id = 1")
+    @Query("SELECT g FROM Group g WHERE g.groupLeague.rank = 1")
     Optional<Group> findDefaultGroup();
 
     List<Group> findAllByGroupLeague(League league);
