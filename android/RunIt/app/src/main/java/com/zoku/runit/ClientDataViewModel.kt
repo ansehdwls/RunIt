@@ -16,19 +16,18 @@ import javax.inject.Inject
 class ClientDataViewModel @Inject constructor(
 
 ) : ViewModel(), DataClient.OnDataChangedListener,
-        MessageClient.OnMessageReceivedListener,
-        CapabilityClient.OnCapabilityChangedListener
-    {
+    MessageClient.OnMessageReceivedListener,
+    CapabilityClient.OnCapabilityChangedListener {
 
-        override fun onDataChanged(dataEventBuffer : DataEventBuffer) {
+    override fun onDataChanged(dataEventBuffer: DataEventBuffer) {
 
-        }
-
-        override fun onMessageReceived(messageEvent: MessageEvent) {
-
-        }
-
-        override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
-            Timber.tag("ClientDataViewModel").d("$capabilityInfo")
-        }
     }
+
+    override fun onMessageReceived(messageEvent: MessageEvent) {
+        Timber.tag("ClientDataViewModel").d("message받기 $messageEvent")
+    }
+
+    override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
+        Timber.tag("ClientDataViewModel").d("$capabilityInfo")
+    }
+}
