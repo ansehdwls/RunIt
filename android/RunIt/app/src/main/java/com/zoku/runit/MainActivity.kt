@@ -1,5 +1,6 @@
 package com.zoku.runit
 
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -66,6 +67,11 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         dataClient.addListener(clientDataViewModel)
         messageClient.addListener(clientDataViewModel)
+        capabilityClient.addListener(
+            clientDataViewModel,
+            Uri.parse("phone://"),
+            CapabilityClient.FILTER_REACHABLE
+        )
         sendWearable()
     }
 

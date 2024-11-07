@@ -47,7 +47,7 @@ fun RunningPauseScreen(
 
     Timber.tag("RunningPauseScreen").d("${uiState.exerciseState?.exerciseState}")
     Timber.tag("RunningPauseScreen").d("${runningData?.time}")
-    
+
     if (uiState.exerciseState?.exerciseState == ExerciseState.USER_RESUMING) {
         onResumeClick()
     } else if (uiState.exerciseState?.exerciseState == ExerciseState.ENDED) {
