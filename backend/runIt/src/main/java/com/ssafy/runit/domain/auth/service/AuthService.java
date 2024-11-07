@@ -10,7 +10,7 @@ public interface AuthService {
 
     LoginResponse login(UserLoginRequest request);
 
-    void saveRefreshToken(String userEmail, String refreshToken);
+    void saveRefreshToken(String userEmail, String refreshToken, String accessToken);
 
     LoginResponse getNewRefreshToken(UpdateJwtRequest request);
 
