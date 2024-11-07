@@ -5,6 +5,8 @@ import com.zoku.data.NetworkResult
 import com.zoku.data.model.MyTestData
 import com.zoku.network.api.RunningApi
 import com.zoku.network.model.request.TestSumRequest
+import com.zoku.network.model.response.RunningAllHistoryResponse
+import com.zoku.network.model.response.RunningHistoryResponse
 import com.zoku.network.model.response.TestSumResponse
 import retrofit2.Response
 import java.util.Date
@@ -23,6 +25,14 @@ class RunningRepositoryImpl @Inject constructor(
 
     override suspend fun postTestSum(testSumRequest: TestSumRequest): NetworkResult<TestSumResponse> {
         return handleApi { runningApi.testSum(testSumRequest) }
+    }
+
+    override suspend fun getRunningAllHistory(): NetworkResult<RunningAllHistoryResponse> {
+        return handleApi { runningApi.getRunAllHistory() }
+    }
+
+    override suspend fun getRunningHistory(recordId: Int): NetworkResult<RunningHistoryResponse> {
+        return handleApi { runningApi.getRunHistory(recordId) }
     }
 
 }
