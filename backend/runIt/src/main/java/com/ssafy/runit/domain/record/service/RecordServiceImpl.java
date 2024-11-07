@@ -64,7 +64,6 @@ public class RecordServiceImpl implements RecordService {
 
             paceRepository.saveAll(paceList);
         }catch (Exception e){
-            log.debug("여기 걸리나");
             throw new CustomException(TrackErrorCode.NOT_FOUND_TRACK_IMG);
         }
     }
