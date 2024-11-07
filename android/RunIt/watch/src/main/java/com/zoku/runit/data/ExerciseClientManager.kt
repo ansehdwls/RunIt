@@ -110,7 +110,7 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                 val config = ExerciseConfig(
                     exerciseType = ExerciseType.RUNNING,
                     dataTypes = dataTypes,
-                    isAutoPauseAndResumeEnabled = supportsAutoPauseAndResume,
+                    isAutoPauseAndResumeEnabled = false,
                     isGpsEnabled = true,
                 )
 

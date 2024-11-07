@@ -65,11 +65,13 @@ class DataLayerListenerService @Inject constructor(
             START_ACTIVITY_PATH -> {
                 startActivity(
                     Intent(this, MainActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 )
             }
             START_RUNNING -> {
-                startService(Intent(this, ExerciseService::class.java))
+                startService(Intent(this, ExerciseService::class.java).apply {
+                    action = RUNNING_ACTION
+                })
             }
         }
     }
@@ -81,7 +83,7 @@ class DataLayerListenerService @Inject constructor(
 
     companion object {
         private const val TAG = "DataLayerService"
-
+        const val RUNNING_ACTION = "com.zoku.runit.action.running"
         private const val START_ACTIVITY_PATH = "/start-activity"
         private const val START_RUNNING = "/start-running"
         private const val DATA_ITEM_RECEIVED_PATH = "/data-item-received"

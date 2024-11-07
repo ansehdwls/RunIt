@@ -7,19 +7,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.health.services.client.data.ExerciseState
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
-import com.zoku.ui.CustomTypo
 import com.zoku.runit.component.PagerScreen
 import com.zoku.runit.component.button.StartButton
 import com.zoku.runit.viewmodel.HomeViewModel
+import com.zoku.runit.viewmodel.RunViewModel
+import com.zoku.ui.CustomTypo
+import timber.log.Timber
 
 @Composable
 fun HomeScreen(
@@ -27,7 +32,14 @@ fun HomeScreen(
     onStartClick: () -> Unit
 ) {
     val homeViewModel = hiltViewModel<HomeViewModel>()
-    homeViewModel.prepareRunning()
+    val runningViewModel = hiltViewModel<RunViewModel>()
+
+    val uiState by runningViewModel.uiState.collectAsStateWithLifecycle()
+
+    if (uiState.exerciseState?.exerciseState == ExerciseState.USER_STARTING) {
+        Timber.tag("HomeScreen").d("ExerciseState ${ExerciseState.ACTIVE}")
+        onStartClick()
+    }
 
     val items: List<@Composable () -> Unit> =
         listOf({

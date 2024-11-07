@@ -40,7 +40,7 @@ class ExerciseService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Timber.tag("ExerciseService").d("onStartCommand 호출 $intent")
+        Timber.tag("ExerciseService").d("onStartCommand 호출 $intent  ${intent?.action}")
         if (!isStarted) {
             isStarted = true
 
@@ -57,6 +57,7 @@ class ExerciseService : LifecycleService() {
         }
 
         if (intent?.action == RUNNING_ACTION) {
+            Timber.tag("ExerciseService").d("운동 서비스")
             lifecycleScope.launch { startExercise() }
         }
 
@@ -181,5 +182,6 @@ class ExerciseService : LifecycleService() {
     companion object {
         private val UNBIND_DELAY = 3000L
         const val RUNNING_ACTION = "com.zoku.runit.action.running"
+
     }
 }
