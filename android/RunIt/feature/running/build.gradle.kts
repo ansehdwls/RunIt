@@ -74,4 +74,10 @@ dependencies {
 
     //permission
     implementation(libs.permissions)
+
+    //wear
+    implementation(libs.play.services.wearable)
+
+    // Log
+    implementation(libs.timber)
 }

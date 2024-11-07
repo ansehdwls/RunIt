@@ -56,11 +56,6 @@ class ExerciseService : LifecycleService() {
             }
         }
 
-        if (intent?.action == RUNNING_ACTION) {
-            Timber.tag("ExerciseService").d("운동 서비스")
-            lifecycleScope.launch { startExercise() }
-        }
-
         return START_STICKY
     }
 

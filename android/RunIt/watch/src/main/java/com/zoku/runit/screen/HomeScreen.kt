@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,9 +38,11 @@ fun HomeScreen(
     val runningViewModel = hiltViewModel<RunViewModel>()
 
     val uiState by runningViewModel.uiState.collectAsStateWithLifecycle()
-
-    if (uiState.exerciseState?.exerciseState == ExerciseState.USER_STARTING) {
+    var flag by remember { mutableStateOf(false) }
+    Timber.tag("HomeScreen").d("ExerciseState $flag")
+    if (uiState.exerciseState?.exerciseState == ExerciseState.USER_STARTING && !flag) {
         Timber.tag("HomeScreen").d("ExerciseState ${ExerciseState.ACTIVE}")
+        flag = true
         onStartClick()
     }
 
