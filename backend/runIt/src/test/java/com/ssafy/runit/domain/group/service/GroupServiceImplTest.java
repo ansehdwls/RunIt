@@ -7,6 +7,7 @@ import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.league.entity.League;
 import com.ssafy.runit.domain.league.repository.LeagueRepository;
+import com.ssafy.runit.domain.rank.LeagueRank;
 import com.ssafy.runit.domain.summary.SummaryFactory;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
@@ -61,7 +62,7 @@ public class GroupServiceImplTest {
         int groupCount = 10;
         int userPerGroup = 10;
         int experiencePerUser = 1000;
-        League league = leagueRepository.findById(2L).get();
+        League league = leagueRepository.findFirstByRankGreaterThanOrderByRankAsc(LeagueRank.RANK_1).get();
         List<User> users = new ArrayList<>();
         List<Experience> experiences = new ArrayList<>();
         List<Group> groups = testDataUtil.createTestGroups(league, groupCount);
