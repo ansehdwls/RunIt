@@ -79,7 +79,6 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<RecordGetListResponse> getRecordList(UserDetails userDetails) {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
-        List<Record> record = recordRepository.findByUserId(findUser.getId());
 
         List<RecordGetListResponse> recordGetListResponses = recordRepository.findByUserId(findUser.getId())
                 .stream()
