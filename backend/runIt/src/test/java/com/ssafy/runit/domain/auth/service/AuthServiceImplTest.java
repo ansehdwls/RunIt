@@ -5,8 +5,8 @@ import com.ssafy.runit.domain.auth.dto.request.UpdateJwtRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserLoginRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
 import com.ssafy.runit.domain.auth.dto.response.LoginResponse;
-import com.ssafy.runit.domain.auth.entity.RefreshToken;
-import com.ssafy.runit.domain.auth.repository.RefreshTokenRepository;
+import com.ssafy.runit.domain.auth.entity.JwtToken;
+import com.ssafy.runit.domain.auth.repository.JwtTokenRepository;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.league.entity.League;
@@ -17,6 +17,7 @@ import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.exception.code.GroupErrorCode;
 import com.ssafy.runit.util.JwtTokenProvider;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +46,7 @@ class AuthServiceImplTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @Mock
-    private RefreshTokenRepository refreshTokenRepository;
+    private JwtTokenRepository jwtTokenRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -57,6 +58,18 @@ class AuthServiceImplTest {
     private final String refreshToken = "refresh_token";
     private final String accessToken = "access_token";
     private static final String TOKEN_PREFIX = "Bearer ";
+    private static JwtToken jwtToken;
+    private static User user;
+
+
+    @BeforeEach
+    void setUp() {
+        jwtToken = new JwtToken(testNumber, refreshToken, 1000L);
+        user = User.builder()
+                .id(1L)
+                .userNumber(testNumber)
+                .build();
+    }
 
     @Test
     @DisplayName("회원가입 성공 테스트")
@@ -87,9 +100,7 @@ class AuthServiceImplTest {
                 .userImageUrl("image")
                 .userName("test").build();
         when(userRepository.existsByUserNumber(testNumber)).thenReturn(true);
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            authService.registerUser(request);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> authService.registerUser(request));
         assertEquals(AuthErrorCode.DUPLICATED_USER_ERROR, exception.getErrorCodeType());
         verify(userRepository).existsByUserNumber(anyString());
         verify(userRepository, never()).save(any(User.class));
@@ -103,9 +114,7 @@ class AuthServiceImplTest {
                 .userNumber(null)
                 .userImageUrl(null)
                 .userName(null).build();
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            authService.registerUser(request);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> authService.registerUser(request));
         assertEquals(AuthErrorCode.INVALID_DATA_FORM, exception.getErrorCodeType());
         verify(userRepository, never()).save(any(User.class));
         verify(userRepository, never()).existsByUserNumber(anyString());
@@ -116,9 +125,7 @@ class AuthServiceImplTest {
     @DisplayName("로그인 요청 유효성 검사")
     void loginUser_Invalid_Data_Form_ThrowsException() {
         UserLoginRequest request = new UserLoginRequest(null);
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            authService.login(request);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> authService.login(request));
         assertEquals(AuthErrorCode.INVALID_DATA_FORM, exception.getErrorCodeType());
         assertEquals(AuthErrorCode.INVALID_DATA_FORM.message(), exception.getErrorCodeType().message());
         verify(customUserDetailsService, never()).loadUserByUsername(anyString());
@@ -133,10 +140,6 @@ class AuthServiceImplTest {
                 .password(anyString())
                 .authorities(new ArrayList<>())
                 .build();
-        User user = User.builder()
-                .id(1L)
-                .userNumber(testNumber)
-                .build();
         when(customUserDetailsService.loadUserByUsername(testNumber)).thenReturn(userDetails);
         when(jwtTokenProvider.generateAccessToken(testNumber)).thenReturn(accessToken);
         when(jwtTokenProvider.generateRefreshToken(testNumber)).thenReturn(refreshToken);
@@ -144,7 +147,7 @@ class AuthServiceImplTest {
         LoginResponse response = authService.login(request);
         assertNotNull(response);
         assertEquals(TOKEN_PREFIX + accessToken, response.getAccessToken());
-        assertEquals(TOKEN_PREFIX + refreshToken, response.getAccessToken());
+        assertEquals(TOKEN_PREFIX + refreshToken, response.getRefreshToken());
         System.out.println("[예상] refreshToken: " + TOKEN_PREFIX + refreshToken);
         System.out.println("[실제] refreshToken: " + response.getRefreshToken());
         System.out.println("[예상] accessToken: " + TOKEN_PREFIX + accessToken);
@@ -165,9 +168,7 @@ class AuthServiceImplTest {
                 .build();
         when(userRepository.existsByUserNumber(testNumber)).thenReturn(false);
         when(groupRepository.findDefaultGroup()).thenReturn(Optional.empty());
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            authService.registerUser(request);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> authService.registerUser(request));
         assertEquals(GroupErrorCode.GROUP_NOT_FOUND_ERROR, exception.getErrorCodeType());
         assertEquals(GroupErrorCode.GROUP_NOT_FOUND_ERROR.message(), exception.getErrorCodeType().message());
         verify(groupRepository).findDefaultGroup();
@@ -177,24 +178,12 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("리프레시 토큰 저장 - 기존 토큰 업데이트")
     void saveRefreshToken_UpdateToken_Success() {
-        User user = User.builder()
-                .id(1L)
-                .userNumber(testNumber)
-                .build();
-        RefreshToken existingToken = RefreshToken.builder()
-                .id(1L)
-                .refreshToken("old_refresh_token")
-                .user(user)
-                .build();
-
         when(userRepository.findByUserNumber(testNumber)).thenReturn(Optional.of(user));
-        when(refreshTokenRepository.findByUserId(user.getId())).thenReturn(Optional.of(existingToken));
-        when(refreshTokenRepository.save(existingToken)).thenReturn(existingToken);
-        authService.saveRefreshToken(testNumber, refreshToken);
-        assertEquals(refreshToken, existingToken.getRefreshToken());
-        verify(userRepository).findByUserNumber(testNumber);
-        verify(refreshTokenRepository).findByUserId(user.getId());
-        verify(refreshTokenRepository).save(existingToken);
+        when(jwtTokenRepository.save(any(JwtToken.class))).thenReturn(jwtToken);
+        authService.saveRefreshToken(testNumber, refreshToken, accessToken);
+        assertEquals(refreshToken, jwtToken.getRefreshToken());
+        verify(jwtTokenRepository).save(any(JwtToken.class));
+        verify(userRepository).findByUserNumber(eq(testNumber));
     }
 
     @Test
@@ -202,15 +191,10 @@ class AuthServiceImplTest {
     void createJwtToken_Success() {
         String newAccessToken = "new_access_token";
         String newRefreshToken = "new_refresh_token";
-        User user = User.builder()
-                .id(1L)
-                .userNumber(testNumber)
-                .build();
         when(jwtTokenProvider.generateAccessToken(testNumber)).thenReturn(newAccessToken);
         when(jwtTokenProvider.generateRefreshToken(testNumber)).thenReturn(newRefreshToken);
         when(userRepository.findByUserNumber(testNumber)).thenReturn(Optional.of(user));
-        when(refreshTokenRepository.findByUserId(user.getId())).thenReturn(Optional.empty());
-        when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(null);
+        when(jwtTokenRepository.save(any(JwtToken.class))).thenReturn(jwtToken);
         LoginResponse response = authService.createJwtToken(testNumber);
         assertNotNull(response);
         assertEquals(TOKEN_PREFIX + newAccessToken, response.getAccessToken());
@@ -218,8 +202,7 @@ class AuthServiceImplTest {
         verify(jwtTokenProvider).generateAccessToken(anyString());
         verify(jwtTokenProvider).generateRefreshToken(anyString());
         verify(userRepository).findByUserNumber(testNumber);
-        verify(refreshTokenRepository).findByUserId(user.getId());
-        verify(refreshTokenRepository).save(any(RefreshToken.class));
+        verify(jwtTokenRepository).save(any(JwtToken.class));
     }
 
     @Test
@@ -227,14 +210,11 @@ class AuthServiceImplTest {
     void getNewRefreshToken_Success() {
         UpdateJwtRequest request = new UpdateJwtRequest(refreshToken);
         String newRefreshToken = "new_refresh_token";
-        User user = User.builder()
-                .id(1L)
-                .userNumber(testNumber)
-                .build();
         when(jwtTokenProvider.validateToken(anyString())).thenReturn(true);
         when(jwtTokenProvider.extractUserNumber(anyString())).thenReturn(testNumber);
         when(jwtTokenProvider.generateAccessToken(anyString())).thenReturn(accessToken);
         when(jwtTokenProvider.generateRefreshToken(anyString())).thenReturn(newRefreshToken);
+        when(jwtTokenRepository.findById(testNumber)).thenReturn(Optional.of(jwtToken));
         when(userRepository.findByUserNumber(anyString())).thenReturn(Optional.of(user));
         newRefreshToken = authService.getNewRefreshToken(request).getRefreshToken();
         System.out.println("[갱신 전]: " + TOKEN_PREFIX + refreshToken);
@@ -244,20 +224,19 @@ class AuthServiceImplTest {
         verify(jwtTokenProvider).extractUserNumber(anyString());
         verify(jwtTokenProvider).generateAccessToken(anyString());
         verify(jwtTokenProvider).generateRefreshToken(anyString());
+        verify(jwtTokenRepository).findById(eq(testNumber));
     }
 
     @Test
     @DisplayName("리프레시 토큰 저장 - 등록되지 않은 사용자 예외")
     void saveRefreshToken_UnregisteredUser_ThrowsException() {
         when(userRepository.findByUserNumber(testNumber)).thenReturn(Optional.empty());
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            authService.saveRefreshToken(testNumber, refreshToken);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> authService.saveRefreshToken(testNumber, refreshToken, accessToken));
         assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR, exception.getErrorCodeType());
         assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR.message(), exception.getErrorCodeType().message());
         verify(userRepository).findByUserNumber(testNumber);
-        verify(refreshTokenRepository, never()).findByUserId(anyLong());
-        verify(refreshTokenRepository, never()).save(any(RefreshToken.class));
+        verify(jwtTokenRepository, never()).findById(anyString());
+        verify(jwtTokenRepository, never()).save(any(JwtToken.class));
     }
 
     @Test
@@ -265,9 +244,7 @@ class AuthServiceImplTest {
     void getNewRefreshToken_InvalidRefreshToken_ThrowsException() {
         UpdateJwtRequest request = new UpdateJwtRequest(refreshToken);
         when(jwtTokenProvider.validateToken(refreshToken)).thenReturn(false);
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            authService.getNewRefreshToken(request);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> authService.getNewRefreshToken(request));
         assertEquals(exception.getErrorCodeType(), AuthErrorCode.EXPIRED_TOKEN_ERROR);
         assertEquals(AuthErrorCode.EXPIRED_TOKEN_ERROR.message(), exception.getErrorCodeType().message());
     }

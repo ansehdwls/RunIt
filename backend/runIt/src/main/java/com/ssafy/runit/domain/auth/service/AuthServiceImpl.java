@@ -5,8 +5,8 @@ import com.ssafy.runit.domain.auth.dto.request.UpdateJwtRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserLoginRequest;
 import com.ssafy.runit.domain.auth.dto.request.UserRegisterRequest;
 import com.ssafy.runit.domain.auth.dto.response.LoginResponse;
-import com.ssafy.runit.domain.auth.entity.RefreshToken;
-import com.ssafy.runit.domain.auth.repository.RefreshTokenRepository;
+import com.ssafy.runit.domain.auth.entity.JwtToken;
+import com.ssafy.runit.domain.auth.repository.JwtTokenRepository;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.user.entity.User;
@@ -17,6 +17,7 @@ import com.ssafy.runit.exception.code.GroupErrorCode;
 import com.ssafy.runit.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,9 +33,12 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final CustomUserDetailsService customUserDetailsService;
+    private final JwtTokenRepository jwtTokenRepository;
     private static final String TOKEN_PREFIX = "Bearer ";
+
+    @Value("${jwt.refresh-token-expiration:3600000}")
+    private Long refreshTokenExpiration;
 
 
     @Override
@@ -57,10 +61,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginResponse createJwtToken(String userEmail) {
-        String refreshToken = TOKEN_PREFIX + jwtTokenProvider.generateRefreshToken(userEmail);
-        String accessToken = TOKEN_PREFIX + jwtTokenProvider.generateAccessToken(userEmail);
-        saveRefreshToken(userEmail, refreshToken);
+    public LoginResponse createJwtToken(String userNumber) {
+        String refreshToken = TOKEN_PREFIX + jwtTokenProvider.generateRefreshToken(userNumber);
+        String accessToken = TOKEN_PREFIX + jwtTokenProvider.generateAccessToken(userNumber);
+        saveRefreshToken(userNumber, refreshToken, accessToken);
         return new LoginResponse(accessToken, refreshToken);
     }
 
@@ -90,19 +94,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void saveRefreshToken(String userNumber, String refreshToken) {
-        User user = userRepository.findByUserNumber(userNumber).orElseThrow(
+    public void saveRefreshToken(String userNumber, String refreshToken, String accessToken) {
+        userRepository.findByUserNumber(userNumber).orElseThrow(
                 () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
         );
-        refreshTokenRepository.findByUserId(user.getId())
-                .map(existingToken -> {
-                    existingToken.setRefreshToken(refreshToken);
-                    return refreshTokenRepository.save(existingToken);
-                })
-                .orElseGet(() -> {
-                    RefreshToken newRefreshToken = RefreshToken.builder().refreshToken(refreshToken).user(user).build();
-                    return refreshTokenRepository.save(newRefreshToken);
-                });
+        String tokenWithoutBearer = refreshToken.replaceFirst("^Bearer ", "");
+        jwtTokenRepository.save(new JwtToken(userNumber, tokenWithoutBearer, refreshTokenExpiration));
     }
 
     @Override
@@ -113,7 +110,13 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(AuthErrorCode.EXPIRED_TOKEN_ERROR);
         }
 
-        String userEmail = jwtTokenProvider.extractUserNumber(refreshToken);
-        return createJwtToken(userEmail);
+        String userNumber = jwtTokenProvider.extractUserNumber(refreshToken);
+        JwtToken storedToken = jwtTokenRepository.findById(userNumber).orElseThrow(
+                () -> new CustomException(AuthErrorCode.EXPIRED_TOKEN_ERROR)
+        );
+        if (!refreshToken.equals(storedToken.getRefreshToken())) {
+            throw new CustomException(AuthErrorCode.INVALID_TOKEN_ERROR);
+        }
+        return createJwtToken(userNumber);
     }
 }
