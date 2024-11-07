@@ -12,10 +12,11 @@ import lombok.NoArgsConstructor;
 public class TrackSaveDto {
     private String path;
 
-    public Track toEntity(Record record){
+    public Track toEntity(Record record, String Url){
         return Track.builder()
                 .record(record)
                 .path(path)
+                .trackImageUrl(Url)
                 .build();
     }
 }
