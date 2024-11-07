@@ -33,6 +33,11 @@ spring:
     hibernate:
       ddl-auto: update
     #show-sql: true
+  data:
+    redis:
+      host: localhost
+      port: ${RUNIT_REDIS_PORT}
+      password: ${DATABASE_PW}
 
 jwt:
   secret: ${JWT_SECRET}
