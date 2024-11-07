@@ -106,4 +106,10 @@ dependencies {
     // kakao map
     implementation(libs.kakao.map)
 
+    //wear
+    implementation(libs.play.services.wearable)
+
+    // Log
+    implementation(libs.timber)
+
 }
