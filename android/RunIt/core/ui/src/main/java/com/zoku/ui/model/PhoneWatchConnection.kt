@@ -5,5 +5,5 @@ enum class PhoneWatchConnection(val route: String) {
     START_RUNNING("/start-running"),
     PAUSE_RUNNING("/pause-running"),
     STOP_RUNNING("/stop-running"),
-    RESUME_RUNNING("/resume-running")
+    RESUME_RUNNING("/resume-running"),
 }
