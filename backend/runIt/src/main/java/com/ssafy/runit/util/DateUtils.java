@@ -1,13 +1,14 @@
 package com.ssafy.runit.util;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 
 public class DateUtils {
 
     public static LocalDate getLastMonday() {
         LocalDate today = LocalDate.now();
-        return today.with(DayOfWeek.MONDAY);
+        return today.getDayOfWeek() == DayOfWeek.MONDAY ? today : today.with(DayOfWeek.MONDAY);
     }
 
     public static String getDayNameInKorean(DayOfWeek day) {
@@ -20,5 +21,10 @@ public class DateUtils {
             case FRIDAY -> "금요일";
             case SATURDAY -> "토요일";
         };
+    }
+
+    public static long computeTTLForNextWeek(){
+        LocalDate expirationDate = getLastMonday().plusDays(7);
+        return Duration.between(LocalDate.now().atStartOfDay(), expirationDate.atStartOfDay()).toSeconds();
     }
 }
