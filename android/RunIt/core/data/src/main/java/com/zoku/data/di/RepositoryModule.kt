@@ -1,5 +1,7 @@
 package com.zoku.data.di
 
+import com.zoku.data.repository.AttendanceRepository
+import com.zoku.data.repository.AttendanceRepositoryImpl
 import com.zoku.data.repository.DataStoreRepository
 import com.zoku.data.repository.DataStoreRepositoryImpl
 import com.zoku.data.repository.ExpRepository
@@ -65,4 +67,10 @@ interface RepositoryModule {
     fun bindGroupRepository(
         groupRepositoryImpl: GroupRepositoryImpl
     ) : GroupRepository
+
+    @Binds
+    @Singleton
+    fun bindAttendanceRepository(
+        attendanceRepositoryImpl: AttendanceRepositoryImpl
+    ) : AttendanceRepository
 }
