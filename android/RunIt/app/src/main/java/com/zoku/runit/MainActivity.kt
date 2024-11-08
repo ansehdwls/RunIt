@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
                         ::sendWearable,
                         ::sendWearable,
                         ::sendWearable,
+                        ::sendWearable,
                         ::sendWearable
                     )
                 }
@@ -72,7 +73,6 @@ class MainActivity : ComponentActivity() {
             Uri.parse("phone://"),
             CapabilityClient.FILTER_REACHABLE
         )
-        sendWearable()
     }
 
     private fun sendWearable(path: String = PhoneWatchConnection.START_ACTIVITY.route) {

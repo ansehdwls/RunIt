@@ -37,6 +37,7 @@ import com.zoku.util.ScreenDestinations
 fun RunItMainNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    onHomeScreen : () -> Unit,
     onStartWearableActivityClick: (String) -> Unit,
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
