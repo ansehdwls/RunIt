@@ -17,13 +17,15 @@ fun NavGraphBuilder.runningScreen(
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
+    moveToHome : ()->Unit
 ) {
     composable(route = ScreenDestinations.running.route) {
         RunningScreen(
             modifier,
             onPauseWearableActivityClick = onPauseWearableActivityClick,
             onResumeWearableActivityClick = onResumeWearableActivityClick,
-            onStopWearableActivityClick = onStopWearableActivityClick
+            onStopWearableActivityClick = onStopWearableActivityClick,
+            moveToHome = moveToHome
         )
     }
 }

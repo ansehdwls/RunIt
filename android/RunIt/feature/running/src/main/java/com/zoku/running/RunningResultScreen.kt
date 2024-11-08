@@ -38,7 +38,8 @@ import java.io.File
 @Composable
 fun RunningResultScreen(
     modifier: Modifier = Modifier,
-    runningViewModel: RunningViewModel
+    runningViewModel: RunningViewModel,
+    moveToHome : () -> Unit
 ) {
     val context = LocalContext.current
     val totalRunningList by runningViewModel.totalRunningList.collectAsState()
@@ -89,6 +90,7 @@ fun RunningResultScreen(
                             captureFile = file,
                             onSuccess = {
                                 Toast.makeText(context, "통신 성공", Toast.LENGTH_SHORT).show()
+                                moveToHome()
                             },
                             onFail = { message ->
                                 Toast.makeText(context, "API 실패 ${message}", Toast.LENGTH_SHORT)
@@ -120,6 +122,7 @@ fun RunningResultScreen(
 @Composable
 fun RunningResultPreview() {
     com.zoku.ui.RunItTheme {
-        RunningResultScreen(runningViewModel = hiltViewModel<RunningViewModel>())
+        RunningResultScreen(runningViewModel = hiltViewModel<RunningViewModel>(),
+            moveToHome = {})
     }
 }

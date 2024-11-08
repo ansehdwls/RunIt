@@ -75,7 +75,8 @@ fun RunItMainNavHost(
             modifier = modifier,
             onPauseWearableActivityClick = onPauseWearableActivityClick,
             onResumeWearableActivityClick = onResumeWearableActivityClick,
-            onStopWearableActivityClick = onStopWearableActivityClick
+            onStopWearableActivityClick = onStopWearableActivityClick,
+            moveToHome = {navController.navigateToHome()}
         )
 //        this.runningResultScreen(modifier = modifier)
 

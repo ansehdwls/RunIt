@@ -36,6 +36,8 @@ import com.zoku.network.model.response.AttendanceDay
 import com.zoku.network.model.response.GroupMember
 import com.zoku.ui.CustomTypo
 import java.time.LocalDate
+import kotlin.math.ceil
+import kotlin.math.floor
 
 @Composable
 fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
@@ -209,7 +211,7 @@ fun DailyCheckView(
                 type = if (attendanceList[i].attended) 1 else 2
             )
         }
-        for (i in today until 6) {
+        for (i in today+1 until 7) {
             DailyCheck(
                 Modifier.weight(1f), day = attendanceList[i].day, type = 0
             )
@@ -257,6 +259,7 @@ fun ExpView(
 
             Row {
                 Surface(
+                    color = Color.Transparent,
                     onClick = {
                         moveToExpHistory()
                     }
@@ -292,8 +295,8 @@ fun ExpView(
 fun UserRanking(groupList: List<GroupMember>) {
 
     val groupSize = groupList.size
-    val promoteCount = (groupSize * 0.3).toInt().coerceAtLeast(1)
-    val demoteCount = (groupSize * 0.3).toInt().coerceAtLeast(1)
+    val promoteCount = ceil(groupSize* 0.3).toInt()
+    val demoteCount = floor(groupSize * 0.3).toInt()
 
 
     LazyColumn(
@@ -356,7 +359,7 @@ fun UserRanking(groupList: List<GroupMember>) {
             }
         }
         // 3명 이상 이면 적용
-        if (groupSize > 3) {
+        if (demoteCount > 0) {
 
             // 유지 인원
             items(groupSize - promoteCount - demoteCount) { index ->
@@ -365,10 +368,11 @@ fun UserRanking(groupList: List<GroupMember>) {
                     Modifier
                         .fillMaxWidth(),
                     item,
-                    index
+                    promoteCount + index
                 )
             }
-
+        }
+        if (groupSize - promoteCount - demoteCount > 0) {
             // 강등
             item {
                 Row(
@@ -420,7 +424,7 @@ fun UserRanking(groupList: List<GroupMember>) {
                     Modifier
                         .fillMaxWidth(),
                     item,
-                    index
+                    groupSize - demoteCount + index
                 )
             }
 
@@ -436,6 +440,7 @@ fun UserRankingProfile(
 ) {
     val baseModifier = Modifier.fillMaxHeight()
     Surface(
+        color = com.zoku.ui.BaseDarkBackground,
         modifier = modifier
             .height(80.dp)
             .padding(vertical = 8.dp)
@@ -487,7 +492,7 @@ fun UserRankingProfile(
                 contentAlignment = Alignment.CenterEnd
             ) {
                 RankText(
-                    text = "100xp", fontSize = 24.sp, color = Color.Black
+                    text = "${item.exp}xp", fontSize = 24.sp
                 )
             }
         }

@@ -36,7 +36,6 @@ class RunningRepositoryImpl @Inject constructor(
 
     override suspend fun getRunningHistory(recordId: Int): NetworkResult<RunningHistoryResponse> {
         return handleApi { runningApi.getRunHistory(recordId) }
-
     }
     override suspend fun postRunningRecord(dto: MultipartBody.Part, images: MultipartBody.Part): NetworkResult<PostRunningRecordResponse> {
         return handleApi { runningApi.postRunningRecord(dto, images) }

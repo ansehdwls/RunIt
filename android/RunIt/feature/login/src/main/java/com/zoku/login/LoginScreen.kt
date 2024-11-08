@@ -113,6 +113,3 @@ fun KakaoLoginButton(onKakaoLoginClick: () -> Unit) {
         )
     }
 }
-
-
-
