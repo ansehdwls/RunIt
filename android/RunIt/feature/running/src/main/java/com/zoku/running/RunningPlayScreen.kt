@@ -124,25 +124,6 @@ fun RunningPlayScreen(
 
         Spacer(modifier = Modifier.weight(0.15f))
 
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .align(Alignment.Start)
-//        ) {
-//            Spacer(modifier = Modifier.weight(0.15f))
-//
-//            RobotoText(
-//                text = "심박수",
-//                fontSize = 20.sp,
-//            )
-//
-//            Spacer(modifier = Modifier.weight(0.9f))
-//        }
-
-//        Spacer(modifier = Modifier.weight(0.3f))
-
-//        TempHeartGraph()
-
         Spacer(modifier = Modifier.weight(0.2f))
 
         if (isFirstPlay) {
@@ -207,19 +188,6 @@ fun GatherButtonBox(onPauseClick: () -> Unit, runningViewModel: RunningViewModel
                 onPauseClick()
             })
     }
-}
-
-
-@Composable
-fun TempHeartGraph() {
-    Image(
-        painter = painterResource(id = R.drawable.temp_chart),
-        contentDescription = "Temperature Chart",
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 50.dp),
-        contentScale = ContentScale.Crop
-    )
 }
 
 @Composable
