@@ -6,6 +6,7 @@ import com.ssafy.runit.domain.pace.repository.PaceRepository;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.RecordGetListResponse;
 import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
+import com.ssafy.runit.domain.record.dto.response.RecordTodayResponse;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.repository.RecordRepository;
 import com.ssafy.runit.exception.code.AuthErrorCode;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,5 +102,31 @@ public class RecordServiceImpl implements RecordService {
 
 
         return recordGetListResponses;
+    }
+
+    @Override
+    public RecordTodayResponse getTodayData(UserDetails userDetails) {
+        User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+
+//        LocalDateTime todayStart = LocalDateTime.;
+//        LocalDateTime todayEnd = LocalDateTime.MAX;
+
+//        log.debug("time = {} {}", todayStart, todayEnd);
+
+//        List<Record> recordList = recordRepository.findByUserIdAndToday(user.getId(), todayStart, todayEnd);
+
+        Double dis = 0.0;
+        Integer time = 0;
+        Integer pace = 0;
+
+//        for (Record item : recordList){
+//            dis += item.getDistance();
+//
+//            log.debug("tiem = {} {}", item.getStartTime(), item.getEndTime());
+//
+//            pace += item.getBpm();
+//        }
+
+        return RecordTodayResponse.fromEntity(dis, 0, pace / 2);
     }
 }

@@ -4,6 +4,7 @@ import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.RecordGetListResponse;
 import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
+import com.ssafy.runit.domain.record.dto.response.RecordTodayResponse;
 import com.ssafy.runit.domain.record.service.RecordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,5 +48,12 @@ public class RecordController implements RecordDocs{
     public RunItApiResponse<List<RecordGetListResponse>> recordFindList(@AuthenticationPrincipal UserDetails userDetails) {
         List<RecordGetListResponse> recordList = recordService.getRecordList(userDetails);
         return new RunItApiResponse<>(recordList, "성공");
+    }
+
+    @Override
+    @GetMapping("/run/today")
+    public RunItApiResponse<RecordTodayResponse> recordFindToday(UserDetails userDetails) {
+        RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
+        return new RunItApiResponse<>(todayResponse, "성공");
     }
 }

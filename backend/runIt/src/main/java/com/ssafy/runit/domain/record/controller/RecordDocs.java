@@ -4,6 +4,7 @@ import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.RecordGetListResponse;
 import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
+import com.ssafy.runit.domain.record.dto.response.RecordTodayResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,6 +35,10 @@ public interface RecordDocs {
     @Operation(summary = "러닝 전체 기록 호출 Api", description = "러닝")
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<List<RecordGetListResponse>> recordFindList(@AuthenticationPrincipal UserDetails userDetails);
+
+    @Operation(summary = "러닝 당일 기록 호출 Api", description = "러닝")
+    @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
+    RunItApiResponse<RecordTodayResponse> recordFindToday(@AuthenticationPrincipal UserDetails userDetails);
 
 
 }
