@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.location.Location
 import android.os.Build
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
@@ -36,6 +37,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.util.Locale
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -43,7 +45,10 @@ import javax.inject.Inject
 class RunningViewModel @Inject constructor(
     application: Application,
     private val runningRepository: RunningRepository
-) : AndroidViewModel(application) {
+) : AndroidViewModel(application), TextToSpeech.OnInitListener {
+
+    //tts
+    private var tts: TextToSpeech = TextToSpeech(application, this)
 
     // UI variable
     private val _uiState = MutableStateFlow(
@@ -107,6 +112,13 @@ class RunningViewModel @Inject constructor(
         newBPM: Int? = null,
     ) {
         _uiState.update { currentState ->
+            newDistance?.let {
+                val intDistance = it.toInt()
+                if ((intDistance > 0) && (intDistance % 10 == 0)) {
+                    //현재 미터단위, 킬로미터로 수정해야함
+                    tts.speak("${intDistance}미터 달성하였습니다. 화이팅!",TextToSpeech.QUEUE_FLUSH, null,null)
+                }
+            }
             currentState.copy(
                 time = newTime ?: currentState.time,
                 distance = newDistance ?: currentState.distance,
@@ -215,6 +227,12 @@ class RunningViewModel @Inject constructor(
         super.onCleared()
         stopTimer()
         getApplication<Application>().unregisterReceiver(locationReceiver)
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            tts.language = Locale.KOREAN
+        }
     }
 
 }
