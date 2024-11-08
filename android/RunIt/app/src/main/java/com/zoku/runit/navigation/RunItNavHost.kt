@@ -31,6 +31,7 @@ import com.zoku.running.navigation.navigateToRunning
 import com.zoku.running.navigation.runningScreen
 import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.util.ScreenDestinations
+import timber.log.Timber
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -49,8 +50,7 @@ fun RunItMainNavHost(
     val loginViewModel: LoginViewModel = hiltViewModel()
 
     val phoneWatchData by clientDataViewModel.phoneWatchData.collectAsState()
-
-
+    Timber.tag("RuntItMainNavHost").d("phoneWatchData $phoneWatchData")
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -76,6 +76,7 @@ fun RunItMainNavHost(
             // 로그인 성공 시, 상태 업데이트
 //            isUserLoggedIn = true
             navController.navigate("home")
+            onHomeScreen()
         }, viewModel = loginViewModel)
         this.recordDetail()
         this.runningScreen(
@@ -83,7 +84,8 @@ fun RunItMainNavHost(
             onPauseWearableActivityClick = onPauseWearableActivityClick,
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
-            moveToHome = { navController.navigateToHome() }
+            moveToHome = { navController.navigateToHome() },
+            phoneWatchData = phoneWatchData
         )
 //        this.runningResultScreen(modifier = modifier)
 

@@ -42,11 +42,11 @@ fun HomeScreen(modifier: Modifier = Modifier,
                moveToRecordMode : ()->Unit,
                moveToRunning : () -> Unit,
                moveToExpHistory: () -> Unit,
-               phoneWatchData : PhoneWatchData
+               phoneWatchData : PhoneWatchConnection
                ) {
-    Timber.tag("HomeScreen").d("보내기 타입 ${phoneWatchData.sendType}")
-    if(phoneWatchData.sendType == PhoneWatchConnection.SEND_BPM){
-        moveToRunning
+
+    if(phoneWatchData == PhoneWatchConnection.SEND_BPM){
+        moveToRunning()
     }
     BackOnPressed()
     var isInfo by remember { mutableStateOf(true) }

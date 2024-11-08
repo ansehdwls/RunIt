@@ -43,7 +43,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RunningViewModel @Inject constructor(
     application: Application,
-    private val runningRepository: RunningRepository
+    private val runningRepository: RunningRepository,
+
 ) : AndroidViewModel(application) {
 
     // UI variable

@@ -8,6 +8,7 @@ import com.zoku.home.HomeScreen
 import com.zoku.home.RecordModeDetail
 import com.zoku.home.RecordModeScreen
 import com.zoku.home.RunHistoryScreen
+import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.ui.model.PhoneWatchData
 import com.zoku.util.ScreenDestinations
 
@@ -28,7 +29,7 @@ fun NavGraphBuilder.homeScreen(
     moveToRecordMode: () -> Unit,
     moveToRunning: () -> Unit,
     moveToExpHistory: () -> Unit,
-    phoneWatchData: PhoneWatchData
+    phoneWatchData: PhoneWatchConnection
 ) {
     composable(route = ScreenDestinations.home.route) {
         HomeScreen(

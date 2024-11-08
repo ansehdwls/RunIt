@@ -8,7 +8,6 @@ import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.MessageEvent
 import com.zoku.ui.model.PhoneWatchConnection
-import com.zoku.ui.model.PhoneWatchData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,19 +23,20 @@ class ClientDataViewModel @Inject constructor(
     MessageClient.OnMessageReceivedListener,
     CapabilityClient.OnCapabilityChangedListener {
 
-    private val _phoneWatchData = MutableStateFlow<PhoneWatchData>(PhoneWatchData.DEFAULT)
-    val phoneWatchData: StateFlow<PhoneWatchData> get() = _phoneWatchData
+    private val _phoneWatchData = MutableStateFlow<PhoneWatchConnection>(PhoneWatchConnection.EMPTY)
+    val phoneWatchData: StateFlow<PhoneWatchConnection> get() = _phoneWatchData
+
+    val _bpm = MutableStateFlow<List<Int>>(emptyList())
+    val bpm: StateFlow<List<Int>> get() = _bpm
 
     fun addBpmData(bpm: Int) {
-        _phoneWatchData.update { data ->
-            data.copy(bpm = data.bpm + bpm)
+        _bpm.update { data ->
+            data + bpm
         }
     }
 
     fun updateMessageType(connection: PhoneWatchConnection) {
-        _phoneWatchData.update { data ->
-            data.copy(sendType = connection)
-        }
+        _phoneWatchData.update { connection }
     }
 
     override fun onDataChanged(dataEventBuffer: DataEventBuffer) {
@@ -44,8 +44,6 @@ class ClientDataViewModel @Inject constructor(
     }
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
-
-
         if (messageEvent.path == PhoneWatchConnection.SEND_BPM.route) {
             // ByteArray를 String으로 변환한 후 Int로 변환
             val bpmString = messageEvent.data.toString(Charsets.UTF_8)

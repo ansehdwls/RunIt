@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.zoku.ui.model.PhoneWatchConnection
+import timber.log.Timber
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -19,13 +20,35 @@ fun RunningScreen(
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
-    moveToHome : () -> Unit
+    moveToHome : () -> Unit,
+    phoneWatchData: PhoneWatchConnection,
 ) {
 
     val runningViewModel = hiltViewModel<RunningViewModel>()
     var isPlay by remember { mutableStateOf(true) }
     var isFirstPlay by remember { mutableStateOf(true) }
     var isResult by remember { mutableStateOf(false) }
+
+    Timber.tag("RunningScreen").d("phoneWatchData $phoneWatchData")
+    when(phoneWatchData){
+        PhoneWatchConnection.PAUSE_RUNNING -> {
+            isPlay = false
+        }
+        PhoneWatchConnection.RESUME_RUNNING -> {
+            isPlay = true
+            isFirstPlay = false
+        }
+        PhoneWatchConnection.STOP_RUNNING -> {
+            isResult = true
+            moveToHome()
+        }
+        PhoneWatchConnection.SEND_BPM -> {
+            isPlay = true
+            isFirstPlay = false
+        }
+        else -> {}
+    }
+
 
     if (isResult) {
         RunningResultScreen(runningViewModel = runningViewModel,

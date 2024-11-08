@@ -79,20 +79,23 @@ fun RunningStatus(
     val metrics = uiState.exerciseState?.exerciseMetrics
     var duration by remember { mutableStateOf<Duration?>(null) }
     var flag by remember { mutableStateOf(false) }
-    Timber.tag("runningStatus").d("$lastActiveDurationCheckpoint")
 
-    Timber.tag("RunningScreen").d("duration 맨 윗 부분 $duration")
+    Timber.tag("RunningStatus").d("exerciseState ${exerciseState}")
+    Timber.tag("RunningStatus").d("duration 맨 윗 부분 $duration")
     if (exerciseState == ExerciseState.USER_PAUSING && !flag) {
         flag = true
         onPauseClick(uiState, duration)
-    }
-    LaunchedEffect(metrics?.heartRate) {
-        while (true) {
-            delay(200L)
-            sendBpm(metrics?.heartRate?.toInt() ?: 0, PhoneWatchConnection.SEND_BPM)
+    }else if(exerciseState == ExerciseState.ACTIVE){
+        LaunchedEffect(metrics?.heartRate) {
+            while (true) {
+                delay(200L)
+                sendBpm(metrics?.heartRate?.toInt() ?: 0, PhoneWatchConnection.SEND_BPM)
+            }
         }
-
     }
+
+
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
