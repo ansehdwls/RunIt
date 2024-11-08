@@ -83,7 +83,7 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
 
         HomeTitle(modifier.padding(top = 10.dp, bottom = 5.dp), "그룹 내 순위", "종합 순위", rankMenu)
 
-        if (groupList.userInfos.isNotEmpty()) UserRanking(groupList.userInfos,myName)
+        if (groupList.userInfos.isNotEmpty()) UserRanking(groupList.userInfos,(groupList.leagueRank -1))
     }
 }
 
@@ -316,7 +316,7 @@ fun ExpView(
 
 @Composable
 fun UserRanking(groupList: List<GroupMember>,
-                myName : String,
+                rank : Int,
                 ) {
 
     val groupSize = groupList.size
@@ -341,8 +341,8 @@ fun UserRanking(groupList: List<GroupMember>,
             )
         }
 
-        // 승급 표시
-        item {
+        // 승급 표시, 알이면 없음
+        if (rank > 0) item {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -383,6 +383,7 @@ fun UserRanking(groupList: List<GroupMember>,
 
             }
         }
+
         // 3명 이상 이면 적용
         if (demoteCount > 0) {
 
@@ -398,8 +399,8 @@ fun UserRanking(groupList: List<GroupMember>,
             }
         }
         if (groupSize - promoteCount - demoteCount > 0) {
-            // 강등
-            item {
+            // 강등 알이면 없음
+            if (rank > 0) item {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
