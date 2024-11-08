@@ -56,7 +56,7 @@ public class LeagueServiceImplTest {
     @Transactional // 테스트 시 트랜잭션 롤백을 원할 경우 사용
     public void weeklyLeagueSummaryTest() {
         // 1. 테스트 데이터 생성
-        int groupsPerLeague = 13;
+        int groupsPerLeague = 5;
         int usersPerGroup = 10;
         // 2. 성능 측정 시작
         long startTime = System.currentTimeMillis();

@@ -5,12 +5,27 @@ pipeline {
     }
 
     stages {
+
+       stage('application.yml download') {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'application-prod-yml', variable: 'applicationProd'),
+                    file(credentialsId: 'application-test-yml', variable: 'applicationTest')
+                ]) {
+                    script {
+                        sh 'cp $applicationProd backend/runIt/src/main/resources/application-prod.yml'
+                        sh 'cp $applicationTest backend/runIt/src/test/resources/application-test.yml'
+                    }
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 sh '''
                     chmod +x ./backend/runIt/gradlew
                     cd ./backend/runIt
-                    ./gradlew clean build -x test
+                    ./gradlew clean build
                 '''
             }
         }
@@ -70,24 +85,12 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                withCredentials([string(credentialsId: 'DATABASE_ID', variable: 'database_id'),string(credentialsId: 'DATABASE_URL', variable: 'database_url'),
-                string(credentialsId: 'RUNIT_PORT', variable: 'runit_port'),
-                string(credentialsId: 'JWT_SECRET', variable: 'jwt_secret'),
-                string(credentialsId: 'DATABASE_PW',variable:'database_pw'),
-                string(credentialsId: 'S3_PROJECT',variable:'s3_project'),
-                string(credentialsId: 'S3_ACCESSKEY',variable:'S3_accessKey'),
-                string(credentialsId: 'S3_SECRETKEY',variable:'S3_secretKey'),
-                string(credentialsId: 'RUNIT_REDIS_PORT',variable:'RUNIT_REDIS_PORT'),
-                string(credentialsId: 'EC2_SERVER_IP_NO_PORT',variable:'EC2_SERVER_IP_NO_PORT')
-                ]) {
                     sh '''
-
-                        docker run -d -p 8081:8081 --name runit -e DATABASE_URL=$database_url -e DATABASE_ID=$database_id -e DATABASE_PW=$database_pw -e RUNIT_PORT=$runit_port -e JWT_SECRET=$jwt_secret -e S3_PROJECT=$s3_project -e S3_ACCESSKEY=$S3_accessKey -e S3_SECRETKEY=$S3_secretKey -e RUNIT_REDIS_PORT=$RUNIT_REDIS_PORT -e EC2_SERVER_IP_NO_PORT=$EC2_SERVER_IP_NO_PORT "rhkeh102416/runit"
+                        docker run -d -p 8081:8081 --name runit "rhkeh102416/runit"
                     '''
-                }
-                echo 'Deployment succeeded!'
+                    echo 'Deployment succeeded!'
             }
-        }
+       }
     }
 
     post {
