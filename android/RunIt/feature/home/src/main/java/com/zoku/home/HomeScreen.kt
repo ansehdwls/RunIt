@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.zoku.ui.BaseWhiteBackground
+import com.zoku.ui.BaseYellow
 import com.zoku.ui.componenet.MenuButton
 
 
@@ -69,7 +70,7 @@ fun HomeScreen(modifier: Modifier = Modifier,
 
             MenuButton(
                 name = "정보",
-                backgroundColor = BaseWhiteBackground
+                backgroundColor = if(isInfo) BaseYellow else BaseWhiteBackground
             ) {
                 isInfo = true
             }
@@ -78,7 +79,7 @@ fun HomeScreen(modifier: Modifier = Modifier,
 
             MenuButton(
                 name = "랭킹",
-                backgroundColor = BaseWhiteBackground
+                backgroundColor = if(isInfo) BaseWhiteBackground else BaseYellow
             ) {
                 isInfo = false
             }
