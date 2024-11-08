@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -41,4 +42,24 @@ public class AttendanceServiceImpl implements AttendanceService {
                     return DayAttendanceResponse.fromEntity(DateUtils.getDayNameInKorean(day), targetDate, attended);
                 }).toList();
     }
+
+    @Override
+    public Boolean getTodayAttended(LocalDateTime today) {
+//
+//        if (attendanceRepository.findByCreatedAt(today) == null){
+//            return false;
+//        }
+
+        log.debug("today = {}", today);
+
+        return true;
+    }
+
+    @Override
+    public Void saveAttendance(Attendance attendance) {
+        attendanceRepository.save(attendance);
+        return null;
+    }
+
+
 }

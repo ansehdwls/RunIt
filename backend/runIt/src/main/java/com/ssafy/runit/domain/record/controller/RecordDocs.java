@@ -4,6 +4,7 @@ import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.RecordGetListResponse;
 import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
+import com.ssafy.runit.domain.record.dto.response.RecordPostResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,9 +24,9 @@ import java.util.Optional;
 public interface RecordDocs {
     @Operation(summary = "러닝 저장 Api", description = "러닝")
     @ApiResponse(responseCode = "200", description = "러닝 기록 저장", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
-    RunItApiResponse<Void> saveRecord(@AuthenticationPrincipal UserDetails userDetails,
-                                      @RequestPart(value = "dto") RecordSaveRequest recordSaveRequest,
-                                      @RequestPart(value = "images", required = false) MultipartFile file);
+    RunItApiResponse<RecordPostResponse> saveRecord(@AuthenticationPrincipal UserDetails userDetails,
+                                                    @RequestPart(value = "dto") RecordSaveRequest recordSaveRequest,
+                                                    @RequestPart(value = "images", required = false) MultipartFile file);
 
     @Operation(summary = "러닝 개별 기록 호출 Api", description = "러닝")
     @ApiResponse(responseCode = "200", description = "러닝 개별 기록 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))

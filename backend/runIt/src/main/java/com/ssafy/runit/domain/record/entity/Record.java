@@ -39,4 +39,5 @@ public class Record {
 
      private LocalDateTime endTime;
 
+     private Boolean isPractice;
 }
