@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.zoku.network.model.response.RunningAllHistory
+import com.zoku.ui.CustomTypo
 
 @Composable
 fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :()->Unit){
@@ -80,6 +81,18 @@ fun RecordList(modifier: Modifier, moveToDetail :()->Unit,
     LazyColumn(
         modifier = modifier
     ) {
+
+        if(runningAllList.size == 0) {
+            item{
+                Text(text = "현재 날짜에는 기록이 없습니다",
+                    style = CustomTypo().jalnan.copy(
+                        color = Color.White
+                    ),
+                    )
+            }
+
+        }
+
 
         items(runningAllList.size){ index ->
             val item = runningAllList[index]

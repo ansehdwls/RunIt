@@ -500,7 +500,7 @@ fun UserRankingProfile(
                 contentAlignment = Alignment.CenterEnd
             ) {
                 RankText(
-                    text = "100xp", fontSize = 24.sp
+                    text = "${item.exp}xp", fontSize = 24.sp
                 )
             }
         }
