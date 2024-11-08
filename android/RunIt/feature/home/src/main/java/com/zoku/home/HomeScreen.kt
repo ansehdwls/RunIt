@@ -2,6 +2,7 @@ package com.zoku.home
 
 import android.app.Activity
 import android.service.autofill.FillEventHistory
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -30,6 +31,9 @@ import androidx.compose.ui.unit.dp
 import com.zoku.ui.BaseWhiteBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.componenet.MenuButton
+import com.zoku.ui.model.PhoneWatchConnection
+import com.zoku.ui.model.PhoneWatchData
+import timber.log.Timber
 
 
 @Composable
@@ -37,7 +41,14 @@ fun HomeScreen(modifier: Modifier = Modifier,
                moveToHistory :() -> Unit,
                moveToRecordMode : ()->Unit,
                moveToRunning : () -> Unit,
-               moveToExpHistory: () -> Unit) {
+               moveToExpHistory: () -> Unit,
+               phoneWatchData : PhoneWatchData
+               ) {
+    Timber.tag("HomeScreen").d("보내기 타입 ${phoneWatchData.sendType}")
+    if(phoneWatchData.sendType == PhoneWatchConnection.SEND_BPM){
+
+        moveToRunning
+    }
     BackOnPressed()
     var isInfo by remember { mutableStateOf(true) }
     var isHistory by remember {

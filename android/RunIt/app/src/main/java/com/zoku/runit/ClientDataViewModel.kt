@@ -7,6 +7,8 @@ import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.MessageEvent
+import com.zoku.ui.model.PhoneWatchConnection
+import com.zoku.ui.model.PhoneWatchData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,11 +24,19 @@ class ClientDataViewModel @Inject constructor(
     MessageClient.OnMessageReceivedListener,
     CapabilityClient.OnCapabilityChangedListener {
 
-    private val _bpmData = MutableStateFlow<List<Int>>(emptyList())
-    val bpmData: StateFlow<List<Int>> get() = _bpmData
+    private val _phoneWatchData = MutableStateFlow<PhoneWatchData>(PhoneWatchData.DEFAULT)
+    val phoneWatchData: StateFlow<PhoneWatchData> get() = _phoneWatchData
 
     fun addBpmData(bpm: Int) {
-        _bpmData.update { it + bpm }
+        _phoneWatchData.update { data ->
+            data.copy(bpm = data.bpm + bpm)
+        }
+    }
+
+    fun updateMessageType(connection: PhoneWatchConnection) {
+        _phoneWatchData.update { data ->
+            data.copy(sendType = connection)
+        }
     }
 
     override fun onDataChanged(dataEventBuffer: DataEventBuffer) {
@@ -34,19 +44,23 @@ class ClientDataViewModel @Inject constructor(
     }
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
-        if (messageEvent.path == "/send-bpm") {
+
+
+        if (messageEvent.path == PhoneWatchConnection.SEND_BPM.route) {
             // ByteArray를 String으로 변환한 후 Int로 변환
             val bpmString = messageEvent.data.toString(Charsets.UTF_8)
             val bpm = bpmString.toIntOrNull()
 
             if (bpm != null) {
                 addBpmData(bpm)
-                Timber.tag("ClientDataViewModel").d("BPM 받기 성공 ${bpmData.value}")
+                Timber.tag("ClientDataViewModel").d("BPM 받기 성공 ${bpm}")
             } else {
                 Timber.tag("ClientDataViewModel").e("BPM 받기 실패")
             }
         }
-
+        updateMessageType(
+            PhoneWatchConnection.getType(messageEvent.path) ?: PhoneWatchConnection.EMPTY
+        )
         Timber.tag("ClientDataViewModel").d("message받기 $messageEvent")
     }
 

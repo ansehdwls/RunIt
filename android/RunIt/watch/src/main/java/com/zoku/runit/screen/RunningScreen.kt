@@ -37,6 +37,7 @@ import com.zoku.runit.util.formatDistanceKm
 import com.zoku.runit.viewmodel.RunViewModel
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.CustomTypo
+import com.zoku.ui.model.PhoneWatchConnection
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.time.Duration
@@ -45,7 +46,7 @@ import java.time.Duration
 fun RunningScreen(
     modifier: Modifier = Modifier,
     onPauseClick: (ExerciseResult) -> Unit,
-    sendBpm: (Int) -> Unit
+    sendBpm: (Int, PhoneWatchConnection) -> Unit
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
 
@@ -58,8 +59,8 @@ fun RunningScreen(
         viewModel.pauseRunning()
         onPauseClick(state.toExerciseResult(duration))
     },
-        sendBpm = { bpm ->
-            sendBpm(bpm)
+        sendBpm = { bpm, connection ->
+            sendBpm(bpm, connection)
         }
     )
 }
@@ -71,7 +72,7 @@ fun RunningStatus(
     modifier: Modifier = Modifier,
     uiState: ExerciseScreenState,
     onPauseClick: (ExerciseScreenState, Duration?) -> Unit,
-    sendBpm: (Int) -> Unit
+    sendBpm: (Int, PhoneWatchConnection) -> Unit
 ) {
     val lastActiveDurationCheckpoint = uiState.exerciseState?.activeDurationCheckpoint
     val exerciseState = uiState.exerciseState?.exerciseState
@@ -86,9 +87,9 @@ fun RunningStatus(
         onPauseClick(uiState, duration)
     }
     LaunchedEffect(metrics?.heartRate) {
-        while(true){
+        while (true) {
             delay(200L)
-            sendBpm(metrics?.heartRate?.toInt() ?: 0)
+            sendBpm(metrics?.heartRate?.toInt() ?: 0, PhoneWatchConnection.SEND_BPM)
         }
 
     }

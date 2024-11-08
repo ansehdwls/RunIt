@@ -4,12 +4,14 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.zoku.login.LoginViewModel
@@ -24,6 +26,7 @@ import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
+import com.zoku.runit.ClientDataViewModel
 import com.zoku.running.navigation.navigateToRunning
 import com.zoku.running.navigation.runningScreen
 import com.zoku.ui.model.PhoneWatchConnection
@@ -40,9 +43,13 @@ fun RunItMainNavHost(
     onStopWearableActivityClick: (String) -> Unit,
     startDestination: String = ScreenDestinations.login.route
 ) {
-
+    val clientDataViewModel: ClientDataViewModel = hiltViewModel()
     var isUserLoggedIn by remember { mutableStateOf(false) }
     val loginViewModel: LoginViewModel = hiltViewModel()
+
+    val phoneWatchData by clientDataViewModel.phoneWatchData.collectAsState()
+
+
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -55,10 +62,11 @@ fun RunItMainNavHost(
                 navController.navigateToRecordModeScreen()
             },
             moveToRunning = {
-                onStartWearableActivityClick(PhoneWatchConnection.START_RUNNING.route)
+                onStartWearableActivityClick(PhoneWatchConnection.SEND_BPM.route)
                 navController.navigateToRunning()
             },
-            moveToExpHistory = { navController.navigateToExpHistory() }
+            moveToExpHistory = { navController.navigateToExpHistory()},
+            phoneWatchData = phoneWatchData
         )
         this.runHistory()
         this.recordMode(
@@ -75,7 +83,7 @@ fun RunItMainNavHost(
             onPauseWearableActivityClick = onPauseWearableActivityClick,
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
-            moveToHome = {navController.navigateToHome()}
+            moveToHome = { navController.navigateToHome() }
         )
 //        this.runningResultScreen(modifier = modifier)
 
