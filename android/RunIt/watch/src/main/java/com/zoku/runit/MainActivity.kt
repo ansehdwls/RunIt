@@ -21,6 +21,7 @@ import com.zoku.ui.model.PhoneWatchConnection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -86,12 +87,13 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
+        Timber.tag("MainActivity").d("onStop")
         isActivityActive = false
     }
+
 
     companion object {
         private const val PHONE_CAPABILITY = "phone"

@@ -56,14 +56,13 @@ fun RunItMainNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-
         this.homeScreen(
             moveToHistory = { navController.navigateToRunHistory() },
             moveToRecordMode = {
                 navController.navigateToRecordModeScreen()
             },
             moveToRunning = {
-                onStartWearableActivityClick(PhoneWatchConnection.SEND_BPM.route)
+                onStartWearableActivityClick(PhoneWatchConnection.START_RUNNING.route)
                 navController.navigateToRunning()
             },
             moveToExpHistory = { navController.navigateToExpHistory()},

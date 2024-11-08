@@ -46,7 +46,6 @@ fun HomeScreen(modifier: Modifier = Modifier,
                ) {
     Timber.tag("HomeScreen").d("보내기 타입 ${phoneWatchData.sendType}")
     if(phoneWatchData.sendType == PhoneWatchConnection.SEND_BPM){
-
         moveToRunning
     }
     BackOnPressed()

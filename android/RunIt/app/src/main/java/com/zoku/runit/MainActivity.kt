@@ -73,6 +73,7 @@ class MainActivity : ComponentActivity() {
             Uri.parse("phone://"),
             CapabilityClient.FILTER_REACHABLE
         )
+        sendWearable()
     }
 
     private fun sendWearable(path: String = PhoneWatchConnection.START_ACTIVITY.route) {
@@ -82,7 +83,7 @@ class MainActivity : ComponentActivity() {
                     .getCapability(WEAR_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
                     .await()
                     .nodes
-
+                Timber.tag("MainWearable").d("메세지 전송 $nodes , $path")
                 nodes.map { node ->
                     async {
                         Timber.tag("MainWearable").d("메세지 전송 $nodes , $path")

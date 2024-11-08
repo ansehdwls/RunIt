@@ -91,7 +91,7 @@ class DataLayerListenerService : WearableListenerService() {
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
         super.onMessageReceived(messageEvent)
-        Timber.tag("DataLayerListenerService").d("메세지 수신 $messageEvent")
+        Timber.tag("DataLayerListenerService").d("메세지 수신 $messageEvent ${MainActivity.isActivityActive}")
         when (messageEvent.path) {
             PhoneWatchConnection.START_ACTIVITY.route -> {
                 if (!MainActivity.isActivityActive) {
