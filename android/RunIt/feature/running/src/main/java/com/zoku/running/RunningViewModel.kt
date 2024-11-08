@@ -86,7 +86,10 @@ class RunningViewModel @Inject constructor(
                 }
                 if (lastLocation != null) {
                     val distance = lastLocation!!.distanceTo(newLocation)
-                    Log.d("확인", "거리를 재고 있어요 $distance 총 ${uiState.value.distance + distance.toInt()}")
+                    Log.d(
+                        "확인",
+                        "거리를 재고 있어요 $distance 총 ${uiState.value.distance + distance.toInt()}"
+                    )
                     updateUIState(
                         newDistance = uiState.value.distance + distance.toInt()
                     )
@@ -116,7 +119,12 @@ class RunningViewModel @Inject constructor(
                 val intDistance = it.toInt()
                 if ((intDistance > 0) && (intDistance % 10 == 0)) {
                     //현재 미터단위, 킬로미터로 수정해야함
-                    tts.speak("${intDistance}미터 달성하였습니다. 화이팅!",TextToSpeech.QUEUE_FLUSH, null,null)
+                    tts.speak(
+                        "${intDistance}미터 달성하였습니다. 화이팅!",
+                        TextToSpeech.QUEUE_FLUSH,
+                        null,
+                        null
+                    )
                 }
             }
             currentState.copy(
