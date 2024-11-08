@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,13 +37,15 @@ import com.zoku.runit.util.formatDistanceKm
 import com.zoku.runit.viewmodel.RunViewModel
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.CustomTypo
+import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.time.Duration
 
 @Composable
 fun RunningScreen(
     modifier: Modifier = Modifier,
-    onPauseClick: (ExerciseResult) -> Unit
+    onPauseClick: (ExerciseResult) -> Unit,
+    sendBpm: (Int) -> Unit
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
 
@@ -50,11 +53,15 @@ fun RunningScreen(
 
     Timber.tag("RunningScreen RunningStatus").d("운동 State ${uiState.exerciseState}")
 
-    RunningStatus(uiState = uiState) { state, duration ->
+    RunningStatus(uiState = uiState, onPauseClick = { state, duration ->
         Timber.tag("RunningScreen RunningStatus").d("$duration")
         viewModel.pauseRunning()
         onPauseClick(state.toExerciseResult(duration))
-    }
+    },
+        sendBpm = { bpm ->
+            sendBpm(bpm)
+        }
+    )
 }
 
 
@@ -63,7 +70,8 @@ fun RunningScreen(
 fun RunningStatus(
     modifier: Modifier = Modifier,
     uiState: ExerciseScreenState,
-    onPauseClick: (ExerciseScreenState, Duration?) -> Unit
+    onPauseClick: (ExerciseScreenState, Duration?) -> Unit,
+    sendBpm: (Int) -> Unit
 ) {
     val lastActiveDurationCheckpoint = uiState.exerciseState?.activeDurationCheckpoint
     val exerciseState = uiState.exerciseState?.exerciseState
@@ -76,6 +84,13 @@ fun RunningStatus(
     if (exerciseState == ExerciseState.USER_PAUSING && !flag) {
         flag = true
         onPauseClick(uiState, duration)
+    }
+    LaunchedEffect(metrics?.heartRate) {
+        while(true){
+            delay(200L)
+            sendBpm(metrics?.heartRate?.toInt() ?: 0)
+        }
+
     }
 
     Column(

@@ -90,7 +90,6 @@ class MainActivity : ComponentActivity() {
                             .await()
                     }
                 }.awaitAll()
-                Timber.tag("MainWearable").d("웨어러블 실행하도록 요청하는 것 이가능!")
             } catch (cancellationException: CancellationException) {
                 Timber.tag("MainWearable").d("웨어러블 실행하도록 요청하는 것 !")
                 throw cancellationException

@@ -17,12 +17,13 @@ import timber.log.Timber
 fun WatchNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = WatchScreenDestination.home.route
+    startDestination: String = WatchScreenDestination.home.route,
+    sendBpm: (Int) -> Unit
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier
+        modifier = modifier,
     ) {
         composable(route = WatchScreenDestination.home.route) {
             HomeScreen(modifier) {
@@ -31,12 +32,17 @@ fun WatchNavHost(
         }
 
         composable(route = WatchScreenDestination.running.route) {
-            RunningScreen(modifier) { exerciseResult ->
+            RunningScreen(modifier, onPauseClick =
+            { exerciseResult ->
                 navController.run {
                     Timber.tag("WatchNavHost RunningScreen Result").d("${exerciseResult}")
                     this.navigate(WatchScreenDestination.runningPause.createRoute(exerciseResult))
                 }
-            }
+            },
+                sendBpm = { bpm ->
+                    sendBpm(bpm)
+                }
+            )
         }
         composable(
             route = WatchScreenDestination.runningPause.route,

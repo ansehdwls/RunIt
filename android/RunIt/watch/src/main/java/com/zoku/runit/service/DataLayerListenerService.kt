@@ -138,7 +138,6 @@ class DataLayerListenerService  : WearableListenerService() {
 
     companion object {
         private const val TAG = "DataLayerService"
-        const val RUNNING_ACTION = "com.zoku.runit.action.running"
         private const val DATA_ITEM_RECEIVED_PATH = "/data-item-received"
         const val COUNT_PATH = "/count"
 

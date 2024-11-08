@@ -17,7 +17,6 @@ import com.google.android.gms.wearable.Wearable
 import com.google.android.horologist.compose.layout.AppScaffold
 import com.zoku.runit.ui.MainScreen
 import com.zoku.runit.util.PermissionHelper
-import com.zoku.ui.model.PhoneWatchConnection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -44,7 +43,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             navController = rememberNavController()
             AppScaffold {
-                MainScreen(Modifier.fillMaxSize(), navController)
+                MainScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController,
+                    sendBpm = ::sendBpm
+                )
             }
 
         }
@@ -52,10 +55,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        sendPhone()
     }
 
-    private fun sendPhone(path: String = PhoneWatchConnection.START_ACTIVITY.route) {
+    private fun sendBpm(bpm: Int) {
         lifecycleScope.launch {
             try {
                 val nodes = capabilityClient
@@ -63,14 +65,17 @@ class MainActivity : ComponentActivity() {
                     .await()
                     .nodes
 
+                val bpmData = bpm.toString().toByteArray(Charsets.UTF_8)
+
+                Timber.tag("sendPhone").d("노드 확인 $nodes , $SEND_BPM")
                 nodes.map { node ->
                     async {
-                        Timber.tag("sendPhone").d("메세지 전송 $nodes , $path")
-                        messageClient.sendMessage(node.id, path, byteArrayOf())
+                        Timber.tag("sendPhone").d("메세지 전송 $nodes , $bpmData")
+                        messageClient.sendMessage(node.id, SEND_BPM, bpmData)
                             .await()
                     }
                 }.awaitAll()
-                Timber.tag("sendPhone").d("핸드폰에 데이터 보내기")
+
             } catch (cancellationException: CancellationException) {
                 Timber.tag("sendPhone").d("핸드폰에 데이터 보내기 취소!")
                 throw cancellationException
@@ -83,6 +88,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         private const val PHONE_CAPABILITY = "phone"
+        private const val SEND_BPM = "/send-bpm"
     }
 
 }
@@ -91,5 +97,5 @@ class MainActivity : ComponentActivity() {
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true, apiLevel = 33)
 @Composable
 fun DefaultPreview() {
-    MainScreen(navController = rememberNavController())
+
 }
