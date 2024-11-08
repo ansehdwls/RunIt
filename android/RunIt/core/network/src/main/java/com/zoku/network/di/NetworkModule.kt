@@ -3,6 +3,7 @@ package com.zoku.network.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.zoku.network.BuildConfig
+import com.zoku.network.api.AttendanceApi
 import com.zoku.network.api.ExpApi
 import com.zoku.network.api.GroupApi
 import com.zoku.network.api.LoginApi
@@ -92,4 +93,10 @@ object NetworkModule {
     @Provides
     fun provideGroupService(@Named("runit") retrofit: Retrofit) : GroupApi =
         retrofit.create(GroupApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideAttendanceService(@Named("runit") retrofit: Retrofit) : AttendanceApi =
+        retrofit.create(AttendanceApi::class.java)
+
 }

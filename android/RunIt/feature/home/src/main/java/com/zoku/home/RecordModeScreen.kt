@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,9 +28,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
+import com.zoku.network.model.response.RunningAllHistory
 
 @Composable
 fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :()->Unit){
+
+    val viewModel : RecordModeViewModel = hiltViewModel()
+
+    val runningAllList by viewModel.runningAllHistoryRecord.collectAsState()
+
+    with(viewModel){
+        getRunningAllHistory()
+    }
+
   Column(
       modifier = modifier
           .fillMaxWidth()
@@ -47,40 +62,54 @@ fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :()->Unit){
         )
 
       // 기록 리스트
-      RecordList(
-          modifier
-              .weight(1f)
-              .padding(horizontal = 20.dp)
-          , moveToDetail= moveToDetail
-      )
+      if(runningAllList.isNotEmpty()){
+          RecordList(
+              modifier
+                  .weight(1f)
+                  .padding(horizontal = 20.dp)
+              , moveToDetail= moveToDetail,
+              runningAllList
+          )
+      }
   }
 }
 
 @Composable
-fun RecordList(modifier: Modifier, moveToDetail :()->Unit){
-    Column(
+fun RecordList(modifier: Modifier, moveToDetail :()->Unit,
+               runningAllList : List<RunningAllHistory>){
+    LazyColumn(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
     ) {
 
-        // 날짜
-        Text(text = "2024-10-27",
-            color = Color.White,
-            modifier = Modifier.fillMaxWidth(),
-            fontFamily = com.zoku.ui.ZokuFamily)
+        items(runningAllList.size){ index ->
+            val item = runningAllList[index]
+            // 날짜
+            Text(text = item.startTime.substringBefore("T"),
+                color = Color.White,
+                modifier = Modifier.fillMaxWidth(),
+                fontFamily = com.zoku.ui.ZokuFamily)
 
-        RecordDataView(modifier =  Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .padding(top = 5.dp)
-            .clip(RoundedCornerShape(16.dp))
-                ,moveToDetail = moveToDetail)
+            RecordDataView(modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(top = 5.dp)
+                .clip(RoundedCornerShape(16.dp))
+                ,moveToDetail = moveToDetail,
+                item)
+        }
 
     }
 }
 
 @Composable
-fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit){
+fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit,
+                   item : RunningAllHistory){
+
+    val startTime = item.startTime.substringAfter("T").substring(0, 5)
+    val endTime = item.endTime.substringAfter("T").substring(0, 5)
+    val startHour = startTime.substringBefore(":").toInt()
+    val endHour = endTime.substringBefore(":").toInt()
+
     //가록 Surface
     Surface(
         onClick = { moveToDetail() },
@@ -93,12 +122,23 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit){
         ) {
             // 시간
             Text(
-                text = "오후 3:37 ~ 오후 3:52",
+                text = if(startHour > 12) "오후 $startTime" else "오전 $startTime",
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, end = 25.dp),
                 textAlign = TextAlign.End,
                 fontFamily = com.zoku.ui.ZokuFamily
             )
+
+            Text(
+                text = "~ ${if(endHour > 12) "오후 $endTime" else  "오전 $endTime" }",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 10.dp),
+                textAlign = TextAlign.End,
+                fontFamily = com.zoku.ui.ZokuFamily
+            )
+
 
             // 지도 및 데이터
             Row(
@@ -106,14 +146,15 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit){
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Image(painter = painterResource(id = R.drawable.sample_map_history_icon),
+                Image(painter = rememberAsyncImagePainter(item.imageUrl),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .weight(3f)
                         .padding(10.dp))
                 RecordTextView(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    item
                 )
             }
         }
@@ -121,21 +162,22 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit){
 }
 
 @Composable
-fun RecordTextView(modifier: Modifier){
+fun RecordTextView(modifier: Modifier,
+                   item: RunningAllHistory){
     Column(
         modifier = modifier
     ) {
         Box(modifier = Modifier.weight(2f)){
-            Text(text = "시용지 이름",
+            Text(text = item.name,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.Center),
                 fontFamily = com.zoku.ui.ZokuFamily)
         }
         Box(modifier = Modifier.weight(3f)){
             Column {
-                Text(text = "거리 : 3km",
+                Text(text = "거리 : ${item.distance}km",
                     fontFamily = com.zoku.ui.ZokuFamily)
-                Text(text = "시간 : 15분",
+                Text(text = "시간 : ${item.bpm}분",
                     fontFamily = com.zoku.ui.ZokuFamily)
             }
         }

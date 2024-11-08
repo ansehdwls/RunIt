@@ -39,16 +39,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.zoku.home.component.DropDownMenu
+import com.zoku.network.model.response.AttendanceDay
 import com.zoku.network.model.response.GroupMember
 import com.zoku.ui.CustomTypo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.withContext
 import org.w3c.dom.Text
+import java.time.LocalDate
 
 @Composable
-fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
+fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
     val rankMenu = arrayOf("종합 순위", "페이스 순위", "거리 순위")
     val rankViewModel: RankViewModel = hiltViewModel()
+
+    // 이번주 출석 현황
+    val attendanceList by rankViewModel.attendanceWeekInfo.collectAsState()
 
     // 이번주 획득 경험치
     val weekExp by rankViewModel.currentExp.collectAsState()
@@ -56,27 +61,31 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory : () -> Unit) {
     // 그룹 리스트
     val groupList by rankViewModel.groupInfo.collectAsState()
 
-    with(rankViewModel){
+    with(rankViewModel) {
         getAllExpHistory()
         getWeekExp()
         getGroupList()
+        getAttendance()
     }
     Column(
         modifier = modifier
             .padding(horizontal = 10.dp)
             .fillMaxSize()
     ) {
-        RankingInfo(moveToExpHistory,weekExp)
+        RankingInfo(moveToExpHistory, weekExp, attendanceList)
 
         HomeTitle(modifier.padding(top = 10.dp, bottom = 5.dp), "그룹 내 순위", "종합 순위", rankMenu)
 
-        if(groupList.isNotEmpty()) UserRanking(groupList)
+        if (groupList.isNotEmpty()) UserRanking(groupList)
     }
 }
 
 @Composable
-fun RankingInfo(moveToExpHistory : () -> Unit,
-                weekExp: Int) {
+fun RankingInfo(
+    moveToExpHistory: () -> Unit,
+    weekExp: Int,
+    attendanceList: List<AttendanceDay>
+) {
     val baseModifier = Modifier.fillMaxWidth()
     Box(
         modifier = baseModifier
@@ -90,13 +99,15 @@ fun RankingInfo(moveToExpHistory : () -> Unit,
             InfoIconButton("리그 정보", onClick = {})
 
             UserProfile()
+            if (attendanceList.isNotEmpty()){
+                DailyCheckView(
+                    baseModifier
+                        .padding(top = 10.dp),
+                    attendanceList
+                )
+            }
 
-            DailyCheckView(
-                baseModifier
-                    .padding(top = 10.dp)
-            )
-
-            ExpView(baseModifier,moveToExpHistory, weekExp)
+            ExpView(baseModifier, moveToExpHistory, weekExp)
 
             InfoIconButton("경험치 획득 방법", onClick = {})
         }
@@ -193,21 +204,24 @@ fun InfoIconButton(title: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun DailyCheckView(modifier: Modifier = Modifier) {
-    val list = arrayListOf("월", "화", "수", "목", "금", "토", '일')
+fun DailyCheckView(
+    modifier: Modifier = Modifier,
+    attendanceList: List<AttendanceDay>
+) {
+    val today = LocalDate.now().dayOfWeek.value - 1
     Row(
         modifier = modifier.fillMaxWidth()
     ) {
-        for (i in 0..6) {
+        for (i in 0..today) {
             DailyCheck(
-                Modifier.weight(1f), day = list[i].toString(), type = when (i) {
-                    0 -> 2
-                    1 -> 1
-                    2 -> 1
-                    3 -> 2
-                    4 -> 1
-                    else -> 0
-                }
+                Modifier.weight(1f),
+                day = attendanceList[i].day,
+                type = if (attendanceList[i].attended) 1 else 2
+            )
+        }
+        for (i in today until 6) {
+            DailyCheck(
+                Modifier.weight(1f), day = attendanceList[i].day, type = 0
             )
         }
     }
@@ -237,9 +251,11 @@ fun DailyCheck(modifier: Modifier = Modifier, type: Int = 0, day: String) {
 }
 
 @Composable
-fun ExpView(modifier: Modifier = Modifier,
-            moveToExpHistory : () -> Unit,
-            weekExp : Int) {
+fun ExpView(
+    modifier: Modifier = Modifier,
+    moveToExpHistory: () -> Unit,
+    weekExp: Int
+) {
     Row(
         modifier = modifier
             .padding(vertical = 5.dp)
@@ -283,7 +299,7 @@ fun ExpView(modifier: Modifier = Modifier,
 }
 
 @Composable
-fun UserRanking(groupList : List<GroupMember>) {
+fun UserRanking(groupList: List<GroupMember>) {
 
     val groupSize = groupList.size
     val promoteCount = (groupSize * 0.3).toInt().coerceAtLeast(1)
@@ -308,7 +324,7 @@ fun UserRanking(groupList : List<GroupMember>) {
         }
 
         // 승급 표시
-        item{
+        item {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -350,7 +366,7 @@ fun UserRanking(groupList : List<GroupMember>) {
             }
         }
         // 3명 이상 이면 적용
-        if(groupSize > 3){
+        if (groupSize > 3) {
 
             // 유지 인원
             items(groupSize - promoteCount - demoteCount) { index ->
@@ -424,8 +440,10 @@ fun UserRanking(groupList : List<GroupMember>) {
 }
 
 @Composable
-fun UserRankingProfile(modifier: Modifier = Modifier,
-                       item : GroupMember,index : Int) {
+fun UserRankingProfile(
+    modifier: Modifier = Modifier,
+    item: GroupMember, index: Int
+) {
     val baseModifier = Modifier.fillMaxHeight()
     Surface(
         modifier = modifier
@@ -440,7 +458,7 @@ fun UserRankingProfile(modifier: Modifier = Modifier,
                 contentAlignment = Alignment.Center
             ) {
                 RankText(
-                    text = "${index+1}",
+                    text = "${index + 1}",
                     fontSize = 24.sp
                 )
             }
