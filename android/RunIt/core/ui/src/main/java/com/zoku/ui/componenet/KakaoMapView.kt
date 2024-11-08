@@ -40,7 +40,8 @@ fun KakaoMapView(
     modifier: Modifier = Modifier,
     totalLocationList: List<LocationData>,
     isResult: Boolean = false,
-    onCaptureComplete: (File) -> Unit = {}
+    onCaptureComplete: (File) -> Unit = {},
+    initialLocation: LocationData? = null
 ) {
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
@@ -91,6 +92,13 @@ fun KakaoMapView(
                                     LatLng.from(centerLat, centerLng)
                                 )
                                 kakaoMap.moveCamera(cameraUpdate)
+                            }else{
+                                initialLocation?.let{
+                                    val cameraUpdate = CameraUpdateFactory.newCenterPosition(
+                                        LatLng.from(it.latitude, it.longitude)
+                                    )
+                                    kakaoMap.moveCamera(cameraUpdate)
+                                }
                             }
 
 

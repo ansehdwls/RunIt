@@ -65,7 +65,8 @@ fun RunningResultScreen(
                 onCaptureComplete = { file ->
                     captureFile = file
                     isMapCompleted = true
-                }
+                },
+                initialLocation = runningViewModel.getInitialLocationData()
             )
         }
 
