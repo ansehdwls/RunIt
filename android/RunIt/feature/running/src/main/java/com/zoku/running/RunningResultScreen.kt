@@ -1,5 +1,6 @@
 package com.zoku.running
 
+import android.graphics.Paint.Align
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -73,7 +74,8 @@ fun RunningResultScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.7f)
+                .weight(0.7f),
+            contentAlignment = Alignment.Center
         ) {
             RecordDetailInfo(startDestination = 1)
         }
