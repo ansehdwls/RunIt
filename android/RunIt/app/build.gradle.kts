@@ -31,10 +31,22 @@ android {
         buildConfigField("String", "KAKAO_API_KEY", properties["KAKAO_API_KEY"] as String)
         resValue("string", "KAKAO_REDIRECT_URI", properties["KAKAO_REDIRECT_URI"] as String)
         manifestPlaceholders["KAKAO_API_KEY"] = properties["KAKAO_API_KEY"] as String
+
+        ndk {
+            abiFilters.add("arm64-v8a")
+        }
     }
 
     buildTypes {
         release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+
+        debug {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

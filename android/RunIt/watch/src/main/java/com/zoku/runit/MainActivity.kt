@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        isActivityActive = true
     }
 
     private fun sendBpm(bpm: Int) {
@@ -85,10 +86,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        isActivityActive = false
+    }
 
     companion object {
         private const val PHONE_CAPABILITY = "phone"
         private const val SEND_BPM = "/send-bpm"
+        var isActivityActive = false
     }
 
 }
