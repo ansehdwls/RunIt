@@ -18,7 +18,8 @@ fun RunningScreen(
     modifier: Modifier = Modifier,
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
-    onStopWearableActivityClick: (String) -> Unit
+    onStopWearableActivityClick: (String) -> Unit,
+    moveToHome : () -> Unit
 ) {
 
     val runningViewModel = hiltViewModel<RunningViewModel>()
@@ -27,7 +28,8 @@ fun RunningScreen(
     var isResult by remember { mutableStateOf(false) }
 
     if (isResult) {
-        RunningResultScreen(runningViewModel = runningViewModel)
+        RunningResultScreen(runningViewModel = runningViewModel,
+            moveToHome = moveToHome)
     } else {
         if (isPlay) {
             RunningPlayScreen(
