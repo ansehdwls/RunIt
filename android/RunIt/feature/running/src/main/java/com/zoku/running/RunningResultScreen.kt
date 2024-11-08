@@ -72,7 +72,8 @@ fun RunningResultScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.7f)
+                .weight(0.7f),
+            contentAlignment = Alignment.Center
         ) {
             RecordDetailInfo(startDestination = 1)
         }
