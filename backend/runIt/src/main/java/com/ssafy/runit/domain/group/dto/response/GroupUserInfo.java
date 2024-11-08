@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetGroupUsersResponse {
+public class GroupUserInfo {
     private String userName;
     private String imageUrl;
     private Long exp;
 
-    public static GetGroupUsersResponse fromEntity(User user, Long exp) {
-        return GetGroupUsersResponse.builder()
+    public static GroupUserInfo fromEntity(User user, Long exp) {
+        return GroupUserInfo.builder()
                 .userName(user.getUserName())
                 .imageUrl(user.getImageUrl())
                 .exp(exp)
