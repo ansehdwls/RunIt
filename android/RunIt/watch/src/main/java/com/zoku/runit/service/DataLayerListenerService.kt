@@ -20,10 +20,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class DataLayerListenerService  : WearableListenerService() {
+class DataLayerListenerService : WearableListenerService() {
 
     private val messageClient by lazy { Wearable.getMessageClient(this) }
 
@@ -47,7 +46,7 @@ class DataLayerListenerService  : WearableListenerService() {
     override fun onCreate() {
         super.onCreate()
         // ExerciseService에 바인드
-        if(!isBound){
+        if (!isBound) {
             bindService(
                 Intent(this, ExerciseService::class.java),
                 serviceConnection,
@@ -95,10 +94,13 @@ class DataLayerListenerService  : WearableListenerService() {
         Timber.tag("DataLayerListenerService").d("메세지 수신 $messageEvent")
         when (messageEvent.path) {
             PhoneWatchConnection.START_ACTIVITY.route -> {
-                startActivity(
-                    Intent(this, MainActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                )
+                if (!MainActivity.isActivityActive) {
+                    startActivity(
+                        Intent(this, MainActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    )
+                }
+
             }
 
             PhoneWatchConnection.START_RUNNING.route -> {

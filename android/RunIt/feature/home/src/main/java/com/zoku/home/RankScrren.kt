@@ -13,38 +13,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.zoku.home.component.DropDownMenu
 import com.zoku.network.model.response.AttendanceDay
 import com.zoku.network.model.response.GroupMember
 import com.zoku.ui.CustomTypo
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.withContext
-import org.w3c.dom.Text
 import java.time.LocalDate
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -101,7 +91,7 @@ fun RankingInfo(
             InfoIconButton("리그 정보", onClick = {})
 
             UserProfile()
-            if (attendanceList.isNotEmpty()){
+            if (attendanceList.isNotEmpty()) {
                 DailyCheckView(
                     baseModifier
                         .padding(top = 10.dp),
@@ -455,6 +445,7 @@ fun UserRankingProfile(
             .height(80.dp)
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(10.dp))
+            .background(com.zoku.ui.BaseDarkBackground)
     ) {
         Row {
             Box(
@@ -464,7 +455,8 @@ fun UserRankingProfile(
             ) {
                 RankText(
                     text = "${index + 1}",
-                    fontSize = 24.sp
+                    fontSize = 24.sp,
+                    color = Color.Black
                 )
             }
             Image(
@@ -480,7 +472,7 @@ fun UserRankingProfile(
                 modifier = baseModifier.weight(1f),
                 contentAlignment = Alignment.CenterStart
             ) {
-                RankText(text = item.userName, fontSize = 20.sp)
+                RankText(text = item.userName, fontSize = 20.sp, color = Color.Black)
             }
             Box(
                 modifier = baseModifier,
@@ -508,13 +500,18 @@ fun UserRankingProfile(
 }
 
 @Composable
-fun RankText(modifier: Modifier = Modifier, text: String, fontSize: TextUnit = 15.sp,) {
+fun RankText(
+    modifier: Modifier = Modifier,
+    text: String,
+    fontSize: TextUnit = 15.sp,
+    color: Color = Color.White
+) {
     Text(
         text = text,
         style = CustomTypo().jalnan.copy(
             fontSize = fontSize,
             textAlign = TextAlign.Center,
-            color = Color.White
+            color = color
         ),
     )
 }

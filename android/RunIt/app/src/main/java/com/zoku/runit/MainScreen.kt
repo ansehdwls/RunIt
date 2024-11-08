@@ -11,6 +11,7 @@ import com.zoku.runit.navigation.RunItMainNavHost
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
+    onHomeScreen : () -> Unit,
     onStartWearableActivityClick: (String) -> Unit,
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
@@ -20,6 +21,7 @@ fun MainScreen(
     RunItMainNavHost(
         modifier = modifier,
         navController = navController,
+        onHomeScreen = onHomeScreen,
         onStartWearableActivityClick = onStartWearableActivityClick,
         onPauseWearableActivityClick = onPauseWearableActivityClick,
         onResumeWearableActivityClick = onResumeWearableActivityClick,
