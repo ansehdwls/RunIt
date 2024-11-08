@@ -85,9 +85,10 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         isActivityActive = false
     }
 
