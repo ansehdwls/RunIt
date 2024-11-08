@@ -124,26 +124,26 @@ fun RunningPlayScreen(
 
         Spacer(modifier = Modifier.weight(0.15f))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Start)
-        ) {
-            Spacer(modifier = Modifier.weight(0.15f))
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .align(Alignment.Start)
+//        ) {
+//            Spacer(modifier = Modifier.weight(0.15f))
+//
+//            RobotoText(
+//                text = "심박수",
+//                fontSize = 20.sp,
+//            )
+//
+//            Spacer(modifier = Modifier.weight(0.9f))
+//        }
 
-            RobotoText(
-                text = "심박수",
-                fontSize = 20.sp,
-            )
+//        Spacer(modifier = Modifier.weight(0.3f))
 
-            Spacer(modifier = Modifier.weight(0.9f))
-        }
+//        TempHeartGraph()
 
-        Spacer(modifier = Modifier.weight(0.3f))
-
-        TempHeartGraph()
-
-        Spacer(modifier = Modifier.weight(0.3f))
+        Spacer(modifier = Modifier.weight(0.2f))
 
         if (isFirstPlay) {
             RoundRunButton(

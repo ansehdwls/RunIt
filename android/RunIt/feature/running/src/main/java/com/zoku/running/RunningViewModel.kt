@@ -86,7 +86,7 @@ class RunningViewModel @Inject constructor(
                 }
                 if (lastLocation != null) {
                     val distance = lastLocation!!.distanceTo(newLocation)
-                    Log.d("확인", "거리를 재고 있어요 $distance")
+                    Log.d("확인", "거리를 재고 있어요 $distance 총 ${uiState.value.distance + distance.toInt()}")
                     updateUIState(
                         newDistance = uiState.value.distance + distance.toInt()
                     )
