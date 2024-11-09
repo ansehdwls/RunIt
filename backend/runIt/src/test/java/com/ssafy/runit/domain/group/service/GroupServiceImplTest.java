@@ -2,7 +2,7 @@ package com.ssafy.runit.domain.group.service;
 
 import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.experience.repository.ExperienceRepository;
-import com.ssafy.runit.domain.group.dto.response.GetGroupUsersResponse;
+import com.ssafy.runit.domain.group.dto.response.GroupUserInfo;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.league.entity.League;
@@ -58,7 +58,7 @@ public class GroupServiceImplTest {
     @Test
     @DisplayName("그룹 별 사용자 경험치 합계 및 랭킹 조회 테스트")
     @Transactional
-    public void testFindUsersByGroupPerformance() {
+    public void testFindUsersByGroupWithRankPerformance() {
         int groupCount = 10;
         int userPerGroup = 10;
         int experiencePerUser = 1000;
@@ -77,7 +77,7 @@ public class GroupServiceImplTest {
         experienceRepository.saveAll(experiences);
         long startTime = System.currentTimeMillis();
         for (Group group : groups) {
-            List<GetGroupUsersResponse> responses = groupService.findUsersByGroup(group.getId());
+            List<GroupUserInfo> responses = groupService.findUsersByGroup(group);
             for (int i = 0; i < responses.size() - 1; i++) {
                 long current = responses.get(i).getExp();
                 long next = responses.get(i + 1).getExp();
