@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.attendance.service;
 
+import com.ssafy.runit.domain.attendance.dto.AttendanceSaveDto;
 import com.ssafy.runit.domain.attendance.dto.response.DayAttendanceResponse;
 import com.ssafy.runit.domain.attendance.entity.Attendance;
 import com.ssafy.runit.domain.attendance.repository.AttendanceRepository;
@@ -10,6 +11,7 @@ import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -44,11 +46,11 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public Boolean getTodayAttended(LocalDateTime today) {
-//
-//        if (attendanceRepository.findByCreatedAt(today) == null){
-//            return false;
-//        }
+    public Boolean getTodayAttended(LocalDate today) {
+
+        if (attendanceRepository.findByCreatedAt(today).isEmpty()){
+            return false;
+        }
 
         log.debug("today = {}", today);
 
@@ -56,7 +58,9 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public Void saveAttendance(Attendance attendance) {
+    public Void saveAttendance(UserDetails userDetails) {
+        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+        Attendance attendance = new AttendanceSaveDto().toEntity(findUser);
         attendanceRepository.save(attendance);
         return null;
     }
