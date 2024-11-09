@@ -1,6 +1,8 @@
 package com.ssafy.runit.domain.record.controller;
 
 import com.ssafy.runit.RunItApiResponse;
+import com.ssafy.runit.domain.attendance.dto.AttendanceSaveDto;
+import com.ssafy.runit.domain.attendance.entity.Attendance;
 import com.ssafy.runit.domain.attendance.service.AttendanceService;
 import com.ssafy.runit.domain.experience.service.ExperienceService;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
@@ -17,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,13 +32,13 @@ public class RecordController implements RecordDocs{
 
     private final RecordService recordService;
     private final AttendanceService attendanceService;
-    private final ExperienceService experienceService;
 
     @Override
     @PostMapping(value = "/run", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public RunItApiResponse<RecordPostResponse> saveRecord(@AuthenticationPrincipal UserDetails userDetails,
                                                            @RequestPart(value = "dto")  RecordSaveRequest recordSaveRequest,
                                                            @RequestPart(value = "images", required = false) MultipartFile file) {
+
         recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
 
         /*
@@ -51,16 +54,14 @@ public class RecordController implements RecordDocs{
          * */
 
 
-
-
-
         RecordPostResponse postResponse;
 
 
 
-        if (attendanceService.getTodayAttended(LocalDateTime.now()) == false){
+        if (attendanceService.getTodayAttended(LocalDate.now()) == false){
             // 출석 + 경험치
             postResponse = RecordPostResponse.toEntity(false, 100);
+            attendanceService.saveAttendance(userDetails);
         }
         else{
             postResponse = RecordPostResponse.toEntity(true, 100);
