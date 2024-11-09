@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -108,25 +110,29 @@ public class RecordServiceImpl implements RecordService {
     public RecordTodayResponse getTodayData(UserDetails userDetails) {
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
 
-//        LocalDateTime todayStart = LocalDateTime.;
-//        LocalDateTime todayEnd = LocalDateTime.MAX;
+        LocalDate localDate = LocalDate.now();
 
-//        log.debug("time = {} {}", todayStart, todayEnd);
 
-//        List<Record> recordList = recordRepository.findByUserIdAndToday(user.getId(), todayStart, todayEnd);
+
+        List<Record> recordList = recordRepository.findByUserIdAndStartTimeBetween(user.getId(), localDate.atStartOfDay(), localDate.plusDays(1).atStartOfDay());
 
         Double dis = 0.0;
-        Integer time = 0;
+        Long time = 0L;
         Integer pace = 0;
 
-//        for (Record item : recordList){
-//            dis += item.getDistance();
-//
-//            log.debug("tiem = {} {}", item.getStartTime(), item.getEndTime());
-//
-//            pace += item.getBpm();
-//        }
+        for (Record item : recordList){
+            dis += item.getDistance();
 
-        return RecordTodayResponse.fromEntity(dis, 0, pace / 2);
+            Duration duration = Duration.between(item.getStartTime(), item.getEndTime());
+
+            long hours = duration.toHours(); // 총 시간 차이
+            long minutes = duration.toMinutes() % 60; //
+
+            time += (hours * 60) + minutes;
+
+            pace += item.getBpm();
+        }
+
+        return RecordTodayResponse.fromEntity(dis, Long.valueOf(time/recordList.size()).intValue(), pace / recordList.size());
     }
 }

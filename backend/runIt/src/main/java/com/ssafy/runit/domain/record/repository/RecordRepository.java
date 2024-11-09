@@ -17,8 +17,13 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     List<Record> findByUserId(Long userId);
 
-    @Query("SELECT r FROM Record r WHERE r.user.id = :userId " +
-            "AND r.startTime >= :todayStart " +
-            "AND r.startTime < :todayEnd")
-    List<Record> findByUserIdAndToday(@Param("userId") Long userId, @Param("todayStart") LocalDateTime todayStart, @Param("todayEnd") LocalDateTime todayEnd);
+
+    @Query("SELECT r FROM Record r WHERE r.user.id = :userId AND r.startTime BETWEEN :startOfDay AND :endOfDay")
+    List<Record> findByUserIdAndStartTimeBetween(
+            @Param("userId") Long userId,
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("endOfDay") LocalDateTime endOfDay
+    );
+
+    ;
 }
