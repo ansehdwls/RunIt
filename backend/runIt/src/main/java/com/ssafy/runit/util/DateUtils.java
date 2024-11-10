@@ -12,6 +12,14 @@ public class DateUtils {
         return today.with(DayOfWeek.MONDAY);
     }
 
+    public static LocalDate getLastMonday(LocalDate today) {
+        return today.with(DayOfWeek.MONDAY);
+    }
+
+    public static LocalDate getLastSunday(LocalDate today) {
+        return today.with(DayOfWeek.SUNDAY);
+    }
+
     public static String getDayNameInKorean(DayOfWeek day) {
         return switch (day) {
             case SUNDAY -> "일요일";
