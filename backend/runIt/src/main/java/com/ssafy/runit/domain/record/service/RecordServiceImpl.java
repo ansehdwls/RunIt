@@ -28,9 +28,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -98,8 +96,16 @@ public class RecordServiceImpl implements RecordService {
         List<RecordGetListResponse> recordGetListResponses = recordRepository.findByUserId(findUser.getId())
                 .stream()
                 .map(item -> {
-                    Track track = trackRepository.findTrackImageUrlByRecordId(item.getId()).orElseThrow();
-                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), track.getTrackImageUrl());
+
+                    Optional<Track> optionalTrack = trackRepository.findTrackImageUrlByRecordId(item.getId());
+
+                    Track track = optionalTrack.orElse(null);
+
+                    String trackImageUrl = (track != null && track.getTrackImageUrl() != null)
+                            ? track.getTrackImageUrl()
+                            : "";
+
+                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), trackImageUrl);
 
                 })
                 .collect(Collectors.toList());
@@ -134,7 +140,11 @@ public class RecordServiceImpl implements RecordService {
             pace += item.getBpm();
         }
 
-        return RecordTodayResponse.fromEntity(dis, Long.valueOf(time / recordList.size()).intValue(), pace / recordList.size());
+        if (recordList.isEmpty()) {
+            return RecordTodayResponse.fromEntity(0.0, 0, 0);
+        } else {
+            return RecordTodayResponse.fromEntity(dis, Long.valueOf(time / recordList.size()).intValue(), pace / recordList.size());
+        }
     }
 
     @Override
@@ -206,12 +216,8 @@ public class RecordServiceImpl implements RecordService {
 
         for (Record item : recordList) {
             totalDis += item.getDistance();
-
             if (item.getStartTime() != null && item.getEndTime() != null) {
-
-                if (item.getStartTime() != null && item.getEndTime() != null) {
-                    totalTime += DateUtils.getSpendTime(item.getStartTime(), item.getEndTime());
-                }
+                totalTime += DateUtils.getSpendTime(item.getStartTime(), item.getEndTime());
             }
         }
 
@@ -267,5 +273,19 @@ public class RecordServiceImpl implements RecordService {
                 .collect(Collectors.toList());
 
         return recordGetListResponses;
+    }
+
+    @Override
+    @Transactional
+    public Void putRecord(UserDetails userDetails, Long recordId) {
+        User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+        Optional<Record> record = recordRepository.findByUserIdAndRecordId(user.getId(), recordId);
+        if (record.isEmpty()) {
+            return null;
+        }
+
+        recordRepository.updateRecordPractice(recordId, !record.get().getIsPractice());
+
+        return null;
     }
 }

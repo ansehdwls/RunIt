@@ -57,5 +57,9 @@ public interface RecordDocs {
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<List<RecordGetCalendarResponse>> recordFindWeekList(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "today") LocalDate today);
 
+    @Operation(summary = "러닝 연습 업데이트 Api", description = "러닝")
+    @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
+    RunItApiResponse<Void> recordPracticeUpdate(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "recordId") Long recordId);
+
 
 }

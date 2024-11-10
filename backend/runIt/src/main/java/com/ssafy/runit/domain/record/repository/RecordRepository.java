@@ -4,6 +4,7 @@ package com.ssafy.runit.domain.record.repository;
 import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
 import com.ssafy.runit.domain.record.entity.Record;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -25,4 +26,7 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             @Param("endOfDay") LocalDateTime endOfDay
     );
 
+    @Modifying
+    @Query("UPDATE Record r SET r.isPractice = :isPractice WHERE r.id = :recordId")
+    int updateRecordPractice(@Param("recordId") Long recordId,@Param("isPractice") Boolean isPractice);
 }

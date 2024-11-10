@@ -27,4 +27,6 @@ public interface RecordService {
     List<RecordGetCalendarResponse> getWeekList(UserDetails userDetails, LocalDate today);
 
     List<RecordGetListResponse> getRecordPracList(UserDetails userDetails);
+
+    Void putRecord(UserDetails userDetails,Long recordId);
 }

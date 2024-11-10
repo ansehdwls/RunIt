@@ -117,5 +117,12 @@ public class RecordController implements RecordDocs{
         return new RunItApiResponse<>(response, "성공");
     }
 
+    @Override
+    @PutMapping("/run/record/{recordId}")
+    public RunItApiResponse<Void> recordPracticeUpdate(UserDetails userDetails, Long recordId) {
+        recordService.putRecord(userDetails, recordId);
+        return new RunItApiResponse<>(null, "성공");
+    }
+
 
 }
