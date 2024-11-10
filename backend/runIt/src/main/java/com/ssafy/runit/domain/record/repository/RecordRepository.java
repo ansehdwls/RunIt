@@ -25,5 +25,4 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             @Param("endOfDay") LocalDateTime endOfDay
     );
 
-    ;
 }
