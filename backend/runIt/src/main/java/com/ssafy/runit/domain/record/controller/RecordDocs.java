@@ -36,6 +36,11 @@ public interface RecordDocs {
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<List<RecordGetListResponse>> recordFindList(@AuthenticationPrincipal UserDetails userDetails);
 
+    @Operation(summary = "러닝 전체 기록 호출 Api (연습)", description = "러닝")
+    @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
+    RunItApiResponse<List<RecordGetListResponse>> recordFindPractiseList(@AuthenticationPrincipal UserDetails userDetails);
+
+
     @Operation(summary = "러닝 당일 기록 호출 Api", description = "러닝")
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<RecordTodayResponse> recordFindToday(@AuthenticationPrincipal UserDetails userDetails);

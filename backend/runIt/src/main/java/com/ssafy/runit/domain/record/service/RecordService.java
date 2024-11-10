@@ -25,4 +25,6 @@ public interface RecordService {
     RecordGetTotalResponse getTotalData(UserDetails userDetails);
 
     List<RecordGetCalendarResponse> getWeekList(UserDetails userDetails, LocalDate today);
+
+    List<RecordGetListResponse> getRecordPracList(UserDetails userDetails);
 }

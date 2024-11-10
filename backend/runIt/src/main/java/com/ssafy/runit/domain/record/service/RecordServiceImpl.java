@@ -245,11 +245,27 @@ public class RecordServiceImpl implements RecordService {
 
         List<RecordGetCalendarResponse> result = new ArrayList<>();
 
-        for (Record item : recordList){
+        for (Record item : recordList) {
             Track track = trackRepository.getReferenceById(item.getId());
-            result.add(RecordGetCalendarResponse.fromEntity(item, user.getUserName(),track.getTrackImageUrl()));
+            result.add(RecordGetCalendarResponse.fromEntity(item, user.getUserName(), track.getTrackImageUrl()));
         }
 
         return result;
+    }
+
+    @Override
+    public List<RecordGetListResponse> getRecordPracList(UserDetails userDetails) {
+        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+
+        List<RecordGetListResponse> recordGetListResponses = recordRepository.findByUserId(findUser.getId())
+                .stream()
+                .filter(item -> item.getIsPractice())
+                .map(item -> {
+                    Track track = trackRepository.findTrackImageUrlByRecordId(item.getId()).orElseThrow();
+                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), track.getTrackImageUrl());
+                })
+                .collect(Collectors.toList());
+
+        return recordGetListResponses;
     }
 }

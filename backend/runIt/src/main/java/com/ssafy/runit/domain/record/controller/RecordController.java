@@ -84,6 +84,12 @@ public class RecordController implements RecordDocs{
     }
 
     @Override
+    public RunItApiResponse<List<RecordGetListResponse>> recordFindPractiseList(UserDetails userDetails) {
+        List<RecordGetListResponse> responseList = recordService.getRecordPracList(userDetails);
+        return new RunItApiResponse<>(responseList, "성공");
+    }
+
+    @Override
     @GetMapping("/run/today")
     public RunItApiResponse<RecordTodayResponse> recordFindToday(UserDetails userDetails) {
         RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
@@ -110,4 +116,6 @@ public class RecordController implements RecordDocs{
         List<RecordGetCalendarResponse> response = recordService.getWeekList(userDetails, today);
         return new RunItApiResponse<>(response, "성공");
     }
+
+
 }
