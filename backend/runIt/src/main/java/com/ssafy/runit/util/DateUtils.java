@@ -1,7 +1,9 @@
 package com.ssafy.runit.util;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class DateUtils {
 
@@ -20,5 +22,14 @@ public class DateUtils {
             case FRIDAY -> "금요일";
             case SATURDAY -> "토요일";
         };
+    }
+
+    public static Long getSpendTime(LocalDateTime stTime, LocalDateTime endTime) {
+        Duration duration = Duration.between(stTime, endTime);
+
+        long hours = duration.toHours(); // 총 시간 차이
+        long minutes = duration.toMinutes() % 60; //
+
+        return  (hours * 60) + minutes;
     }
 }
