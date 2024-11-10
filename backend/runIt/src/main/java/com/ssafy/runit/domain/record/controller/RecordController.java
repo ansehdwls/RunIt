@@ -6,10 +6,7 @@ import com.ssafy.runit.domain.attendance.entity.Attendance;
 import com.ssafy.runit.domain.attendance.service.AttendanceService;
 import com.ssafy.runit.domain.experience.service.ExperienceService;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
-import com.ssafy.runit.domain.record.dto.response.RecordGetListResponse;
-import com.ssafy.runit.domain.record.dto.response.RecordGetResponse;
-import com.ssafy.runit.domain.record.dto.response.RecordTodayResponse;
-import com.ssafy.runit.domain.record.dto.response.RecordPostResponse;
+import com.ssafy.runit.domain.record.dto.response.*;
 import com.ssafy.runit.domain.record.service.RecordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -91,5 +88,26 @@ public class RecordController implements RecordDocs{
     public RunItApiResponse<RecordTodayResponse> recordFindToday(UserDetails userDetails) {
         RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
         return new RunItApiResponse<>(todayResponse, "성공");
+    }
+
+    @Override
+    @GetMapping("/run/week")
+    public RunItApiResponse<RecordGetWeekResponse> recordFindWeek(UserDetails userDetails) {
+        RecordGetWeekResponse weekResponse = recordService.getWeekData(userDetails);
+        return new RunItApiResponse<>(weekResponse, "성공");
+    }
+
+    @Override
+    @GetMapping("/run/total")
+    public RunItApiResponse<RecordGetTotalResponse> recordFindTotal(UserDetails userDetails) {
+        RecordGetTotalResponse totalResponse = recordService.getTotalData(userDetails);
+        return new RunItApiResponse<>(totalResponse, "성공");
+    }
+
+    @Override
+    @GetMapping("/run/weekList/{today}")
+    public RunItApiResponse<List<RecordGetCalendarResponse>> recordFindWeekList(UserDetails userDetails, LocalDate today) {
+        List<RecordGetCalendarResponse> response = recordService.getWeekList(userDetails, today);
+        return new RunItApiResponse<>(response, "성공");
     }
 }
