@@ -1,5 +1,7 @@
 package com.zoku.home
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +39,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.time.temporal.WeekFields
+import java.util.Locale
 
 
 @Composable
@@ -45,7 +51,7 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
     var selectHistory by remember {
         mutableStateOf(false)
     }
-    var selectedDay by remember { mutableStateOf(1) }
+    var selectedDay by remember { mutableStateOf(LocalDate.now()) }
     var challengeList by remember {
         mutableStateOf(
             mutableListOf(
@@ -59,7 +65,10 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
             )
         )
     }
-
+    // 주간 시작일을 고정하여 현재 주간의 날짜를 유지
+    val weekStart = selectedDay.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
+    val weekDates = getWeekDates(weekStart)
+    val monthName = weekDates.first().month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
     val baseModifier = Modifier
         .padding(horizontal = 10.dp)
         .fillMaxWidth()
@@ -70,7 +79,14 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
             .background(com.zoku.ui.BaseGray)
     ) {
         // ex) < 10 월 >
-        RunHistoryTitle(baseModifier)
+        RunHistoryTitle(baseModifier
+            ,monthName,
+            preWeek = {
+                selectedDay = selectedDay.minusWeeks(1)
+            },
+            postWeek = {
+                selectedDay = selectedDay.plusWeeks(1)
+            })
 
         // 월 화 수 목 금 토 일
         WeekView(baseModifier)
@@ -78,9 +94,11 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
         // ex) 불 icon / 날짜
         WeeklyDateView(
             baseModifier,
-            start = 1,
+            weekDates = weekDates,
             onDateClick = { day ->
-                selectedDay = day  // 클릭된 날짜 업데이트
+                // 클릭한 날짜를 그대로 selectedDay로 설정하여 주간이 변경되지 않도록 함
+                selectedDay = day// 클릭된 날짜 업데이트
+                Log.d("확인", "RunHistoryScreen: $day")
                 selectHistory = false
             },
             challengeList = challengeList
@@ -99,7 +117,11 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun RunHistoryTitle(modifier: Modifier = Modifier) {
+fun RunHistoryTitle(modifier: Modifier = Modifier,
+                    monthName  : String,
+                    preWeek : () -> Unit,
+                    postWeek : () -> Unit
+                    ) {
 
     Row(
         modifier = modifier
@@ -121,7 +143,7 @@ fun RunHistoryTitle(modifier: Modifier = Modifier) {
 
         RunHistoryTitleBtn(
             modifier = titleBtnModifier,
-            onClick = {},
+            onClick = {preWeek()},
             icon = R.drawable.pre_run_history_icon,
             iconModifier = titleBtnImageModifier
         )
@@ -133,7 +155,7 @@ fun RunHistoryTitle(modifier: Modifier = Modifier) {
                 .align(Alignment.CenterVertically),
         ) {
             Text(
-                text = "10월",
+                text = monthName,
                 color = Color.White,
                 fontSize = 30.sp,
                 modifier = Modifier.align(Alignment.Center),
@@ -143,7 +165,7 @@ fun RunHistoryTitle(modifier: Modifier = Modifier) {
 
         RunHistoryTitleBtn(
             modifier = titleBtnModifier,
-            onClick = {},
+            onClick = {postWeek()},
             icon = R.drawable.next_run_history_icon,
             iconModifier = titleBtnImageModifier
         )
@@ -195,27 +217,21 @@ fun WeekView(modifier: Modifier) {
 @Composable
 fun WeeklyDateView(
     modifier: Modifier,
-    start: Int,
-    onDateClick: (Int) -> Unit,
+    weekDates: List<LocalDate>,
+    onDateClick: (LocalDate) -> Unit,
     challengeList: MutableList<Boolean>
 ) {
-    Row(
-        modifier = modifier
-    ) {
-
-        for (i in start..start + 6) {
-
+    Row(modifier = modifier) {
+        for ((index, date) in weekDates.withIndex()) {
             Surface(
-                onClick = { onDateClick(i) },
+                onClick = { onDateClick(date)},
                 modifier = Modifier
                     .weight(1f)
                     .align(Alignment.CenterVertically)
                     .padding(top = 10.dp),
                 color = com.zoku.ui.BaseGray
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Image(
                         painter = painterResource(id = R.drawable.fire_history_icon),
                         contentDescription = null,
@@ -223,20 +239,24 @@ fun WeeklyDateView(
                         modifier = Modifier
                             .width(25.dp)
                             .height(25.dp)
-                            // challengeList의 결과 값에 따라 불 표시
-                            .alpha(if (challengeList[i - start]) 1f else 0f)
+                            .alpha(if (challengeList[index]) 1f else 0f)
                     )
                     Text(
-                        text = i.toString(),
+                        text = date.dayOfMonth.toString(),
                         color = Color.White,
                         textAlign = TextAlign.Center,
-                        fontSize = 13.sp, modifier = Modifier.padding(top = 5.dp),
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(top = 5.dp),
                         fontFamily = com.zoku.ui.ZokuFamily
                     )
                 }
             }
-
         }
-
     }
+}
+
+fun getWeekDates( today : LocalDate = LocalDate.now()): List<LocalDate> {
+
+    val weekStart = today.with(WeekFields.of(Locale.getDefault()).firstDayOfWeek)
+    return (0..6).map { weekStart.plusDays(it.toLong()) }
 }
