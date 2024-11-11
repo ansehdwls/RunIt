@@ -46,7 +46,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
-    public void saveRunningRecord(UserDetails userDetails, RecordSaveRequest request, MultipartFile file) {
+    public Record saveRunningRecord(UserDetails userDetails, RecordSaveRequest request, MultipartFile file) {
 
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow(
                 () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
@@ -68,6 +68,8 @@ public class RecordServiceImpl implements RecordService {
         } catch (Exception e) {
             throw new CustomException(TrackErrorCode.NOT_FOUND_TRACK_IMG);
         }
+
+        return record;
     }
 
     @Override
