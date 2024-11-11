@@ -2,22 +2,28 @@ package com.zoku.running
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.CustomTypo
+import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RecordDetailInfo
 
@@ -125,80 +133,83 @@ fun RunningResultScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable {
-                        showDialog = false
-                    },
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = { showDialog = false })
+                    }
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.weight(0.4f))
-                Surface(modifier = Modifier.weight(0.2f)) {
-                    Text(
-                        text = "경로를 저장하시겠습니까?",
-                        style = CustomTypo().jalnan,
-                        fontSize = 16.sp,
-                        color = Color.White,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
+                Surface(
+                    modifier = Modifier
+                        .weight(0.2f),
+                    color = BaseDarkBackground,
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(0.1.dp, BaseYellow)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // 텍스트
+                        Text(
+                            text = "경로를 저장하시겠습니까?",
+                            style = CustomTypo().jalnan,
+                            fontSize = 16.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(vertical = 32.dp)
+                        )
+
+                        HorizontalDivider(
+                            color = RoundButtonGray,
+                            thickness = 1.dp
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            TextButton(
+                                onClick = { showDialog = false },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = "취소",
+                                    style = CustomTypo().mapleLight,
+                                    color = Color.White
+                                )
+                            }
+
+                            VerticalDivider(
+                                modifier = Modifier
+                                    .width(1.dp),
+                                color = RoundButtonGray
+                            )
+
+                            TextButton(
+                                onClick = {
+                                    showDialog = false
+                                    moveToHome()
+                                },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = "확인",
+                                    style = CustomTypo().mapleLight,
+                                    color = BaseYellow
+                                )
+                            }
+                        }
+                    }
                 }
+                Spacer(modifier = Modifier.weight(0.4f))
             }
         }
-//        AlertDialog(
-//            onDismissRequest = { showDialog = false },
-//            shape = RoundedCornerShape(16.dp),
-//            containerColor = BaseDarkBackground,
-//            text = {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth(),
-//                    contentAlignment = Alignment.Center,
-//                ) {
-//                    Text(
-//                        text = "경로를 저장하시겠습니까?",
-//                        style = CustomTypo().jalnan,
-//                        fontSize = 16.sp,
-//                        color = Color.White,
-//                        modifier = Modifier.padding(top = 16.dp)
-//                    )
-//                }
-//            },
-//            confirmButton = {
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(8.dp),
-//                    horizontalArrangement = Arrangement.SpaceEvenly
-//                ) {
-//                    TextButton(
-//                        onClick = { showDialog = false },
-//                        modifier = Modifier
-//                            .weight(1f)
-//                            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-//                    ) {
-//                        Text(
-//                            text = "취소",
-//                            style = CustomTypo().mapleLight,
-//                            color = Color.White
-//                        )
-//                    }
-//                    Spacer(modifier = Modifier.width(8.dp))
-//                    TextButton(
-//                        onClick = {
-//                            showDialog = false
-//                            moveToHome()
-//                        },
-//                        modifier = Modifier
-//                            .weight(1f)
-//                            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-//                    ) {
-//                        Text(
-//                            text = "확인",
-//                            style = CustomTypo().mapleLight,
-//                            color = BaseYellow
-//                        )
-//                    }
-//                }
-//            }
-//        )
     }
 }
 
