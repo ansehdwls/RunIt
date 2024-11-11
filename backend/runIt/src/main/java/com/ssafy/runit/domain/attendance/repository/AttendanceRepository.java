@@ -16,6 +16,5 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     List<Attendance> findByUserAndCreatedAtAfterOrderByCreatedAtAsc(User user, LocalDate date);
 
 
-    @Query(value = "SELECT * FROM Attendance WHERE DATE(created_at) = DATE(:date)", nativeQuery = true)
-Optional<Attendance> findByCreatedAt(@Param("date") LocalDate date);
+    Optional<Attendance> findByUserAndCreatedAt(User user, LocalDate date);
 }
