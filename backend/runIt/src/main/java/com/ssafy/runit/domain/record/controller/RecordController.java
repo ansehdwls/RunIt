@@ -56,7 +56,7 @@ public class RecordController implements RecordDocs{
 
 
 
-        if (attendanceService.getTodayAttended(LocalDate.now()) == false){
+        if (attendanceService.getTodayAttended(userDetails,LocalDate.now()) == false){
             // 출석 + 경험치
             postResponse = RecordPostResponse.toEntity(false, 100);
             attendanceService.saveAttendance(userDetails);

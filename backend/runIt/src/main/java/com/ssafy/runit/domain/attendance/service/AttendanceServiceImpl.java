@@ -18,6 +18,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 @Service
@@ -46,15 +47,21 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public Boolean getTodayAttended(LocalDate today) {
-
-        if (attendanceRepository.findByCreatedAt(today).isEmpty()){
-            return false;
-        }
-
-        log.debug("today = {}", today);
-
-        return true;
+    public Boolean getTodayAttended(UserDetails userDetails, LocalDate today) {
+        User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+        /*
+        * 반환 값이 널이면은 해당 날은 출석을 안했다는 거니까
+        * -> false
+        *
+        * 반환 값이 있으면 해당 날은 출석을 했다는 거니까
+        * -> true
+        *
+        * .orElse -> 값이 있을 경우 true, 없을 경우 false
+        *
+        * */
+        return attendanceRepository.findByUserAndCreatedAt(user, today)
+                .map(attendance -> true)
+                .orElse(false);
     }
 
     @Override
