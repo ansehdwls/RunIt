@@ -47,9 +47,6 @@ public class RecordServiceImpl implements RecordService {
     @Override
     @Transactional
     public void saveRunningRecord(UserDetails userDetails, RecordSaveRequest request, MultipartFile file) {
-        if (file == null) {
-            throw new CustomException(TrackErrorCode.NOT_FOUND_TRACK_IMG);
-        }
 
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow(
                 () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
@@ -99,15 +96,7 @@ public class RecordServiceImpl implements RecordService {
                 .stream()
                 .map(item -> {
 
-                    Optional<Track> optionalTrack = trackRepository.findTrackImageUrlByRecordId(item.getId());
-
-                    Track track = optionalTrack.orElse(null);
-
-                    String trackImageUrl = (track != null && track.getTrackImageUrl() != null)
-                            ? track.getTrackImageUrl()
-                            : "";
-
-                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), trackImageUrl);
+                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), item.getTrack().getTrackImageUrl());
 
                 })
                 .collect(Collectors.toList());
@@ -283,8 +272,7 @@ public class RecordServiceImpl implements RecordService {
                 .stream()
                 .filter(item -> item.getIsPractice())
                 .map(item -> {
-                    Track track = trackRepository.findTrackImageUrlByRecordId(item.getId()).orElseThrow();
-                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), track.getTrackImageUrl());
+                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), item.getTrack().getTrackImageUrl());
                 })
                 .collect(Collectors.toList());
     }
@@ -302,7 +290,5 @@ public class RecordServiceImpl implements RecordService {
                         }
 
                 );
-
-
     }
 }

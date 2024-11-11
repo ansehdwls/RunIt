@@ -1,10 +1,7 @@
 package com.ssafy.runit.domain.record.controller;
 
 import com.ssafy.runit.RunItApiResponse;
-import com.ssafy.runit.domain.attendance.dto.AttendanceSaveDto;
-import com.ssafy.runit.domain.attendance.entity.Attendance;
 import com.ssafy.runit.domain.attendance.service.AttendanceService;
-import com.ssafy.runit.domain.experience.service.ExperienceService;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.*;
 import com.ssafy.runit.domain.record.service.RecordService;
@@ -35,7 +32,7 @@ public class RecordController implements RecordDocs{
     @PostMapping(value = "/run", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public RunItApiResponse<RecordPostResponse> saveRecord(@AuthenticationPrincipal UserDetails userDetails,
                                                            @RequestPart(value = "dto")  RecordSaveRequest recordSaveRequest,
-                                                           @RequestPart(value = "images", required = false) MultipartFile file) {
+                                                           @RequestPart(value = "images") MultipartFile file) {
 
         recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
 
@@ -84,6 +81,7 @@ public class RecordController implements RecordDocs{
     }
 
     @Override
+    @GetMapping("/run/practice")
     public RunItApiResponse<List<RecordGetListResponse>> recordFindPractiseList(UserDetails userDetails) {
         List<RecordGetListResponse> responseList = recordService.getRecordPracList(userDetails);
         return new RunItApiResponse<>(responseList, "성공");
