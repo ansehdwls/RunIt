@@ -85,6 +85,11 @@ class ExerciseService : LifecycleService() {
         return true
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        lifecycleScope.launch { endExercise() }
+    }
+
     //서비스가 바인딩되었음을 처리.
     private fun handleBind() {
         if (!isBound) {

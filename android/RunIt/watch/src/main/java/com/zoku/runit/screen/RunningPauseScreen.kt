@@ -14,6 +14,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,19 +42,32 @@ import java.time.Duration
 fun RunningPauseScreen(
     modifier: Modifier = Modifier,
     runningData: ExerciseResult?,
+    onPauseStatus : () -> Unit,
     onStopClick: () -> Unit,
     onResumeClick: () -> Unit
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    var pauseFlag by remember { mutableStateOf(false) }
     Timber.tag("RunningPauseScreen").d("${uiState.exerciseState?.exerciseState}")
     Timber.tag("RunningPauseScreen").d("${runningData?.time}")
 
-    if (uiState.exerciseState?.exerciseState == ExerciseState.USER_RESUMING) {
-        onResumeClick()
-    } else if (uiState.exerciseState?.exerciseState == ExerciseState.ENDED) {
-        onStopClick()
+    when(uiState.exerciseState?.exerciseState){
+        ExerciseState.USER_PAUSED -> {
+            if(!pauseFlag){
+                onPauseStatus()
+                pauseFlag = true
+            }
+
+        }
+        ExerciseState.USER_RESUMING -> {
+            onResumeClick()
+        }
+        ExerciseState.ENDED -> {
+            onStopClick()
+        }
+
+
     }
 
     val scrollState = rememberScrollState()
@@ -146,6 +162,7 @@ fun RunningPause(
 fun RunningPausePreview() {
     RunningPauseScreen(
         runningData = null,
+        onPauseStatus = {},
         onStopClick = {},
         onResumeClick = {}
     )

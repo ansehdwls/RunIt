@@ -58,40 +58,10 @@ class DataLayerListenerService : WearableListenerService() {
     }
 
 
-    @SuppressLint("VisibleForTests")
-    override fun onDataChanged(dataEvents: DataEventBuffer) {
-        super.onDataChanged(dataEvents)
-
-        dataEvents.forEach { dataEvent ->
-            val uri = dataEvent.dataItem.uri
-            when (uri.path) {
-                COUNT_PATH -> {
-                    scope.launch {
-                        try {
-                            val nodeId = uri.host!!
-                            val payload = uri.toString().toByteArray()
-                            messageClient.sendMessage(
-                                nodeId,
-                                DATA_ITEM_RECEIVED_PATH,
-                                payload
-                            )
-                                .await()
-                            Timber.tag("DataLayerListenerService").d("메세지 전송 성공")
-                        } catch (cancellationException: CancellationException) {
-                            throw cancellationException
-                        } catch (exception: Exception) {
-                            Timber.tag("DataLayerListenerService").d("메세지 전송 실패")
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
         super.onMessageReceived(messageEvent)
-        Timber.tag("DataLayerListenerService").d("메세지 수신 $messageEvent")
+        Timber.tag("DataLayerListenerService").d("메세지 수신 $messageEvent ${MainActivity.isActivityActive}")
         when (messageEvent.path) {
             PhoneWatchConnection.START_ACTIVITY.route -> {
                 if (!MainActivity.isActivityActive) {
@@ -133,15 +103,8 @@ class DataLayerListenerService : WearableListenerService() {
     override fun onDestroy() {
         super.onDestroy()
         scope.cancel()
-        exerciseService?.let {
-            unbindService(serviceConnection)
-        }
+        unbindService(serviceConnection)
     }
 
-    companion object {
-        private const val TAG = "DataLayerService"
-        private const val DATA_ITEM_RECEIVED_PATH = "/data-item-received"
-        const val COUNT_PATH = "/count"
 
-    }
 }

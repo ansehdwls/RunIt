@@ -37,6 +37,7 @@ import com.zoku.runit.util.formatDistanceKm
 import com.zoku.runit.viewmodel.RunViewModel
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.CustomTypo
+import com.zoku.ui.model.PhoneWatchConnection
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.time.Duration
@@ -45,7 +46,7 @@ import java.time.Duration
 fun RunningScreen(
     modifier: Modifier = Modifier,
     onPauseClick: (ExerciseResult) -> Unit,
-    sendBpm: (Int) -> Unit
+    sendBpm: (Int, PhoneWatchConnection) -> Unit
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
 
@@ -58,8 +59,8 @@ fun RunningScreen(
         viewModel.pauseRunning()
         onPauseClick(state.toExerciseResult(duration))
     },
-        sendBpm = { bpm ->
-            sendBpm(bpm)
+        sendBpm = { bpm, connection ->
+            sendBpm(bpm, connection)
         }
     )
 }
@@ -71,27 +72,30 @@ fun RunningStatus(
     modifier: Modifier = Modifier,
     uiState: ExerciseScreenState,
     onPauseClick: (ExerciseScreenState, Duration?) -> Unit,
-    sendBpm: (Int) -> Unit
+    sendBpm: (Int, PhoneWatchConnection) -> Unit
 ) {
     val lastActiveDurationCheckpoint = uiState.exerciseState?.activeDurationCheckpoint
     val exerciseState = uiState.exerciseState?.exerciseState
     val metrics = uiState.exerciseState?.exerciseMetrics
     var duration by remember { mutableStateOf<Duration?>(null) }
     var flag by remember { mutableStateOf(false) }
-    Timber.tag("runningStatus").d("$lastActiveDurationCheckpoint")
 
-    Timber.tag("RunningScreen").d("duration 맨 윗 부분 $duration")
+    Timber.tag("RunningStatus").d("exerciseState ${exerciseState}")
+    Timber.tag("RunningStatus").d("duration 맨 윗 부분 $duration")
     if (exerciseState == ExerciseState.USER_PAUSING && !flag) {
         flag = true
         onPauseClick(uiState, duration)
-    }
-    LaunchedEffect(metrics?.heartRate) {
-        while(true){
-            delay(200L)
-            sendBpm(metrics?.heartRate?.toInt() ?: 0)
+    }else if(exerciseState == ExerciseState.ACTIVE){
+        LaunchedEffect(metrics?.heartRate) {
+            while (true) {
+                delay(200L)
+                sendBpm(metrics?.heartRate?.toInt() ?: 0, PhoneWatchConnection.SEND_BPM)
+            }
         }
-
     }
+
+
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
