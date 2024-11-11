@@ -53,7 +53,7 @@ fun RunningPauseScreen(
     val totalRunningList by runningViewModel.totalRunningList.collectAsState()
 
     var showMap by remember { mutableStateOf(false) }
-
+    runningViewModel.stopTimer()
     LaunchedEffect(Unit) {
         //의미 없는 값이 collect 되는 거 무시하기
         delay(300)

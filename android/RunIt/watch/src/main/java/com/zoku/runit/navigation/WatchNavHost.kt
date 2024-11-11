@@ -36,7 +36,6 @@ fun WatchNavHost(
         composable(route = WatchScreenDestination.running.route) {
             RunningScreen(modifier, onPauseClick =
             { exerciseResult ->
-                sendBpm(0, PhoneWatchConnection.PAUSE_RUNNING)
                 navController.run {
                     Timber.tag("WatchNavHost RunningScreen Result").d("${exerciseResult}")
                     this.navigate(WatchScreenDestination.runningPause.createRoute(exerciseResult))
@@ -59,6 +58,9 @@ fun WatchNavHost(
 
             Timber.tag("WatchNavHost").d("result $data")
             RunningPauseScreen(modifier, data,
+                onPauseStatus = {
+                    sendBpm(0, PhoneWatchConnection.PAUSE_RUNNING)
+                },
                 onStopClick = {
                     sendBpm(0, PhoneWatchConnection.STOP_RUNNING)
                     navController.popBackStack(

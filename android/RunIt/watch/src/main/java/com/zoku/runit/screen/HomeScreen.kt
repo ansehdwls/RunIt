@@ -39,11 +39,12 @@ fun HomeScreen(
 
     val uiState by runningViewModel.uiState.collectAsStateWithLifecycle()
     var flag by remember { mutableStateOf(false) }
-    Timber.tag("HomeScreen").d("ExerciseState $flag")
+    Timber.tag("HomeScreen").d("ExerciseState $flag , ${ExerciseState.ACTIVE}")
     if (uiState.exerciseState?.exerciseState == ExerciseState.USER_STARTING && !flag) {
         Timber.tag("HomeScreen").d("ExerciseState ${ExerciseState.ACTIVE}")
         flag = true
         onStartClick()
+        homeViewModel.startRunning()
     }
     StartButton(modifier, {
         onStartClick()

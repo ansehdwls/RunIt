@@ -54,7 +54,7 @@ fun RunningScreen(
         RunningResultScreen(runningViewModel = runningViewModel,
             moveToHome = moveToHome)
     } else {
-        if (isPlay) {
+        if (isPlay) { // 재개된 상태
             RunningPlayScreen(
                 onPauseClick = {
                     onPauseWearableActivityClick(PhoneWatchConnection.PAUSE_RUNNING.route)
@@ -63,7 +63,7 @@ fun RunningScreen(
                 isFirstPlay = isFirstPlay,
                 runningViewModel = runningViewModel
             )
-        } else {
+        } else { // 중지 된 상태
             RunningPauseScreen(
                 onPlayClick = {
                     onResumeWearableActivityClick(PhoneWatchConnection.RESUME_RUNNING.route)
