@@ -3,6 +3,7 @@ package com.ssafy.runit.util;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class DateUtils {
 
@@ -23,8 +24,14 @@ public class DateUtils {
         };
     }
 
-    public static long computeTTLForNextWeek(){
+    public static long computeTTLForNextWeek() {
         LocalDate expirationDate = getLastMonday().plusDays(7);
         return Duration.between(LocalDate.now().atStartOfDay(), expirationDate.atStartOfDay()).toSeconds();
+    }
+
+    public static Duration computeDurationForNextWeek() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expirationDate = getLastMonday().plusDays(7).atStartOfDay();
+        return Duration.between(now, expirationDate);
     }
 }
