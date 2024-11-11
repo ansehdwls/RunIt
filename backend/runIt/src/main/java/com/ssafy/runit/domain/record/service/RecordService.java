@@ -24,9 +24,9 @@ public interface RecordService {
 
     RecordGetTotalResponse getTotalData(UserDetails userDetails);
 
-    List<RecordGetCalendarResponse> getWeekList(UserDetails userDetails, LocalDate today);
+    List<List<RecordGetListResponse>> getWeekList(UserDetails userDetails, LocalDate today);
 
     List<RecordGetListResponse> getRecordPracList(UserDetails userDetails);
 
-    Void putRecord(UserDetails userDetails,Long recordId);
+    void putRecord(UserDetails userDetails,Long recordId);
 }

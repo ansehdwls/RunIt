@@ -28,6 +28,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -93,7 +94,8 @@ public class RecordServiceImpl implements RecordService {
     public List<RecordGetListResponse> getRecordList(UserDetails userDetails) {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
 
-        List<RecordGetListResponse> recordGetListResponses = recordRepository.findByUserId(findUser.getId())
+
+        return recordRepository.findByUserId(findUser.getId())
                 .stream()
                 .map(item -> {
 
@@ -109,9 +111,6 @@ public class RecordServiceImpl implements RecordService {
 
                 })
                 .collect(Collectors.toList());
-
-
-        return recordGetListResponses;
     }
 
     @Override
@@ -123,8 +122,8 @@ public class RecordServiceImpl implements RecordService {
 
         List<Record> recordList = recordRepository.findByUserIdAndStartTimeBetween(user.getId(), localDate.atStartOfDay(), localDate.plusDays(1).atStartOfDay());
 
-        Double dis = 0.0;
-        Long time = 0L;
+        double dis = 0.0;
+        long time = 0L;
         Integer pace = 0;
 
         for (Record item : recordList) {
@@ -170,15 +169,15 @@ public class RecordServiceImpl implements RecordService {
         for (int day = 0; day < 7; day++) {
             LocalDate cur = monday.plusDays(day);
 
-            Long time = 0L;
-            Double dis = 0.0;
+            long time = 0L;
+            double dis = 0.0;
             Double pace = 0.0;
-            Integer cnt = 0;
+            int cnt = 0;
 
             for (Record item : recordList) {
                 if (item.getStartTime().toString().split("T")[0].equals(cur.toString())) {
 
-                    if (item.getStartTime() != null && item.getEndTime() != null) {
+                    if (item.getEndTime() != null) {
                         time += DateUtils.getSpendTime(item.getStartTime(), item.getEndTime());
                     }
 
@@ -202,17 +201,12 @@ public class RecordServiceImpl implements RecordService {
 
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
 
-        /*
-         * 전체 리스트 들고와서
-         *
-         * */
-
         List<Record> recordList = recordRepository.findByUserId(findUser.getId());
 
-        Double totalDis = 0.0;
-        Long totalTime = 0L;
-        Double weekDis = 0.0;
-        Long weekTime = 0L;
+        double totalDis = 0.0;
+        long totalTime = 0L;
+        double weekDis = 0.0;
+        long weekTime = 0L;
 
         for (Record item : recordList) {
             totalDis += item.getDistance();
@@ -239,7 +233,7 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public List<RecordGetCalendarResponse> getWeekList(UserDetails userDetails, LocalDate today) {
+    public List<List<RecordGetListResponse>> getWeekList(UserDetails userDetails, LocalDate today) {
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
         LocalDate monday = DateUtils.getLastMonday(today);
         LocalDate sunday = DateUtils.getLastSunday(today);
@@ -249,11 +243,33 @@ public class RecordServiceImpl implements RecordService {
 
         List<Record> recordList = recordRepository.findByUserIdAndStartTimeBetween(user.getId(), startTime, endTime);
 
-        List<RecordGetCalendarResponse> result = new ArrayList<>();
+        List<List<RecordGetListResponse>> result = Arrays.asList(
+                new ArrayList<>(), // Monday
+                new ArrayList<>(), // Tuesday
+                new ArrayList<>(), // Wednesday
+                new ArrayList<>(), // Thursday
+                new ArrayList<>(), // Friday
+                new ArrayList<>(), // Saturday
+                new ArrayList<>()  // Sunday
+        );
+
 
         for (Record item : recordList) {
-            Track track = trackRepository.getReferenceById(item.getId());
-            result.add(RecordGetCalendarResponse.fromEntity(item, user.getUserName(), track.getTrackImageUrl()));
+
+            LocalDate itemDate = item.getStartTime().toLocalDate();
+
+            // 날짜를 기준으로 요일 인덱스를 계산
+            int dayIndex = (int) ChronoUnit.DAYS.between(monday, itemDate) % 7;
+
+            // 요일 인덱스가 0 이상 6 이하인지 확인
+            if (dayIndex >= 0) {
+                Track track = trackRepository.getReferenceById(item.getId());
+                RecordGetListResponse toRecord = RecordGetListResponse.fromEntity(
+                        item, user.getUserName(), track.getTrackImageUrl());
+
+                // 요일 인덱스에 맞는 리스트에 추가
+                result.get(dayIndex).add(toRecord);
+            }
         }
 
         return result;
@@ -263,7 +279,7 @@ public class RecordServiceImpl implements RecordService {
     public List<RecordGetListResponse> getRecordPracList(UserDetails userDetails) {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
 
-        List<RecordGetListResponse> recordGetListResponses = recordRepository.findByUserId(findUser.getId())
+        return recordRepository.findByUserId(findUser.getId())
                 .stream()
                 .filter(item -> item.getIsPractice())
                 .map(item -> {
@@ -271,21 +287,22 @@ public class RecordServiceImpl implements RecordService {
                     return RecordGetListResponse.fromEntity(item, findUser.getUserName(), track.getTrackImageUrl());
                 })
                 .collect(Collectors.toList());
-
-        return recordGetListResponses;
     }
 
     @Override
     @Transactional
-    public Void putRecord(UserDetails userDetails, Long recordId) {
+    public void putRecord(UserDetails userDetails, Long recordId) {
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
-        Optional<Record> record = recordRepository.findByUserIdAndRecordId(user.getId(), recordId);
-        if (record.isEmpty()) {
-            return null;
-        }
 
-        recordRepository.updateRecordPractice(recordId, !record.get().getIsPractice());
+        recordRepository.findByUserIdAndRecordId(user.getId(), recordId)
+                .ifPresentOrElse(
+                        record -> recordRepository.updateRecordPractice(recordId, !record.getIsPractice()),
+                        () -> {
+                            throw new CustomException(RecordErrorCode.NOT_FOUND_RECORD_DATA);
+                        }
 
-        return null;
+                );
+
+
     }
 }
