@@ -11,10 +11,12 @@ import com.zoku.data.repository.ExpRepository
 import com.zoku.data.repository.GroupRepository
 import com.zoku.network.model.response.AttendanceDay
 import com.zoku.network.model.response.ExpDataHistory
+import com.zoku.network.model.response.GroupList
 import com.zoku.network.model.response.GroupMember
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.exp
@@ -34,11 +36,24 @@ class RankViewModel @Inject constructor(
     private val _allExpHistoryDataList = MutableStateFlow<List<ExpDataHistory>>(emptyList())
     val allExpHistoryDataList : StateFlow<List<ExpDataHistory>> = _allExpHistoryDataList
 
-    private val _groupInfoList = MutableStateFlow<List<GroupMember>>(emptyList())
-    val groupInfo : StateFlow<List<GroupMember>> = _groupInfoList
+    private val _groupInfoList = MutableStateFlow<GroupList>(GroupList(emptyList(),1,1))
+    val groupInfo : StateFlow<GroupList> = _groupInfoList
 
     private val _attendanceWeekInfo = MutableStateFlow<List<AttendanceDay>>(emptyList())
     val attendanceWeekInfo : StateFlow<List<AttendanceDay>> = _attendanceWeekInfo
+
+    private val _userName = MutableStateFlow<String>("")
+    val userName : StateFlow<String> = _userName
+
+    init {
+        viewModelScope.launch {
+            with(dataStoreRepository){
+                userName.collect{
+                    _userName.value = it
+                }
+            }
+        }
+    }
 
     fun getAllExpHistory(){
         viewModelScope.launch {
@@ -46,6 +61,8 @@ class RankViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     Log.d("확인", " 성공 ${result}")
                     _allExpHistoryDataList.value = result.data.data
+
+
                 }
 
                 is NetworkResult.Error -> {

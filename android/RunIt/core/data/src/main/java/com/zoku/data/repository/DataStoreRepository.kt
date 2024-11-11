@@ -11,6 +11,8 @@ interface DataStoreRepository {
 
     val groupId : Flow<Int>
 
+    val userName : Flow<String>
+    val userId : Flow <Int>
     suspend fun saveTokens(accessToken: String, refreshToken: String)
 
     suspend fun saveUser(userData: UserData)
