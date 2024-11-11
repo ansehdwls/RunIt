@@ -228,7 +228,7 @@ public class RecordServiceImpl implements RecordService {
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
 
         LocalDate monday = DateUtils.getLastMonday(today);
-        LocalDate sunday = DateUtils.getLastMonday(monday);
+        LocalDate sunday = DateUtils.getLastSunday(monday);
 
 
         LocalDateTime startTime = LocalDateTime.of(monday, LocalTime.MIN);
