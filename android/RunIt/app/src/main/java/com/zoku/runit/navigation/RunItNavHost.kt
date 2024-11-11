@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.zoku.login.LoginViewModel
@@ -26,7 +25,7 @@ import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
-import com.zoku.runit.ClientDataViewModel
+import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.running.navigation.navigateToRunning
 import com.zoku.running.navigation.runningScreen
 import com.zoku.ui.model.PhoneWatchConnection

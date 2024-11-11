@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Wearable
+import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.model.PhoneWatchConnection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
