@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         );
         User user = request.Mapper(group);
         String cacheKey = "group:" + group.getId();
-        userRepository.save(user);
+        user = userRepository.save(user);
         UserInfoResponse dto = UserInfoResponse.fromEntity(user);
         redisTemplate.opsForList().rightPush(cacheKey, dto);
         long ttl = DateUtils.computeTTLForNextWeek();

@@ -11,6 +11,7 @@ import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.league.entity.League;
 import com.ssafy.runit.domain.rank.LeagueRank;
+import com.ssafy.runit.domain.rank.service.RankService;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
@@ -24,6 +25,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -54,6 +57,16 @@ class AuthServiceImplTest {
     @Mock
     private GroupRepository groupRepository;
 
+    @Mock
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Mock
+    private ListOperations<String, Object> listOperations;
+
+    @Mock
+    private RankService rankService;
+
+
     private final String testNumber = "1234";
     private final String refreshToken = "refresh_token";
     private final String accessToken = "access_token";
@@ -81,10 +94,17 @@ class AuthServiceImplTest {
                 .userName("test").build();
         LeagueRank rank = LeagueRank.RANK_1;
         League league = League.builder().leagueName(rank.getLeagueName()).rank(rank).build();
-        Group group = Group.builder().groupLeague(league).build();
-        User user = request.Mapper(group);
+        Group group = Group.builder().id(1L).groupLeague(league).build();
+        User user = User.builder()
+                .id(1L)
+                .userNumber(request.getUserNumber())
+                .userGroup(group)
+                .build();
+        when(redisTemplate.opsForList()).thenReturn(listOperations);
+        when(listOperations.rightPush(anyString(), any())).thenReturn(1L);
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(groupRepository.findDefaultGroup()).thenReturn(Optional.of(group));
+        doNothing().when(rankService).updateScore(anyLong(), anyLong(), anyLong());
         authService.registerUser(request);
         verify(userRepository).save(any(User.class));
         verify(groupRepository).findDefaultGroup();
