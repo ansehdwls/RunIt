@@ -4,6 +4,7 @@ import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.attendance.service.AttendanceService;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.*;
+import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.service.RecordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class RecordController implements RecordDocs{
                                                            @RequestPart(value = "dto")  RecordSaveRequest recordSaveRequest,
                                                            @RequestPart(value = "images") MultipartFile file) {
 
-        recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
+        Record record = recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
 
         /*
         * 경험치 연산 로직 추가
@@ -55,11 +56,11 @@ public class RecordController implements RecordDocs{
 
         if (attendanceService.getTodayAttended(userDetails,LocalDate.now()) == false){
             // 출석 + 경험치
-            postResponse = RecordPostResponse.toEntity(false, 100);
+            postResponse = RecordPostResponse.toEntity(record.getId(),false, 100);
             attendanceService.saveAttendance(userDetails);
         }
         else{
-            postResponse = RecordPostResponse.toEntity(true, 100);
+            postResponse = RecordPostResponse.toEntity(record.getId(),true, 100);
         }
 
         return new RunItApiResponse<>(postResponse, "성공");
