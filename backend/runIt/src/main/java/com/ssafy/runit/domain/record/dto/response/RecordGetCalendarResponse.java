@@ -4,23 +4,30 @@ import com.ssafy.runit.domain.record.entity.Record;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 public record RecordGetCalendarResponse(
-        long id,
-        double distance,
-        LocalDateTime startTime,
-        LocalDateTime endTime,
-        String name,
-        String imageUrl
-) {
-    public static RecordGetCalendarResponse fromEntity(Record record, String userName, String url) {
+
+        List<RecordGetListResponse> mondayList,
+        List<RecordGetListResponse> tuesdayList,
+        List<RecordGetListResponse> wednesdayList,
+        List<RecordGetListResponse> thursdayList,
+        List<RecordGetListResponse> fridayList,
+        List<RecordGetListResponse> saturdayList,
+        List<RecordGetListResponse> sundayList
+
+        ) {
+
+    public static RecordGetCalendarResponse fromEntity(List<List<RecordGetListResponse>> weekLists) {
         return RecordGetCalendarResponse.builder()
-                .distance(record.getDistance())
-                .startTime(record.getStartTime())
-                .endTime(record.getEndTime())
-                .name(userName)
-                .imageUrl(url)
+                .mondayList(weekLists.get(0))
+                .tuesdayList(weekLists.get(1))
+                .wednesdayList(weekLists.get(2))
+                .thursdayList(weekLists.get(3))
+                .fridayList(weekLists.get(4))
+                .saturdayList(weekLists.get(5))
+                .sundayList(weekLists.get(6))
                 .build();
     }
 }
