@@ -1,6 +1,7 @@
 package com.zoku.home
 
 import android.icu.util.LocaleData
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,7 +62,7 @@ fun RunHistoryRecordListScreen(selectedDay : LocalDate, list: List<WeekList>, on
                         .padding(vertical = 10.dp),
                     list = list[index],
                     onClick = {
-                        onClick(index)
+                        onClick(list[index].id)
                     }
                 )
             }
@@ -71,6 +72,19 @@ fun RunHistoryRecordListScreen(selectedDay : LocalDate, list: List<WeekList>, on
 
 @Composable
 fun DailyRouteView(modifier: Modifier, list: WeekList, onClick: () -> Unit) {
+    Log.d("확인", "${list.startTime}")
+    val startTime = list.startTime.toString()
+        .substringAfter(" ")
+        .take(5) // 시간 부분에서 앞 5자 (예: "06:26")만 가져옴
+
+    val endTime = list.endTime.toString()
+        .substringAfter(" ")
+        .take(5)
+
+// 안전하게 파싱
+    val startHour = startTime.substringBefore(":").toIntOrNull() ?: 0
+    val endHour = endTime.substringBefore(":").toIntOrNull() ?: 0
+
     Surface(
         onClick = {onClick() },
         modifier = modifier
@@ -96,10 +110,10 @@ fun DailyRouteView(modifier: Modifier, list: WeekList, onClick: () -> Unit) {
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
                 DailyRouteText(modifier = Modifier.weight(1f), text = "시작", fontSize = 16.sp)
-                DailyRouteText(modifier = Modifier.weight(1f), text = "오후 3:37", fontSize = 12.sp)
+                DailyRouteText(modifier = Modifier.weight(1f), text = if(startHour > 12) "오후 $startTime" else "오전 $startTime", fontSize = 12.sp)
                 Spacer(modifier = Modifier.height(10.dp))
                 DailyRouteText(modifier = Modifier.weight(1f), text = "종료", fontSize = 16.sp)
-                DailyRouteText(modifier = Modifier.weight(1f), text = "오후 3:57", fontSize = 12.sp)
+                DailyRouteText(modifier = Modifier.weight(1f), text = if(endHour > 12) "오후 $endTime" else  "오전 $endTime" , fontSize = 12.sp)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }

@@ -7,9 +7,8 @@ import com.zoku.network.api.RunningApi
 import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.response.HistoryWeekResponse
-import com.zoku.network.model.response.RunningAllHistoryResponse
-import com.zoku.network.model.response.RunningHistoryResponse
 import com.zoku.network.model.response.PostRunningRecordResponse
+import com.zoku.network.model.response.RunRecordDetailResponse
 import com.zoku.network.model.response.TestSumResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -31,13 +30,11 @@ class RunningRepositoryImpl @Inject constructor(
         return handleApi { runningApi.testSum(testSumRequest) }
     }
 
-    override suspend fun getRunningAllHistory(): NetworkResult<RunningAllHistoryResponse> {
-        return handleApi { runningApi.getRunAllHistory() }
+    override suspend fun getRunRecordDetail(recordId: Int): NetworkResult<RunRecordDetailResponse> {
+        return handleApi { runningApi.getRunRecordDetail(recordId) }
     }
 
-    override suspend fun getRunningHistory(recordId: Int): NetworkResult<RunningHistoryResponse> {
-        return handleApi { runningApi.getRunHistory(recordId) }
-    }
+
     override suspend fun postRunningRecord(dto: MultipartBody.Part, images: MultipartBody.Part): NetworkResult<PostRunningRecordResponse> {
         return handleApi { runningApi.postRunningRecord(dto, images) }
     }

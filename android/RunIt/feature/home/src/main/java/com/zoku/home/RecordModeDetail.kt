@@ -39,12 +39,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.ui.componenet.RecordDetailInfo
 import com.zoku.ui.componenet.RecordGraph
 import com.zoku.ui.componenet.RecordMap
 
 @Composable
-fun RecordModeDetail(modifier: Modifier = Modifier) {
+fun RecordModeDetail(modifier: Modifier = Modifier, runRecord: RunRecordDetail? = null) {
 
     Column(
         modifier = Modifier
@@ -69,7 +70,7 @@ fun RecordModeDetail(modifier: Modifier = Modifier) {
         Box(
             modifier.weight(7f)
         ) {
-            RecordDetailInfo(
+            RecordDetailInfo(runRecord = runRecord
             )
         }
     }

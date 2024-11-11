@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.zoku.network.model.response.RunningAllHistory
 import com.zoku.ui.CustomTypo
 
 @Composable
@@ -38,11 +37,8 @@ fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :()->Unit){
 
     val viewModel : RecordModeViewModel = hiltViewModel()
 
-    val runningAllList by viewModel.runningAllHistoryRecord.collectAsState()
 
-    with(viewModel){
-        getRunningAllHistory()
-    }
+
 
   Column(
       modifier = modifier
@@ -62,137 +58,137 @@ fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :()->Unit){
             fontFamily = com.zoku.ui.ZokuFamily
         )
 
-      // 기록 리스트
-      if(runningAllList.isNotEmpty()){
-          RecordList(
-              modifier
-                  .weight(1f)
-                  .padding(horizontal = 20.dp)
-              , moveToDetail= moveToDetail,
-              runningAllList
-          )
-      }
+//      // 기록 리스트
+//      if(runningAllList.isNotEmpty()){
+//          RecordList(
+//              modifier
+//                  .weight(1f)
+//                  .padding(horizontal = 20.dp)
+//              , moveToDetail= moveToDetail,
+//              runningAllList
+//          )
+//      }
   }
 }
-
-@Composable
-fun RecordList(modifier: Modifier, moveToDetail :()->Unit,
-               runningAllList : List<RunningAllHistory>){
-    LazyColumn(
-        modifier = modifier
-    ) {
-
-        if(runningAllList.size == 0) {
-            item{
-                Text(text = "현재 날짜에는 기록이 없습니다",
-                    style = CustomTypo().jalnan.copy(
-                        color = Color.White
-                    ),
-                    )
-            }
-
-        }
-
-
-        items(runningAllList.size){ index ->
-            val item = runningAllList[index]
-            // 날짜
-            Text(text = item.startTime.substringBefore("T"),
-                color = Color.White,
-                modifier = Modifier.fillMaxWidth(),
-                fontFamily = com.zoku.ui.ZokuFamily)
-
-            RecordDataView(modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .padding(top = 5.dp)
-                .clip(RoundedCornerShape(16.dp))
-                ,moveToDetail = moveToDetail,
-                item)
-        }
-
-    }
-}
-
-@Composable
-fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit,
-                   item : RunningAllHistory){
-
-    val startTime = item.startTime.substringAfter("T").substring(0, 5)
-    val endTime = item.endTime.substringAfter("T").substring(0, 5)
-    val startHour = startTime.substringBefore(":").toInt()
-    val endHour = endTime.substringBefore(":").toInt()
-
-    //가록 Surface
-    Surface(
-        onClick = { moveToDetail() },
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
-            // 시간
-            Text(
-                text = if(startHour > 12) "오후 $startTime" else "오전 $startTime",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, end = 25.dp),
-                textAlign = TextAlign.End,
-                fontFamily = com.zoku.ui.ZokuFamily
-            )
-
-            Text(
-                text = "~ ${if(endHour > 12) "오후 $endTime" else  "오전 $endTime" }",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 10.dp),
-                textAlign = TextAlign.End,
-                fontFamily = com.zoku.ui.ZokuFamily
-            )
-
-
-            // 지도 및 데이터
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                Image(painter = rememberAsyncImagePainter(item.imageUrl),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .weight(3f)
-                        .padding(10.dp))
-                RecordTextView(
-                    modifier = Modifier.weight(1f),
-                    item
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun RecordTextView(modifier: Modifier,
-                   item: RunningAllHistory){
-    Column(
-        modifier = modifier
-    ) {
-        Box(modifier = Modifier.weight(2f)){
-            Text(text = item.name,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center),
-                fontFamily = com.zoku.ui.ZokuFamily)
-        }
-        Box(modifier = Modifier.weight(3f)){
-            Column {
-                Text(text = "거리 : ${item.distance}km",
-                    fontFamily = com.zoku.ui.ZokuFamily)
-                Text(text = "시간 : ${item.bpm}분",
-                    fontFamily = com.zoku.ui.ZokuFamily)
-            }
-        }
-    }
-}
+//
+//@Composable
+//fun RecordList(modifier: Modifier, moveToDetail :()->Unit,
+//               runningAllList : List<RunningAllHistory>){
+//    LazyColumn(
+//        modifier = modifier
+//    ) {
+//
+//        if(runningAllList.size == 0) {
+//            item{
+//                Text(text = "현재 날짜에는 기록이 없습니다",
+//                    style = CustomTypo().jalnan.copy(
+//                        color = Color.White
+//                    ),
+//                    )
+//            }
+//
+//        }
+//
+//
+//        items(runningAllList.size){ index ->
+//            val item = runningAllList[index]
+//            // 날짜
+//            Text(text = item.startTime.substringBefore("T"),
+//                color = Color.White,
+//                modifier = Modifier.fillMaxWidth(),
+//                fontFamily = com.zoku.ui.ZokuFamily)
+//
+//            RecordDataView(modifier = Modifier
+//                .fillMaxWidth()
+//                .height(200.dp)
+//                .padding(top = 5.dp)
+//                .clip(RoundedCornerShape(16.dp))
+//                ,moveToDetail = moveToDetail,
+//                item)
+//        }
+//
+//    }
+//}
+//
+//@Composable
+//fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit,
+//                   item : RunningAllHistory){
+//
+//    val startTime = item.startTime.substringAfter("T").substring(0, 5)
+//    val endTime = item.endTime.substringAfter("T").substring(0, 5)
+//    val startHour = startTime.substringBefore(":").toInt()
+//    val endHour = endTime.substringBefore(":").toInt()
+//
+//    //가록 Surface
+//    Surface(
+//        onClick = { moveToDetail() },
+//        modifier = modifier
+//    ) {
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .fillMaxHeight()
+//        ) {
+//            // 시간
+//            Text(
+//                text = if(startHour > 12) "오후 $startTime" else "오전 $startTime",
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(top = 10.dp, end = 25.dp),
+//                textAlign = TextAlign.End,
+//                fontFamily = com.zoku.ui.ZokuFamily
+//            )
+//
+//            Text(
+//                text = "~ ${if(endHour > 12) "오후 $endTime" else  "오전 $endTime" }",
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(end = 10.dp),
+//                textAlign = TextAlign.End,
+//                fontFamily = com.zoku.ui.ZokuFamily
+//            )
+//
+//
+//            // 지도 및 데이터
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .weight(1f)
+//            ) {
+//                Image(painter = rememberAsyncImagePainter(item.imageUrl),
+//                    contentDescription = null,
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier
+//                        .weight(3f)
+//                        .padding(10.dp))
+//                RecordTextView(
+//                    modifier = Modifier.weight(1f),
+//                    item
+//                )
+//            }
+//        }
+//    }
+//}
+//
+//@Composable
+//fun RecordTextView(modifier: Modifier,
+//                   item: RunningAllHistory){
+//    Column(
+//        modifier = modifier
+//    ) {
+//        Box(modifier = Modifier.weight(2f)){
+//            Text(text = item.name,
+//                textAlign = TextAlign.Center,
+//                modifier = Modifier.align(Alignment.Center),
+//                fontFamily = com.zoku.ui.ZokuFamily)
+//        }
+//        Box(modifier = Modifier.weight(3f)){
+//            Column {
+//                Text(text = "거리 : ${item.distance}km",
+//                    fontFamily = com.zoku.ui.ZokuFamily)
+//                Text(text = "시간 : ${item.bpm}분",
+//                    fontFamily = com.zoku.ui.ZokuFamily)
+//            }
+//        }
+//    }
+//}

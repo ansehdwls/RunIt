@@ -56,7 +56,9 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
         mutableStateOf(false)
     }
     var selectedDay by remember { mutableStateOf(LocalDate.now()) }
-
+    var selectRecordId by remember {
+        mutableStateOf(0)
+    }
     // 주간 시작일을 고정하여 현재 주간의 날짜를 유지
     val weekStart = selectedDay.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
     val weekDates = getWeekDates(weekStart)
@@ -123,11 +125,11 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
                     list = historyWeekList[selectedIndex],
                     onClick = { selectItem ->
                         selectHistory = true
-
+                        selectRecordId = selectItem
                     })
             }
             else {
-                RunHistoryDetailScreen()
+                RunHistoryDetailScreen(selectRecordId, viewModel)
             }
         }
     }
