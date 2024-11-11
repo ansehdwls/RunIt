@@ -9,6 +9,7 @@ import com.ssafy.runit.domain.auth.entity.JwtToken;
 import com.ssafy.runit.domain.auth.repository.JwtTokenRepository;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
+import com.ssafy.runit.domain.rank.service.RankService;
 import com.ssafy.runit.domain.user.dto.response.UserInfoResponse;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
@@ -41,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenRepository jwtTokenRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final RankService rankService;
     private static final String TOKEN_PREFIX = "Bearer ";
 
     @Value("${jwt.refresh-token-expiration:3600000}")
@@ -69,6 +71,7 @@ public class AuthServiceImpl implements AuthService {
         redisTemplate.opsForList().rightPush(cacheKey, dto);
         long ttl = DateUtils.computeTTLForNextWeek();
         redisTemplate.expire(cacheKey, ttl, TimeUnit.SECONDS);
+        rankService.updateScore(group.getId(), user.getId(), 0);
     }
 
     @Override
