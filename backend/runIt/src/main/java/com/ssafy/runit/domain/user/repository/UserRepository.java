@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.user.repository;
 
+import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -28,4 +29,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "GROUP BY u.id " +
             "ORDER BY SUM(e.changed) ASC")
     List<User> findUsersWithExperienceSum(@Param("groupId") Long groupId, @Param("startDate") LocalDateTime startDate);
+
+    List<User> findUserByUserGroup(Group group);
 }

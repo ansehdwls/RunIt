@@ -1,27 +1,30 @@
 package com.ssafy.runit.domain.group.service;
 
-import com.ssafy.runit.domain.experience.repository.ExperienceRepository;
 import com.ssafy.runit.domain.group.dto.response.GetGroupUsersInfo;
 import com.ssafy.runit.domain.group.dto.response.GroupUserInfo;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
+import com.ssafy.runit.domain.rank.service.RankService;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.GroupErrorCode;
-import com.ssafy.runit.util.DateUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
-    private final ExperienceRepository experienceRepository;
+    private final RankService rankService;
 
     @Override
     @Transactional(readOnly = true)
@@ -33,15 +36,24 @@ public class GroupServiceImpl implements GroupService {
                 .filter(u -> u.getUserNumber().equals(userNumber))
                 .findFirst()
                 .orElseThrow(() -> new CustomException(GroupErrorCode.GROUP_NO_USERS_ERROR));
-        List<GroupUserInfo> userInfos = findUsersByGroup(group);
+        List<GroupUserInfo> userInfos = new ArrayList<>();
+        List<User> users = group.getUsers().stream().toList();
+        Map<String, User> userMap = users.stream()
+                .collect(Collectors.toMap(u -> String.valueOf(u.getId()), u -> u));
+        List<String> userIds = users.stream().map(User::getId).map(String::valueOf).toList();
+        Map<String, Integer> rankDiff = rankService.getRankDiff(userIds, groupId); // 랭크 변화
+        Set<ZSetOperations.TypedTuple<Object>> rankings = rankService.getGroupRanking(groupId);
+        for (ZSetOperations.TypedTuple<Object> ranking : rankings) {
+            String userId = ranking.getValue().toString();
+            Double score = ranking.getScore();
+            int diff = rankDiff.get(userId);
+            User u = userMap.get(userId);
+            if (u == null) {
+                continue;
+            }
+            GroupUserInfo groupUserInfo = GroupUserInfo.fromEntity(u, score.longValue(), diff);
+            userInfos.add(groupUserInfo);
+        }
         return new GetGroupUsersInfo().Mapper(userInfos, user, group.getGroupLeague().getRank().getRank());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<GroupUserInfo> findUsersByGroup(Group group) {
-        LocalDate lastMonday = DateUtils.getLastMonday();
-        List<Long> userIds = group.getUsers().stream().map(User::getId).toList();
-        return experienceRepository.sumExperienceByUserIdsAndStartDate(userIds, lastMonday.atStartOfDay());
     }
 }

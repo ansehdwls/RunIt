@@ -9,21 +9,27 @@ import com.ssafy.runit.domain.auth.entity.JwtToken;
 import com.ssafy.runit.domain.auth.repository.JwtTokenRepository;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
+import com.ssafy.runit.domain.rank.service.RankService;
+import com.ssafy.runit.domain.user.dto.response.UserInfoResponse;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.exception.code.GroupErrorCode;
+import com.ssafy.runit.util.DateUtils;
 import com.ssafy.runit.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +41,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenRepository jwtTokenRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final RankService rankService;
     private static final String TOKEN_PREFIX = "Bearer ";
 
     @Value("${jwt.refresh-token-expiration:3600000}")
@@ -57,10 +65,17 @@ public class AuthServiceImpl implements AuthService {
                 () -> new CustomException(GroupErrorCode.GROUP_NOT_FOUND_ERROR)
         );
         User user = request.Mapper(group);
+        String cacheKey = "group:" + group.getId();
         userRepository.save(user);
+        UserInfoResponse dto = UserInfoResponse.fromEntity(user);
+        redisTemplate.opsForList().rightPush(cacheKey, dto);
+        long ttl = DateUtils.computeTTLForNextWeek();
+        redisTemplate.expire(cacheKey, ttl, TimeUnit.SECONDS);
+        rankService.updateScore(group.getId(), user.getId(), 0);
     }
 
     @Override
+    @Transactional
     public LoginResponse createJwtToken(String userNumber) {
         String refreshToken = TOKEN_PREFIX + jwtTokenProvider.generateRefreshToken(userNumber);
         String accessToken = TOKEN_PREFIX + jwtTokenProvider.generateAccessToken(userNumber);
@@ -70,10 +85,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean existsByUserNumber(String userNumber) {
-        if (userRepository.existsByUserNumber(userNumber)) {
-            return true;
-        }
-        return false;
+        return userRepository.existsByUserNumber(userNumber);
     }
 
 

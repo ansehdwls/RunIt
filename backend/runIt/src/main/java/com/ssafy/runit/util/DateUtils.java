@@ -9,7 +9,7 @@ public class DateUtils {
 
     public static LocalDate getLastMonday() {
         LocalDate today = LocalDate.now();
-        return today.with(DayOfWeek.MONDAY);
+        return today.getDayOfWeek() == DayOfWeek.MONDAY ? today : today.with(DayOfWeek.MONDAY);
     }
 
     public static LocalDate getLastMonday(LocalDate today) {
@@ -32,6 +32,17 @@ public class DateUtils {
         };
     }
 
+
+    public static long computeTTLForNextWeek() {
+        LocalDate expirationDate = getLastMonday().plusDays(7);
+        return Duration.between(LocalDate.now().atStartOfDay(), expirationDate.atStartOfDay()).toSeconds();
+    }
+
+    public static Duration computeDurationForNextWeek() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expirationDate = getLastMonday().plusDays(7).atStartOfDay();
+        return Duration.between(now, expirationDate);
+
     public static Long getSpendTime(LocalDateTime stTime, LocalDateTime endTime) {
         Duration duration = Duration.between(stTime, endTime);
 
@@ -39,5 +50,6 @@ public class DateUtils {
         long minutes = duration.toMinutes() % 60; //
 
         return  (hours * 60) + minutes;
+
     }
 }
