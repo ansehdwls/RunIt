@@ -45,21 +45,11 @@ fun HomeScreen(
         flag = true
         onStartClick()
     }
-
-    val items: List<@Composable () -> Unit> =
-        listOf({
-            StartButton(modifier, {
-                onStartClick()
-            }, {
-                homeViewModel.startRunning()
-            })
-        }, { UserInfoRow(modifier) })
-    val pagerState = rememberPagerState(pageCount = { items.size })
-    PagerScreen(
-        modifier = modifier,
-        state = pagerState,
-        items = items
-    )
+    StartButton(modifier, {
+        onStartClick()
+    }, {
+        homeViewModel.startRunning()
+    })
 }
 
 
