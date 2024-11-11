@@ -25,7 +25,7 @@ public class RecordSaveDto {
                 .distance(distance)
                 .startTime(startTime)
                 .endTime(endTime)
-                .isPractice(isPractice)
+                .isPractice(false)
                 .build();
 
     }

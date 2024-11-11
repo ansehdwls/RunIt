@@ -13,11 +13,12 @@ public class DateUtils {
     }
 
     public static LocalDate getLastMonday(LocalDate today) {
-        return today.with(DayOfWeek.MONDAY);
+        return today.getDayOfWeek() == DayOfWeek.MONDAY ? today : today.with(DayOfWeek.MONDAY);
     }
 
     public static LocalDate getLastSunday(LocalDate today) {
-        return today.with(DayOfWeek.SUNDAY);
+
+        return today.plusDays(6);
     }
 
     public static String getDayNameInKorean(DayOfWeek day) {

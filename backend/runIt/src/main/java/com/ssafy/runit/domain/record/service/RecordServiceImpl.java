@@ -226,8 +226,10 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<List<RecordGetListResponse>> getWeekList(UserDetails userDetails, LocalDate today) {
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+
         LocalDate monday = DateUtils.getLastMonday(today);
-        LocalDate sunday = DateUtils.getLastSunday(today);
+        LocalDate sunday = DateUtils.getLastMonday(monday);
+
 
         LocalDateTime startTime = LocalDateTime.of(monday, LocalTime.MIN);
         LocalDateTime endTime = LocalDateTime.of(sunday, LocalTime.MIN);
