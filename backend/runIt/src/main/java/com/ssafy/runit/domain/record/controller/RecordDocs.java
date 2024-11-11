@@ -36,28 +36,28 @@ public interface RecordDocs {
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<List<RecordGetListResponse>> recordFindList(@AuthenticationPrincipal UserDetails userDetails);
 
-    @Operation(summary = "러닝 전체 기록 호출 Api (연습)", description = "러닝")
+    @Operation(summary = "러닝 전체 기록 호출 Api (연습)", description = "연습용 기록 리스트 반환")
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<List<RecordGetListResponse>> recordFindPractiseList(@AuthenticationPrincipal UserDetails userDetails);
 
 
-    @Operation(summary = "러닝 당일 기록 호출 Api", description = "러닝")
+    @Operation(summary = "러닝 당일 기록 호출 Api", description = "당일 기록 리스트 반환")
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<RecordTodayResponse> recordFindToday(@AuthenticationPrincipal UserDetails userDetails);
 
-    @Operation(summary = "러닝 주 기록 호출 Api", description = "러닝")
+    @Operation(summary = "러닝 주 기록 호출 Api", description = "해당 주 기록 호출 반환")
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<RecordGetWeekResponse> recordFindWeek(@AuthenticationPrincipal UserDetails userDetails);
 
-    @Operation(summary = "러닝 전체 기록 호출 Api", description = "러닝")
+    @Operation(summary = "러닝 전체 기록 호출 Api", description = "전체 거리 합 호출")
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<RecordGetTotalResponse> recordFindTotal(@AuthenticationPrincipal UserDetails userDetails);
 
-    @Operation(summary = "러닝 주간 리스트 호출 Api", description = "러닝")
+    @Operation(summary = "러닝 주간 리스트 호출 Api", description = "주간 리스트 호출")
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
-    RunItApiResponse<List<RecordGetCalendarResponse>> recordFindWeekList(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "today") LocalDate today);
+    RunItApiResponse<List<List<RecordGetListResponse>>> recordFindWeekList(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "today") LocalDate today);
 
-    @Operation(summary = "러닝 연습 업데이트 Api", description = "러닝")
+    @Operation(summary = "러닝 연습 업데이트 Api", description = "연습 업데이트")
     @ApiResponse(responseCode = "200", description = "러닝 기록 리스트 호출", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     RunItApiResponse<Void> recordPracticeUpdate(@AuthenticationPrincipal UserDetails userDetails, @PathVariable(name = "recordId") Long recordId);
 
