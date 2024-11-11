@@ -1,5 +1,6 @@
 package com.zoku.running
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,18 +8,18 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.location.Location
 import android.os.Build
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
-import com.google.android.gms.wearable.MessageClient
-import com.google.android.gms.wearable.MessageEvent
 import com.zoku.data.NetworkResult
 import com.zoku.data.repository.RunningRepository
 import com.zoku.network.model.request.Pace
 import com.zoku.network.model.request.PostRunningRecordRequest
-import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.request.Track
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.service.LocationService
@@ -36,16 +37,18 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import timber.log.Timber
+import java.util.Locale
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @HiltViewModel
 class RunningViewModel @Inject constructor(
     application: Application,
-    private val runningRepository: RunningRepository,
+    private val runningRepository: RunningRepository
+) : AndroidViewModel(application), TextToSpeech.OnInitListener {
 
-) : AndroidViewModel(application) {
+    //tts
+    private var tts: TextToSpeech = TextToSpeech(application, this)
 
     // UI variable
     private val _uiState = MutableStateFlow(
@@ -61,6 +64,9 @@ class RunningViewModel @Inject constructor(
     val totalRunningList: StateFlow<List<LocationData>> = _totalRunningList
 
     // GPS
+    private val fusedLocationClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(application)
+    private var initialLocation: LocationData? = null
     private var lastLocation: Location? = null
     private val locationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -80,7 +86,10 @@ class RunningViewModel @Inject constructor(
                 }
                 if (lastLocation != null) {
                     val distance = lastLocation!!.distanceTo(newLocation)
-                    Log.d("확인", "거리를 재고 있어요 $distance")
+                    Log.d(
+                        "확인",
+                        "거리를 재고 있어요 $distance 총 ${uiState.value.distance + distance.toInt()}"
+                    )
                     updateUIState(
                         newDistance = uiState.value.distance + distance.toInt()
                     )
@@ -106,6 +115,18 @@ class RunningViewModel @Inject constructor(
         newBPM: Int? = null,
     ) {
         _uiState.update { currentState ->
+            newDistance?.let {
+                val intDistance = it.toInt()
+                if ((intDistance > 0) && (intDistance % 10 == 0)) {
+                    //현재 미터단위, 킬로미터로 수정해야함
+                    tts.speak(
+                        "${intDistance}미터 달성하였습니다. 화이팅!",
+                        TextToSpeech.QUEUE_FLUSH,
+                        null,
+                        null
+                    )
+                }
+            }
             currentState.copy(
                 time = newTime ?: currentState.time,
                 distance = newDistance ?: currentState.distance,
@@ -128,6 +149,7 @@ class RunningViewModel @Inject constructor(
     }
 
     fun startTimer() {
+        getInitialLocation()
         timerJob = viewModelScope.launch {
             while (true) {
                 val startTime = System.currentTimeMillis()
@@ -140,6 +162,21 @@ class RunningViewModel @Inject constructor(
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private fun getInitialLocation() {
+        if (_totalRunningList.value.isEmpty()) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                location?.let {
+                    initialLocation = LocationData(
+                        latitude = it.latitude,
+                        longitude = it.longitude
+                    )
+                }
+            }.addOnFailureListener { exception ->
+                Log.e("RunningViewModel", "초기 위치를 가져오는 데 실패했습니다: $exception")
+            }
+        }
+    }
 
     fun stopTimer() {
         timerJob?.cancel()
@@ -171,11 +208,11 @@ class RunningViewModel @Inject constructor(
 
             val userRequestBody = userJson.toRequestBody("application/json".toMediaTypeOrNull())
 
-            val requestBody = MultipartBody.Part.createFormData("dto", null,userRequestBody)
+            val requestBody = MultipartBody.Part.createFormData("dto", null, userRequestBody)
 
 
 
-            when (val result = runningRepository.postRunningRecord(requestBody,filePart)) {
+            when (val result = runningRepository.postRunningRecord(requestBody, filePart)) {
                 is NetworkResult.Success -> {
                     onSuccess()
                 }
@@ -192,30 +229,18 @@ class RunningViewModel @Inject constructor(
         }
     }
 
-
-    fun submitTestSum(testSumRequest: TestSumRequest) {
-        viewModelScope.launch {
-            when (val result = runningRepository.postTestSum(testSumRequest)) {
-                is NetworkResult.Success -> {
-                    Log.d("확인", " 성공 ${result}")
-                }
-
-                is NetworkResult.Error -> {
-                    Log.d("확인", "실패, 에러 ${result}")
-                }
-
-                is NetworkResult.Exception -> {
-                    Log.d("확인", "서버 연결 에러")
-                }
-            }
-        }
-    }
-
+    fun getInitialLocationData(): LocationData? = initialLocation
 
     override fun onCleared() {
         super.onCleared()
         stopTimer()
         getApplication<Application>().unregisterReceiver(locationReceiver)
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            tts.language = Locale.KOREAN
+        }
     }
 
 }

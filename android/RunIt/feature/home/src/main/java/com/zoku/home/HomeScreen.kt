@@ -56,7 +56,6 @@ fun HomeScreen(modifier: Modifier = Modifier,
     val baseModifier = Modifier
         .fillMaxSize()
         .background(com.zoku.ui.BaseGray)
-        .systemBarsPadding()
     Column(
         modifier = if(isInfo) baseModifier
             .verticalScroll(rememberScrollState())

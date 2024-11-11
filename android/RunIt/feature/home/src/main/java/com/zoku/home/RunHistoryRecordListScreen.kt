@@ -1,5 +1,6 @@
 package com.zoku.home
 
+import android.icu.util.LocaleData
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,8 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.time.LocalDate
+
 @Composable
-fun RunHistoryRecordListScreen(selectedDay: Int, onClick: (Int) -> Unit) {
+fun RunHistoryRecordListScreen(selectedDay: LocalDate, onClick: (Int) -> Unit) {
     // 아이템을 통해 높이가 완성 되면 작동
 
         LazyColumn(
@@ -40,7 +43,7 @@ fun RunHistoryRecordListScreen(selectedDay: Int, onClick: (Int) -> Unit) {
             // 선택된 날짜 헤더
             item {
                 Text(
-                    text = "2024-10-${selectedDay}",
+                    text = "$selectedDay",
                     color = Color.White,
                     fontSize = 20.sp,
                     modifier = Modifier.padding(top = 10.dp, start = 20.dp, bottom = 5.dp),
@@ -65,7 +68,7 @@ fun RunHistoryRecordListScreen(selectedDay: Int, onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun DailyRouteView(modifier: Modifier, day: Int, onClick: () -> Unit) {
+fun DailyRouteView(modifier: Modifier, day: LocalDate, onClick: () -> Unit) {
     Surface(
         onClick = {onClick() },
         modifier = modifier
