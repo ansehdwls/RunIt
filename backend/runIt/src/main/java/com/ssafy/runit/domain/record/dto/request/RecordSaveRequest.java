@@ -38,6 +38,7 @@ public class RecordSaveRequest {
                 .distance(recordEntity.getDistance())
                 .startTime(recordEntity.getStartTime())
                 .endTime(recordEntity.getEndTime())
+                .isPractice(recordEntity.getIsPractice())
                 .build();
 
 

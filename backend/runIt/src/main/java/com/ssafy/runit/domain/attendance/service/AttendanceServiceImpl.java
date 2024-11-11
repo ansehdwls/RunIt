@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.attendance.service;
 
+import com.ssafy.runit.domain.attendance.dto.AttendanceSaveDto;
 import com.ssafy.runit.domain.attendance.dto.response.DayAttendanceResponse;
 import com.ssafy.runit.domain.attendance.entity.Attendance;
 import com.ssafy.runit.domain.attendance.repository.AttendanceRepository;
@@ -10,11 +11,14 @@ import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 @Service
@@ -41,4 +45,32 @@ public class AttendanceServiceImpl implements AttendanceService {
                     return DayAttendanceResponse.fromEntity(DateUtils.getDayNameInKorean(day), targetDate, attended);
                 }).toList();
     }
+
+    @Override
+    public Boolean getTodayAttended(UserDetails userDetails, LocalDate today) {
+        User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+        /*
+        * 반환 값이 널이면은 해당 날은 출석을 안했다는 거니까
+        * -> false
+        *
+        * 반환 값이 있으면 해당 날은 출석을 했다는 거니까
+        * -> true
+        *
+        * .orElse -> 값이 있을 경우 true, 없을 경우 false
+        *
+        * */
+        return attendanceRepository.findByUserAndCreatedAt(user, today)
+                .map(attendance -> true)
+                .orElse(false);
+    }
+
+    @Override
+    public Void saveAttendance(UserDetails userDetails) {
+        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+        Attendance attendance = new AttendanceSaveDto().toEntity(findUser);
+        attendanceRepository.save(attendance);
+        return null;
+    }
+
+
 }

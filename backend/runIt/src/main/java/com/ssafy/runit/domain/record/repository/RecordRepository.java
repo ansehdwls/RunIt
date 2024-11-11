@@ -16,4 +16,5 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     List<Record> findByUserId(Long userId);
 
+
 }
