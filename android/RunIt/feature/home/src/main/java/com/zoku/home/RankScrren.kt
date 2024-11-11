@@ -44,6 +44,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.zoku.home.component.DropDownMenu
 import com.zoku.network.model.response.AttendanceDay
 import com.zoku.network.model.response.GroupMember
+import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.CustomTypo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.withContext
@@ -52,6 +53,7 @@ import java.time.LocalDate
 import kotlin.math.ceil
 import kotlin.math.floor
 import com.zoku.ui.League
+import com.zoku.ui.RankProfile
 import com.zoku.ui.leagueList
 
 @Composable
@@ -229,13 +231,13 @@ fun DailyCheckView(
         for (i in 0..today) {
             DailyCheck(
                 Modifier.weight(1f),
-                day = attendanceList[i].day,
+                day = attendanceList[i].day.substring(0,1),
                 type = if (attendanceList[i].attended) 1 else 2
             )
         }
         for (i in today+1 until 7) {
             DailyCheck(
-                Modifier.weight(1f), day = attendanceList[i].day, type = 0
+                Modifier.weight(1f), day = attendanceList[i].day.substring(0,1), type = 0
             )
         }
     }
@@ -383,22 +385,18 @@ fun UserRanking(groupList: List<GroupMember>,
 
             }
         }
-
-        // 3명 이상 이면 적용
-        if (demoteCount > 0) {
-
-            // 유지 인원
-            items(groupSize - promoteCount - demoteCount) { index ->
-                val item = groupList[promoteCount + index]
-                UserRankingProfile(
-                    Modifier
-                        .fillMaxWidth(),
-                    item,
-                    promoteCount + index
-                )
-            }
+        // 유지 인원
+        items(groupSize - promoteCount - demoteCount) { index ->
+            val item = groupList[promoteCount + index]
+            UserRankingProfile(
+                Modifier
+                    .fillMaxWidth(),
+                item,
+                promoteCount + index
+            )
         }
-        if (groupSize - promoteCount - demoteCount > 0) {
+
+        if (demoteCount > 0) {
             // 강등 알이면 없음
             if (rank > 0) item {
                 Row(
@@ -466,7 +464,7 @@ fun UserRankingProfile(
 ) {
     val baseModifier = Modifier.fillMaxHeight()
     Surface(
-        color = com.zoku.ui.BaseDarkBackground,
+        color = BaseDarkBackground,
         modifier = modifier
             .height(80.dp)
             .padding(vertical = 8.dp)
@@ -501,25 +499,36 @@ fun UserRankingProfile(
                 RankText(text = item.userName, fontSize = 20.sp)
             }
             Box(
-                modifier = baseModifier,
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.run_info_icon),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = baseModifier
-                        .size(50.dp) // 명확한 크기 설정
-                        .padding(horizontal = 15.dp, vertical = 20.dp)
-                )
-            }
-            Box(
                 modifier = baseModifier
                     .padding(end = 10.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
                 RankText(
                     text = "${item.exp}xp", fontSize = 24.sp
+                )
+            }
+            Box(
+                modifier = baseModifier,
+                contentAlignment = Alignment.CenterEnd
+            ) {
+
+                Image(
+                    painter = painterResource(id = R.drawable.stop_icon),
+                    contentDescription = null,
+                    modifier = baseModifier
+                        .size(50.dp) // 명확한 크기 설정
+                        .padding(top = 15.dp, bottom = 15.dp,start =20.dp, end = 8.dp)
+                )
+            }
+            Box(
+                modifier = baseModifier,
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                RankText(
+                    text = "0", fontSize = 12.sp,
+                    modifier = Modifier
+                        .width(20.dp)
+                        .padding(end = 10.dp)
                 )
             }
         }
@@ -534,11 +543,12 @@ fun RankText(
     color: Color = Color.White
 ) {
     Text(
+        modifier = modifier,
         text = text,
         style = CustomTypo().jalnan.copy(
             fontSize = fontSize,
             textAlign = TextAlign.Center,
-            color = Color.White
+            color = color
         ),
     )
 }

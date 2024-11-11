@@ -19,3 +19,5 @@ val Black = Color(color = 0xFF000000)
 val RoundButtonGray = Color(0xFF535353)
 
 val routeColor = Color(0xFF624CAA)
+
+val RankProfile = Color(0xFFF8F8F8)
