@@ -42,6 +42,7 @@ public class DateUtils {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expirationDate = getLastMonday().plusDays(7).atStartOfDay();
         return Duration.between(now, expirationDate);
+    }
 
     public static Long getSpendTime(LocalDateTime stTime, LocalDateTime endTime) {
         Duration duration = Duration.between(stTime, endTime);
