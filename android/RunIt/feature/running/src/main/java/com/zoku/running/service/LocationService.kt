@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -36,7 +35,7 @@ class LocationService : Service() {
                 val lastLocation = locationResult.lastLocation
                 if (lastLocation != null) {
                     locationList.add(LocationData(lastLocation.latitude, lastLocation.longitude))
-                    val intent = Intent("com.zoku.running.LOCATION_UPDATE").apply{
+                    val intent = Intent("com.zoku.running.LOCATION_UPDATE").apply {
                         putExtra("isPause", false)
                         putExtra("latitude", lastLocation.latitude)
                         putExtra("longitude", lastLocation.longitude)
