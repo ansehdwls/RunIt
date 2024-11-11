@@ -1,6 +1,7 @@
 package com.zoku.running
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -75,19 +76,17 @@ fun RunningResultScreen(
             KakaoMapView(
                 totalLocationList = totalRunningList,
                 onCaptureComplete = { file ->
-                    //TODO 이거 테스트용임 지워야함 , 누가 이 주석을 본다면 지우라고 해주세요;;
-                    isMapCompleted = true
-//                    runningViewModel.postRunningRecord(
-//                        captureFile = file,
-//                        onSuccess = {
-//                            Toast.makeText(context, "통신 성공", Toast.LENGTH_SHORT).show()
-//                            isMapCompleted = true
-//                        },
-//                        onFail = { message ->
-//                            Toast.makeText(context, "API 실패 ${message}", Toast.LENGTH_SHORT)
-//                                .show()
-//                        }
-//                    )
+                    runningViewModel.postRunningRecord(
+                        captureFile = file,
+                        onSuccess = { response ->
+                            Toast.makeText(context, "통신 성공 ${response}", Toast.LENGTH_SHORT).show()
+                            isMapCompleted = true
+                        },
+                        onFail = { message ->
+                            Toast.makeText(context, "API 실패 ${message}", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    )
                 },
                 initialLocation = runningViewModel.getInitialLocationData(),
                 isResult = true
