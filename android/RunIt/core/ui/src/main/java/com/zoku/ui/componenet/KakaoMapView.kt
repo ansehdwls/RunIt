@@ -105,7 +105,7 @@ fun KakaoMapView(
                             if (isResult) {
                                 mapView.surfaceView?.let {
                                     CoroutineScope(Dispatchers.IO).launch {
-                                        delay(1000)
+                                        delay(500)
                                         val bitmap = Bitmap.createBitmap(
                                             it.width,
                                             it.height,

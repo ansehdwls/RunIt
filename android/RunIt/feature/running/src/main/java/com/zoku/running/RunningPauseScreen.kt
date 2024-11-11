@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.util.formatTime
 import com.zoku.ui.BaseDarkBackground
+import com.zoku.ui.BaseGrayBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.KakaoMapView
@@ -60,7 +61,7 @@ fun RunningPauseScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BaseDarkBackground),
+            .background(BaseGrayBackground),
     ) {
         Box(
             modifier = Modifier

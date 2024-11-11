@@ -37,6 +37,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.zoku.running.service.LocationService
 import com.zoku.running.util.formatTime
 import com.zoku.ui.BaseDarkBackground
+import com.zoku.ui.BaseGrayBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.RobotoText
@@ -71,7 +72,7 @@ fun RunningPlayScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BaseDarkBackground),
+            .background(BaseGrayBackground),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.weight(0.2f))
