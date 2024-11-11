@@ -3,6 +3,7 @@ package com.zoku.data.repository
 import com.zoku.data.NetworkResult
 import com.zoku.data.model.MyTestData
 import com.zoku.network.model.request.TestSumRequest
+import com.zoku.network.model.response.HistoryWeekResponse
 import com.zoku.network.model.response.RunningAllHistoryResponse
 import com.zoku.network.model.response.RunningHistoryResponse
 import com.zoku.network.model.response.PostRunningRecordResponse
@@ -24,5 +25,9 @@ interface RunningRepository {
         dto: MultipartBody.Part,
         images: MultipartBody.Part
     ): NetworkResult<PostRunningRecordResponse>
+
+    suspend fun getWeekList(
+        today : String
+    ) : NetworkResult<HistoryWeekResponse>
 
 }

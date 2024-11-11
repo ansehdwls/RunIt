@@ -6,6 +6,7 @@ import com.zoku.data.model.MyTestData
 import com.zoku.network.api.RunningApi
 import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.TestSumRequest
+import com.zoku.network.model.response.HistoryWeekResponse
 import com.zoku.network.model.response.RunningAllHistoryResponse
 import com.zoku.network.model.response.RunningHistoryResponse
 import com.zoku.network.model.response.PostRunningRecordResponse
@@ -39,6 +40,10 @@ class RunningRepositoryImpl @Inject constructor(
     }
     override suspend fun postRunningRecord(dto: MultipartBody.Part, images: MultipartBody.Part): NetworkResult<PostRunningRecordResponse> {
         return handleApi { runningApi.postRunningRecord(dto, images) }
+    }
+
+    override suspend fun getWeekList(today: String): NetworkResult<HistoryWeekResponse> {
+        return handleApi { runningApi.getWeekHistory(today) }
     }
 
 }

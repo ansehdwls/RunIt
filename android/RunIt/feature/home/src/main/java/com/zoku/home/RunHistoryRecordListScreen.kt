@@ -29,10 +29,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import com.zoku.network.model.response.WeekList
 import java.time.LocalDate
 
 @Composable
-fun RunHistoryRecordListScreen(selectedDay: LocalDate, onClick: (Int) -> Unit) {
+fun RunHistoryRecordListScreen(selectedDay : LocalDate, list: List<WeekList>, onClick: (Int) -> Unit) {
     // 아이템을 통해 높이가 완성 되면 작동
 
         LazyColumn(
@@ -52,12 +54,12 @@ fun RunHistoryRecordListScreen(selectedDay: LocalDate, onClick: (Int) -> Unit) {
             }
 
             // 그날 뛴 기록 확인
-            items(3) { index ->
+            items(list.size) { index ->
                 DailyRouteView(
                     Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp),
-                    day = selectedDay,
+                    list = list[index],
                     onClick = {
                         onClick(index)
                     }
@@ -68,7 +70,7 @@ fun RunHistoryRecordListScreen(selectedDay: LocalDate, onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun DailyRouteView(modifier: Modifier, day: LocalDate, onClick: () -> Unit) {
+fun DailyRouteView(modifier: Modifier, list: WeekList, onClick: () -> Unit) {
     Surface(
         onClick = {onClick() },
         modifier = modifier
@@ -78,7 +80,7 @@ fun DailyRouteView(modifier: Modifier, day: LocalDate, onClick: () -> Unit) {
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             Image(
-                painter = painterResource(id = R.drawable.sample_map_history_icon),
+                painter = rememberAsyncImagePainter(list.imageUrl),
                 contentDescription = null,
                 modifier = Modifier
                     .weight(3f)

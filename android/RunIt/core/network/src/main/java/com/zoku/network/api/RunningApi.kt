@@ -2,6 +2,7 @@ package com.zoku.network.api
 
 import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.response.GetRunningRecordResponse
+import com.zoku.network.model.response.HistoryWeekResponse
 import com.zoku.network.model.response.RunningAllHistoryResponse
 import com.zoku.network.model.response.RunningHistoryResponse
 import com.zoku.network.model.response.TestSumData
@@ -38,4 +39,9 @@ interface RunningApi {
         @Part dto: MultipartBody.Part,
         @Part images: MultipartBody.Part
     ): Response<PostRunningRecordResponse>
+
+    @GET("api/run/weekList/{today}")
+    suspend fun getWeekHistory(
+        @Path("today") today : String
+    ) : Response<HistoryWeekResponse>
 }
