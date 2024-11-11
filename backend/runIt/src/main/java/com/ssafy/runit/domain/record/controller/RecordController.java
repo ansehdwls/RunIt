@@ -112,8 +112,8 @@ public class RecordController implements RecordDocs{
 
     @Override
     @GetMapping("/run/weekList/{today}")
-    public RunItApiResponse<List<RecordGetCalendarResponse>> recordFindWeekList(UserDetails userDetails, LocalDate today) {
-        List<RecordGetCalendarResponse> response = recordService.getWeekList(userDetails, today);
+    public RunItApiResponse<List<List<RecordGetListResponse>>> recordFindWeekList(UserDetails userDetails, LocalDate today) {
+        List<List<RecordGetListResponse>> response = recordService.getWeekList(userDetails, today);
         return new RunItApiResponse<>(response, "성공");
     }
 
