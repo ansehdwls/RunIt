@@ -507,13 +507,23 @@ fun UserRankingProfile(
                     text = "${item.exp}xp", fontSize = 24.sp
                 )
             }
+            val iconRes =
+                if(item.rankDiff > 0) R.drawable.up_rank_icon
+                else if(item.rankDiff == 0) R.drawable.stop_icon
+                else R.drawable.down_rank_icon
+
+            val rankColor =
+                if(item.rankDiff > 0) Color.Green
+                else if(item.rankDiff == 0) com.zoku.ui.RankProfile
+                else Color.Red
+
             Box(
                 modifier = baseModifier,
                 contentAlignment = Alignment.CenterEnd
             ) {
 
                 Image(
-                    painter = painterResource(id = R.drawable.stop_icon),
+                    painter = painterResource(id = iconRes),
                     contentDescription = null,
                     modifier = baseModifier
                         .size(50.dp) // 명확한 크기 설정
@@ -525,10 +535,11 @@ fun UserRankingProfile(
                 contentAlignment = Alignment.CenterEnd
             ) {
                 RankText(
-                    text = "0", fontSize = 12.sp,
+                    text = item.rankDiff.toString(), fontSize = 12.sp,
                     modifier = Modifier
                         .width(20.dp)
-                        .padding(end = 10.dp)
+                        .padding(end = 10.dp),
+                    color = rankColor
                 )
             }
         }

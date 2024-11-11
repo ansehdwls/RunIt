@@ -14,5 +14,6 @@ data class GroupList(
 data class GroupMember(
     val userName: String,
     val imageUrl: String,
-    val exp: Long
+    val exp: Long,
+    val rankDiff : Int
 )

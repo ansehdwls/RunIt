@@ -68,6 +68,8 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
     // 주간 시작일을 고정하여 현재 주간의 날짜를 유지
     val weekStart = selectedDay.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
     val weekDates = getWeekDates(weekStart)
+
+    // 표기 되는 월은 그 주의 월요일 기준
     val monthName = weekDates.first().month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
     val baseModifier = Modifier
         .padding(horizontal = 10.dp)
