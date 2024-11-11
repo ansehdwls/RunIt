@@ -40,7 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.zoku.ui.BaseDarkBackground
+import com.zoku.ui.BaseGrayBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.CustomTypo
 import com.zoku.ui.RoundButtonGray
@@ -63,7 +63,7 @@ fun RunningResultScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(BaseDarkBackground)
+            .background(BaseGrayBackground)
     ) {
 
         Spacer(modifier = Modifier.weight(0.02f))
@@ -78,8 +78,9 @@ fun RunningResultScreen(
                 onCaptureComplete = { file ->
                     runningViewModel.postRunningRecord(
                         captureFile = file,
-                        onSuccess = { response ->
-                            Toast.makeText(context, "통신 성공 ${response}", Toast.LENGTH_SHORT).show()
+                        onSuccess = { exp, isAttend ->
+                            Toast.makeText(context, "경험치가 ${exp} 증가했습니다!", Toast.LENGTH_SHORT)
+                                .show()
                             isMapCompleted = true
                         },
                         onFail = { message ->
@@ -142,16 +143,15 @@ fun RunningResultScreen(
                 Surface(
                     modifier = Modifier
                         .weight(0.2f),
-                    color = BaseDarkBackground,
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(0.1.dp, BaseYellow)
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize()
+                            .background(BaseGrayBackground),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // 텍스트
                         Text(
                             text = "경로를 저장하시겠습니까?",
                             style = CustomTypo().jalnan,

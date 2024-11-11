@@ -19,3 +19,5 @@ val Black = Color(color = 0xFF000000)
 val RoundButtonGray = Color(0xFF535353)
 
 val routeColor = Color(0xFF624CAA)
+
+val BaseGrayBackground = Color(0xFF1D1D1D)

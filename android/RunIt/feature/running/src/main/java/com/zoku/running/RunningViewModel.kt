@@ -182,7 +182,7 @@ class RunningViewModel @Inject constructor(
         timerJob?.cancel()
     }
 
-    fun postRunningRecord(captureFile: File, onSuccess: (String) -> Unit, onFail: (String) -> Unit) {
+    fun postRunningRecord(captureFile: File, onSuccess: (Int,Boolean) -> Unit, onFail: (String) -> Unit) {
         viewModelScope.launch {
 
             val filePart = MultipartBody.Part.createFormData(
@@ -214,7 +214,7 @@ class RunningViewModel @Inject constructor(
 
             when (val result = runningRepository.postRunningRecord(requestBody, filePart)) {
                 is NetworkResult.Success -> {
-                    onSuccess("${result.data}")
+                    onSuccess(result.data.data.exp,result.data.data.isAttend)
                 }
 
                 is NetworkResult.Error -> {
