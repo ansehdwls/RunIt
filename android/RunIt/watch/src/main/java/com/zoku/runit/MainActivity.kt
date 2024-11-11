@@ -21,7 +21,6 @@ import com.zoku.ui.model.PhoneWatchConnection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -60,7 +59,7 @@ class MainActivity : ComponentActivity() {
         isActivityActive = true
     }
 
-    private fun sendBpm(bpm: Int?=0, phoneWatchConnection: PhoneWatchConnection) {
+    private fun sendBpm(bpm: Int? = 0, time: Int? = 0, phoneWatchConnection: PhoneWatchConnection) {
         lifecycleScope.launch {
             try {
                 val nodes = capabilityClient
@@ -68,13 +67,13 @@ class MainActivity : ComponentActivity() {
                     .await()
                     .nodes
 
-                val bpmData = bpm.toString().toByteArray(Charsets.UTF_8)
+                val bpmTimeData = "${bpm}:${time}".toByteArray(Charsets.UTF_8)
 
-                Timber.tag("sendPhone").d("노드 확인 $nodes , ${phoneWatchConnection.route}")
+
+                Timber.tag("sendPhone").d("노드 확인 $bpmTimeData , ${phoneWatchConnection.route}")
                 nodes.map { node ->
                     async {
-                        Timber.tag("sendPhone").d("메세지 전송 $nodes , $bpmData")
-                        messageClient.sendMessage(node.id, phoneWatchConnection.route, bpmData)
+                        messageClient.sendMessage(node.id, phoneWatchConnection.route, bpmTimeData)
                             .await()
                     }
                 }.awaitAll()

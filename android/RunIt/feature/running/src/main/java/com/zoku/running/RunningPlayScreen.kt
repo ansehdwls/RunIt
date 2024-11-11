@@ -32,16 +32,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.zoku.running.service.LocationService
 import com.zoku.running.util.formatTime
-import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.BaseGrayBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
+import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
+import com.zoku.ui.model.RunningConnectionState
+import timber.log.Timber
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
@@ -49,7 +52,8 @@ import com.zoku.ui.componenet.RoundRunButton
 fun RunningPlayScreen(
     onPauseClick: () -> Unit,
     isFirstPlay: Boolean = true,
-    runningViewModel: RunningViewModel
+    runningViewModel: RunningViewModel,
+    connectionState: RunningConnectionState
 ) {
     val locationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -68,6 +72,7 @@ fun RunningPlayScreen(
         }
     }
     val uiState by runningViewModel.uiState.collectAsState()
+
 
     Column(
         modifier = Modifier
@@ -89,8 +94,15 @@ fun RunningPlayScreen(
                 topName = "${uiState.bpm}",
                 bottomName = "BPM"
             )
+            Timber.tag("RunningPlayScreen").d("connection $connectionState")
+            val time = if (connectionState is RunningConnectionState.ConnectionSuccess) {
+                connectionState.data.time ?: 0
+            } else {
+                uiState.time
+            }
+            Timber.tag("RunningPlayScreen").d("connection Time $time")
             TopInfoWithText(
-                topName = formatTime(seconds = uiState.time),
+                topName = formatTime(seconds = time),
                 bottomName = "시간"
             )
         }
@@ -219,7 +231,8 @@ fun GreetingPreview() {
     com.zoku.ui.RunItTheme {
         RunningPlayScreen(
             onPauseClick = { Log.d("Zz", "Zzz") },
-            runningViewModel = hiltViewModel<RunningViewModel>()
+            runningViewModel = hiltViewModel<RunningViewModel>(),
+            connectionState = RunningConnectionState.ConnectionDefault
         )
     }
 }

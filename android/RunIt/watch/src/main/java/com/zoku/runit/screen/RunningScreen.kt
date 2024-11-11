@@ -46,7 +46,7 @@ import java.time.Duration
 fun RunningScreen(
     modifier: Modifier = Modifier,
     onPauseClick: (ExerciseResult) -> Unit,
-    sendBpm: (Int, PhoneWatchConnection) -> Unit
+    sendBpm: (Int, Int, PhoneWatchConnection) -> Unit
 ) {
     val viewModel = hiltViewModel<RunViewModel>()
 
@@ -59,8 +59,8 @@ fun RunningScreen(
         viewModel.pauseRunning()
         onPauseClick(state.toExerciseResult(duration))
     },
-        sendBpm = { bpm, connection ->
-            sendBpm(bpm, connection)
+        sendBpm = { bpm, duration, connection ->
+            sendBpm(bpm, duration, connection)
         }
     )
 }
@@ -72,7 +72,7 @@ fun RunningStatus(
     modifier: Modifier = Modifier,
     uiState: ExerciseScreenState,
     onPauseClick: (ExerciseScreenState, Duration?) -> Unit,
-    sendBpm: (Int, PhoneWatchConnection) -> Unit
+    sendBpm: (Int, Int, PhoneWatchConnection) -> Unit
 ) {
     val lastActiveDurationCheckpoint = uiState.exerciseState?.activeDurationCheckpoint
     val exerciseState = uiState.exerciseState?.exerciseState
@@ -85,11 +85,15 @@ fun RunningStatus(
     if (exerciseState == ExerciseState.USER_PAUSING && !flag) {
         flag = true
         onPauseClick(uiState, duration)
-    }else if(exerciseState == ExerciseState.ACTIVE){
+    } else if (exerciseState == ExerciseState.ACTIVE) {
         LaunchedEffect(metrics?.heartRate) {
             while (true) {
-                delay(200L)
-                sendBpm(metrics?.heartRate?.toInt() ?: 0, PhoneWatchConnection.SEND_BPM)
+                delay(1000L)
+                sendBpm(
+                    metrics?.heartRate?.toInt() ?: 0,
+                    duration?.seconds?.toInt() ?: 0,
+                    PhoneWatchConnection.SEND_BPM
+                )
             }
         }
     }

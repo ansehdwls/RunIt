@@ -9,6 +9,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.model.PhoneWatchConnection
 import timber.log.Timber
 
@@ -20,39 +22,48 @@ fun RunningScreen(
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
-    moveToHome : () -> Unit,
+    moveToHome: () -> Unit,
     phoneWatchData: PhoneWatchConnection,
+    viewModel: ClientDataViewModel = hiltViewModel(),
+    runningViewModel: RunningViewModel = hiltViewModel(),
 ) {
-
-    val runningViewModel = hiltViewModel<RunningViewModel>()
+    //val currentCheck by viewModel.runningConnectionState.collectAsStateWithLifecycle()
+    val currentCheck = viewModel.runningConnectionState.collectAsStateWithLifecycle()
+    Timber.tag("RunningScreen").d("currentCheck 변화 감지: $currentCheck")
     var isPlay by remember { mutableStateOf(true) }
     var isFirstPlay by remember { mutableStateOf(true) }
     var isResult by remember { mutableStateOf(false) }
 
     Timber.tag("RunningScreen").d("phoneWatchData $phoneWatchData")
-    when(phoneWatchData){
+    when (phoneWatchData) {
         PhoneWatchConnection.PAUSE_RUNNING -> {
             isPlay = false
         }
+
         PhoneWatchConnection.RESUME_RUNNING -> {
             isPlay = true
             isFirstPlay = false
         }
+
         PhoneWatchConnection.STOP_RUNNING -> {
             isResult = true
             moveToHome()
         }
+
         PhoneWatchConnection.SEND_BPM -> {
             isPlay = true
             isFirstPlay = false
         }
+
         else -> {}
     }
 
 
     if (isResult) {
-        RunningResultScreen(runningViewModel = runningViewModel,
-            moveToHome = moveToHome)
+        RunningResultScreen(
+            runningViewModel = runningViewModel,
+            moveToHome = moveToHome
+        )
     } else {
         if (isPlay) { // 재개된 상태
             RunningPlayScreen(
@@ -61,7 +72,8 @@ fun RunningScreen(
                     isPlay = false
                 },
                 isFirstPlay = isFirstPlay,
-                runningViewModel = runningViewModel
+                runningViewModel = runningViewModel,
+                connectionState = currentCheck.value
             )
         } else { // 중지 된 상태
             RunningPauseScreen(
