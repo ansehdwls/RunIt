@@ -144,7 +144,7 @@ fun RunningResultScreen(
                     modifier = Modifier
                         .weight(0.2f),
                     shape = RoundedCornerShape(8.dp),
-                    border = BorderStroke(0.1.dp, BaseYellow)
+//                    border = BorderStroke(0.1.dp, BaseYellow)
                 ) {
                     Column(
                         modifier = Modifier.fillMaxSize()
