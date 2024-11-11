@@ -12,6 +12,14 @@ public class DateUtils {
         return today.getDayOfWeek() == DayOfWeek.MONDAY ? today : today.with(DayOfWeek.MONDAY);
     }
 
+    public static LocalDate getLastMonday(LocalDate today) {
+        return today.with(DayOfWeek.MONDAY);
+    }
+
+    public static LocalDate getLastSunday(LocalDate today) {
+        return today.with(DayOfWeek.SUNDAY);
+    }
+
     public static String getDayNameInKorean(DayOfWeek day) {
         return switch (day) {
             case SUNDAY -> "일요일";
@@ -24,6 +32,7 @@ public class DateUtils {
         };
     }
 
+
     public static long computeTTLForNextWeek() {
         LocalDate expirationDate = getLastMonday().plusDays(7);
         return Duration.between(LocalDate.now().atStartOfDay(), expirationDate.atStartOfDay()).toSeconds();
@@ -33,5 +42,14 @@ public class DateUtils {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expirationDate = getLastMonday().plusDays(7).atStartOfDay();
         return Duration.between(now, expirationDate);
+
+    public static Long getSpendTime(LocalDateTime stTime, LocalDateTime endTime) {
+        Duration duration = Duration.between(stTime, endTime);
+
+        long hours = duration.toHours(); // 총 시간 차이
+        long minutes = duration.toMinutes() % 60; //
+
+        return  (hours * 60) + minutes;
+
     }
 }
