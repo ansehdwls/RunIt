@@ -12,7 +12,7 @@ public interface AttendanceService {
 
     List<DayAttendanceResponse> getWeekAttendance(String userNumber);
 
-    Boolean getTodayAttended(LocalDate today);
+    Boolean getTodayAttended(UserDetails userDetails,LocalDate today);
 
     Void saveAttendance(UserDetails userDetails);
 }

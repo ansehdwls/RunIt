@@ -46,13 +46,11 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public Boolean getTodayAttended(LocalDate today) {
-
-        if (attendanceRepository.findByCreatedAt(today).isEmpty()){
+    public Boolean getTodayAttended(UserDetails userDetails, LocalDate today) {
+        User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+        if (attendanceRepository.findByUserAndCreatedAt(user, today).isEmpty()){
             return false;
         }
-
-        log.debug("today = {}", today);
 
         return true;
     }
