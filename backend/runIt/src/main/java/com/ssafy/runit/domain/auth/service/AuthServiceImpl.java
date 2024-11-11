@@ -75,6 +75,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public LoginResponse createJwtToken(String userNumber) {
         String refreshToken = TOKEN_PREFIX + jwtTokenProvider.generateRefreshToken(userNumber);
         String accessToken = TOKEN_PREFIX + jwtTokenProvider.generateAccessToken(userNumber);
@@ -84,10 +85,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean existsByUserNumber(String userNumber) {
-        if (userRepository.existsByUserNumber(userNumber)) {
-            return true;
-        }
-        return false;
+        return userRepository.existsByUserNumber(userNumber);
     }
 
 

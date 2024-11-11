@@ -1,6 +1,5 @@
 package com.ssafy.runit.domain.group.service;
 
-import com.ssafy.runit.domain.experience.repository.ExperienceRepository;
 import com.ssafy.runit.domain.group.dto.response.GetGroupUsersInfo;
 import com.ssafy.runit.domain.group.dto.response.GroupUserInfo;
 import com.ssafy.runit.domain.group.entity.Group;
@@ -10,7 +9,6 @@ import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.GroupErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +24,7 @@ import java.util.stream.Collectors;
 public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
-    private final ExperienceRepository experienceRepository;
     private final RankService rankService;
-    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     @Transactional(readOnly = true)
