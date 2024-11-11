@@ -19,12 +19,7 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     List<Record> findByUserId(Long userId);
 
 
-    @Query("SELECT r FROM Record r WHERE r.user.id = :userId AND r.startTime BETWEEN :startOfDay AND :endOfDay")
-    List<Record> findByUserIdAndStartTimeBetween(
-            @Param("userId") Long userId,
-            @Param("startOfDay") LocalDateTime startOfDay,
-            @Param("endOfDay") LocalDateTime endOfDay
-    );
+    List<Record> findByUserIdAndStartTimeBetween(Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
     @Modifying
     @Query("UPDATE Record r SET r.isPractice = :isPractice WHERE r.id = :recordId")
