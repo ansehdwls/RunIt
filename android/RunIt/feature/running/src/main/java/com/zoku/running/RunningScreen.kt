@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.zoku.ui.model.PhoneWatchConnection
+import timber.log.Timber
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -19,7 +20,8 @@ fun RunningScreen(
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
-    moveToHome : () -> Unit
+    moveToHome : () -> Unit,
+    phoneWatchData: PhoneWatchConnection,
 ) {
 
     val runningViewModel = hiltViewModel<RunningViewModel>()
@@ -27,11 +29,32 @@ fun RunningScreen(
     var isFirstPlay by remember { mutableStateOf(true) }
     var isResult by remember { mutableStateOf(false) }
 
+    Timber.tag("RunningScreen").d("phoneWatchData $phoneWatchData")
+    when(phoneWatchData){
+        PhoneWatchConnection.PAUSE_RUNNING -> {
+            isPlay = false
+        }
+        PhoneWatchConnection.RESUME_RUNNING -> {
+            isPlay = true
+            isFirstPlay = false
+        }
+        PhoneWatchConnection.STOP_RUNNING -> {
+            isResult = true
+            moveToHome()
+        }
+        PhoneWatchConnection.SEND_BPM -> {
+            isPlay = true
+            isFirstPlay = false
+        }
+        else -> {}
+    }
+
+
     if (isResult) {
         RunningResultScreen(runningViewModel = runningViewModel,
             moveToHome = moveToHome)
     } else {
-        if (isPlay) {
+        if (isPlay) { // 재개된 상태
             RunningPlayScreen(
                 onPauseClick = {
                     onPauseWearableActivityClick(PhoneWatchConnection.PAUSE_RUNNING.route)
@@ -40,7 +63,7 @@ fun RunningScreen(
                 isFirstPlay = isFirstPlay,
                 runningViewModel = runningViewModel
             )
-        } else {
+        } else { // 중지 된 상태
             RunningPauseScreen(
                 onPlayClick = {
                     onResumeWearableActivityClick(PhoneWatchConnection.RESUME_RUNNING.route)

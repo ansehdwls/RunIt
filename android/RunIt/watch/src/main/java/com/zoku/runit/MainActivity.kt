@@ -17,9 +17,11 @@ import com.google.android.gms.wearable.Wearable
 import com.google.android.horologist.compose.layout.AppScaffold
 import com.zoku.runit.ui.MainScreen
 import com.zoku.runit.util.PermissionHelper
+import com.zoku.ui.model.PhoneWatchConnection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -58,7 +60,7 @@ class MainActivity : ComponentActivity() {
         isActivityActive = true
     }
 
-    private fun sendBpm(bpm: Int) {
+    private fun sendBpm(bpm: Int?=0, phoneWatchConnection: PhoneWatchConnection) {
         lifecycleScope.launch {
             try {
                 val nodes = capabilityClient
@@ -68,11 +70,11 @@ class MainActivity : ComponentActivity() {
 
                 val bpmData = bpm.toString().toByteArray(Charsets.UTF_8)
 
-                Timber.tag("sendPhone").d("노드 확인 $nodes , $SEND_BPM")
+                Timber.tag("sendPhone").d("노드 확인 $nodes , ${phoneWatchConnection.route}")
                 nodes.map { node ->
                     async {
                         Timber.tag("sendPhone").d("메세지 전송 $nodes , $bpmData")
-                        messageClient.sendMessage(node.id, SEND_BPM, bpmData)
+                        messageClient.sendMessage(node.id, phoneWatchConnection.route, bpmData)
                             .await()
                     }
                 }.awaitAll()
@@ -85,12 +87,13 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
+        Timber.tag("MainActivity").d("onStop")
         isActivityActive = false
     }
+
 
     companion object {
         private const val PHONE_CAPABILITY = "phone"

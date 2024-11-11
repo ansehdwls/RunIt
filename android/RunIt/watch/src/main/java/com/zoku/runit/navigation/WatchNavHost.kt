@@ -11,6 +11,7 @@ import com.zoku.runit.model.ExerciseResult
 import com.zoku.runit.screen.HomeScreen
 import com.zoku.runit.screen.RunningPauseScreen
 import com.zoku.runit.screen.RunningScreen
+import com.zoku.ui.model.PhoneWatchConnection
 import timber.log.Timber
 
 @Composable
@@ -18,7 +19,7 @@ fun WatchNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     startDestination: String = WatchScreenDestination.home.route,
-    sendBpm: (Int) -> Unit
+    sendBpm: (Int, PhoneWatchConnection) -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -27,6 +28,7 @@ fun WatchNavHost(
     ) {
         composable(route = WatchScreenDestination.home.route) {
             HomeScreen(modifier) {
+                sendBpm(0, PhoneWatchConnection.START_RUNNING)
                 navController.navigate(WatchScreenDestination.running.route)
             }
         }
@@ -39,8 +41,8 @@ fun WatchNavHost(
                     this.navigate(WatchScreenDestination.runningPause.createRoute(exerciseResult))
                 }
             },
-                sendBpm = { bpm ->
-                    sendBpm(bpm)
+                sendBpm = { bpm, connection ->
+                    sendBpm(bpm, connection)
                 }
             )
         }
@@ -56,13 +58,18 @@ fun WatchNavHost(
 
             Timber.tag("WatchNavHost").d("result $data")
             RunningPauseScreen(modifier, data,
+                onPauseStatus = {
+                    sendBpm(0, PhoneWatchConnection.PAUSE_RUNNING)
+                },
                 onStopClick = {
+                    sendBpm(0, PhoneWatchConnection.STOP_RUNNING)
                     navController.popBackStack(
                         route = WatchScreenDestination.home.route,
                         inclusive = false
                     )
                 },
                 onResumeClick = {
+                    sendBpm(0, PhoneWatchConnection.RESUME_RUNNING)
                     navController.popBackStack(
                         route = WatchScreenDestination.running.route,
                         inclusive = false

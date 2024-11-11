@@ -67,6 +67,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Log
+    implementation(libs.timber)
+
     //hilt
     implementation(libs.hilt)
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")

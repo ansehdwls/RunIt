@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.zoku.running.RunningScreen
+import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.util.ScreenDestinations
 
 fun NavController.navigateToRunning() = navigate(route = ScreenDestinations.running.route)
@@ -17,7 +18,8 @@ fun NavGraphBuilder.runningScreen(
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
-    moveToHome : ()->Unit
+    moveToHome : ()->Unit,
+    phoneWatchData: PhoneWatchConnection
 ) {
     composable(route = ScreenDestinations.running.route) {
         RunningScreen(
@@ -25,7 +27,8 @@ fun NavGraphBuilder.runningScreen(
             onPauseWearableActivityClick = onPauseWearableActivityClick,
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
-            moveToHome = moveToHome
+            moveToHome = moveToHome,
+            phoneWatchData = phoneWatchData
         )
     }
 }

@@ -21,3 +21,5 @@ val RoundButtonGray = Color(0xFF535353)
 val routeColor = Color(0xFF624CAA)
 
 val BaseGrayBackground = Color(0xFF1D1D1D)
+
+val RankProfile = Color(0xFFF8F8F8)

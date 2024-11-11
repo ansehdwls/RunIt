@@ -27,6 +27,14 @@ class DataStoreRepositoryImpl @Inject constructor(
         preferences[PreferencesKeys.USER_GROUP_ID]?.toInt() ?: 0
     }
 
+    override val userId: Flow<Int> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.USER_ID]?.toInt() ?: 0
+    }
+    override val userName: Flow<String> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.USER_NAME] ?: ""
+    }
+
+
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.USER_TOKEN] = accessToken
