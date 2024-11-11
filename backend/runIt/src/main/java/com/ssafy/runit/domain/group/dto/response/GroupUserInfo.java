@@ -14,12 +14,14 @@ public class GroupUserInfo {
     private String userName;
     private String imageUrl;
     private Long exp;
+    private Integer rankDiff;
 
-    public static GroupUserInfo fromEntity(User user, Long exp) {
+    public static GroupUserInfo fromEntity(User user, Long exp, int diff) {
         return GroupUserInfo.builder()
                 .userName(user.getUserName())
                 .imageUrl(user.getImageUrl())
                 .exp(exp)
+                .rankDiff(diff)
                 .build();
     }
 }
