@@ -131,9 +131,9 @@ public class RecordServiceImpl implements RecordService {
         }
 
         if (recordList.isEmpty()) {
-            return RecordTodayResponse.fromEntity(0.0, 0, 0);
+            return RecordTodayResponse.fromEntity(0.0, 0L, 0);
         } else {
-            return RecordTodayResponse.fromEntity(dis, Long.valueOf(time / recordList.size()).intValue(), pace / recordList.size());
+            return RecordTodayResponse.fromEntity(dis, time, pace / recordList.size());
         }
     }
 
@@ -162,7 +162,7 @@ public class RecordServiceImpl implements RecordService {
 
             long time = 0L;
             double dis = 0.0;
-            Double pace = 0.0;
+            int pace = 0;
             int cnt = 0;
 
             for (Record item : recordList) {
@@ -181,7 +181,12 @@ public class RecordServiceImpl implements RecordService {
 
             timeList.add(time);
             disList.add(dis);
-            paceList.add(pace / cnt);
+
+            if (cnt > 0) {
+                paceList.add((double) pace / cnt);
+            }else{
+                paceList.add((double) pace);
+            }
         }
 
         return RecordGetWeekResponse.fromEntity(disList, timeList, paceList);

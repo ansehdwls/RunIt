@@ -5,10 +5,10 @@ import lombok.Builder;
 @Builder
 public record RecordTodayResponse(
         Double distance,
-        Integer time,
+        Long time,
         Integer pace
 ) {
-    public static RecordTodayResponse fromEntity(Double dis, Integer time, Integer pace){
+    public static RecordTodayResponse fromEntity(Double dis, Long time, Integer pace){
         return RecordTodayResponse.builder()
                 .pace(pace)
                 .time(time)
