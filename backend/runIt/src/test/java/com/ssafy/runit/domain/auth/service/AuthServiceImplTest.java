@@ -25,8 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -57,11 +55,6 @@ class AuthServiceImplTest {
     @Mock
     private GroupRepository groupRepository;
 
-    @Mock
-    private RedisTemplate<String, Object> redisTemplate;
-
-    @Mock
-    private ListOperations<String, Object> listOperations;
 
     @Mock
     private RankService rankService;
@@ -100,8 +93,6 @@ class AuthServiceImplTest {
                 .userNumber(request.getUserNumber())
                 .userGroup(group)
                 .build();
-        when(redisTemplate.opsForList()).thenReturn(listOperations);
-        when(listOperations.rightPush(anyString(), any())).thenReturn(1L);
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(groupRepository.findDefaultGroup()).thenReturn(Optional.of(group));
         doNothing().when(rankService).updateScore(anyLong(), anyString(), anyLong());
