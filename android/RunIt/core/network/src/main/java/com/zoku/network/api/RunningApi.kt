@@ -5,6 +5,7 @@ import com.zoku.network.model.response.GetRunningRecordResponse
 import com.zoku.network.model.response.HistoryWeekResponse
 import com.zoku.network.model.response.TestSumData
 import com.zoku.network.model.response.PostRunningRecordResponse
+import com.zoku.network.model.response.RunPracticeResponse
 import com.zoku.network.model.response.RunRecordDetailResponse
 import com.zoku.network.model.response.TestSumResponse
 import okhttp3.MultipartBody
@@ -41,4 +42,7 @@ interface RunningApi {
 
     @GET("api/run/{recordId}")
     suspend fun getRunRecordDetail(@Path("recordId") recordId : Int) : Response<RunRecordDetailResponse>
+
+    @GET("api/run/practice")
+    suspend fun getRecordMode() : Response<RunPracticeResponse>
 }

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.zoku.network.model.response.WeekList
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
 import java.util.Locale
@@ -55,7 +56,7 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
     var selectHistory by remember {
         mutableStateOf(false)
     }
-    var selectedDay by remember { mutableStateOf(LocalDate.now()) }
+    var selectedDay by remember { mutableStateOf(LocalDate.now(ZoneId.systemDefault()).minusDays(1)) }
     var selectRecordId by remember {
         mutableStateOf(0)
     }
@@ -121,7 +122,7 @@ fun RunHistoryScreen(modifier: Modifier = Modifier) {
             )
             if (!selectHistory) {
                 RunHistoryRecordListScreen(
-                    selectedDay = selectedDay,
+                    selectedDay = selectedDay.plusDays(1),
                     list = historyWeekList[selectedIndex],
                     onClick = { selectItem ->
                         selectHistory = true
@@ -260,7 +261,7 @@ fun WeeklyDateView(
                             .height(25.dp)
                     )
                     Text(
-                        text = date.dayOfMonth.toString(),
+                        text = date.plusDays(1).dayOfMonth.toString(),
                         color = Color.White,
                         textAlign = TextAlign.Center,
                         fontSize = 13.sp,

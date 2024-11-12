@@ -5,6 +5,7 @@ import com.zoku.data.model.MyTestData
 import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.response.HistoryWeekResponse
 import com.zoku.network.model.response.PostRunningRecordResponse
+import com.zoku.network.model.response.RunPracticeResponse
 import com.zoku.network.model.response.RunRecordDetailResponse
 import com.zoku.network.model.response.TestSumResponse
 import okhttp3.MultipartBody
@@ -27,4 +28,5 @@ interface RunningRepository {
         today : String
     ) : NetworkResult<HistoryWeekResponse>
 
+    suspend fun getRunPracticeList() : NetworkResult<RunPracticeResponse>
 }

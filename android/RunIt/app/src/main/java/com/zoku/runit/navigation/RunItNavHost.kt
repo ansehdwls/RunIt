@@ -69,7 +69,8 @@ fun RunItMainNavHost(
         )
         this.runHistory()
         this.recordMode(
-            moveToDetail = { navController.navigateToRecordModeDetail() }
+            moveToDetail = { recordId ->
+                navController.navigateToRecordModeDetail(recordId) }
         )
         this.loginScreen(onLoginSuccess = {
             // 로그인 성공 시, 상태 업데이트

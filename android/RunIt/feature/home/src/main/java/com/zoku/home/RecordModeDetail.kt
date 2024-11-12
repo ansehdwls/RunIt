@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,13 +40,19 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.ui.componenet.RecordDetailInfo
 import com.zoku.ui.componenet.RecordGraph
 import com.zoku.ui.componenet.RecordMap
 
 @Composable
-fun RecordModeDetail(modifier: Modifier = Modifier, runRecord: RunRecordDetail? = null) {
+fun RecordModeDetail(modifier: Modifier = Modifier,
+                     recordId: Int) {
+    val viewModel : RunHistoryViewModel = hiltViewModel()
+    val runRecord by viewModel.historyRunRecord.collectAsState()
+
+    viewModel.getRunRecordDetail(recordId)
 
     Column(
         modifier = Modifier

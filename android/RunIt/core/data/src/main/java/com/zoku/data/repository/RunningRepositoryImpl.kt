@@ -8,6 +8,7 @@ import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.response.HistoryWeekResponse
 import com.zoku.network.model.response.PostRunningRecordResponse
+import com.zoku.network.model.response.RunPracticeResponse
 import com.zoku.network.model.response.RunRecordDetailResponse
 import com.zoku.network.model.response.TestSumResponse
 import okhttp3.MultipartBody
@@ -41,6 +42,10 @@ class RunningRepositoryImpl @Inject constructor(
 
     override suspend fun getWeekList(today: String): NetworkResult<HistoryWeekResponse> {
         return handleApi { runningApi.getWeekHistory(today) }
+    }
+
+    override suspend fun getRunPracticeList(): NetworkResult<RunPracticeResponse> {
+        return handleApi { runningApi.getRecordMode() }
     }
 
 }
