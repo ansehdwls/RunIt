@@ -43,6 +43,8 @@ public class RecordController implements RecordDocs {
 
         RecordPostResponse postResponse;
         Record record = recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
+
+
         int size = attendanceService.getWeekAttendance(userDetails.getUsername()).size();
         long todayExp = experienceService.experienceGetToday(userDetails);
         RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
@@ -60,7 +62,7 @@ public class RecordController implements RecordDocs {
         for (Pair<String, Long> item : result) {
 
             ExperienceSaveRequest exp = ExperienceSaveRequest.builder()
-                    .activity(item.getLeft() + " " + todayResponse.distance().toString() + "를 달성했습니다." )
+                    .activity(item.getLeft())
                     .changed(item.getRight())
                     .build();
             sum += item.getRight();
