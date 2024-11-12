@@ -26,9 +26,9 @@ import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
 import com.zoku.network.model.response.RunRecordDetail
-import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.running.navigation.navigateToRunning
 import com.zoku.running.navigation.runningScreen
+import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.util.ScreenDestinations
 import timber.log.Timber
@@ -63,8 +63,10 @@ fun RunItMainNavHost(
             },
             moveToRunning = {
                 onStartWearableActivityClick(PhoneWatchConnection.START_RUNNING.route)
-                navController.navigateToRunning(recordDetail =
-                RunRecordDetail(0,0.0,0,"","", emptyList())
+                viewModel.updateMessageType(PhoneWatchConnection.START_RUNNING)
+                navController.navigateToRunning(
+                    recordDetail =
+                    RunRecordDetail(0, 0.0, 0, "", "", emptyList())
                 )
             },
             moveToExpHistory = { navController.navigateToExpHistory() },
@@ -73,7 +75,8 @@ fun RunItMainNavHost(
         this.runHistory()
         this.recordMode(
             moveToDetail = { recordId ->
-                navController.navigateToRecordModeDetail(recordId) }
+                navController.navigateToRecordModeDetail(recordId)
+            }
         )
         this.loginScreen(onLoginSuccess = {
             navController.navigate(ScreenDestinations.home.route)
@@ -83,8 +86,7 @@ fun RunItMainNavHost(
             moveToPractice = {
                 navController.popBackStack()
             },
-            moveToRunning = {
-                runRecordDto ->
+            moveToRunning = { runRecordDto ->
                 navController.navigateToRunning(runRecordDto)
             }
         )
@@ -93,7 +95,12 @@ fun RunItMainNavHost(
             onPauseWearableActivityClick = onPauseWearableActivityClick,
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
-            moveToHome = { navController.popBackStack() },
+            moveToHome = {
+                navController.popBackStack(
+                    route = ScreenDestinations.home.route,
+                    inclusive = false
+                )
+            },
             viewModel
         )
 //        this.runningResultScreen(modifier = modifier)

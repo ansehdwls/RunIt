@@ -36,6 +36,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
 
+    var InitphoneWatchConnection = PhoneWatchConnection.EMPTY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -62,22 +63,30 @@ class MainActivity : ComponentActivity() {
     private fun sendBpm(bpm: Int? = 0, time: Int? = 0, phoneWatchConnection: PhoneWatchConnection) {
         lifecycleScope.launch {
             try {
-                val nodes = capabilityClient
-                    .getCapability(PHONE_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
-                    .await()
-                    .nodes
+                if (phoneWatchConnection != InitphoneWatchConnection || phoneWatchConnection ==
+                    PhoneWatchConnection.SEND_BPM
+                ) {
+                    val nodes = capabilityClient
+                        .getCapability(PHONE_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
+                        .await()
+                        .nodes
 
-                val bpmTimeData = "${bpm}:${time}".toByteArray(Charsets.UTF_8)
+                    val bpmTimeData = "${bpm}:${time}".toByteArray(Charsets.UTF_8)
 
 
-                Timber.tag("sendPhone").d("노드 확인 $bpmTimeData , ${phoneWatchConnection.route}")
-                nodes.map { node ->
-                    async {
-                        messageClient.sendMessage(node.id, phoneWatchConnection.route, bpmTimeData)
-                            .await()
-                    }
-                }.awaitAll()
-
+                    Timber.tag("sendPhone").d("노드 확인 $bpmTimeData , ${phoneWatchConnection.route}")
+                    nodes.map { node ->
+                        async {
+                            InitphoneWatchConnection = phoneWatchConnection
+                            messageClient.sendMessage(
+                                node.id,
+                                phoneWatchConnection.route,
+                                bpmTimeData
+                            )
+                                .await()
+                        }
+                    }.awaitAll()
+                }
             } catch (cancellationException: CancellationException) {
                 Timber.tag("sendPhone").d("핸드폰에 데이터 보내기 취소!")
                 throw cancellationException

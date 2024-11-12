@@ -37,7 +37,9 @@ fun RunningScreen(
     var isFirstPlay by remember { mutableStateOf(true) }
     var isResult by remember { mutableStateOf(false) }
 
-    Timber.tag("RunningScreen").d("상태값 확인 $isPlay $isFirstPlay $isResult")
+
+
+    Timber.tag("RunningScreen").d("상태값 확인 isPlay $isPlay isFirstPlay $isFirstPlay isResult $isResult $phoneWatchData")
     runningViewModel.getPracticeRecord(runRecordDetail)
     when (phoneWatchData) {
         PhoneWatchConnection.PAUSE_RUNNING -> {
@@ -55,10 +57,15 @@ fun RunningScreen(
 
         PhoneWatchConnection.SEND_BPM -> {
             isPlay = true
-            isFirstPlay = false
+            isFirstPlay = true
+        }
+        PhoneWatchConnection.START_RUNNING -> {
+            isPlay = true
+            isFirstPlay = true
         }
 
         else -> {}
+
     }
     HandleRunningState(
         runningViewModel = runningViewModel,
@@ -94,7 +101,6 @@ fun HandleRunningState(
     onIsResultChange: (Boolean) -> Unit,
 ) {
 
-    Timber.tag("RunningScreen").d("상태 확인 $isPlay $isFirstPlay $isResult")
 
     if (isResult) {
         RunningResultScreen(

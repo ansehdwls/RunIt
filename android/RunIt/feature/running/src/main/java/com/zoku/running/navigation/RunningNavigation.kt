@@ -34,7 +34,6 @@ fun NavGraphBuilder.runningScreen(
         val recordDtoJson = backStackEntry.arguments?.getString("recordDto") ?: ""
         val recordDto = Gson().fromJson(recordDtoJson, RunRecordDetail::class.java)
 
-        Log.d("확인", "runningScreen: $recordDto 잘왔다")
         RunningScreen(
             modifier,
             onPauseWearableActivityClick = onPauseWearableActivityClick,
