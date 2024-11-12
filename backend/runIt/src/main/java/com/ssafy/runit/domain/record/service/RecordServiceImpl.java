@@ -113,7 +113,7 @@ public class RecordServiceImpl implements RecordService {
 
         List<Record> recordList = recordRepository.findByUserIdAndStartTimeBetween(user.getId(), localDate.atStartOfDay(), localDate.plusDays(1).atStartOfDay());
 
-        double dis = 0.0;
+        Integer dis = 0;
         long time = 0L;
         Integer pace = 0;
 

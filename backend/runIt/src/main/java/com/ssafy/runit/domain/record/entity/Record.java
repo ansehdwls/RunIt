@@ -31,7 +31,7 @@ public class Record {
      @OneToMany(mappedBy = "record")
      private List<Pace> paceList;
 
-     private double distance;
+     private Integer distance;
 
      private Integer bpm;
 
