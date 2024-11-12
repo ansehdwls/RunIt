@@ -41,29 +41,16 @@ public class RecordController implements RecordDocs {
                                                            @RequestPart(value = "dto") RecordSaveRequest recordSaveRequest,
                                                            @RequestPart(value = "images") MultipartFile file) {
 
-        RecordPostResponse postResponse;
+
         Record record = recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
 
-
-        int size = attendanceService.getWeekAttendance(userDetails.getUsername()).size();
-        long todayExp = experienceService.experienceGetToday(userDetails);
-        RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
-        long restDis = (long) (todayResponse.distance() - (todayExp * 100));
         boolean attendanceType = attendanceService.getTodayAttended(userDetails, LocalDate.now());
 
-        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attendanceType, size, restDis);
-        int sum = 0;
-        for (Pair<String, Long> item : result) {
-
-            ExperienceSaveRequest exp = ExperienceSaveRequest.builder()
-                    .activity(item.getLeft())
-                    .changed(item.getRight())
-                    .build();
-            sum += item.getRight();
-            experienceService.experienceSave(userDetails, exp);
-        }
-
-        postResponse = RecordPostResponse.toEntity(record.getId(), attendanceType, sum);
+        RecordPostResponse postResponse = RecordPostResponse.toEntity(
+                record.getId(),
+                attendanceType,
+                experienceService.experienceDistribution(userDetails, attendanceType)
+        );
 
         return new RunItApiResponse<>(postResponse, "성공");
     }
