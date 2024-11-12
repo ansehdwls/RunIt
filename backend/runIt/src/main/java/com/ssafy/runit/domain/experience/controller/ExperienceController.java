@@ -28,7 +28,7 @@ public class ExperienceController implements ExperienceDocs {
     @PostMapping("/exp")
     public RunItApiResponse<Void> saveExperience(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ExperienceSaveRequest experienceSaveRequest) {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
-        experienceService.experienceSave(findUser, experienceSaveRequest);
+        experienceService.experienceSave(userDetails, experienceSaveRequest);
         return new RunItApiResponse<>(null, "성공");
     }
 
