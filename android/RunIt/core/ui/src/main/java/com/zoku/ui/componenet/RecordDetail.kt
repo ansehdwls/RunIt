@@ -40,7 +40,8 @@ import java.time.temporal.ChronoField
 @Composable
 fun RecordDetailInfo(
     modifier: Modifier = Modifier, startDestination: Int = 0,
-    runRecord: RunRecordDetail?
+    runRecord: RunRecordDetail?,
+    moveToRunning : (recordDto : RunRecordDetail) -> Unit = {}
 ) {
     if(runRecord != null){
         Log.d("확인", "RecordDetailInfo: ${runRecord.startTime}")
@@ -95,7 +96,9 @@ fun RecordDetailInfo(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(
-                            onClick = {},
+                            onClick = {
+                                moveToRunning(runRecord)
+                            },
                             modifier = Modifier
                         ) {
                             Text(text = "도전하기", fontFamily = com.zoku.ui.ZokuFamily)

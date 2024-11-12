@@ -62,7 +62,8 @@ import com.zoku.ui.componenet.RecordMap
 @Composable
 fun RecordModeDetail(modifier: Modifier = Modifier,
                      recordId: Int,
-                     moveToPractice : () -> Unit) {
+                     moveToPractice : () -> Unit,
+                     moveToRunning : (recordDto : RunRecordDetail) -> Unit) {
     val viewModel : RunHistoryViewModel = hiltViewModel()
     val runRecord by viewModel.historyRunRecord.collectAsState()
     val recordViewModel : RecordModeViewModel = hiltViewModel()
@@ -94,7 +95,8 @@ fun RecordModeDetail(modifier: Modifier = Modifier,
         Box(
             modifier.weight(7f)
         ) {
-            RecordDetailInfo(runRecord = runRecord
+            RecordDetailInfo(runRecord = runRecord,
+                moveToRunning = moveToRunning
             )
         }
 

@@ -5,11 +5,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.google.gson.Gson
 import com.zoku.home.ExpHistory
 import com.zoku.home.HomeScreen
 import com.zoku.home.RecordModeDetail
 import com.zoku.home.RecordModeScreen
 import com.zoku.home.RunHistoryScreen
+import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.ui.model.PhoneWatchData
 import com.zoku.util.ScreenDestinations
@@ -57,13 +59,18 @@ fun NavGraphBuilder.recordMode(moveToDetail: (Int) -> Unit) {
 }
 
 fun NavGraphBuilder.recordDetail(
-    moveToPractice : () -> Unit
+    moveToPractice : () -> Unit,
+    moveToRunning: (runRecordDto : RunRecordDetail) -> Unit
 ) {
     composable(route = ScreenDestinations.RecordModeDetail.route,
-        arguments = listOf(navArgument("recordId") { type = NavType.IntType })) {
+        arguments = listOf(navArgument("recordId") {  type = NavType.IntType })) {
             backStackEntry ->
         val recordId = backStackEntry.arguments?.getInt("recordId") ?: 0
-        RecordModeDetail(recordId = recordId, moveToPractice = moveToPractice)
+
+        RecordModeDetail(recordId = recordId,
+            moveToPractice = moveToPractice,
+            moveToRunning = moveToRunning
+        )
     }
 }
 
