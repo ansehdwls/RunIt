@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Wearable
@@ -22,6 +23,8 @@ import com.zoku.ui.model.PhoneWatchConnection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -41,6 +44,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        Timber.tag("MainActivity").d("viewModel : ${clientDataViewModel.hashCode()}")
 //        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
 //            if (task.isSuccessful) {
 //                val token = task.result
@@ -49,6 +54,15 @@ class MainActivity : ComponentActivity() {
 //                Log.w("FCM Token", "Fetching FCM registration token failed", task.exception)
 //            }
 //        }
+
+        lifecycleScope.launch {
+            clientDataViewModel.runningConnectionState.flowWithLifecycle(lifecycle)
+                .onEach {
+                    Timber.tag("MainActivity").d("$it")
+                }
+                .launchIn(lifecycleScope)
+        }
+
         setContent {
             com.zoku.ui.RunItTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -58,7 +72,8 @@ class MainActivity : ComponentActivity() {
                         ::sendWearable,
                         ::sendWearable,
                         ::sendWearable,
-                        ::sendWearable
+                        ::sendWearable,
+                        viewModel = clientDataViewModel,
                     )
                 }
             }

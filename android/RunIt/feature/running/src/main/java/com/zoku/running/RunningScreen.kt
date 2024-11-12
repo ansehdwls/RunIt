@@ -4,14 +4,18 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zoku.running.model.RunningUIState
 import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.model.PhoneWatchConnection
+import com.zoku.ui.model.RunningConnectionState
 import timber.log.Timber
 
 
@@ -24,17 +28,17 @@ fun RunningScreen(
     onStopWearableActivityClick: (String) -> Unit,
     moveToHome: () -> Unit,
     phoneWatchData: PhoneWatchConnection,
-    viewModel: ClientDataViewModel = hiltViewModel(),
+    viewModel: ClientDataViewModel,
     runningViewModel: RunningViewModel = hiltViewModel(),
 ) {
-    //val currentCheck by viewModel.runningConnectionState.collectAsStateWithLifecycle()
-    val currentCheck = viewModel.runningConnectionState.collectAsStateWithLifecycle()
-    Timber.tag("RunningScreen").d("currentCheck 변화 감지: $currentCheck")
+
+    val currentCheck by viewModel.runningConnectionState.collectAsStateWithLifecycle()
+
+
     var isPlay by remember { mutableStateOf(true) }
     var isFirstPlay by remember { mutableStateOf(true) }
     var isResult by remember { mutableStateOf(false) }
 
-    Timber.tag("RunningScreen").d("phoneWatchData $phoneWatchData")
     when (phoneWatchData) {
         PhoneWatchConnection.PAUSE_RUNNING -> {
             isPlay = false
@@ -57,7 +61,41 @@ fun RunningScreen(
 
         else -> {}
     }
+    HandleRunningState(
+        runningViewModel = runningViewModel,
+        moveToHome = moveToHome,
+        onPauseWearableActivityClick = onPauseWearableActivityClick,
+        onResumeWearableActivityClick = onResumeWearableActivityClick,
+        onStopWearableActivityClick = onStopWearableActivityClick,
+        currentCheck = currentCheck,
+        isPlay = isPlay,
+        isFirstPlay = isFirstPlay,
+        isResult = isResult,
+        onIsPlayChange = { isPlay = it },
+        onIsFirstPlayChange = { isFirstPlay = it },
+        onIsResultChange = { isResult = it }
+    )
+}
 
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun HandleRunningState(
+    runningViewModel: RunningViewModel = hiltViewModel(),
+    moveToHome: () -> Unit = {},
+    onPauseWearableActivityClick: (String) -> Unit,
+    onResumeWearableActivityClick: (String) -> Unit,
+    onStopWearableActivityClick: (String) -> Unit,
+    currentCheck: RunningConnectionState,
+    isPlay: Boolean ,
+    isFirstPlay: Boolean ,
+    isResult: Boolean ,
+    onIsPlayChange: (Boolean) -> Unit,
+    onIsFirstPlayChange: (Boolean) -> Unit,
+    onIsResultChange: (Boolean) -> Unit,
+) {
+
+    Timber.tag("RunningScreen").d("상태 확인 $isPlay $isFirstPlay $isResult")
 
     if (isResult) {
         RunningResultScreen(
@@ -69,22 +107,23 @@ fun RunningScreen(
             RunningPlayScreen(
                 onPauseClick = {
                     onPauseWearableActivityClick(PhoneWatchConnection.PAUSE_RUNNING.route)
-                    isPlay = false
+                    onIsPlayChange(false)
                 },
                 isFirstPlay = isFirstPlay,
                 runningViewModel = runningViewModel,
-                connectionState = currentCheck.value
+                connectionState = currentCheck
             )
         } else { // 중지 된 상태
             RunningPauseScreen(
                 onPlayClick = {
                     onResumeWearableActivityClick(PhoneWatchConnection.RESUME_RUNNING.route)
-                    isPlay = true
-                    isFirstPlay = false
+                    onIsPlayChange(true)
+                    onIsFirstPlayChange(false)
+
                 },
                 onStopLongPress = {
                     onStopWearableActivityClick(PhoneWatchConnection.STOP_RUNNING.route)
-                    isResult = true
+                    onIsResultChange(true)
                 },
                 runningViewModel = runningViewModel
             )

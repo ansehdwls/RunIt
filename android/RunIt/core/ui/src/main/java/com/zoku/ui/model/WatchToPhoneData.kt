@@ -7,4 +7,11 @@ import androidx.compose.runtime.Immutable
 data class WatchToPhoneData(
     val bpm: Int?,
     val time: Int?
-)
+) {
+    companion object {
+        val DEFAULT = WatchToPhoneData(
+            bpm = null,
+            time = null
+        )
+    }
+}

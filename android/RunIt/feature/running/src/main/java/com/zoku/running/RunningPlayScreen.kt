@@ -44,6 +44,7 @@ import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.model.RunningConnectionState
+import com.zoku.ui.model.WatchToPhoneData
 import timber.log.Timber
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -53,8 +54,12 @@ fun RunningPlayScreen(
     onPauseClick: () -> Unit,
     isFirstPlay: Boolean = true,
     runningViewModel: RunningViewModel,
-    connectionState: RunningConnectionState
+    connectionState: RunningConnectionState,
+    viewModel: ClientDataViewModel = hiltViewModel(),
 ) {
+    val currentCheck by viewModel.runningConnectionState.collectAsStateWithLifecycle()
+
+
     val locationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,

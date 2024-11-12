@@ -25,9 +25,9 @@ import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
-import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.running.navigation.navigateToRunning
 import com.zoku.running.navigation.runningScreen
+import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.util.ScreenDestinations
 import timber.log.Timber
@@ -37,17 +37,17 @@ import timber.log.Timber
 fun RunItMainNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    onHomeScreen : () -> Unit,
+    onHomeScreen: () -> Unit,
     onStartWearableActivityClick: (String) -> Unit,
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
-    startDestination: String = ScreenDestinations.login.route
+    startDestination: String = ScreenDestinations.login.route,
+    viewModel: ClientDataViewModel
 ) {
     val clientDataViewModel: ClientDataViewModel = hiltViewModel()
     var isUserLoggedIn by remember { mutableStateOf(false) }
     val loginViewModel: LoginViewModel = hiltViewModel()
-
     val phoneWatchData by clientDataViewModel.phoneWatchData.collectAsState()
     Timber.tag("RuntItMainNavHost").d("phoneWatchData $phoneWatchData")
     NavHost(
@@ -64,7 +64,7 @@ fun RunItMainNavHost(
                 onStartWearableActivityClick(PhoneWatchConnection.START_RUNNING.route)
                 navController.navigateToRunning()
             },
-            moveToExpHistory = { navController.navigateToExpHistory()},
+            moveToExpHistory = { navController.navigateToExpHistory() },
             phoneWatchData = phoneWatchData
         )
         this.runHistory()
@@ -84,7 +84,8 @@ fun RunItMainNavHost(
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
             moveToHome = { navController.navigateToHome() },
-            phoneWatchData = phoneWatchData
+            phoneWatchData = phoneWatchData,
+            viewModel
         )
 //        this.runningResultScreen(modifier = modifier)
 

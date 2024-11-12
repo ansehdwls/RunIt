@@ -1,6 +1,7 @@
 package com.zoku.ui.base
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.DataClient.OnDataChangedListener
 import com.google.android.gms.wearable.MessageClient
@@ -11,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.collections.plus
@@ -34,36 +36,20 @@ class ClientDataViewModel @Inject constructor(
     val runningConnectionState: StateFlow<RunningConnectionState> get() = _runningConnectionState
 
     fun updateConnection(state: RunningConnectionState) {
-        val originState = _runningConnectionState.value
-        Timber.tag("clientDataViewModel").d("originState ${originState}")
-        if(originState is RunningConnectionState.ConnectionSuccess && state is RunningConnectionState.ConnectionSuccess){
-            Timber.tag("clientDataViewModel").d("${_runningConnectionState.value.hashCode()}")
-            _runningConnectionState.value = originState.copy(
-                data = originState.data.copy(
-                    bpm = state.data.bpm,
-                    time = state.data.time
+        val originState = runningConnectionState.value
+        _runningConnectionState.value = when {
+            originState is RunningConnectionState.ConnectionSuccess && state is RunningConnectionState.ConnectionSuccess -> {
+                originState.copy(
+                    data = originState.data.copy(
+                        bpm = state.data.bpm,
+                        time = state.data.time
+                    )
                 )
-            )
-            Timber.tag("clientDataViewModel").d("${_runningConnectionState.value.hashCode()}")
-        } else if(originState is RunningConnectionState.ConnectionDefault){
-            _runningConnectionState.value = state
+            }
+            else -> {
+                state
+            }
         }
-        Timber.tag("clientDataViewModel").d("State ${state}")
-//        _runningConnectionState.value = when (state) {
-//            is RunningConnectionState.ConnectionSuccess -> {
-//                RunningConnectionState.ConnectionSuccess(state.data)
-//            }
-//
-//            is RunningConnectionState.ConnectionDefault -> {
-//                RunningConnectionState.ConnectionDefault
-//            }
-//
-//            is RunningConnectionState.ConnectionFail -> {
-//                RunningConnectionState.ConnectionFail
-//            }
-//        }
-
-        Timber.tag("clientDataViewModel").d("connection 데이터 변경 ${runningConnectionState.value}")
     }
 
     val _bpm = MutableStateFlow<List<Int>>(emptyList())
@@ -99,8 +85,7 @@ class ClientDataViewModel @Inject constructor(
                     )
                 )
                 addBpmData(bpm)
-                timber.log.Timber.Forest.tag("ClientDataViewModel")
-                    .d("BPM 받기 성공 ${bpm} 시간 : ${time}")
+                Timber.tag("ClientDataViewModel").d("BPM 받기 성공 ${bpm} 시간 : ${time}")
             } else {
                 timber.log.Timber.Forest.tag("ClientDataViewModel").e("BPM 받기 실패")
             }
@@ -108,10 +93,10 @@ class ClientDataViewModel @Inject constructor(
         updateMessageType(
             PhoneWatchConnection.getType(messageEvent.path) ?: PhoneWatchConnection.EMPTY
         )
-        timber.log.Timber.Forest.tag("ClientDataViewModel").d("message받기 $messageEvent")
+        Timber.tag("ClientDataViewModel").d("message받기 $messageEvent")
     }
 
     override fun onCapabilityChanged(capabilityInfo: com.google.android.gms.wearable.CapabilityInfo) {
-        timber.log.Timber.Forest.tag("ClientDataViewModel").d("$capabilityInfo")
+        Timber.tag("ClientDataViewModel").d("$capabilityInfo")
     }
 }
