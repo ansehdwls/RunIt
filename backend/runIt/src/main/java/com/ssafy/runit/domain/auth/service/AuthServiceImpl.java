@@ -10,13 +10,11 @@ import com.ssafy.runit.domain.auth.repository.JwtTokenRepository;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.rank.service.RankService;
-import com.ssafy.runit.domain.user.dto.response.UserInfoResponse;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.exception.code.GroupErrorCode;
-import com.ssafy.runit.util.DateUtils;
 import com.ssafy.runit.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -65,13 +61,8 @@ public class AuthServiceImpl implements AuthService {
                 () -> new CustomException(GroupErrorCode.GROUP_NOT_FOUND_ERROR)
         );
         User user = request.Mapper(group);
-        String cacheKey = "group:" + group.getId();
         user = userRepository.save(user);
-        UserInfoResponse dto = UserInfoResponse.fromEntity(user);
-        redisTemplate.opsForList().rightPush(cacheKey, dto);
-        long ttl = DateUtils.computeTTLForNextWeek();
-        redisTemplate.expire(cacheKey, ttl, TimeUnit.SECONDS);
-        rankService.updateScore(group.getId(), user.getId(), 0);
+        rankService.updateScore(group.getId(), String.valueOf(user.getId()), 0);
     }
 
     @Override
