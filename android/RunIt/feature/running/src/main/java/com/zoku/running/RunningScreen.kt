@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.ui.model.RunningConnectionState
@@ -23,9 +24,10 @@ fun RunningScreen(
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
-    moveToHome: () -> Unit,
     viewModel: ClientDataViewModel,
     runningViewModel: RunningViewModel = hiltViewModel(),
+    moveToHome: () -> Unit,
+    runRecordDetail: RunRecordDetail
 ) {
 
     val currentCheck by viewModel.runningConnectionState.collectAsStateWithLifecycle()
@@ -36,6 +38,7 @@ fun RunningScreen(
     var isResult by remember { mutableStateOf(false) }
 
     Timber.tag("RunningScreen").d("상태값 확인 $isPlay $isFirstPlay $isResult")
+    runningViewModel.getPracticeRecord(runRecordDetail)
     when (phoneWatchData) {
         PhoneWatchConnection.PAUSE_RUNNING -> {
             isPlay = false

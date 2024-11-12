@@ -1,5 +1,6 @@
 package com.zoku.ui.componenet
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,47 +29,80 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.zoku.network.model.response.PaceRecord
+import com.zoku.network.model.response.RunRecordDetail
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 
 @Composable
-fun RecordDetailInfo(modifier: Modifier = Modifier, startDestination: Int = 0) {
-    // 전체 box
-    Box(
-        modifier = modifier
-            .padding(10.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-    ) {
-        // 길이가 길어 지면 scroll
-        Column(
-            modifier = if(startDestination == 0) Modifier
-                .verticalScroll(rememberScrollState())
-            else Modifier
+fun RecordDetailInfo(
+    modifier: Modifier = Modifier, startDestination: Int = 0,
+    runRecord: RunRecordDetail?,
+    moveToRunning : (recordDto : RunRecordDetail) -> Unit = {}
+) {
+    if(runRecord != null){
+        Log.d("확인", "RecordDetailInfo: ${runRecord.startTime}")
+        val startTime = runRecord.startTime.toString()
+            .substringAfter("T")
+            .take(5) // 시간 부분에서 앞 5자 (예: "06:26")만 가져옴
+
+        val endTime = runRecord.endTime.toString()
+            .substringAfter("T")
+            .take(5)
+
+// 안전하게 파싱
+        val startHour = startTime.substringBefore(":").toIntOrNull() ?: 0
+        val endHour = endTime.substringBefore(":").toIntOrNull() ?: 0
+        // 전체 box
+        Box(
+            modifier = modifier
+                .padding(10.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
         ) {
-            // 날짜 및 시간
-            RecordDate(
-                "2024-10-27",
-                "오후 3:37 ~ 오후 3:52"
-            )
+            // 길이가 길어 지면 scroll
+            Column(
+                modifier = if (startDestination == 0) Modifier
+                    .verticalScroll(rememberScrollState())
+                else Modifier
+            ) {
+                // 날짜 및 시간
+                RecordDate(
+                    runRecord.startTime.substringBefore("T"),
+                    if(startHour > 12) "오후 $startTime" else "오전 $startTime ~ " +
+                            if(endHour > 12) "오후 $endTime" else  "오전 $endTime"
+                )
 
-            // 평균 기록 데이터
-            RecordData(modifier.fillMaxWidth(), 20.1f, "20", 100)
+                // 평균 기록 데이터
+                RecordData(
+                    modifier.fillMaxWidth(), runRecord.distance, calculateHoursDifference(
+                        runRecord.startTime,
+                        runRecord.endTime
+                    ), runRecord.bpm
+                )
 
-            // 그래프
-            RecordGraph("구간별 심박수")
+                // 그래프
+                RecordGraph("구간별 심박수", runRecord.paceList, 1)
 
-            RecordGraph("구간별 페이스")
+                RecordGraph("구간별 페이스", runRecord.paceList, 2)
 
-            if(startDestination == 0) {
-                // 도전하기 버튼
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Button(
-                        onClick = {},
-                        modifier = Modifier
+                if (startDestination == 0) {
+                    // 도전하기 버튼
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(text = "도전하기",fontFamily = com.zoku.ui.ZokuFamily)
+                        Button(
+                            onClick = {
+                                moveToRunning(runRecord)
+                            },
+                            modifier = Modifier
+                        ) {
+                            Text(text = "도전하기", fontFamily = com.zoku.ui.ZokuFamily)
+                        }
                     }
                 }
             }
@@ -83,19 +117,29 @@ fun RecordDate(today: String, time: String) {
             .fillMaxWidth()
             .padding(20.dp)
     ) {
-        Text(text = today, textAlign = TextAlign.Start, modifier = Modifier.weight(1f),fontFamily = com.zoku.ui.ZokuFamily)
-        Text(text = time, textAlign = TextAlign.End, modifier = Modifier.weight(1f),fontFamily = com.zoku.ui.ZokuFamily)
+        Text(
+            text = today,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.weight(1f),
+            fontFamily = com.zoku.ui.ZokuFamily
+        )
+        Text(
+            text = time,
+            textAlign = TextAlign.End,
+            modifier = Modifier.weight(1f),
+            fontFamily = com.zoku.ui.ZokuFamily
+        )
     }
 }
 
 @Composable
-fun RecordData(modifier: Modifier = Modifier, distance: Float, time: String, bpm: Int) {
+fun RecordData(modifier: Modifier = Modifier, distance: Double, time: String, bpm: Int) {
     Row(
         modifier = modifier
             .padding(10.dp)
     ) {
         AverageData(modifier.weight(1f), data = "$distance", "km")
-        AverageData(modifier.weight(1f), data = "$time", "hr")
+        AverageData(modifier.weight(1f), data = time, "")
         AverageData(modifier.weight(1f), data = "$bpm", "bpm")
     }
 }
@@ -106,27 +150,36 @@ fun AverageData(modifier: Modifier = Modifier, data: String, type: String) {
         modifier = modifier,
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(text = data, fontSize = 20.sp, textAlign = TextAlign.Center,fontFamily = com.zoku.ui.ZokuFamily)
-        Text(text = type, modifier = Modifier.padding(start = 5.dp),fontFamily = com.zoku.ui.ZokuFamily)
+        Text(
+            text = data,
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center,
+            fontFamily = com.zoku.ui.ZokuFamily
+        )
+        Text(
+            text = type,
+            modifier = Modifier.padding(start = 5.dp),
+            fontFamily = com.zoku.ui.ZokuFamily
+        )
     }
 }
 
 
 @Composable
-fun RecordGraph(title: String) {
+fun RecordGraph(title: String, list: List<PaceRecord>, type: Int) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 10.dp)
     ) {
-        Text(text = title,fontFamily = com.zoku.ui.ZokuFamily)
+        Text(text = title, fontFamily = com.zoku.ui.ZokuFamily)
         // 예시 데이터
-        LineChartView()
+        LineChartView(list, type)
     }
 }
 
 @Composable
-fun LineChartView() {
+fun LineChartView(list: List<PaceRecord>, type: Int) {
     AndroidView(
         modifier = Modifier
             .fillMaxWidth()
@@ -152,7 +205,8 @@ fun LineChartView() {
             }
         },
         update = { lineChart ->
-            val entries = (1..10).map { Entry(it.toFloat(), Random.nextFloat() * 10) }
+            val entries = (0..list.size-1).map { Entry((it+1).toFloat(),
+                if(type == 1 ) list[it].bpmList.toFloat() else list[it].durationList?.toFloat() ?: 0.0f) }
             val lineDataSet = LineDataSet(entries, "Sample Data").apply {
                 color = com.zoku.ui.BaseYellow.toArgb()
                 lineWidth = 2f
@@ -165,4 +219,25 @@ fun LineChartView() {
             lineChart.invalidate()  // 차트 갱신
         }
     )
+}
+
+fun calculateHoursDifference(startTime: String, endTime: String): String {
+    // DateTimeFormatterBuilder를 사용하여 1~3자리 밀리초 지원
+    val formatter = DateTimeFormatterBuilder()
+        .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+        .optionalStart()
+        .appendFraction(ChronoField.MILLI_OF_SECOND, 1, 3, true)
+        .optionalEnd()
+        .toFormatter()
+
+    // 문자열을 LocalDateTime으로 변환
+    val startDateTime = LocalDateTime.parse(startTime, formatter)
+    val endDateTime = LocalDateTime.parse(endTime, formatter)
+
+    // 두 시간 사이의 차이 계산
+    val duration = Duration.between(startDateTime, endDateTime)
+
+    // 차이를 시간으로 변환하여 소수점 첫째 자리까지 형식화
+    val hours = duration.toMinutes().toDouble() / 60
+    return String.format("%.1f hr", hours)
 }

@@ -30,19 +30,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.zoku.network.model.response.RunningAllHistory
+import com.zoku.network.model.response.RunPractice
 import com.zoku.ui.CustomTypo
 
 @Composable
-fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :()->Unit){
+fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :(Int)->Unit){
 
     val viewModel : RecordModeViewModel = hiltViewModel()
+    val practiceList by viewModel.practiceList.collectAsState()
 
-    val runningAllList by viewModel.runningAllHistoryRecord.collectAsState()
-
-    with(viewModel){
-        getRunningAllHistory()
-    }
+    viewModel.getPracticeList()
 
   Column(
       modifier = modifier
@@ -63,34 +60,33 @@ fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :()->Unit){
         )
 
       // 기록 리스트
-      if(runningAllList.isNotEmpty()){
+      if(practiceList.isNotEmpty()){
           RecordList(
               modifier
                   .weight(1f)
                   .padding(horizontal = 20.dp)
               , moveToDetail= moveToDetail,
-              runningAllList
+              practiceList
           )
       }
   }
 }
 
 @Composable
-fun RecordList(modifier: Modifier, moveToDetail :()->Unit,
-               runningAllList : List<RunningAllHistory>){
+fun RecordList(modifier: Modifier, moveToDetail :(Int)->Unit,
+               runningAllList : List<RunPractice>){
     LazyColumn(
         modifier = modifier
     ) {
 
-        if(runningAllList.size == 0) {
+        if(runningAllList.isEmpty()) {
             item{
-                Text(text = "현재 날짜에는 기록이 없습니다",
+                Text(text = "현재 기록이 없습니다",
                     style = CustomTypo().jalnan.copy(
                         color = Color.White
                     ),
                     )
             }
-
         }
 
 
@@ -115,8 +111,8 @@ fun RecordList(modifier: Modifier, moveToDetail :()->Unit,
 }
 
 @Composable
-fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit,
-                   item : RunningAllHistory){
+fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : (Int) -> Unit,
+                   item : RunPractice){
 
     val startTime = item.startTime.substringAfter("T").substring(0, 5)
     val endTime = item.endTime.substringAfter("T").substring(0, 5)
@@ -125,7 +121,7 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit,
 
     //가록 Surface
     Surface(
-        onClick = { moveToDetail() },
+        onClick = { moveToDetail(item.id) },
         modifier = modifier
     ) {
         Column(
@@ -176,7 +172,7 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : () -> Unit,
 
 @Composable
 fun RecordTextView(modifier: Modifier,
-                   item: RunningAllHistory){
+                   item: RunPractice){
     Column(
         modifier = modifier
     ) {

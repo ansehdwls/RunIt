@@ -2,13 +2,15 @@ package com.zoku.navigatinon
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.zoku.home.ExpHistory
 import com.zoku.home.HomeScreen
 import com.zoku.home.RecordModeDetail
 import com.zoku.home.RecordModeScreen
 import com.zoku.home.RunHistoryScreen
-import com.zoku.ui.base.ClientDataViewModel
+import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.util.ScreenDestinations
 
@@ -18,8 +20,8 @@ fun NavController.navigateToRunHistory() = navigate(route = ScreenDestinations.r
 fun NavController.navigateToRecordModeScreen() =
     navigate(route = ScreenDestinations.RecordMode.route)
 
-fun NavController.navigateToRecordModeDetail() =
-    navigate(route = ScreenDestinations.RecordModeDetail.route)
+fun NavController.navigateToRecordModeDetail(recordId :Int) =
+    navigate(route = ScreenDestinations.RecordModeDetail.createRoute(recordId))
 
 fun NavController.navigateToExpHistory() = navigate(route = ScreenDestinations.expHistory.route)
 
@@ -48,15 +50,25 @@ fun NavGraphBuilder.runHistory() {
     }
 }
 
-fun NavGraphBuilder.recordMode(moveToDetail: () -> Unit) {
+fun NavGraphBuilder.recordMode(moveToDetail: (Int) -> Unit) {
     composable(route = ScreenDestinations.RecordMode.route) {
         RecordModeScreen(moveToDetail = moveToDetail)
     }
 }
 
-fun NavGraphBuilder.recordDetail() {
-    composable(route = ScreenDestinations.RecordModeDetail.route) {
-        RecordModeDetail()
+fun NavGraphBuilder.recordDetail(
+    moveToPractice : () -> Unit,
+    moveToRunning: (runRecordDto : RunRecordDetail) -> Unit
+) {
+    composable(route = ScreenDestinations.RecordModeDetail.route,
+        arguments = listOf(navArgument("recordId") {  type = NavType.IntType })) {
+            backStackEntry ->
+        val recordId = backStackEntry.arguments?.getInt("recordId") ?: 0
+
+        RecordModeDetail(recordId = recordId,
+            moveToPractice = moveToPractice,
+            moveToRunning = moveToRunning
+        )
     }
 }
 

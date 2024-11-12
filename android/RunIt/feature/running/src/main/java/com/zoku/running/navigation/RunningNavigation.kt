@@ -1,17 +1,22 @@
 package com.zoku.running.navigation
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.google.gson.Gson
+import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.running.RunningScreen
 import com.zoku.ui.base.ClientDataViewModel
-import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.util.ScreenDestinations
 
-fun NavController.navigateToRunning() = navigate(route = ScreenDestinations.running.route)
+fun NavController.navigateToRunning(recordDetail: RunRecordDetail) =
+    navigate(route = ScreenDestinations.running.createRoute(recordDetail))
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun NavGraphBuilder.runningScreen(
@@ -22,14 +27,22 @@ fun NavGraphBuilder.runningScreen(
     moveToHome: () -> Unit,
     viewModel: ClientDataViewModel
 ) {
-    composable(route = ScreenDestinations.running.route) {
+    composable(
+        route = ScreenDestinations.running.route,
+        arguments = listOf(navArgument("recordDto") { type = NavType.StringType })
+    ) { backStackEntry ->
+        val recordDtoJson = backStackEntry.arguments?.getString("recordDto") ?: ""
+        val recordDto = Gson().fromJson(recordDtoJson, RunRecordDetail::class.java)
+
+        Log.d("확인", "runningScreen: $recordDto 잘왔다")
         RunningScreen(
             modifier,
             onPauseWearableActivityClick = onPauseWearableActivityClick,
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
             moveToHome = moveToHome,
-            viewModel = viewModel
+            viewModel = viewModel,
+            runRecordDetail = recordDto
         )
     }
 }

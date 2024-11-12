@@ -21,6 +21,7 @@ import com.zoku.data.repository.RunningRepository
 import com.zoku.network.model.request.Pace
 import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.Track
+import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.service.LocationService
 import com.zoku.running.util.getIso8601TimeString
@@ -46,6 +47,15 @@ class RunningViewModel @Inject constructor(
     application: Application,
     private val runningRepository: RunningRepository
 ) : AndroidViewModel(application), TextToSpeech.OnInitListener {
+
+    private val _practiceRecord = MutableStateFlow<RunRecordDetail?>(null )
+    val practiceRecord : StateFlow<RunRecordDetail?> = _practiceRecord
+
+    fun getPracticeRecord(runDto : RunRecordDetail)
+    {
+        _practiceRecord.value = runDto
+    }
+
 
     //tts
     private var tts: TextToSpeech = TextToSpeech(application, this)

@@ -25,9 +25,10 @@ import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
+import com.zoku.network.model.response.RunRecordDetail
+import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.running.navigation.navigateToRunning
 import com.zoku.running.navigation.runningScreen
-import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.util.ScreenDestinations
 import timber.log.Timber
@@ -61,22 +62,32 @@ fun RunItMainNavHost(
                 navController.navigateToRecordModeScreen()
             },
             moveToRunning = {
-                Timber.tag("RunItNavHost").d("웨어러블 Start 클릭시")
                 onStartWearableActivityClick(PhoneWatchConnection.START_RUNNING.route)
-                navController.navigateToRunning()
+                navController.navigateToRunning(recordDetail =
+                RunRecordDetail(0,0.0,0,"","", emptyList())
+                )
             },
             moveToExpHistory = { navController.navigateToExpHistory() },
             phoneWatchConnection = phoneWatchData
         )
         this.runHistory()
         this.recordMode(
-            moveToDetail = { navController.navigateToRecordModeDetail() }
+            moveToDetail = { recordId ->
+                navController.navigateToRecordModeDetail(recordId) }
         )
         this.loginScreen(onLoginSuccess = {
             navController.navigate(ScreenDestinations.home.route)
             onHomeScreen()
         }, viewModel = loginViewModel)
-        this.recordDetail()
+        this.recordDetail(
+            moveToPractice = {
+                navController.popBackStack()
+            },
+            moveToRunning = {
+                runRecordDto ->
+                navController.navigateToRunning(runRecordDto)
+            }
+        )
         this.runningScreen(
             modifier = modifier,
             onPauseWearableActivityClick = onPauseWearableActivityClick,
