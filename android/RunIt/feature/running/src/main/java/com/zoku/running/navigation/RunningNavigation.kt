@@ -12,7 +12,7 @@ import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.running.RunningScreen
-import com.zoku.ui.model.PhoneWatchConnection
+import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.util.ScreenDestinations
 
 fun NavController.navigateToRunning(recordDetail: RunRecordDetail) =
@@ -24,13 +24,13 @@ fun NavGraphBuilder.runningScreen(
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
-    moveToHome : ()->Unit,
-    phoneWatchData: PhoneWatchConnection
+    moveToHome: () -> Unit,
+    viewModel: ClientDataViewModel
 ) {
-    composable(route = ScreenDestinations.running.route,
+    composable(
+        route = ScreenDestinations.running.route,
         arguments = listOf(navArgument("recordDto") { type = NavType.StringType })
-    ) {
-            backStackEntry ->
+    ) { backStackEntry ->
         val recordDtoJson = backStackEntry.arguments?.getString("recordDto") ?: ""
         val recordDto = Gson().fromJson(recordDtoJson, RunRecordDetail::class.java)
 
@@ -41,7 +41,7 @@ fun NavGraphBuilder.runningScreen(
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
             moveToHome = moveToHome,
-            phoneWatchData = phoneWatchData,
+            viewModel = viewModel,
             runRecordDetail = recordDto
         )
     }

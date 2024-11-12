@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.zoku.runit.navigation.RunItMainNavHost
+import com.zoku.ui.base.ClientDataViewModel
+import com.zoku.ui.model.PhoneWatchConnection
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -16,6 +18,7 @@ fun MainScreen(
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
+    viewModel : ClientDataViewModel,
 ) {
     val navController = rememberNavController()
     RunItMainNavHost(
@@ -25,6 +28,7 @@ fun MainScreen(
         onStartWearableActivityClick = onStartWearableActivityClick,
         onPauseWearableActivityClick = onPauseWearableActivityClick,
         onResumeWearableActivityClick = onResumeWearableActivityClick,
-        onStopWearableActivityClick = onStopWearableActivityClick
+        onStopWearableActivityClick = onStopWearableActivityClick,
+        viewModel = viewModel,
     )
 }

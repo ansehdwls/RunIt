@@ -11,10 +11,10 @@ import com.zoku.ui.model.PhoneWatchConnection
 fun MainScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    sendBpm: (Int, PhoneWatchConnection) -> Unit
+    sendBpm: (Int, Int, PhoneWatchConnection) -> Unit
 ) {
-    WatchNavHost(navController, modifier) { bpm, connection ->
-        sendBpm(bpm, connection)
+    WatchNavHost(navController, modifier) { bpm, duration, connection ->
+        sendBpm(bpm, duration, connection)
     }
 }
 

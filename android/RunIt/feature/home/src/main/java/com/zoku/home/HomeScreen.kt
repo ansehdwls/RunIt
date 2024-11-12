@@ -1,8 +1,6 @@
 package com.zoku.home
 
 import android.app.Activity
-import android.service.autofill.FillEventHistory
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -28,24 +25,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoku.ui.BaseWhiteBackground
 import com.zoku.ui.BaseYellow
+import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.componenet.MenuButton
 import com.zoku.ui.model.PhoneWatchConnection
-import com.zoku.ui.model.PhoneWatchData
 import timber.log.Timber
 
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier,
-               moveToHistory :() -> Unit,
-               moveToRecordMode : ()->Unit,
-               moveToRunning : () -> Unit,
-               moveToExpHistory: () -> Unit,
-               phoneWatchData : PhoneWatchConnection
-               ) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    moveToHistory: () -> Unit,
+    moveToRecordMode: () -> Unit,
+    moveToRunning: () -> Unit,
+    moveToExpHistory: () -> Unit,
+    phoneWatchConnection : PhoneWatchConnection,
 
-    if(phoneWatchData == PhoneWatchConnection.SEND_BPM){
+) {
+
+    Timber.tag("HomeScreen").d("실행 데이터 $phoneWatchConnection")
+
+    if (phoneWatchConnection == PhoneWatchConnection.SEND_BPM) {
         moveToRunning()
     }
     BackOnPressed()
@@ -57,9 +59,9 @@ fun HomeScreen(modifier: Modifier = Modifier,
         .fillMaxSize()
         .background(com.zoku.ui.BaseGray)
     Column(
-        modifier = if(isInfo) baseModifier
+        modifier = if (isInfo) baseModifier
             .verticalScroll(rememberScrollState())
-            else baseModifier
+        else baseModifier
     ) {
         Spacer(modifier = Modifier.height(15.dp))
 
@@ -79,7 +81,7 @@ fun HomeScreen(modifier: Modifier = Modifier,
 
             MenuButton(
                 name = "정보",
-                backgroundColor = if(isInfo) BaseYellow else BaseWhiteBackground
+                backgroundColor = if (isInfo) BaseYellow else BaseWhiteBackground
             ) {
                 isInfo = true
             }
@@ -88,7 +90,7 @@ fun HomeScreen(modifier: Modifier = Modifier,
 
             MenuButton(
                 name = "랭킹",
-                backgroundColor = if(isInfo) BaseWhiteBackground else BaseYellow
+                backgroundColor = if (isInfo) BaseWhiteBackground else BaseYellow
             ) {
                 isInfo = false
             }
@@ -99,16 +101,16 @@ fun HomeScreen(modifier: Modifier = Modifier,
 
         // InfoScreen 표시 조건
         if (isInfo) {
-            InfoScreen(modifier = modifier
-                .background(com.zoku.ui.BaseGray)
-                .padding(horizontal = 10.dp),
+            InfoScreen(
+                modifier = modifier
+                    .background(com.zoku.ui.BaseGray)
+                    .padding(horizontal = 10.dp),
                 moveToHistory = moveToHistory,
                 moveToRecordMode = moveToRecordMode,
-                moveToRunning = moveToRunning)
-        }
-
-        else {
-            RankScreen(moveToExpHistory= moveToExpHistory)
+                moveToRunning = moveToRunning
+            )
+        } else {
+            RankScreen(moveToExpHistory = moveToExpHistory)
         }
 
     }
@@ -121,7 +123,7 @@ fun BackOnPressed() {
     var backPressedTime = 0L
 
     BackHandler(enabled = backPressedState) {
-        if(System.currentTimeMillis() - backPressedTime <= 1000L) {
+        if (System.currentTimeMillis() - backPressedTime <= 1000L) {
             (context as Activity).finish()
         } else {
             backPressedState = true

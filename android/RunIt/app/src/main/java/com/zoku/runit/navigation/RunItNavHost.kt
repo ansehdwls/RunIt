@@ -38,19 +38,19 @@ import timber.log.Timber
 fun RunItMainNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    onHomeScreen : () -> Unit,
+    onHomeScreen: () -> Unit,
     onStartWearableActivityClick: (String) -> Unit,
     onPauseWearableActivityClick: (String) -> Unit,
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
-    startDestination: String = ScreenDestinations.login.route
+    startDestination: String = ScreenDestinations.login.route,
+    viewModel: ClientDataViewModel
 ) {
-    val clientDataViewModel: ClientDataViewModel = hiltViewModel()
     var isUserLoggedIn by remember { mutableStateOf(false) }
     val loginViewModel: LoginViewModel = hiltViewModel()
+    val phoneWatchData by viewModel.phoneWatchData.collectAsState()
 
-    val phoneWatchData by clientDataViewModel.phoneWatchData.collectAsState()
-    Timber.tag("RuntItMainNavHost").d("phoneWatchData $phoneWatchData")
+    Timber.tag("RunItNavHost").d("폰 데이터 $phoneWatchData")
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -62,14 +62,13 @@ fun RunItMainNavHost(
                 navController.navigateToRecordModeScreen()
             },
             moveToRunning = {
-
                 onStartWearableActivityClick(PhoneWatchConnection.START_RUNNING.route)
                 navController.navigateToRunning(recordDetail =
                 RunRecordDetail(0,0.0,0,"","", emptyList())
                 )
             },
-            moveToExpHistory = { navController.navigateToExpHistory()},
-            phoneWatchData = phoneWatchData
+            moveToExpHistory = { navController.navigateToExpHistory() },
+            phoneWatchConnection = phoneWatchData
         )
         this.runHistory()
         this.recordMode(
@@ -77,9 +76,7 @@ fun RunItMainNavHost(
                 navController.navigateToRecordModeDetail(recordId) }
         )
         this.loginScreen(onLoginSuccess = {
-            // 로그인 성공 시, 상태 업데이트
-//            isUserLoggedIn = true
-            navController.navigate("home")
+            navController.navigate(ScreenDestinations.home.route)
             onHomeScreen()
         }, viewModel = loginViewModel)
         this.recordDetail(
@@ -96,8 +93,8 @@ fun RunItMainNavHost(
             onPauseWearableActivityClick = onPauseWearableActivityClick,
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
-            moveToHome = { navController.navigateToHome() },
-            phoneWatchData = phoneWatchData
+            moveToHome = { navController.popBackStack() },
+            viewModel
         )
 //        this.runningResultScreen(modifier = modifier)
 

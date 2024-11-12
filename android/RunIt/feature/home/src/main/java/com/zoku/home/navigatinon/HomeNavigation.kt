@@ -5,7 +5,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.google.gson.Gson
 import com.zoku.home.ExpHistory
 import com.zoku.home.HomeScreen
 import com.zoku.home.RecordModeDetail
@@ -13,7 +12,6 @@ import com.zoku.home.RecordModeScreen
 import com.zoku.home.RunHistoryScreen
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.ui.model.PhoneWatchConnection
-import com.zoku.ui.model.PhoneWatchData
 import com.zoku.util.ScreenDestinations
 
 
@@ -33,7 +31,7 @@ fun NavGraphBuilder.homeScreen(
     moveToRecordMode: () -> Unit,
     moveToRunning: () -> Unit,
     moveToExpHistory: () -> Unit,
-    phoneWatchData: PhoneWatchConnection
+    phoneWatchConnection: PhoneWatchConnection
 ) {
     composable(route = ScreenDestinations.home.route) {
         HomeScreen(
@@ -41,7 +39,7 @@ fun NavGraphBuilder.homeScreen(
             moveToRecordMode = moveToRecordMode,
             moveToRunning = moveToRunning,
             moveToExpHistory = moveToExpHistory,
-            phoneWatchData = phoneWatchData
+            phoneWatchConnection = phoneWatchConnection
         )
     }
 }

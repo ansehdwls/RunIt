@@ -9,8 +9,8 @@ import com.zoku.util.ScreenDestinations
 
 fun NavController.navigateToLogin() = navigate(route = ScreenDestinations.login.route)
 
-fun NavGraphBuilder.loginScreen(onLoginSuccess: () -> Unit,viewModel: LoginViewModel) {
+fun NavGraphBuilder.loginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel) {
     composable(route = ScreenDestinations.login.route) {
-        LoginScreen(onLoginSuccess = onLoginSuccess,viewModel)
+        LoginScreen(onLoginSuccess = onLoginSuccess, viewModel)
     }
 }
