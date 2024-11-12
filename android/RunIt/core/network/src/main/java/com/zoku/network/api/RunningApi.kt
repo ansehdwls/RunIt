@@ -8,6 +8,9 @@ import com.zoku.network.model.response.TestSumData
 import com.zoku.network.model.response.PostRunningRecordResponse
 import com.zoku.network.model.response.RunPracticeResponse
 import com.zoku.network.model.response.RunRecordDetailResponse
+import com.zoku.network.model.response.RunTodayResponse
+import com.zoku.network.model.response.RunTotalResponse
+import com.zoku.network.model.response.RunWeekListResponse
 import com.zoku.network.model.response.TestSumResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -50,4 +53,13 @@ interface RunningApi {
 
     @PUT("api/run/record/{recordId}")
     suspend fun updatePractice(@Path("recordId") recordId: Int) : Response<MessageResponse>
+
+    @GET("api/run/today")
+    suspend fun getRunToday() : Response<RunTodayResponse>
+
+    @GET("api/run/total")
+    suspend fun getRunTotal() : Response<RunTotalResponse>
+
+    @GET("api/run/week")
+    suspend fun getRunWeek() : Response<RunWeekListResponse>
 }

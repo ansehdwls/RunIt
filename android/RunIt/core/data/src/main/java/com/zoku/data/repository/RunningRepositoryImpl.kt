@@ -11,6 +11,9 @@ import com.zoku.network.model.response.MessageResponse
 import com.zoku.network.model.response.PostRunningRecordResponse
 import com.zoku.network.model.response.RunPracticeResponse
 import com.zoku.network.model.response.RunRecordDetailResponse
+import com.zoku.network.model.response.RunTodayResponse
+import com.zoku.network.model.response.RunTotalResponse
+import com.zoku.network.model.response.RunWeekListResponse
 import com.zoku.network.model.response.TestSumResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -51,6 +54,18 @@ class RunningRepositoryImpl @Inject constructor(
 
     override suspend fun updateRunPracticeMode(recordId: Int): NetworkResult<MessageResponse> {
         return handleApi { runningApi.updatePractice(recordId) }
+    }
+
+    override suspend fun getRunToday(): NetworkResult<RunTodayResponse> {
+        return handleApi { runningApi.getRunToday() }
+    }
+
+    override suspend fun getRunTotal(): NetworkResult<RunTotalResponse> {
+        return handleApi { runningApi.getRunTotal() }
+    }
+
+    override suspend fun getRunWeek(): NetworkResult<RunWeekListResponse> {
+        return handleApi { runningApi.getRunWeek() }
     }
 
 }

@@ -80,7 +80,8 @@ fun RecordDetailInfo(
                 RecordData(
                     modifier.fillMaxWidth(), runRecord.distance, calculateHoursDifference(
                         runRecord.startTime,
-                        runRecord.endTime
+                        runRecord.endTime,
+                        runRecord.id
                     ), runRecord.bpm
                 )
 
@@ -221,10 +222,10 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
     )
 }
 
-fun calculateHoursDifference(startTime: String, endTime: String): String {
+fun calculateHoursDifference(startTime: String, endTime: String, id : Int): String {
     // DateTimeFormatterBuilder를 사용하여 1~3자리 밀리초 지원
     val formatter = DateTimeFormatterBuilder()
-        .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+        .appendPattern( if(id > 0 )"yyyy-MM-dd'T'HH:mm:ss" else "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .optionalStart()
         .appendFraction(ChronoField.MILLI_OF_SECOND, 1, 3, true)
         .optionalEnd()

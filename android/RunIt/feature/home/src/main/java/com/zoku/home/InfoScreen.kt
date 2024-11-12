@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -58,6 +60,9 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.zoku.home.component.DropDownMenu
+import com.zoku.network.model.response.RunToday
+import com.zoku.network.model.response.RunWeekList
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlin.random.Random
 
 @Composable
@@ -70,6 +75,24 @@ fun InfoScreen(
     val context = LocalContext.current
     val runningDiaryMenu = arrayOf("거리", "시간", "페이스")
     val runningRecordMenu = arrayOf("전체", "일주일")
+
+    var isAllRecord by remember {
+        mutableStateOf(true)
+    }
+    var listType by remember {
+        mutableStateOf(0)
+    }
+
+    val viewModel: InfoViewModel = hiltViewModel()
+    val todayRecord by viewModel.todayRecord.collectAsState()
+    val totalAllRecord by viewModel.totalAllRecord.collectAsState()
+    val totalWeekRecord by viewModel.totalWeekRecord.collectAsState()
+    val totalWeekList by viewModel.totalWeekList.collectAsState()
+
+    viewModel.getRunToday()
+    viewModel.getTotalRecord()
+    viewModel.getWeekList()
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -88,7 +111,7 @@ fun InfoScreen(
                 modifier = modifier.padding(bottom = 5.dp),
                 fontFamily = com.zoku.ui.ZokuFamily
             )
-            TodayDashBoard(modifier.align(Alignment.CenterHorizontally))
+            TodayDashBoard(modifier.align(Alignment.CenterHorizontally), todayRecord)
 
             Spacer(modifier = modifier.height(20.dp))
 
@@ -97,15 +120,25 @@ fun InfoScreen(
                 context.getString(R.string.running_diary),
                 "거리",
                 runningDiaryMenu
-            )
+            ) { selectedOption ->
+                if (selectedOption == context.getString(R.string.running_diary) + " 거리") listType = 0
+                else if(selectedOption == context.getString(R.string.running_diary) + " 시간") listType = 1
+                else listType = 2
+            }
 
-            RunningDiary(modifier.align(Alignment.CenterHorizontally))
+            RunningDiary(modifier.align(Alignment.CenterHorizontally), totalWeekList, listType)
 
             Spacer(modifier = modifier.height(20.dp))
 
-            HomeTitle(modifier.padding(bottom = 5.dp), "러닝 기록", "전체", runningRecordMenu)
+            HomeTitle(modifier.padding(bottom = 5.dp), "러닝 기록", "전체", runningRecordMenu){
+                 selectedOption ->
+                    if (selectedOption == "러닝 기록 전체") isAllRecord = true
+                    else isAllRecord = false
 
-            RunningRecord(modifier, "1,600", "104")
+            }
+
+            RunningRecord(modifier, if(isAllRecord) totalAllRecord.totalDistance else totalWeekRecord.weekDistance,
+                if(isAllRecord) totalAllRecord.totalTime else totalWeekRecord.weekTime)
 
             Spacer(modifier = modifier.height(30.dp))
 
@@ -125,25 +158,29 @@ fun InfoScreen(
                 HomeFunctionButton(modifier = buttonModifier
                     .background(Color.White), onClick = {
                     moveToHistory()
-                }, icon = R.drawable.calendar_info_icon, "히스토리", iconModifier)
+                }, icon = R.drawable.calendar_info_icon, "히스토리", iconModifier
+                )
 
                 Spacer(modifier = Modifier.width(20.dp))
 
-                HomeFunctionButton(modifier = buttonModifier
-                    .background(com.zoku.ui.BaseYellow),
+                HomeFunctionButton(
+                    modifier = buttonModifier
+                        .background(com.zoku.ui.BaseYellow),
                     onClick = { moveToRunning() },
                     icon = R.drawable.run_info_icon,
                     "",
                     iconModifier
                         .height(60.dp)
-                        .width(40.dp))
+                        .width(40.dp)
+                )
 
                 Spacer(modifier = Modifier.width(20.dp))
 
                 HomeFunctionButton(modifier = buttonModifier
                     .background(Color.White), onClick = {
                     moveToRecordMode()
-                }, icon = R.drawable.record_info_icon, "기록 갱신", iconModifier)
+                }, icon = R.drawable.record_info_icon, "기록 갱신", iconModifier
+                )
             }
         }
     }
@@ -151,7 +188,7 @@ fun InfoScreen(
 }
 
 @Composable
-fun TodayDashBoard(modifier: Modifier = Modifier) {
+fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
 
     val iconModifier = Modifier
         .height(30.dp)
@@ -175,7 +212,7 @@ fun TodayDashBoard(modifier: Modifier = Modifier) {
                 modifier = Modifier.weight(1f),
                 dir = Arrangement.End,
                 iconModifier = iconModifier,
-                result = "100", unit = "Km",
+                result = "${todayRecord.distance}", unit = "Km",
                 imgResource = R.drawable.run_home_icon
             )
 
@@ -191,7 +228,7 @@ fun TodayDashBoard(modifier: Modifier = Modifier) {
                 modifier = Modifier.weight(1f),
                 dir = Arrangement.Center,
                 iconModifier = iconModifier,
-                result = "16.9", unit = "hr",
+                result = "${todayRecord.time}", unit = "hr",
                 imgResource = R.drawable.time_home_icon
             )
 
@@ -207,7 +244,7 @@ fun TodayDashBoard(modifier: Modifier = Modifier) {
                 modifier = Modifier.weight(1f),
                 dir = Arrangement.Start,
                 iconModifier = iconModifier,
-                result = "1'12''", unit = "pace",
+                result = "${todayRecord.pace}", unit = "pace",
                 imgResource = R.drawable.fire_home_icon
             )
 
@@ -259,7 +296,8 @@ fun HomeTitle(
     modifier: Modifier = Modifier,
     title: String,
     firstSelect: String,
-    menu: Array<String>
+    menu: Array<String>,
+    selectType : (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf(firstSelect) }
@@ -297,6 +335,7 @@ fun HomeTitle(
                     onDismissRequest = { expanded = false },
                     onItemSelected = { option ->
                         selectedOption = option // 선택된 옵션 업데이트
+                        selectType("$title $selectedOption")
                     },
                     itemList = menu
                 )
@@ -309,7 +348,9 @@ fun HomeTitle(
 }
 
 @Composable
-fun RunningDiary(modifier: Modifier = Modifier) {
+fun RunningDiary(modifier: Modifier = Modifier,
+                 totalWeekList : RunWeekList,
+                 listType : Int) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -317,12 +358,16 @@ fun RunningDiary(modifier: Modifier = Modifier) {
             .height(200.dp)
             .background(com.zoku.ui.BaseWhiteBackground)
     ) {
-        BarChartScreen()
+        when(listType){
+            0 -> if(totalWeekList.disList.isNotEmpty()) BarChartScreen(totalWeekList.disList)
+            1 -> if(totalWeekList.timeList.isNotEmpty())BarChartScreen(totalWeekList.timeList)
+            2 ->if(totalWeekList.paceList.isNotEmpty()) BarChartScreen(totalWeekList.paceList)
+        }
     }
 }
 
 @Composable
-fun RunningRecord(modifier: Modifier = Modifier, distance: String, time: String) {
+fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -342,7 +387,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: String, time: String)
             ) {
                 Spacer(modifier = Modifier.padding(top = 35.dp))
                 Text(
-                    text = distance,
+                    text = "$distance",
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -382,7 +427,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: String, time: String)
             ) {
                 Spacer(modifier = Modifier.padding(top = 35.dp))
                 Text(
-                    text = time,
+                    text = "$time",
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -444,13 +489,13 @@ fun HomeFunctionButton(
 
 
 @Composable
-fun BarChartScreen() {
+fun BarChartScreen( list : List<Double>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "10 월 1주",fontFamily = com.zoku.ui.ZokuFamily)
+        Text(text = "10 월 1주", fontFamily = com.zoku.ui.ZokuFamily)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -498,7 +543,7 @@ fun BarChartScreen() {
                         }
                     })
                     // 랜덤 데이터 추가
-                    val barData = getBarData1()
+                    val barData = getBarData1(list)
                     data = barData
                     legend.isEnabled = false
                     // 차트 업데이트
@@ -509,14 +554,12 @@ fun BarChartScreen() {
     }
 }
 
-fun getBarData1(): BarData {
+fun getBarData1(list : List<Double>): BarData {
     val values = ArrayList<BarEntry>()
     val days = arrayOf("월", "화", "수", "목", "금", "토", "일")
 
-    // 랜덤 데이터 생성 (0~100 범위)
     for (i in days.indices) {
-        val randomValue = Random.nextFloat() * 100 // 0에서 100 사이의 랜덤 값
-        values.add(BarEntry(i.toFloat(), randomValue))
+        values.add(BarEntry(i.toFloat(), list[i].toFloat()))
     }
 
     // 데이터셋 설정
