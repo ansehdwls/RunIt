@@ -1,13 +1,11 @@
 package com.ssafy.runit.domain.user.service;
 
-import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +18,6 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final GroupRepository groupRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     @Transactional(readOnly = true)

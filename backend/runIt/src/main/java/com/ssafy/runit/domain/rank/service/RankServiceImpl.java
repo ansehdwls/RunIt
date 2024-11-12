@@ -53,8 +53,8 @@ public class RankServiceImpl implements RankService {
             redisTemplate.delete(previousRankKey);
             return;
         }
-        List<String> affectedUserIds = getAffectedUserIds(rankingKey, previousRank, newRank, rankChange, userIdStr);
-        Map<String, Integer> rankChangesMap = buildRankChangesMap(userIdStr, rankChange, affectedUserIds);
+        List<String> affectedUserIds = getAffectedUserIds(rankingKey, previousRank, newRank, rankChange);
+        Map<String, Integer> rankChangesMap = buildRankChangesMap(rankChange, affectedUserIds);
         rankChangesMap.put(userIdStr, rankChange);
         updatePreviousRank(previousRankKey, rankChangesMap);
     }
@@ -74,7 +74,7 @@ public class RankServiceImpl implements RankService {
     }
 
 
-    private List<String> getAffectedUserIds(String rankingKey, Long previousRank, Long newRank, int rankChange, String userIdStr) {
+    private List<String> getAffectedUserIds(String rankingKey, Long previousRank, Long newRank, int rankChange) {
         List<String> affectedUserIds = new ArrayList<>();
         Set<Object> affectedUsers;
         if (rankChange > 0) {
@@ -88,7 +88,7 @@ public class RankServiceImpl implements RankService {
         return affectedUserIds;
     }
 
-    private Map<String, Integer> buildRankChangesMap(String userIdStr, int rankChange, List<String> affectedUserIds) {
+    private Map<String, Integer> buildRankChangesMap(int rankChange, List<String> affectedUserIds) {
         Map<String, Integer> rankChangesMap = new HashMap<>();
         for (String affectedUserId : affectedUserIds) {
             if (rankChange > 0) {
