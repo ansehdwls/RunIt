@@ -40,7 +40,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 //      기존의 user id 받아서 처리하는 부분
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
         Experience exp = request.Mapper(user, LocalDateTime.now());
-        rankService.updateScore(user.getUserGroup().getId(),user.getId(),request.getChanged());
+        rankService.updateScore(user.getUserGroup().getId(),user.getId(), request.getChanged());
         experienceRepository.save(exp);
     }
 
@@ -68,8 +68,9 @@ public class ExperienceServiceImpl implements ExperienceService {
 
         return experienceRepository.findByUserIdAndCreateAtBetween(user.getId(), startDay, endDay)
                 .stream()
+                .filter(experience -> experience.getActivity().equals("거리"))
                 .mapToLong(Experience :: getChanged)
                 .sum();
-//
+
     }
 }
