@@ -1,7 +1,5 @@
 package com.ssafy.runit.domain.rank.service;
 
-import com.ssafy.runit.domain.user.dto.response.UserInfoResponse;
-import com.ssafy.runit.domain.user.service.UserService;
 import com.ssafy.runit.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,10 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,73 +16,99 @@ import java.util.stream.Collectors;
 public class RankServiceImpl implements RankService {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final UserService userService;
 
-    @Override
-    public void updateScore(long groupId, long userId, long changed) {
-        log.debug("[updateScore] groupId:{} userId:{} changed: {}", groupId, userId, changed);
-        String key = String.format("ranking:%s", groupId);
-        String previousRankKey = String.format("previous_rank:%s", groupId);
-        List<UserInfoResponse> users = userService.findUserByGroup(groupId);
-        List<String> ids = users.stream().map(UserInfoResponse::getUserId).map(String::valueOf).collect(Collectors.toList());
-        Map<String, Integer> previousRank = getCurrentRanks(ids, groupId);
-        long currentTimeMillis = System.currentTimeMillis();
-        double timeAdjustment = (currentTimeMillis % 1000000) * 1e-6;
-        redisTemplate.opsForHash().putAll(previousRankKey, previousRank);
-        redisTemplate.expire(previousRankKey, DateUtils.computeDurationForNextWeek());
-        redisTemplate.opsForZSet().incrementScore(key, String.valueOf(userId), changed + timeAdjustment);
-        redisTemplate.expire(key, DateUtils.computeDurationForNextWeek());
-        redisTemplate.expire(previousRankKey, DateUtils.computeDurationForNextWeek());
-    }
-
-
-    @Override
-    public Map<String, Integer> getPreviousRanks(List<String> userIds, long groupId) {
-        String previousRankKey = String.format("previous_rank:%s", groupId);
-        Map<String, Integer> previousRanks = new HashMap<>();
-        List<Object> ids = userIds.stream().map(String::valueOf).collect(Collectors.toList());
-        List<Object> rankStrings = redisTemplate.opsForHash().multiGet(previousRankKey, ids);
-        for (int i = 0; i < userIds.size(); i++) {
-            Object rankObj = rankStrings.get(i);
-            Integer rank = rankObj != null ? Integer.parseInt(rankObj.toString()) : null;
-            previousRanks.put(userIds.get(i), rank);
-        }
-        return previousRanks;
-    }
-
-    @Override
-    public Map<String, Integer> getCurrentRanks(List<String> ids, long groupId) {
-        String key = String.format("ranking:%s", groupId);
-        Map<String, Integer> currentRanks = new HashMap<>();
-        for (String userId : ids) {
-            Long rank = redisTemplate.opsForZSet().reverseRank(key, String.valueOf(userId));
-            if (rank != null) {
-                currentRanks.put(userId, (int) (rank + 1));
-            }
-        }
-        return currentRanks;
-    }
 
     @Override
     public Map<String, Integer> getRankDiff(List<String> ids, long groupId) {
-        Map<String, Integer> previousRanks = getPreviousRanks(ids, groupId);
-        Map<String, Integer> currentRanks = getCurrentRanks(ids, groupId);
-        Map<String, Integer> rankChanges = new HashMap<>();
-        for (String uid : ids) {
-            Integer previousRank = previousRanks.get(uid);
-            Integer currentRank = currentRanks.get(uid);
-            if (previousRank == null) {
-                previousRank = currentRank;
-            }
-            int rankChange = previousRank - currentRank;
-            rankChanges.put(uid, rankChange);
-        }
-        return rankChanges;
+        String previousRankKey = String.format("previous_rank:%s", groupId);
+        return redisTemplate.opsForHash().entries(previousRankKey)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().toString(),
+                        entry -> Integer.parseInt(entry.getValue().toString())
+                ));
     }
 
     @Override
     public Set<ZSetOperations.TypedTuple<Object>> getGroupRanking(long groupId) {
         String key = String.format("ranking:%s", groupId);
         return redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, -1);
+    }
+
+    @Override
+    public void updateScore(long groupId, String userIdStr, long changed) {
+        log.debug("[updateScore] groupId: {}, userId: {}, changed: {}", groupId, userIdStr, changed);
+        String rankingKey = String.format("ranking:%s", groupId);
+        String previousRankKey = String.format("previous_rank:%s", groupId);
+        Long previousRank = getPreviousRank(rankingKey, userIdStr);
+        double timeAdjustment = calculateTimeAdjustment();
+        updateUserScore(rankingKey, userIdStr, changed, timeAdjustment);
+        Long newRank = redisTemplate.opsForZSet().reverseRank(rankingKey, userIdStr);
+        if (newRank == null) {
+            return;
+        }
+        int rankChange = previousRank.intValue() - newRank.intValue();
+        if (rankChange == 0) {
+            redisTemplate.delete(previousRankKey);
+            return;
+        }
+        List<String> affectedUserIds = getAffectedUserIds(rankingKey, previousRank, newRank, rankChange, userIdStr);
+        Map<String, Integer> rankChangesMap = buildRankChangesMap(userIdStr, rankChange, affectedUserIds);
+        rankChangesMap.put(userIdStr, rankChange);
+        updatePreviousRank(previousRankKey, rankChangesMap);
+    }
+
+    private void updateUserScore(String rankingKey, String userIdStr, long changed, double timeAdjustment) {
+        double increment = changed + timeAdjustment;
+        redisTemplate.opsForZSet().incrementScore(rankingKey, userIdStr, increment);
+        redisTemplate.expire(rankingKey, DateUtils.computeDurationForNextWeek());
+    }
+
+    private Long getPreviousRank(String rankingKey, String userIdStr) {
+        Long previousRank = redisTemplate.opsForZSet().reverseRank(rankingKey, userIdStr);
+        if (previousRank == null) {
+            previousRank = redisTemplate.opsForZSet().zCard(rankingKey);
+        }
+        return previousRank;
+    }
+
+
+    private List<String> getAffectedUserIds(String rankingKey, Long previousRank, Long newRank, int rankChange, String userIdStr) {
+        List<String> affectedUserIds = new ArrayList<>();
+        Set<Object> affectedUsers;
+        if (rankChange > 0) {
+            affectedUsers = redisTemplate.opsForZSet().reverseRange(rankingKey, newRank + 1, previousRank);
+        } else {
+            affectedUsers = redisTemplate.opsForZSet().reverseRange(rankingKey, previousRank + 1, newRank);
+        }
+        if (affectedUsers != null) {
+            affectedUserIds.addAll(affectedUsers.stream().map(Object::toString).toList());
+        }
+        return affectedUserIds;
+    }
+
+    private Map<String, Integer> buildRankChangesMap(String userIdStr, int rankChange, List<String> affectedUserIds) {
+        Map<String, Integer> rankChangesMap = new HashMap<>();
+        for (String affectedUserId : affectedUserIds) {
+            if (rankChange > 0) {
+                rankChangesMap.put(affectedUserId, -1);
+            } else {
+                rankChangesMap.put(affectedUserId, 1);
+            }
+        }
+        return rankChangesMap;
+    }
+
+
+    private void updatePreviousRank(String previousRankKey, Map<String, Integer> rankChangesMap) {
+        redisTemplate.delete(previousRankKey);
+        redisTemplate.opsForHash().putAll(previousRankKey, rankChangesMap);
+        redisTemplate.expire(previousRankKey, DateUtils.computeDurationForNextWeek());
+    }
+
+    private double calculateTimeAdjustment() {
+        long currentTimeMillis = System.currentTimeMillis();
+        return (currentTimeMillis % 1000000) * 1e-9; // 0 ~ 0.000999999 초 단위
     }
 }
