@@ -3,6 +3,7 @@ package com.zoku.runit
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -43,9 +44,8 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         enableEdgeToEdge()
-
-        Timber.tag("MainActivity").d("viewModel : ${clientDataViewModel.hashCode()}")
 //        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
 //            if (task.isSuccessful) {
 //                val token = task.result
@@ -55,13 +55,6 @@ class MainActivity : ComponentActivity() {
 //            }
 //        }
 
-        lifecycleScope.launch {
-            clientDataViewModel.runningConnectionState.flowWithLifecycle(lifecycle)
-                .onEach {
-                    Timber.tag("MainActivity").d("$it")
-                }
-                .launchIn(lifecycleScope)
-        }
 
         setContent {
             com.zoku.ui.RunItTheme {
