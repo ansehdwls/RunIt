@@ -30,7 +30,6 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ExperienceServiceImpl implements ExperienceService {
 
@@ -38,7 +37,6 @@ public class ExperienceServiceImpl implements ExperienceService {
     private final RankService rankService;
     private final UserRepository userRepository;
     private final AttendanceService attendanceService;
-    private final ExperienceService experienceService;
     private final RecordService recordService;
 
 
@@ -64,6 +62,29 @@ public class ExperienceServiceImpl implements ExperienceService {
     }
 
     @Override
+    public Integer experienceDistribution(UserDetails userDetails, boolean attType) {
+
+        int size = attendanceService.getWeekAttendance(userDetails.getUsername()).size();
+        long todayExp = experienceGetToday(userDetails);
+        RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
+        long restDis = (long) (todayResponse.distance() - (todayExp * 100));
+
+        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attType, size, restDis);
+        int sum = 0;
+        for (Pair<String, Long> item : result) {
+
+            ExperienceSaveRequest exp = ExperienceSaveRequest.builder()
+                    .activity(item.getLeft())
+                    .changed(item.getRight())
+                    .build();
+            sum += item.getRight();
+            experienceSave(userDetails, exp);
+        }
+
+        return sum;
+    }
+
+    @Override
     public Long experienceGetToday(UserDetails userDetails) {
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow(
                 ()-> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
@@ -80,28 +101,5 @@ public class ExperienceServiceImpl implements ExperienceService {
                 .mapToLong(Experience :: getChanged)
                 .sum();
 
-    }
-
-    @Override
-    public Integer experienceDistribution(UserDetails userDetails, boolean attType) {
-
-        int size = attendanceService.getWeekAttendance(userDetails.getUsername()).size();
-        long todayExp = experienceService.experienceGetToday(userDetails);
-        RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
-        long restDis = (long) (todayResponse.distance() - (todayExp * 100));
-
-        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attType, size, restDis);
-        int sum = 0;
-        for (Pair<String, Long> item : result) {
-
-            ExperienceSaveRequest exp = ExperienceSaveRequest.builder()
-                    .activity(item.getLeft())
-                    .changed(item.getRight())
-                    .build();
-            sum += item.getRight();
-            experienceService.experienceSave(userDetails, exp);
-        }
-
-        return sum;
     }
 }
