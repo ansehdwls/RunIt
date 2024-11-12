@@ -28,6 +28,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
+    private final AttendanceService attendanceService;
 
     @Override
     public List<DayAttendanceResponse> getWeekAttendance(String userNumber) {
@@ -60,7 +61,11 @@ public class AttendanceServiceImpl implements AttendanceService {
         *
         * */
         return attendanceRepository.findByUserAndCreatedAt(user, today)
-                .map(attendance -> true)
+                .map(attendance -> {
+
+                    attendanceService.saveAttendance(userDetails);
+                    return true;
+                })
                 .orElse(false);
     }
 
