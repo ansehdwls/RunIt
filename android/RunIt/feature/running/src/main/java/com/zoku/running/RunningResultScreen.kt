@@ -40,7 +40,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.zoku.network.model.request.Pace
+import com.zoku.network.model.response.PaceRecord
 import com.zoku.network.model.response.RunRecordDetail
+import com.zoku.running.util.getIso8601TimeString
 import com.zoku.ui.BaseGrayBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.CustomTypo
@@ -101,7 +104,12 @@ fun RunningResultScreen(
                 .weight(0.7f),
             contentAlignment = Alignment.Center
         ) {
-            RecordDetailInfo(startDestination = 1, runRecord = null)
+            RecordDetailInfo(startDestination = 1,
+                runRecord = RunRecordDetail(
+                    startTime = getIso8601TimeString(System.currentTimeMillis()),
+                    endTime = getIso8601TimeString(System.currentTimeMillis()),
+                    paceList = listOf(PaceRecord(10, 10), PaceRecord( 20, 20))
+                ))
         }
 
         Box(
