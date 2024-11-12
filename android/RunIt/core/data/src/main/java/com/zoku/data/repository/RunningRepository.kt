@@ -8,6 +8,9 @@ import com.zoku.network.model.response.MessageResponse
 import com.zoku.network.model.response.PostRunningRecordResponse
 import com.zoku.network.model.response.RunPracticeResponse
 import com.zoku.network.model.response.RunRecordDetailResponse
+import com.zoku.network.model.response.RunTodayResponse
+import com.zoku.network.model.response.RunTotalResponse
+import com.zoku.network.model.response.RunWeekListResponse
 import com.zoku.network.model.response.TestSumResponse
 import okhttp3.MultipartBody
 import java.util.Date
@@ -32,4 +35,10 @@ interface RunningRepository {
     suspend fun getRunPracticeList() : NetworkResult<RunPracticeResponse>
 
     suspend fun updateRunPracticeMode(recordId: Int) : NetworkResult<MessageResponse>
+
+    suspend fun getRunToday() : NetworkResult<RunTodayResponse>
+
+    suspend fun getRunTotal() : NetworkResult<RunTotalResponse>
+
+    suspend fun getRunWeek() : NetworkResult<RunWeekListResponse>
 }

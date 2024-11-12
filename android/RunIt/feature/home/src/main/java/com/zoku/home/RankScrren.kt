@@ -83,7 +83,9 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
     ) {
         RankingInfo(moveToExpHistory, weekExp, attendanceList,myName,groupList.rank, leagueList[groupList.leagueRank -1])
 
-        HomeTitle(modifier.padding(top = 10.dp, bottom = 5.dp), "그룹 내 순위", "종합 순위", rankMenu)
+        HomeTitle(modifier.padding(top = 10.dp, bottom = 5.dp), "그룹 내 순위", "종합 순위", rankMenu){
+
+        }
 
         if (groupList.userInfos.isNotEmpty()) UserRanking(groupList.userInfos,(groupList.leagueRank -1))
     }
