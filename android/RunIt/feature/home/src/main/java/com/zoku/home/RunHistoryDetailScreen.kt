@@ -9,12 +9,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.zoku.ui.componenet.RecordDetailInfo
 import com.zoku.ui.componenet.RecordMap
 
 @Composable
-fun RunHistoryDetailScreen() {
+fun RunHistoryDetailScreen(selectRecordId : Int, viewModel: RunHistoryViewModel) {
+
+    val runRecord by viewModel.historyRunRecord.collectAsState()
+    viewModel.getRunRecordDetail(recordId = selectRecordId)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -22,11 +27,15 @@ fun RunHistoryDetailScreen() {
             .verticalScroll(rememberScrollState()) // 스크롤 가능하도록 설정
     ) {
         // 기록 지도 생성
-        Box(modifier = Modifier.weight(3f).fillMaxWidth()) {
+        Box(modifier = Modifier
+            .weight(3f)
+            .fillMaxWidth()) {
             RecordMap()
         }
-        Box(modifier = Modifier.weight(7f).fillMaxWidth()) {
-            RecordDetailInfo(startDestination = 1)
+        Box(modifier = Modifier
+            .weight(7f)
+            .fillMaxWidth()) {
+            RecordDetailInfo(startDestination = 1, runRecord =  runRecord)
         }
     }
 }

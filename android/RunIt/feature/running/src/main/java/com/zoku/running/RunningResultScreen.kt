@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.ui.BaseGrayBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.CustomTypo
@@ -100,7 +101,7 @@ fun RunningResultScreen(
                 .weight(0.7f),
             contentAlignment = Alignment.Center
         ) {
-            RecordDetailInfo(startDestination = 1)
+            RecordDetailInfo(startDestination = 1, runRecord = null)
         }
 
         Box(

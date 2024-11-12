@@ -2,6 +2,7 @@ package com.zoku.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -21,12 +22,19 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.VerticalDivider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,17 +42,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.zoku.network.model.response.RunRecordDetail
+import com.zoku.ui.BaseGrayBackground
+import com.zoku.ui.BaseYellow
+import com.zoku.ui.CustomTypo
+import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.RecordDetailInfo
 import com.zoku.ui.componenet.RecordGraph
 import com.zoku.ui.componenet.RecordMap
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecordModeDetail(modifier: Modifier = Modifier) {
+fun RecordModeDetail(modifier: Modifier = Modifier,
+                     recordId: Int,
+                     moveToPractice : () -> Unit) {
+    val viewModel : RunHistoryViewModel = hiltViewModel()
+    val runRecord by viewModel.historyRunRecord.collectAsState()
+    val recordViewModel : RecordModeViewModel = hiltViewModel()
+    viewModel.getRunRecordDetail(recordId)
+    var showDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -56,7 +79,9 @@ fun RecordModeDetail(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 20.dp)
-        )
+        ) {
+           showDialog = true
+        }
 
         // 지도 경로 표시
         Box(
@@ -69,14 +94,98 @@ fun RecordModeDetail(modifier: Modifier = Modifier) {
         Box(
             modifier.weight(7f)
         ) {
-            RecordDetailInfo(
+            RecordDetailInfo(runRecord = runRecord
             )
+        }
+
+        if (showDialog) {
+            BasicAlertDialog(onDismissRequest = { showDialog = false }) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {
+                            detectTapGestures(onTap = { showDialog = false })
+                        }
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Spacer(modifier = Modifier.weight(0.45f))
+                    Surface(
+                        modifier = Modifier
+                            .weight(0.2f),
+                        shape = RoundedCornerShape(8.dp),
+//                    border = BorderStroke(0.1.dp, BaseYellow)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize()
+                                .background(BaseGrayBackground),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "연습 경로를 삭제하시겠습니까?",
+                                style = CustomTypo().jalnan,
+                                fontSize = 16.sp,
+                                color = Color.White,
+                                modifier = Modifier.padding(vertical = 32.dp)
+                            )
+
+                            HorizontalDivider(
+                                color = RoundButtonGray,
+                                thickness = 1.dp
+                            )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                TextButton(
+                                    onClick = { showDialog = false },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(8.dp)
+                                ) {
+                                    Text(
+                                        text = "취소",
+                                        style = CustomTypo().mapleLight,
+                                        color = Color.White
+                                    )
+                                }
+
+                                VerticalDivider(
+                                    modifier = Modifier
+                                        .width(1.dp),
+                                    color = RoundButtonGray
+                                )
+
+                                TextButton(
+                                    onClick = {
+                                        showDialog = false
+                                        recordViewModel.updatePracticeRecord(recordId)
+                                        moveToPractice()
+                                    },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(8.dp)
+                                ) {
+                                    Text(
+                                        text = "확인",
+                                        style = CustomTypo().mapleLight,
+                                        color = BaseYellow
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.weight(0.45f))
+                }
+            }
         }
     }
 }
 
 @Composable
-fun RecordDetailTitle(modifier: Modifier = Modifier) {
+fun RecordDetailTitle(modifier: Modifier = Modifier, updateRecord : () -> Unit) {
     var isEditing by remember { mutableStateOf(false) }
     var title by remember { mutableStateOf("사용자 코스") }
 
@@ -156,7 +265,9 @@ fun RecordDetailTitle(modifier: Modifier = Modifier) {
             }
         }
 
-        IconButton(onClick = {}) {
+        IconButton(onClick = {
+            updateRecord()
+        }) {
             Icon(
                 painter = painterResource(id = R.drawable.delete_record_detail_icon),
                 contentDescription = null,

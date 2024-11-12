@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoku.data.NetworkResult
 import com.zoku.data.repository.RunningRepository
-import com.zoku.network.model.response.RunPractice
+import com.zoku.network.model.response.HistoryWeekResponse
+import com.zoku.network.model.response.RunRecordDetail
+import com.zoku.network.model.response.WeekList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,23 +15,31 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RecordModeViewModel @Inject constructor(
-    private val runningRepository: RunningRepository
+class RunHistoryViewModel @Inject constructor(
+    val runningRepository: RunningRepository
 ) : ViewModel()
 {
-    private val _practiceList = MutableStateFlow<List<RunPractice>>(emptyList())
-    val practiceList : StateFlow<List<RunPractice>> = _practiceList
+    private val _historyWeekList = MutableStateFlow<List<List<WeekList>>>(emptyList())
+    val historyWeekList : StateFlow<List<List<WeekList>>> = _historyWeekList
 
-    fun getPracticeList(){
+    private val _historyRunRecord = MutableStateFlow<RunRecordDetail?>(null)
+    val historyRunRecord : StateFlow<RunRecordDetail?> = _historyRunRecord
+
+    private var _isFirst = MutableStateFlow<Boolean>(false)
+    val isFirst : StateFlow<Boolean> = _isFirst
+    fun getWeekList( today : String ){
+
         viewModelScope.launch {
-            when(val result = runningRepository.getRunPracticeList()){
+            when(val result = runningRepository.getWeekList(today)){
                 is NetworkResult.Success -> {
                     Log.d("확인", " 성공 ${result}")
-                    _practiceList.value = result.data.data
+                    _historyWeekList.value = result.data.data
+                    _isFirst.value = true
                 }
 
                 is NetworkResult.Error -> {
                     Log.d("확인", "실패, 에러 ${result}")
+
                 }
 
                 is NetworkResult.Exception -> {
@@ -39,15 +49,18 @@ class RecordModeViewModel @Inject constructor(
         }
     }
 
-    fun updatePracticeRecord(recordId : Int){
+    fun getRunRecordDetail(recordId : Int){
         viewModelScope.launch {
-            when(val result = runningRepository.updateRunPracticeMode(recordId)){
+            when(val result = runningRepository.getRunRecordDetail(recordId)){
                 is NetworkResult.Success -> {
                     Log.d("확인", " 성공 ${result}")
+                    _historyRunRecord.value = result.data.data
+                    _isFirst.value = true
                 }
 
                 is NetworkResult.Error -> {
                     Log.d("확인", "실패, 에러 ${result}")
+
                 }
 
                 is NetworkResult.Exception -> {
@@ -56,5 +69,4 @@ class RecordModeViewModel @Inject constructor(
             }
         }
     }
-
 }

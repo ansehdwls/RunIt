@@ -1,6 +1,7 @@
 package com.zoku.home
 
 import android.icu.util.LocaleData
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,10 +30,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import com.zoku.network.model.response.WeekList
 import java.time.LocalDate
 
 @Composable
-fun RunHistoryRecordListScreen(selectedDay: LocalDate, onClick: (Int) -> Unit) {
+fun RunHistoryRecordListScreen(selectedDay : LocalDate, list: List<WeekList>, onClick: (Int) -> Unit) {
     // 아이템을 통해 높이가 완성 되면 작동
 
         LazyColumn(
@@ -52,14 +55,14 @@ fun RunHistoryRecordListScreen(selectedDay: LocalDate, onClick: (Int) -> Unit) {
             }
 
             // 그날 뛴 기록 확인
-            items(3) { index ->
+            items(list.size) { index ->
                 DailyRouteView(
                     Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp),
-                    day = selectedDay,
+                    list = list[index],
                     onClick = {
-                        onClick(index)
+                        onClick(list[index].id)
                     }
                 )
             }
@@ -68,7 +71,20 @@ fun RunHistoryRecordListScreen(selectedDay: LocalDate, onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun DailyRouteView(modifier: Modifier, day: LocalDate, onClick: () -> Unit) {
+fun DailyRouteView(modifier: Modifier, list: WeekList, onClick: () -> Unit) {
+    Log.d("확인", "${list.startTime}")
+    val startTime = list.startTime.toString()
+        .substringAfter(" ")
+        .take(5) // 시간 부분에서 앞 5자 (예: "06:26")만 가져옴
+
+    val endTime = list.endTime.toString()
+        .substringAfter(" ")
+        .take(5)
+
+// 안전하게 파싱
+    val startHour = startTime.substringBefore(":").toIntOrNull() ?: 0
+    val endHour = endTime.substringBefore(":").toIntOrNull() ?: 0
+
     Surface(
         onClick = {onClick() },
         modifier = modifier
@@ -78,7 +94,7 @@ fun DailyRouteView(modifier: Modifier, day: LocalDate, onClick: () -> Unit) {
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             Image(
-                painter = painterResource(id = R.drawable.sample_map_history_icon),
+                painter = rememberAsyncImagePainter(list.imageUrl),
                 contentDescription = null,
                 modifier = Modifier
                     .weight(3f)
@@ -94,10 +110,10 @@ fun DailyRouteView(modifier: Modifier, day: LocalDate, onClick: () -> Unit) {
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
                 DailyRouteText(modifier = Modifier.weight(1f), text = "시작", fontSize = 16.sp)
-                DailyRouteText(modifier = Modifier.weight(1f), text = "오후 3:37", fontSize = 12.sp)
+                DailyRouteText(modifier = Modifier.weight(1f), text = if(startHour > 12) "오후 $startTime" else "오전 $startTime", fontSize = 12.sp)
                 Spacer(modifier = Modifier.height(10.dp))
                 DailyRouteText(modifier = Modifier.weight(1f), text = "종료", fontSize = 16.sp)
-                DailyRouteText(modifier = Modifier.weight(1f), text = "오후 3:57", fontSize = 12.sp)
+                DailyRouteText(modifier = Modifier.weight(1f), text = if(endHour > 12) "오후 $endTime" else  "오전 $endTime" , fontSize = 12.sp)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
