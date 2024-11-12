@@ -24,7 +24,7 @@ public class ExperienceUtil {
         List<Pair<String, Long>> result = new ArrayList<>();
 
         if (!today){
-            result.add(Pair.of("출석", 0L));
+            result.add(Pair.of("출석", 10L));
 
             if (size == 4){
                 result.add(Pair.of("출석 보너스", 50L));
