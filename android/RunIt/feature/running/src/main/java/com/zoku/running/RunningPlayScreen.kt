@@ -32,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.zoku.running.service.LocationService
@@ -40,7 +39,6 @@ import com.zoku.running.util.formatTime
 import com.zoku.ui.BaseGrayBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
-import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.model.RunningConnectionState
@@ -53,11 +51,7 @@ fun RunningPlayScreen(
     isFirstPlay: Boolean = true,
     runningViewModel: RunningViewModel,
     connectionState: RunningConnectionState,
-    viewModel: ClientDataViewModel = hiltViewModel(),
 ) {
-    val currentCheck by viewModel.runningConnectionState.collectAsStateWithLifecycle()
-
-
     val locationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -105,7 +99,7 @@ fun RunningPlayScreen(
                 bottomName = "BPM"
             )
             TopInfoWithText(
-                topName = formatTime(seconds = bpmTimePair.second ?: 0) ,
+                topName = formatTime(seconds = bpmTimePair.second ?: 0),
                 bottomName = "시간"
             )
         }

@@ -62,7 +62,7 @@ class ClientDataViewModel @Inject constructor(
     }
 
     fun updateMessageType(connection: PhoneWatchConnection) {
-        _phoneWatchData.update { connection }
+        _phoneWatchData.value = connection
     }
 
     override fun onDataChanged(dataEventBuffer: com.google.android.gms.wearable.DataEventBuffer) {

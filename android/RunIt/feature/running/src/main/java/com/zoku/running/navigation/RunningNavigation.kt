@@ -20,7 +20,6 @@ fun NavGraphBuilder.runningScreen(
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
     moveToHome: () -> Unit,
-    phoneWatchData: PhoneWatchConnection,
     viewModel: ClientDataViewModel
 ) {
     composable(route = ScreenDestinations.running.route) {
@@ -30,7 +29,6 @@ fun NavGraphBuilder.runningScreen(
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
             moveToHome = moveToHome,
-            phoneWatchData = phoneWatchData,
             viewModel = viewModel
         )
     }

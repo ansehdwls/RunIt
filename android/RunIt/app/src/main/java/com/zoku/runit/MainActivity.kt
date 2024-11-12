@@ -55,7 +55,6 @@ class MainActivity : ComponentActivity() {
 //            }
 //        }
 
-
         setContent {
             com.zoku.ui.RunItTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

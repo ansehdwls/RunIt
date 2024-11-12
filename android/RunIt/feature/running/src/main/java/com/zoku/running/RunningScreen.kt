@@ -4,15 +4,12 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.zoku.running.model.RunningUIState
 import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.model.PhoneWatchConnection
 import com.zoku.ui.model.RunningConnectionState
@@ -27,18 +24,18 @@ fun RunningScreen(
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
     moveToHome: () -> Unit,
-    phoneWatchData: PhoneWatchConnection,
     viewModel: ClientDataViewModel,
     runningViewModel: RunningViewModel = hiltViewModel(),
 ) {
 
     val currentCheck by viewModel.runningConnectionState.collectAsStateWithLifecycle()
-
+    val phoneWatchData by viewModel.phoneWatchData.collectAsStateWithLifecycle()
 
     var isPlay by remember { mutableStateOf(true) }
     var isFirstPlay by remember { mutableStateOf(true) }
     var isResult by remember { mutableStateOf(false) }
 
+    Timber.tag("RunningScreen").d("상태값 확인 $isPlay $isFirstPlay $isResult")
     when (phoneWatchData) {
         PhoneWatchConnection.PAUSE_RUNNING -> {
             isPlay = false
@@ -51,7 +48,6 @@ fun RunningScreen(
 
         PhoneWatchConnection.STOP_RUNNING -> {
             isResult = true
-            moveToHome()
         }
 
         PhoneWatchConnection.SEND_BPM -> {
@@ -87,9 +83,9 @@ fun HandleRunningState(
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
     currentCheck: RunningConnectionState,
-    isPlay: Boolean ,
-    isFirstPlay: Boolean ,
-    isResult: Boolean ,
+    isPlay: Boolean,
+    isFirstPlay: Boolean,
+    isResult: Boolean,
     onIsPlayChange: (Boolean) -> Unit,
     onIsFirstPlayChange: (Boolean) -> Unit,
     onIsResultChange: (Boolean) -> Unit,

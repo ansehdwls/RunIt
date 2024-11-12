@@ -45,11 +45,11 @@ fun RunItMainNavHost(
     startDestination: String = ScreenDestinations.login.route,
     viewModel: ClientDataViewModel
 ) {
-    val clientDataViewModel: ClientDataViewModel = hiltViewModel()
     var isUserLoggedIn by remember { mutableStateOf(false) }
     val loginViewModel: LoginViewModel = hiltViewModel()
-    val phoneWatchData by clientDataViewModel.phoneWatchData.collectAsState()
-    Timber.tag("RuntItMainNavHost").d("phoneWatchData $phoneWatchData")
+    val phoneWatchData by viewModel.phoneWatchData.collectAsState()
+
+    Timber.tag("RunItNavHost").d("폰 데이터 $phoneWatchData")
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -61,20 +61,19 @@ fun RunItMainNavHost(
                 navController.navigateToRecordModeScreen()
             },
             moveToRunning = {
+                Timber.tag("RunItNavHost").d("웨어러블 Start 클릭시")
                 onStartWearableActivityClick(PhoneWatchConnection.START_RUNNING.route)
                 navController.navigateToRunning()
             },
             moveToExpHistory = { navController.navigateToExpHistory() },
-            phoneWatchData = phoneWatchData
+            phoneWatchConnection = phoneWatchData
         )
         this.runHistory()
         this.recordMode(
             moveToDetail = { navController.navigateToRecordModeDetail() }
         )
         this.loginScreen(onLoginSuccess = {
-            // 로그인 성공 시, 상태 업데이트
-//            isUserLoggedIn = true
-            navController.navigate("home")
+            navController.navigate(ScreenDestinations.home.route)
             onHomeScreen()
         }, viewModel = loginViewModel)
         this.recordDetail()
@@ -83,8 +82,7 @@ fun RunItMainNavHost(
             onPauseWearableActivityClick = onPauseWearableActivityClick,
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
-            moveToHome = { navController.navigateToHome() },
-            phoneWatchData = phoneWatchData,
+            moveToHome = { navController.popBackStack() },
             viewModel
         )
 //        this.runningResultScreen(modifier = modifier)
