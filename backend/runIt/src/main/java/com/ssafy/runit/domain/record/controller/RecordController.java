@@ -2,12 +2,16 @@ package com.ssafy.runit.domain.record.controller;
 
 import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.attendance.service.AttendanceService;
+import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
+import com.ssafy.runit.domain.experience.service.ExperienceService;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.*;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.service.RecordService;
+import com.ssafy.runit.util.ExperienceUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,50 +22,52 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Validated
 @Slf4j
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class RecordController implements RecordDocs{
+public class RecordController implements RecordDocs {
 
     private final RecordService recordService;
     private final AttendanceService attendanceService;
+    private final ExperienceService experienceService;
 
     @Override
     @PostMapping(value = "/run", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public RunItApiResponse<RecordPostResponse> saveRecord(@AuthenticationPrincipal UserDetails userDetails,
-                                                           @RequestPart(value = "dto")  RecordSaveRequest recordSaveRequest,
+                                                           @RequestPart(value = "dto") RecordSaveRequest recordSaveRequest,
                                                            @RequestPart(value = "images") MultipartFile file) {
 
-        Record record = recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
-
-        /*
-        * 경험치 연산 로직 추가
-        * 출석은 10점인데
-        * 5일 출석은 + 50
-        * 시점은 4 -> 5로 넘어갈 때
-        * */
-
-
-        /*
-         * 당일 참석에 아무것도 없으면 넣어줘야함
-         * */
-
-
         RecordPostResponse postResponse;
+        Record record = recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
+        int size = attendanceService.getWeekAttendance(userDetails.getUsername()).size();
+        long todayExp = experienceService.experienceGetToday(userDetails);
+        RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
+        long restDis = (long) (todayResponse.distance() - (todayExp * 100));
+        boolean attendanceType = false;
 
-
-
-        if (attendanceService.getTodayAttended(userDetails,LocalDate.now()) == false){
-            // 출석 + 경험치
-            postResponse = RecordPostResponse.toEntity(record.getId(),false, 100);
+        if (!attendanceService.getTodayAttended(userDetails, LocalDate.now())) {
             attendanceService.saveAttendance(userDetails);
+        } else {
+            attendanceType = true;
         }
-        else{
-            postResponse = RecordPostResponse.toEntity(record.getId(),true, 100);
+
+        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attendanceType, size, restDis);
+        int sum = 0;
+        for (Pair<String, Long> item : result) {
+
+            ExperienceSaveRequest exp = ExperienceSaveRequest.builder()
+                    .activity(item.getLeft() + " " + todayResponse.distance().toString() + "를 달성했습니다." )
+                    .changed(item.getRight())
+                    .build();
+            sum += item.getRight();
+            experienceService.experienceSave(userDetails, exp);
         }
+
+        postResponse = RecordPostResponse.toEntity(record.getId(), attendanceType, sum);
 
         return new RunItApiResponse<>(postResponse, "성공");
     }
