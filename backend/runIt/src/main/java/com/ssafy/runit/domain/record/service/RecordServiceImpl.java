@@ -256,9 +256,8 @@ public class RecordServiceImpl implements RecordService {
 
             // 요일 인덱스가 0 이상 6 이하인지 확인
             if (dayIndex >= 0) {
-                Track track = trackRepository.getReferenceById(item.getId());
                 RecordGetListResponse toRecord = RecordGetListResponse.fromEntity(
-                        item, user.getUserName(), track.getTrackImageUrl());
+                        item, user.getUserName(), item.getTrack().getTrackImageUrl());
 
                 // 요일 인덱스에 맞는 리스트에 추가
                 result.get(dayIndex).add(toRecord);
