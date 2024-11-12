@@ -3,6 +3,7 @@ package com.zoku.network.api
 import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.response.GetRunningRecordResponse
 import com.zoku.network.model.response.HistoryWeekResponse
+import com.zoku.network.model.response.MessageResponse
 import com.zoku.network.model.response.TestSumData
 import com.zoku.network.model.response.PostRunningRecordResponse
 import com.zoku.network.model.response.RunPracticeResponse
@@ -14,6 +15,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Part
 import retrofit2.http.Query
@@ -45,4 +47,7 @@ interface RunningApi {
 
     @GET("api/run/practice")
     suspend fun getRecordMode() : Response<RunPracticeResponse>
+
+    @PUT("api/run/record/{recordId}")
+    suspend fun updatePractice(@Path("recordId") recordId: Int) : Response<MessageResponse>
 }

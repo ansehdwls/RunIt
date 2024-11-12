@@ -4,6 +4,7 @@ import com.zoku.data.NetworkResult
 import com.zoku.data.model.MyTestData
 import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.response.HistoryWeekResponse
+import com.zoku.network.model.response.MessageResponse
 import com.zoku.network.model.response.PostRunningRecordResponse
 import com.zoku.network.model.response.RunPracticeResponse
 import com.zoku.network.model.response.RunRecordDetailResponse
@@ -29,4 +30,6 @@ interface RunningRepository {
     ) : NetworkResult<HistoryWeekResponse>
 
     suspend fun getRunPracticeList() : NetworkResult<RunPracticeResponse>
+
+    suspend fun updateRunPracticeMode(recordId: Int) : NetworkResult<MessageResponse>
 }

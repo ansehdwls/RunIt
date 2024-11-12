@@ -56,12 +56,14 @@ fun NavGraphBuilder.recordMode(moveToDetail: (Int) -> Unit) {
     }
 }
 
-fun NavGraphBuilder.recordDetail() {
+fun NavGraphBuilder.recordDetail(
+    moveToPractice : () -> Unit
+) {
     composable(route = ScreenDestinations.RecordModeDetail.route,
         arguments = listOf(navArgument("recordId") { type = NavType.IntType })) {
             backStackEntry ->
         val recordId = backStackEntry.arguments?.getInt("recordId") ?: 0
-        RecordModeDetail(recordId = recordId)
+        RecordModeDetail(recordId = recordId, moveToPractice = moveToPractice)
     }
 }
 

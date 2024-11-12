@@ -38,4 +38,23 @@ class RecordModeViewModel @Inject constructor(
             }
         }
     }
+
+    fun updatePracticeRecord(recordId : Int){
+        viewModelScope.launch {
+            when(val result = runningRepository.updateRunPracticeMode(recordId)){
+                is NetworkResult.Success -> {
+                    Log.d("확인", " 성공 ${result}")
+                }
+
+                is NetworkResult.Error -> {
+                    Log.d("확인", "실패, 에러 ${result}")
+                }
+
+                is NetworkResult.Exception -> {
+                    Log.d("확인", "서버 연결 에러")
+                }
+            }
+        }
+    }
+
 }

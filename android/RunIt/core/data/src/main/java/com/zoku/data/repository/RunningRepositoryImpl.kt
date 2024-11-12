@@ -7,6 +7,7 @@ import com.zoku.network.api.RunningApi
 import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.TestSumRequest
 import com.zoku.network.model.response.HistoryWeekResponse
+import com.zoku.network.model.response.MessageResponse
 import com.zoku.network.model.response.PostRunningRecordResponse
 import com.zoku.network.model.response.RunPracticeResponse
 import com.zoku.network.model.response.RunRecordDetailResponse
@@ -46,6 +47,10 @@ class RunningRepositoryImpl @Inject constructor(
 
     override suspend fun getRunPracticeList(): NetworkResult<RunPracticeResponse> {
         return handleApi { runningApi.getRecordMode() }
+    }
+
+    override suspend fun updateRunPracticeMode(recordId: Int): NetworkResult<MessageResponse> {
+        return handleApi { runningApi.updatePractice(recordId) }
     }
 
 }

@@ -78,7 +78,11 @@ fun RunItMainNavHost(
             navController.navigate("home")
             onHomeScreen()
         }, viewModel = loginViewModel)
-        this.recordDetail()
+        this.recordDetail(
+            moveToPractice = {
+                navController.popBackStack()
+            }
+        )
         this.runningScreen(
             modifier = modifier,
             onPauseWearableActivityClick = onPauseWearableActivityClick,
