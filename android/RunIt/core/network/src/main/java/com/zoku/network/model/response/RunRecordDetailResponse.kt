@@ -4,7 +4,7 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 
 data class RunRecordDetailResponse(
-    val data : RunRecordDetail,
+    val data : RunRecordDetail?,
     val message: String
 )
 data class RunRecordDetail(

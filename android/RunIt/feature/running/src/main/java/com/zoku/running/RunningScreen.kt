@@ -1,6 +1,7 @@
 package com.zoku.running
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -9,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.ui.model.PhoneWatchConnection
 import timber.log.Timber
 
@@ -22,12 +24,17 @@ fun RunningScreen(
     onStopWearableActivityClick: (String) -> Unit,
     moveToHome : () -> Unit,
     phoneWatchData: PhoneWatchConnection,
+    runRecordDetail: RunRecordDetail
 ) {
 
     val runningViewModel = hiltViewModel<RunningViewModel>()
     var isPlay by remember { mutableStateOf(true) }
     var isFirstPlay by remember { mutableStateOf(true) }
     var isResult by remember { mutableStateOf(false) }
+
+    runningViewModel.getPracticeRecord(runRecordDetail)
+
+    Log.d("확인", "RunningScreen: $runRecordDetail")
 
     Timber.tag("RunningScreen").d("phoneWatchData $phoneWatchData")
     when(phoneWatchData){

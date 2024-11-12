@@ -78,4 +78,5 @@ dependencies {
     // coil
     implementation(libs.coil.compose)
 
+    implementation ("com.google.code.gson:gson:2.8.9")
 }

@@ -25,6 +25,7 @@ import com.zoku.navigatinon.navigateToRunHistory
 import com.zoku.navigatinon.recordDetail
 import com.zoku.navigatinon.recordMode
 import com.zoku.navigatinon.runHistory
+import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.running.navigation.navigateToRunning
 import com.zoku.running.navigation.runningScreen
@@ -61,8 +62,11 @@ fun RunItMainNavHost(
                 navController.navigateToRecordModeScreen()
             },
             moveToRunning = {
+
                 onStartWearableActivityClick(PhoneWatchConnection.START_RUNNING.route)
-                navController.navigateToRunning()
+                navController.navigateToRunning(recordDetail =
+                RunRecordDetail(0,0.0,0,"","", emptyList())
+                )
             },
             moveToExpHistory = { navController.navigateToExpHistory()},
             phoneWatchData = phoneWatchData
@@ -81,6 +85,10 @@ fun RunItMainNavHost(
         this.recordDetail(
             moveToPractice = {
                 navController.popBackStack()
+            },
+            moveToRunning = {
+                runRecordDto ->
+                navController.navigateToRunning(runRecordDto)
             }
         )
         this.runningScreen(
