@@ -44,18 +44,13 @@ public class RecordController implements RecordDocs {
         RecordPostResponse postResponse;
         Record record = recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
 
+        boolean attendanceType = attendanceService.getTodayAttended(userDetails, LocalDate.now());
+
 
         int size = attendanceService.getWeekAttendance(userDetails.getUsername()).size();
         long todayExp = experienceService.experienceGetToday(userDetails);
         RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
         long restDis = (long) (todayResponse.distance() - (todayExp * 100));
-        boolean attendanceType = false;
-
-        if (!attendanceService.getTodayAttended(userDetails, LocalDate.now())) {
-            attendanceService.saveAttendance(userDetails);
-        } else {
-            attendanceType = true;
-        }
 
         List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attendanceType, size, restDis);
         int sum = 0;
