@@ -8,11 +8,7 @@ import java.util.Set;
 
 public interface RankService {
 
-    void updateScore(long groupId, long userId, long changed);
-
-    Map<String, Integer> getPreviousRanks(List<String> userIds, long groupId);
-
-    Map<String, Integer> getCurrentRanks(List<String> ids, long groupId);
+    void updateScore(long groupId, String userIdStr, long changed);
 
     Map<String, Integer> getRankDiff(List<String> ids, long groupId);
 

@@ -32,7 +32,7 @@ public class ExperienceServiceImpl implements ExperienceService {
     public void experienceSave(User user, ExperienceSaveRequest request) {
 //      기존의 user id 받아서 처리하는 부분
         Experience exp = request.Mapper(user, LocalDateTime.now());
-        rankService.updateScore(user.getUserGroup().getId(),user.getId(),request.getChanged());
+        rankService.updateScore(user.getUserGroup().getId(), String.valueOf(user.getId()), request.getChanged());
         experienceRepository.save(exp);
     }
 
