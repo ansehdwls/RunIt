@@ -8,10 +8,10 @@ data class RunRecordDetailResponse(
     val message: String
 )
 data class RunRecordDetail(
-    val id: Int ,
-    val distance: Double,
-    val bpm: Int,
-    val startTime: String,
-    val endTime: String,
-    val paceList: List<PaceRecord> ,
+    val id: Int = 0,
+    val distance: Double = 0.0,
+    val bpm: Int = 0,
+    val startTime: String = "",
+    val endTime: String = "",
+    val paceList: List<PaceRecord> = emptyList(),
 )
