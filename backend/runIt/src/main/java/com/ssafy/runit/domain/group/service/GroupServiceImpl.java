@@ -36,24 +36,23 @@ public class GroupServiceImpl implements GroupService {
                 .filter(u -> u.getUserNumber().equals(userNumber))
                 .findFirst()
                 .orElseThrow(() -> new CustomException(GroupErrorCode.GROUP_NO_USERS_ERROR));
-        List<GroupUserInfo> userInfos = new ArrayList<>();
-        List<User> users = group.getUsers().stream().toList();
-        Map<String, User> userMap = users.stream()
+        Map<String, User> userMap = group.getUsers().stream()
                 .collect(Collectors.toMap(u -> String.valueOf(u.getId()), u -> u));
-        List<String> userIds = users.stream().map(User::getId).map(String::valueOf).toList();
+        List<String> userIds = new ArrayList<>(userMap.keySet());
         Map<String, Integer> rankDiff = rankService.getRankDiff(userIds, groupId); // 랭크 변화
         Set<ZSetOperations.TypedTuple<Object>> rankings = rankService.getGroupRanking(groupId);
-        for (ZSetOperations.TypedTuple<Object> ranking : rankings) {
-            String userId = ranking.getValue().toString();
-            Double score = ranking.getScore();
-            int diff = rankDiff.get(userId);
-            User u = userMap.get(userId);
-            if (u == null) {
-                continue;
-            }
-            GroupUserInfo groupUserInfo = GroupUserInfo.fromEntity(u, score.longValue(), diff);
-            userInfos.add(groupUserInfo);
-        }
+        List<GroupUserInfo> userInfos = rankings.stream()
+                .map(ranking -> {
+                    String userId = String.valueOf(ranking.getValue());
+                    Double score = ranking.getScore();
+                    int diff = rankDiff.getOrDefault(userId, 0);
+                    User u = userMap.get(userId);
+                    if (u == null) {
+                        return null;
+                    }
+                    return GroupUserInfo.fromEntity(u, score.longValue(), diff);
+                })
+                .toList();
         return new GetGroupUsersInfo().Mapper(userInfos, user, group.getGroupLeague().getRank().getRank());
     }
 }
