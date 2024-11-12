@@ -104,7 +104,7 @@ class AuthServiceImplTest {
         when(listOperations.rightPush(anyString(), any())).thenReturn(1L);
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(groupRepository.findDefaultGroup()).thenReturn(Optional.of(group));
-        doNothing().when(rankService).updateScore(anyLong(), anyLong(), anyLong());
+        doNothing().when(rankService).updateScore(anyLong(), anyString(), anyLong());
         authService.registerUser(request);
         verify(userRepository).save(any(User.class));
         verify(groupRepository).findDefaultGroup();
