@@ -44,8 +44,6 @@ import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.model.RunningConnectionState
-import com.zoku.ui.model.WatchToPhoneData
-import timber.log.Timber
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
@@ -91,23 +89,23 @@ fun RunningPlayScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
+            val bpmTimePair = if (connectionState is RunningConnectionState.ConnectionSuccess) {
+                Pair(connectionState.data.bpm, connectionState.data.time)
+            } else {
+                Pair(uiState.bpm, uiState.time)
+            }
+
+
             TopInfoWithText(
                 topName = "-'--'",
                 bottomName = "페이스"
             )
             TopInfoWithText(
-                topName = "${uiState.bpm}",
+                topName = "${bpmTimePair.first}",
                 bottomName = "BPM"
             )
-            Timber.tag("RunningPlayScreen").d("connection $connectionState")
-            val time = if (connectionState is RunningConnectionState.ConnectionSuccess) {
-                connectionState.data.time ?: 0
-            } else {
-                uiState.time
-            }
-            Timber.tag("RunningPlayScreen").d("connection Time $time")
             TopInfoWithText(
-                topName = formatTime(seconds = time),
+                topName = formatTime(seconds = bpmTimePair.second ?: 0) ,
                 bottomName = "시간"
             )
         }
