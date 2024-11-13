@@ -1,4 +1,4 @@
-package com.ssafy.runit.domain.pace.entity;
+package com.ssafy.runit.domain.split.entity;
 
 import com.ssafy.runit.domain.record.entity.Record;
 import jakarta.persistence.*;
@@ -7,14 +7,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pace {
+public class Split {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
