@@ -1,8 +1,8 @@
 package com.ssafy.runit.domain.league.entity;
 
 import com.ssafy.runit.domain.group.entity.Group;
-import com.ssafy.runit.domain.rank.LeagueRank;
-import com.ssafy.runit.domain.rank.LeagueRankConverter;
+import com.ssafy.runit.domain.league.LeagueRank;
+import com.ssafy.runit.domain.league.LeagueRankConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

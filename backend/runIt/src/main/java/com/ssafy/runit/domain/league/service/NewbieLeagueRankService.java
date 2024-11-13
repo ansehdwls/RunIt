@@ -1,4 +1,4 @@
-package com.ssafy.runit.domain.rank.service;
+package com.ssafy.runit.domain.league.service;
 
 public class NewbieLeagueRankService implements LeagueRankService {
     @Override
