@@ -1,23 +1,21 @@
-package com.ssafy.runit.domain.pace.dto;
+package com.ssafy.runit.domain.split.dto;
 
-import com.ssafy.runit.domain.pace.entity.Pace;
 import com.ssafy.runit.domain.record.entity.Record;
+import com.ssafy.runit.domain.split.entity.Split;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaceSaveDto {
+public class SplitSaveDto {
 
     private Integer pace;
     private Integer bpm;
 
-    public Pace toEntity(Record record){
-        return Pace.builder()
+    public Split toEntity(Record record) {
+        return Split.builder()
                 .record(record)
                 .pace(pace)
                 .bpm(bpm)

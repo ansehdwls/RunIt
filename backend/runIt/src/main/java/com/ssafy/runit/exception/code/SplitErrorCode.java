@@ -7,11 +7,11 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum ServerErrorCode implements ErrorCodeType {
+public enum SplitErrorCode implements ErrorCodeType {
 
-    UNKNOWN_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-001", "서버 내부 오류입니다"),
-    METHOD_ARGUMENT_ERROR(HttpStatus.BAD_REQUEST, "S-002", "HTTP 요청이 잘못되었습니다."),
-    REDIS_RETRIEVAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-003", "레디스 내부 오류입니다.");
+    INVALID_SPLIT_LIST(HttpStatus.BAD_REQUEST, "SPLIT-001", "구간 정보는 반드시 기록되어야합니다."),
+    PACE_CALCULATION_ERROR(HttpStatus.BAD_REQUEST, "SPLIT-002", "페이스를 계산할 수 없습니다."),
+    INVALID_DISTANCE(HttpStatus.BAD_REQUEST, "SPLIT-004", "거리 측정에 오류가 있습니다.");
 
     private final HttpStatus status;
     private final String errorCode;

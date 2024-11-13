@@ -1,21 +1,21 @@
 package com.ssafy.runit.domain.record.service;
 
-import com.ssafy.runit.domain.pace.dto.response.PaceResponse;
-import com.ssafy.runit.domain.pace.entity.Pace;
-import com.ssafy.runit.domain.pace.repository.PaceRepository;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.*;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.repository.RecordRepository;
-import com.ssafy.runit.exception.code.AuthErrorCode;
-import com.ssafy.runit.exception.code.TrackErrorCode;
-import com.ssafy.runit.util.DateUtils;
-import com.ssafy.runit.util.S3UploadUtil;
+import com.ssafy.runit.domain.split.dto.response.SplitResponse;
+import com.ssafy.runit.domain.split.repository.SplitRepository;
+import com.ssafy.runit.domain.split.service.SplitService;
 import com.ssafy.runit.domain.track.repository.TrackRepository;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
+import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.exception.code.RecordErrorCode;
+import com.ssafy.runit.exception.code.TrackErrorCode;
+import com.ssafy.runit.util.DateUtils;
+import com.ssafy.runit.util.S3UploadUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,12 +23,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,9 +42,10 @@ public class RecordServiceImpl implements RecordService {
 
     private final RecordRepository recordRepository;
     private final TrackRepository trackRepository;
-    private final PaceRepository paceRepository;
+    private final SplitRepository splitRepository;
     private final UserRepository userRepository;
     private final S3UploadUtil s3UploadUtil;
+    private final SplitService splitService;
 
     @Override
     @Transactional
@@ -50,7 +54,7 @@ public class RecordServiceImpl implements RecordService {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow(
                 () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
         );
-
+        log.debug("user-group : {}", findUser.getUserGroup().getId());
         Record record = request.mapper(findUser);
 
         recordRepository.save(record);
@@ -58,13 +62,12 @@ public class RecordServiceImpl implements RecordService {
         try {
             String url = s3UploadUtil.saveFile(file);
             Record afRecord = request.toEntity(record, url);
-
             trackRepository.save(afRecord.getTrack());
-
-            List<Pace> paceList = afRecord.getPaceList();
-
-            paceRepository.saveAll(paceList);
-        } catch (Exception e) {
+            record.updateSplitList(afRecord.getSplitList());
+            splitService.saveAllSplit(record);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (IOException e) {
             throw new CustomException(TrackErrorCode.NOT_FOUND_TRACK_IMG);
         }
 
@@ -79,13 +82,13 @@ public class RecordServiceImpl implements RecordService {
                 () -> new CustomException(RecordErrorCode.NOT_FOUND_RECORD_DATA)
         );
 
-        List<PaceResponse> paceResponseList = paceRepository.findByRecordId(recordId)
+        List<SplitResponse> splitResponseList = splitRepository.findByRecordId(recordId)
                 .stream()
-                .map(item -> PaceResponse.isEntity(item.getBpm(), item.getPace()))
+                .map(item -> SplitResponse.isEntity(item.getBpm(), item.getPace()))
                 .collect(Collectors.toList());
 
 
-        return RecordGetResponse.fromEntity(record, paceResponseList);
+        return RecordGetResponse.fromEntity(record, splitResponseList);
     }
 
     @Override
@@ -183,7 +186,7 @@ public class RecordServiceImpl implements RecordService {
 
             if (cnt > 0) {
                 paceList.add((double) pace / cnt);
-            }else{
+            } else {
                 paceList.add((double) pace);
             }
         }
