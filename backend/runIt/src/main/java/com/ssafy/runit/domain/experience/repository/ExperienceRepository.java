@@ -20,6 +20,8 @@ public interface ExperienceRepository extends JpaRepository<Experience, Long> {
     List<ExperienceGetListResponse> findByUser_Id(Long userId);
 
     @Query("SELECT sum(e.changed) from Experience e " +
-            "WHERE e.user.id = :userId AND createAt BETWEEN :startDay AND :endDay")
+            "WHERE e.user.id = :userId " +
+            "AND e.activity = '거리' " +
+            "AND e.createAt BETWEEN :startDay AND :endDay")
     Optional<Long> findByUserIdAndCreateAtBetween(@Param("userId") Long userId, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
 }

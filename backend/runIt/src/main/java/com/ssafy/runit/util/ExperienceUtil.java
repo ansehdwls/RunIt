@@ -31,7 +31,7 @@ public class ExperienceUtil {
             }
         }
 
-        result.add(Pair.of("거리", (long) (dis* 1000) / 100));
+        result.add(Pair.of("거리", (long) (dis * 10)));
 
         return result;
     }

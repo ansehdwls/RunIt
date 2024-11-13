@@ -64,9 +64,10 @@ public class ExperienceServiceImpl implements ExperienceService {
         int size = attendanceService.getWeekAttendance(userDetails.getUsername()).size();
         long todayExp = experienceGetToday(userDetails);
         RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
-        long restDis = (long) (todayResponse.distance() - (todayExp * 100));
 
-        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attType, size, (restDis < 0)?0:restDis);
+        double restDis = (todayResponse.distance() - (double) todayExp / 10);
+
+        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attType, size, restDis);
         int sum = 0;
         for (Pair<String, Long> item : result) {
 
