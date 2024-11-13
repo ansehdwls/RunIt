@@ -6,10 +6,7 @@ import com.ssafy.runit.domain.track.entity.Track;
 import com.ssafy.runit.domain.track.repository.TrackRepository;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.TrackErrorCode;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.units.qual.N;
 import org.springframework.stereotype.Service;
 
 @Service
