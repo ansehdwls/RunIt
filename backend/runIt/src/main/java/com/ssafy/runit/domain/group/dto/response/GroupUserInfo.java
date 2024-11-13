@@ -13,14 +13,14 @@ import lombok.NoArgsConstructor;
 public class GroupUserInfo {
     private String userName;
     private String imageUrl;
-    private Long exp;
+    private String score;
     private Integer rankDiff;
 
-    public static GroupUserInfo fromEntity(User user, Long exp, int diff) {
+    public static GroupUserInfo fromEntity(User user, String exp, int diff) {
         return GroupUserInfo.builder()
                 .userName(user.getUserName())
                 .imageUrl(user.getImageUrl())
-                .exp(exp)
+                .score(exp)
                 .rankDiff(diff)
                 .build();
     }

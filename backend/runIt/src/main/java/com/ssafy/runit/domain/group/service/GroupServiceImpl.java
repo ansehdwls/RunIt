@@ -48,7 +48,7 @@ public class GroupServiceImpl implements GroupService {
                     if (u == null) {
                         return null;
                     }
-                    return GroupUserInfo.fromEntity(u, score.longValue(), diff);
+                    return GroupUserInfo.fromEntity(u, String.valueOf(score), diff);
                 })
                 .toList();
         return new GetGroupUsersInfo().Mapper(userInfos, user, group.getGroupLeague().getRank().getRank());
