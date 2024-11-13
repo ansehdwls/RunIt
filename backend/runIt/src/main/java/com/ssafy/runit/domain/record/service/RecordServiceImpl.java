@@ -1,12 +1,12 @@
 package com.ssafy.runit.domain.record.service;
 
+import com.ssafy.runit.domain.rank.service.PaceRankManager;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.*;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.repository.RecordRepository;
 import com.ssafy.runit.domain.split.dto.response.SplitResponse;
 import com.ssafy.runit.domain.split.repository.SplitRepository;
-import com.ssafy.runit.domain.split.service.SplitService;
 import com.ssafy.runit.domain.track.repository.TrackRepository;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
@@ -45,7 +45,7 @@ public class RecordServiceImpl implements RecordService {
     private final SplitRepository splitRepository;
     private final UserRepository userRepository;
     private final S3UploadUtil s3UploadUtil;
-    private final SplitService splitService;
+    private final PaceRankManager paceRankManager;
 
     @Override
     @Transactional
@@ -64,7 +64,8 @@ public class RecordServiceImpl implements RecordService {
             Record afRecord = request.toEntity(record, url);
             trackRepository.save(afRecord.getTrack());
             record.updateSplitList(afRecord.getSplitList());
-            splitService.saveAllSplit(record);
+            splitRepository.saveAll(afRecord.getSplitList());
+            paceRankManager.updatePace(record, String.valueOf(findUser.getUserGroup().getId()), String.valueOf(findUser.getId()));
         } catch (RuntimeException e) {
             throw e;
         } catch (IOException e) {

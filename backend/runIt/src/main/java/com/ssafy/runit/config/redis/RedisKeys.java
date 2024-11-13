@@ -11,6 +11,7 @@ public final class RedisKeys {
 
 
     public static final String PACE_RANK_KEY = "pace_rank:%s";
+    public static final String PACE_PREVIOUS_RANK_KEY = "pace_previous_rank:%s";
 
     public static String getUserPaceKey(String userId) {
         return String.format(USER_PACE_KEY, userId);
@@ -26,5 +27,9 @@ public final class RedisKeys {
 
     public static String getExperiencePreviousRankKey(String groupId) {
         return String.format(EXPERIENCE_PREVIOUS_RANK_KEY, groupId);
+    }
+
+    public static String getPacePreviousRankKey(String groupId) {
+        return String.format(PACE_PREVIOUS_RANK_KEY, groupId);
     }
 }

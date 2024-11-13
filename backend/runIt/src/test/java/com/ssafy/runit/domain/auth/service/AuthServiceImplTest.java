@@ -9,9 +9,9 @@ import com.ssafy.runit.domain.auth.entity.JwtToken;
 import com.ssafy.runit.domain.auth.repository.JwtTokenRepository;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
+import com.ssafy.runit.domain.league.LeagueRank;
 import com.ssafy.runit.domain.league.entity.League;
-import com.ssafy.runit.domain.rank.LeagueRank;
-import com.ssafy.runit.domain.rank.service.RankService;
+import com.ssafy.runit.domain.rank.service.ExperienceRankManager;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
@@ -57,7 +57,7 @@ class AuthServiceImplTest {
 
 
     @Mock
-    private RankService rankService;
+    private ExperienceRankManager experienceRankManager;
 
 
     private final String testNumber = "1234";
@@ -95,7 +95,7 @@ class AuthServiceImplTest {
                 .build();
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(groupRepository.findDefaultGroup()).thenReturn(Optional.of(group));
-        doNothing().when(rankService).updateScore(anyLong(), anyString(), anyLong());
+        doNothing().when(experienceRankManager).updateScore(anyLong(), anyString(), anyLong());
         authService.registerUser(request);
         verify(userRepository).save(any(User.class));
         verify(groupRepository).findDefaultGroup();

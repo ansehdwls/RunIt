@@ -1,7 +1,7 @@
-package com.ssafy.runit.domain.rank;
+package com.ssafy.runit.domain.league;
 
-import com.ssafy.runit.domain.rank.service.*;
-import lombok.*;
+import com.ssafy.runit.domain.league.service.*;
+import lombok.Getter;
 
 @Getter
 public enum LeagueRank {

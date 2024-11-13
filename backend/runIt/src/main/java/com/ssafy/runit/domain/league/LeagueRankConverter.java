@@ -1,4 +1,4 @@
-package com.ssafy.runit.domain.rank;
+package com.ssafy.runit.domain.league;
 
 import jakarta.persistence.AttributeConverter;
 

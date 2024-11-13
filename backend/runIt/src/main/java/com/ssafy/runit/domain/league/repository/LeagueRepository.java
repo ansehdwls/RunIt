@@ -1,7 +1,7 @@
 package com.ssafy.runit.domain.league.repository;
 
+import com.ssafy.runit.domain.league.LeagueRank;
 import com.ssafy.runit.domain.league.entity.League;
-import com.ssafy.runit.domain.rank.LeagueRank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

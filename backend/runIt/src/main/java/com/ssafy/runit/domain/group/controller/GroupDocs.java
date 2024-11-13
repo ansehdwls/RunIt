@@ -19,5 +19,8 @@ public interface GroupDocs {
     @ApiResponse(responseCode = "200", description = "그룹 구성원 정보 조회에 성공했습니다.", content = @Content(schema = @Schema(implementation = RunItApiResponse.class)))
     @ApiResponse(responseCode = "GROUP-001", description = "존재하지 않는 그룹입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "")
-    public RunItApiResponse<GetGroupUsersInfo> GetGroupUsersInfo(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Long groupId);
+    public RunItApiResponse<GetGroupUsersInfo> GetGroupUsersInfo(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam Long groupId,
+            @RequestParam String rankType);
 }

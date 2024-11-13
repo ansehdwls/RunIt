@@ -4,5 +4,5 @@ import com.ssafy.runit.domain.group.dto.response.GetGroupUsersInfo;
 
 public interface GroupService {
 
-    GetGroupUsersInfo findUsersByGroupWithRank(Long GroupId, String userNumber);
+    GetGroupUsersInfo findUsersByGroupWithRank(Long GroupId, String userNumber, String RankType);
 }

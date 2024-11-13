@@ -57,18 +57,7 @@ public class Record {
             return null;
         }
         double pace = totalMinutes / distance;
-        System.out.println("record pace : " + pace + " total minutes : " + totalMinutes);
         pace = Math.round(pace * 100) / 100.0;
         return pace;
-    }
-
-    public String getPaceFormatted() {
-        Double pace = getPace();
-        if (pace == null) {
-            return "N/A";
-        }
-        int minutes = pace.intValue();
-        int seconds = (int) Math.round((pace - minutes) * 60);
-        return String.format("%d:%02d min/km", minutes, seconds);
     }
 }

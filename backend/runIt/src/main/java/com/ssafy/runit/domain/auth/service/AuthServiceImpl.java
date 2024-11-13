@@ -9,7 +9,7 @@ import com.ssafy.runit.domain.auth.entity.JwtToken;
 import com.ssafy.runit.domain.auth.repository.JwtTokenRepository;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
-import com.ssafy.runit.domain.rank.service.RankService;
+import com.ssafy.runit.domain.rank.service.ExperienceRankManager;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
 import com.ssafy.runit.exception.CustomException;
@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenRepository jwtTokenRepository;
-    private final RankService rankService;
+    private final ExperienceRankManager experienceRankManager;
     private static final String TOKEN_PREFIX = "Bearer ";
 
     @Value("${jwt.refresh-token-expiration:3600000}")
@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
         );
         User user = request.Mapper(group);
         user = userRepository.save(user);
-        rankService.updateScore(group.getId(), String.valueOf(user.getId()), 0);
+        experienceRankManager.updateScore(group.getId(), String.valueOf(user.getId()), 0);
     }
 
     @Override
