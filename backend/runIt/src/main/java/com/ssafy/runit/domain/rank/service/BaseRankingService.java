@@ -72,14 +72,9 @@ public abstract class BaseRankingService<T> {
 
     protected void updateUserScore(String rankKey, String userIdStr, double newScore, UpdateType updateType) {
         switch (updateType) {
-            case ADD:
-                redisTemplate.opsForZSet().add(rankKey, userIdStr, newScore);
-                break;
-            case INCREMENT:
-                redisTemplate.opsForZSet().incrementScore(rankKey, userIdStr, newScore);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported UpdateType: " + updateType);
+            case ADD -> redisTemplate.opsForZSet().add(rankKey, userIdStr, newScore);
+            case INCREMENT -> redisTemplate.opsForZSet().incrementScore(rankKey, userIdStr, newScore);
+            default -> throw new IllegalArgumentException("Unsupported UpdateType: " + updateType);
         }
         redisTemplate.expire(rankKey, DateUtils.computeDurationForNextWeek());
     }
