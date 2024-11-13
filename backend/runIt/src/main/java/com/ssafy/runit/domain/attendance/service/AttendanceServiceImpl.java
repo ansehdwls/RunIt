@@ -50,26 +50,28 @@ public class AttendanceServiceImpl implements AttendanceService {
     public Boolean getTodayAttended(UserDetails userDetails, LocalDate today) {
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
         /*
-        * 반환 값이 널이면은 해당 날은 출석을 안했다는 거니까
-        * -> false
-        *
-        * 반환 값이 있으면 해당 날은 출석을 했다는 거니까
-        * -> true
-        *
-        * .orElse -> 값이 있을 경우 true, 없을 경우 false
-        *
-        * */
+         * 반환 값이 널이면은 해당 날은 출석을 안했다는 거니까
+         * -> false
+         *
+         * 반환 값이 있으면 해당 날은 출석을 했다는 거니까
+         * -> true
+         *
+         * .orElse -> 값이 있을 경우 true, 없을 경우 false
+         *
+         * */
         return attendanceRepository.findByUserAndCreatedAt(user, today)
                 .map(attendance -> true)
-                .orElse(false);
+                .orElseGet(() -> {
+                    saveAttendance(userDetails);
+                    return false;
+                });
     }
 
     @Override
-    public Void saveAttendance(UserDetails userDetails) {
+    public void saveAttendance(UserDetails userDetails) {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
         Attendance attendance = new AttendanceSaveDto().toEntity(findUser);
         attendanceRepository.save(attendance);
-        return null;
     }
 
 

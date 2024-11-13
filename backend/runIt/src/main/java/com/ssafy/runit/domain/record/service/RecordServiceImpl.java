@@ -11,7 +11,6 @@ import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.exception.code.TrackErrorCode;
 import com.ssafy.runit.util.DateUtils;
 import com.ssafy.runit.util.S3UploadUtil;
-import com.ssafy.runit.domain.track.entity.Track;
 import com.ssafy.runit.domain.track.repository.TrackRepository;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
@@ -113,7 +112,7 @@ public class RecordServiceImpl implements RecordService {
 
         List<Record> recordList = recordRepository.findByUserIdAndStartTimeBetween(user.getId(), localDate.atStartOfDay(), localDate.plusDays(1).atStartOfDay());
 
-        double dis = 0.0;
+        double dis = 0;
         long time = 0L;
         Integer pace = 0;
 

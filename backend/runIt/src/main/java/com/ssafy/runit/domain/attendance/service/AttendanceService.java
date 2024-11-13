@@ -14,5 +14,5 @@ public interface AttendanceService {
 
     Boolean getTodayAttended(UserDetails userDetails,LocalDate today);
 
-    Void saveAttendance(UserDetails userDetails);
+    void saveAttendance(UserDetails userDetails);
 }

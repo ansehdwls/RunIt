@@ -2,16 +2,15 @@ package com.ssafy.runit.domain.record.controller;
 
 import com.ssafy.runit.RunItApiResponse;
 import com.ssafy.runit.domain.attendance.service.AttendanceService;
-import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
 import com.ssafy.runit.domain.experience.service.ExperienceService;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.*;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.service.RecordService;
-import com.ssafy.runit.util.ExperienceUtil;
+import com.ssafy.runit.exception.CustomException;
+import com.ssafy.runit.exception.code.RecordErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Validated
 @Slf4j
@@ -40,36 +37,19 @@ public class RecordController implements RecordDocs {
     public RunItApiResponse<RecordPostResponse> saveRecord(@AuthenticationPrincipal UserDetails userDetails,
                                                            @RequestPart(value = "dto") RecordSaveRequest recordSaveRequest,
                                                            @RequestPart(value = "images") MultipartFile file) {
+        if (recordSaveRequest.getRecord().getDistance() < 0.1){
+            throw new CustomException(RecordErrorCode.NOT_ALLOW_DISTANCE);
+        }
 
-        RecordPostResponse postResponse;
         Record record = recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
 
+        boolean attendanceType = attendanceService.getTodayAttended(userDetails, LocalDate.now());
 
-        int size = attendanceService.getWeekAttendance(userDetails.getUsername()).size();
-        long todayExp = experienceService.experienceGetToday(userDetails);
-        RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
-        long restDis = (long) (todayResponse.distance() - (todayExp * 100));
-        boolean attendanceType = false;
-
-        if (!attendanceService.getTodayAttended(userDetails, LocalDate.now())) {
-            attendanceService.saveAttendance(userDetails);
-        } else {
-            attendanceType = true;
-        }
-
-        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attendanceType, size, restDis);
-        int sum = 0;
-        for (Pair<String, Long> item : result) {
-
-            ExperienceSaveRequest exp = ExperienceSaveRequest.builder()
-                    .activity(item.getLeft())
-                    .changed(item.getRight())
-                    .build();
-            sum += item.getRight();
-            experienceService.experienceSave(userDetails, exp);
-        }
-
-        postResponse = RecordPostResponse.toEntity(record.getId(), attendanceType, sum);
+        RecordPostResponse postResponse = RecordPostResponse.toEntity(
+                record.getId(),
+                attendanceType,
+                experienceService.experienceDistribution(userDetails, attendanceType)
+        );
 
         return new RunItApiResponse<>(postResponse, "성공");
     }

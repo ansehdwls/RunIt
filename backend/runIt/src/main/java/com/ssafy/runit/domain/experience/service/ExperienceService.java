@@ -15,4 +15,6 @@ public interface ExperienceService {
     List<ExperienceGetListResponse> experienceList(Long userId);
 
     Long experienceGetToday(UserDetails userDetails);
+
+    Integer experienceDistribution(UserDetails userDetails, boolean attType);
 }
