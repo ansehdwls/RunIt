@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecordSaveDto {
-    private Integer distance;
+    private Double distance;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer bpm;

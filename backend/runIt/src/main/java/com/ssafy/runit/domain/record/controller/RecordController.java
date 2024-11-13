@@ -37,7 +37,7 @@ public class RecordController implements RecordDocs {
     public RunItApiResponse<RecordPostResponse> saveRecord(@AuthenticationPrincipal UserDetails userDetails,
                                                            @RequestPart(value = "dto") RecordSaveRequest recordSaveRequest,
                                                            @RequestPart(value = "images") MultipartFile file) {
-        if (recordSaveRequest.getRecord().getDistance() < 100){
+        if (recordSaveRequest.getRecord().getDistance() < 0.1){
             throw new CustomException(RecordErrorCode.NOT_ALLOW_DISTANCE);
         }
 

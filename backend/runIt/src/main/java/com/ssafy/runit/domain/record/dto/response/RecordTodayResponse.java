@@ -4,11 +4,11 @@ import lombok.Builder;
 
 @Builder
 public record RecordTodayResponse(
-        Integer distance,
+        Double distance,
         Long time,
         Integer pace
 ) {
-    public static RecordTodayResponse fromEntity(Integer dis, Long time, Integer pace){
+    public static RecordTodayResponse fromEntity(Double dis, Long time, Integer pace){
         return RecordTodayResponse.builder()
                 .pace(pace)
                 .time(time)
