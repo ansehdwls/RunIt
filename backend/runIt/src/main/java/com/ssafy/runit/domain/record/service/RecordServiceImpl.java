@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.record.service;
 
+import com.ssafy.runit.domain.rank.service.DistanceRankManager;
 import com.ssafy.runit.domain.rank.service.PaceRankManager;
 import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.*;
@@ -46,6 +47,7 @@ public class RecordServiceImpl implements RecordService {
     private final UserRepository userRepository;
     private final S3UploadUtil s3UploadUtil;
     private final PaceRankManager paceRankManager;
+    private final DistanceRankManager distanceRankManager;
 
     @Override
     @Transactional
@@ -66,6 +68,7 @@ public class RecordServiceImpl implements RecordService {
             record.updateSplitList(afRecord.getSplitList());
             splitRepository.saveAll(afRecord.getSplitList());
             paceRankManager.updatePace(record, String.valueOf(findUser.getUserGroup().getId()), String.valueOf(findUser.getId()));
+            distanceRankManager.updateDistance(findUser.getUserGroup().getId(), String.valueOf(findUser.getId()), record.getDistance());
         } catch (RuntimeException e) {
             throw e;
         } catch (IOException e) {

@@ -33,13 +33,13 @@ public class PaceRankManager {
         hashOperations.increment(key, RedisKeys.USER_PACE_SUB_KEY_TOTAL_PACE, averagePace);
         hashOperations.increment(key, RedisKeys.USER_PACE_SUB_KEY_COUNT, 1);
         redisTemplate.expire(key, DateUtils.computeDurationForNextWeek());
-        Double totalPace = (Double) hashOperations.get(key, RedisKeys.USER_PACE_SUB_KEY_TOTAL_PACE);
-        Integer totalCount = (Integer) hashOperations.get(key, RedisKeys.USER_PACE_SUB_KEY_COUNT);
+        Number totalPace = (Number) hashOperations.get(key, RedisKeys.USER_PACE_SUB_KEY_TOTAL_PACE);
+        Number totalCount = (Number) hashOperations.get(key, RedisKeys.USER_PACE_SUB_KEY_COUNT);
 
-        if (totalCount == null || totalPace == null || totalCount == 0) {
+        if (totalCount == null || totalPace == null || totalCount.intValue() == 0) {
             throw new CustomException(ServerErrorCode.REDIS_RETRIEVAL_ERROR);
         }
-        double newPace = totalPace / totalCount;
+        double newPace = totalPace.doubleValue() / totalCount.intValue();
         newPace = Math.round(newPace * 100.0) / 100.0;
 
         return newPace;
