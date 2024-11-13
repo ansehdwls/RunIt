@@ -8,7 +8,11 @@ import com.ssafy.runit.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -17,8 +21,7 @@ public class PaceRankManager {
     private final AveragePaceRankingService averagePaceRankingService;
     private final RedisTemplate<String, Object> redisTemplate;
 
-
-    public void savePace(Record record, String groupId, String userId) {
+    public void updatePace(Record record, String groupId, String userId) {
         double newPace = updateUserPace(record.getPace(), userId);
         averagePaceRankingService.updateScore(Long.parseLong(groupId), userId, newPace);
     }
@@ -40,5 +43,13 @@ public class PaceRankManager {
         newPace = Math.round(newPace * 100.0) / 100.0;
 
         return newPace;
+    }
+
+    public Map<String, Integer> getRankDiff(long groupId) {
+        return averagePaceRankingService.getRankDiff(groupId);
+    }
+
+    public Set<ZSetOperations.TypedTuple<Object>> getGroupRanking(long groupId) {
+        return averagePaceRankingService.getGroupRanking(groupId, -1);
     }
 }

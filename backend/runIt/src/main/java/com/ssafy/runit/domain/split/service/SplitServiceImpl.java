@@ -24,7 +24,7 @@ public class SplitServiceImpl implements SplitService {
         String groupId = String.valueOf(record.getUser().getUserGroup().getId());
         String userId = String.valueOf(record.getUser().getId());
         splitRepository.saveAll(record.getSplitList());
-        paceRankManager.savePace(record, groupId, userId);
+        paceRankManager.updatePace(record, groupId, userId);
         //TODO 거리 저장 로직 추가
     }
 }
