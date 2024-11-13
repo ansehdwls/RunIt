@@ -1,5 +1,6 @@
 package com.zoku.runit
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -40,8 +41,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-        PermissionHelper(this, PERMISSIONS, ::finish).launchPermission()
         super.onCreate(savedInstanceState)
+        PermissionHelper(this, PERMISSIONS, ::finish).launchPermission()
         setContent {
             navController = rememberNavController()
             AppScaffold {
@@ -51,14 +52,15 @@ class MainActivity : ComponentActivity() {
                     sendBpm = ::sendBpm
                 )
             }
-
         }
     }
+
 
     override fun onResume() {
         super.onResume()
         isActivityActive = true
     }
+
 
     private fun sendBpm(bpm: Int? = 0, time: Int? = 0, phoneWatchConnection: PhoneWatchConnection) {
         lifecycleScope.launch {
@@ -98,7 +100,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        Timber.tag("MainActivity").d("onStop")
         isActivityActive = false
     }
 

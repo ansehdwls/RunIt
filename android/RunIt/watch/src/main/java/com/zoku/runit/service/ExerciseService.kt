@@ -36,6 +36,8 @@ class ExerciseService : LifecycleService() {
     private var isBound = false //서비스 바인딩 여부
     private var isStarted = false //서비스 시작 여부
     private val localBinder = LocalBinder()
+    private var phoneActive = false
+
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -98,6 +100,13 @@ class ExerciseService : LifecycleService() {
         }
     }
 
+    //핸드폰 앱 로그인 확인
+    fun setPhoneActive(check: Boolean) {
+        Timber.tag("ExerciseService").d("setPhoneActive $check")
+        phoneActive = check
+    }
+
+    fun checkPhoneActive(): Boolean = phoneActive
 
     //운동 상태 확인
     private suspend fun isExerciseInProgress() = exerciseClientManager.isExerciseInProgress()

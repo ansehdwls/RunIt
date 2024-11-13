@@ -22,9 +22,13 @@ appcompat = "1.7.0"
 material = "1.12.0"
 lifecycleService = "2.8.6"
 ksp = "2.0.10-1.0.24"
+workManager = "2.7.1"
+workRuntimeKtx = "2.10.0"
 #hilt
-hilt = "2.48"
+hilt = "2.52"
 hiltNavigationCompose = "1.2.0"
+hiltCompiler = "1.2.0"
+hiltWork = "1.2.0"
 
 #network
 retrofit2 = "2.9.0"
@@ -97,14 +101,17 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycleService" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-
+androidx-work = {group = "androidx.work", name="work-rutime-ktx", version.ref="workManager"}
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 # Logging
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 #hilt
+androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 
 #retrofit
 retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2" }
