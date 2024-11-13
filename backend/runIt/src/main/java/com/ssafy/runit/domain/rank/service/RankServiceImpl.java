@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.rank.service;
 
+import com.ssafy.runit.config.redis.RedisKeys;
 import com.ssafy.runit.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ public class RankServiceImpl implements RankService {
 
     @Override
     public Map<String, Integer> getRankDiff(List<String> ids, long groupId) {
-        String previousRankKey = String.format("previous_rank:%s", groupId);
+        String previousRankKey = RedisKeys.getExperiencePreviousRankKey(String.valueOf(groupId));
         return redisTemplate.opsForHash().entries(previousRankKey)
                 .entrySet()
                 .stream()
@@ -32,15 +33,15 @@ public class RankServiceImpl implements RankService {
 
     @Override
     public Set<ZSetOperations.TypedTuple<Object>> getGroupRanking(long groupId) {
-        String key = String.format("ranking:%s", groupId);
+        String key = RedisKeys.getExperienceRankKey(String.valueOf(groupId));
         return redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, -1);
     }
 
     @Override
     public void updateScore(long groupId, String userIdStr, long changed) {
         log.debug("[updateScore] groupId: {}, userId: {}, changed: {}", groupId, userIdStr, changed);
-        String rankingKey = String.format("ranking:%s", groupId);
-        String previousRankKey = String.format("previous_rank:%s", groupId);
+        String rankingKey = RedisKeys.getExperienceRankKey(String.valueOf(groupId));
+        String previousRankKey = RedisKeys.getExperiencePreviousRankKey(String.valueOf(groupId));
         Long previousRank = getPreviousRank(rankingKey, userIdStr);
         double timeAdjustment = calculateTimeAdjustment();
         updateUserScore(rankingKey, userIdStr, changed, timeAdjustment);
