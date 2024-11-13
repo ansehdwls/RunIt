@@ -15,7 +15,7 @@ properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.zoku.runit"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.zoku.runit"
@@ -99,12 +99,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.work.runtime.ktx)
 
     //hilt
     implementation(libs.hilt)
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-
     ksp(libs.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.work)
 
     //jetpack navigation
     implementation(libs.bundles.nav)
@@ -123,5 +125,10 @@ dependencies {
 
     // Log
     implementation(libs.timber)
+
+    //coroutine
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
 
 }

@@ -1,5 +1,6 @@
 package com.zoku.runit
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
         isActivityActive = true
     }
 
+
     private fun sendBpm(bpm: Int? = 0, time: Int? = 0, phoneWatchConnection: PhoneWatchConnection) {
         lifecycleScope.launch {
             try {
@@ -98,7 +100,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        Timber.tag("MainActivity").d("onStop")
         isActivityActive = false
     }
 

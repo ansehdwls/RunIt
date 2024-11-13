@@ -15,28 +15,36 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.gms.wearable.CapabilityClient
+import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.Wearable
+import com.zoku.runit.manager.SendHeartbeatWorker
 import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.model.PhoneWatchConnection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @Inject
+    lateinit var messageClient: MessageClient
+
+
     private val dataClient by lazy { Wearable.getDataClient(this) }
-    private val messageClient by lazy { Wearable.getMessageClient(this) }
+
     private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
+
 
     private val clientDataViewModel by viewModels<ClientDataViewModel>()
 
@@ -45,6 +53,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         enableEdgeToEdge()
 //        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
 //            if (task.isSuccessful) {
@@ -74,6 +83,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        sendHeartbeatToWatch(true)
         dataClient.addListener(clientDataViewModel)
         messageClient.addListener(clientDataViewModel)
         capabilityClient.addListener(
@@ -81,6 +91,18 @@ class MainActivity : ComponentActivity() {
             Uri.parse("phone://"),
             CapabilityClient.FILTER_REACHABLE
         )
+    }
+
+    private fun sendHeartbeatToWatch(type : Boolean) { // true -> 시작, false -> 종료
+        val data = Data.Builder()
+            .putBoolean("type", type)
+            .build()
+
+        val sendHeartbeatRequest = OneTimeWorkRequestBuilder<SendHeartbeatWorker>()
+            .setInputData(data)
+            .build()
+        val workManager = WorkManager.getInstance(this)
+        workManager.enqueue(sendHeartbeatRequest)
     }
 
     private fun sendWearable(path: String = PhoneWatchConnection.START_ACTIVITY.route) {
@@ -105,6 +127,18 @@ class MainActivity : ComponentActivity() {
                 Timber.tag("MainWearable").d("웨어러블 실행 오류 ${exception}")
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.tag("PhoneMainActivity").d("onStop")
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.tag("PhoneMainActivity").d("onDestroy")
+        sendHeartbeatToWatch(false)
     }
 
     companion object {

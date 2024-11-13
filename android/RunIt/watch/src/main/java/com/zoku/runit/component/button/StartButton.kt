@@ -22,7 +22,6 @@ import com.zoku.ui.Black
 fun StartButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    runningStart: () -> Unit
 ) {
     Row(
         modifier = modifier.padding(35.dp),
@@ -33,7 +32,6 @@ fun StartButton(
             modifier = modifier,
             onClick = {
                 onClick()
-                runningStart()
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = BaseYellow
@@ -52,5 +50,5 @@ fun StartButton(
 @Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true, apiLevel = 33)
 @Composable
 fun RunningPreview() {
-    StartButton(modifier = Modifier, {}) {}
+    StartButton(modifier = Modifier, {})
 }

@@ -8,6 +8,7 @@ import dagger.hilt.android.ActivityRetainedLifecycle
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -45,7 +46,8 @@ class HealthServicesRepository @Inject constructor(
         )
 
     //운동 기능이 가능한지
-    suspend fun hasExerciseCapability(): Boolean = exerciseClientManager.getExerciseCapabilities() != null
+    suspend fun hasExerciseCapability(): Boolean =
+        exerciseClientManager.getExerciseCapabilities() != null
 
     //현재 운동이 진행 중인지
     suspend fun isExerciseInProgress(): Boolean =
@@ -64,6 +66,7 @@ class HealthServicesRepository @Inject constructor(
         }
     }
 
+
     fun startExercise() = serviceCall {
         Timber.tag("healthServiceRepo start").d("Top start")
         try {
@@ -79,7 +82,16 @@ class HealthServicesRepository @Inject constructor(
     fun pauseExercise() = serviceCall { pauseExercise() }
     fun stopExercise() = serviceCall { endExercise() }
     fun resumeExercise() = serviceCall { resumeExercise() }
+    suspend fun checkPhoneActive(): Boolean {
+        val async = coroutineScope.async {
+            binderConnection.runWhenConnected {
+                Timber.tag("HealthServiceRepository").d("check ${it.getService().checkPhoneActive()}")
+                it.getService().checkPhoneActive()
+            }
 
+        }
+        return async.await()
+    }
 
 
 }
