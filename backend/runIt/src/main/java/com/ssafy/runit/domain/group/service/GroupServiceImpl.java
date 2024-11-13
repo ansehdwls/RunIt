@@ -11,7 +11,6 @@ import com.ssafy.runit.domain.rank.service.PaceRankManager;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.GroupErrorCode;
-import com.ssafy.runit.exception.code.ServerErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -73,25 +72,24 @@ public class GroupServiceImpl implements GroupService {
     }
 
     private GetGroupUsersInfo getGetGroupUsersInfo(Group group, User user, Map<String, User> userMap, Map<String, Integer> rankDiff2, Set<ZSetOperations.TypedTuple<Object>> groupRanking, RankType type) {
-        List<GroupUserInfo> userInfos;
-        if(groupRanking.isEmpty()){
-            userInfos = group.getUsers().stream()
-                    .map(u -> GroupUserInfo.fromEntity(u, RankType.calRankScore(type, 0.0), 0))
-                    .collect(Collectors.toList());
-        } else {
-            userInfos = groupRanking.stream()
+        List<GroupUserInfo>  userInfos = groupRanking.stream()
                     .map(ranking -> {
                         String userId = String.valueOf(ranking.getValue());
                         Double score = Objects.requireNonNullElse(ranking.getScore(), 0.0);
                         int diff = rankDiff2.getOrDefault(userId, 0);
                         User u = userMap.get(userId);
+                        userMap.remove(userId);
                         if (u == null) {
                             return null;
                         }
                         return GroupUserInfo.fromEntity(u, RankType.calRankScore(type, score), diff);
                     })
-                    .toList();
-        }
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        userInfos.addAll(userMap.values().stream()
+                .map(u -> GroupUserInfo.fromEntity(u, RankType.calRankScore(type, 0.0), 0)) // 기본값 적용
+                .toList());
         return new GetGroupUsersInfo().Mapper(userInfos, user, group.getGroupLeague().getRank().getRank());
     }
 }
