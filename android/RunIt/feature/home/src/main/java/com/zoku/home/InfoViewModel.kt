@@ -21,14 +21,20 @@ class InfoViewModel @Inject constructor(
 ) : ViewModel()
 {
 
+    init {
+        getRunToday()
+        getTotalRecord()
+        getWeekList()
+    }
+
     private val _todayRecord = MutableStateFlow<RunToday>(RunToday(0.0,0.0,0.0))
-    val todayRecord : StateFlow<RunToday> = _todayRecord
+    val todayRecord : StateFlow<RunToday> get() = _todayRecord
 
     private val _totalAllRecord = MutableStateFlow<AllTotal>(AllTotal(0.0,0.0))
-    val totalAllRecord : StateFlow<AllTotal> = _totalAllRecord
+    val totalAllRecord : StateFlow<AllTotal> get()  = _totalAllRecord
 
     private val _totalWeekRecord = MutableStateFlow<WeekTotal>(WeekTotal(0.0,0.0))
-    val totalWeekRecord : StateFlow<WeekTotal> = _totalWeekRecord
+    val totalWeekRecord : StateFlow<WeekTotal> get()  = _totalWeekRecord
 
     private val _totalWeekList = MutableStateFlow<RunWeekList>(
         RunWeekList(emptyList(), emptyList(), emptyList())
