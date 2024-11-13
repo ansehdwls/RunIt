@@ -11,7 +11,6 @@ import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.exception.code.TrackErrorCode;
 import com.ssafy.runit.util.DateUtils;
 import com.ssafy.runit.util.S3UploadUtil;
-import com.ssafy.runit.domain.track.entity.Track;
 import com.ssafy.runit.domain.track.repository.TrackRepository;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
@@ -131,7 +130,7 @@ public class RecordServiceImpl implements RecordService {
         }
 
         if (recordList.isEmpty()) {
-            return RecordTodayResponse.fromEntity(0.0, 0L, 0);
+            return RecordTodayResponse.fromEntity(0, 0L, 0);
         } else {
             return RecordTodayResponse.fromEntity(dis, time, pace / recordList.size());
         }
