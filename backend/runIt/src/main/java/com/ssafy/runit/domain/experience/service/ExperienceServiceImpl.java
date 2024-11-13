@@ -6,8 +6,8 @@ import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
 import com.ssafy.runit.domain.experience.dto.response.ExperienceGetListResponse;
 import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.experience.repository.ExperienceRepository;
-import com.ssafy.runit.domain.rank.service.RankService;
 import com.ssafy.runit.domain.record.dto.response.RecordTodayResponse;
+import com.ssafy.runit.domain.rank.service.ExperienceRankManager;
 import com.ssafy.runit.domain.record.service.RecordService;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
@@ -32,7 +32,7 @@ import java.util.List;
 public class ExperienceServiceImpl implements ExperienceService {
 
     private final ExperienceRepository experienceRepository;
-    private final RankService rankService;
+    private final ExperienceRankManager experienceRankManager;
     private final UserRepository userRepository;
     private final AttendanceService attendanceService;
     private final RecordService recordService;
@@ -44,7 +44,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 //      기존의 user id 받아서 처리하는 부분
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
         Experience exp = request.Mapper(user, LocalDateTime.now());
-        rankService.updateScore(user.getUserGroup().getId(), String.valueOf(user.getId()), request.getChanged());
+        experienceRankManager.updateScore(user.getUserGroup().getId(), String.valueOf(user.getId()), request.getChanged());
         experienceRepository.save(exp);
     }
 
@@ -66,8 +66,7 @@ public class ExperienceServiceImpl implements ExperienceService {
         RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
 
         double restDis = (todayResponse.distance() - (double) todayExp / 10);
-
-        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attType, size, restDis);
+        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attType, size, (restDis < 0) ? 0 : restDis);
         int sum = 0;
         for (Pair<String, Long> item : result) {
 
@@ -85,7 +84,7 @@ public class ExperienceServiceImpl implements ExperienceService {
     @Override
     public Long experienceGetToday(UserDetails userDetails) {
         User user = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow(
-                ()-> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
+                () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
         );
 
         LocalDate today = LocalDate.now();

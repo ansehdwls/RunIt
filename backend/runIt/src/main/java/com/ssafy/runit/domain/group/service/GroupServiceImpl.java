@@ -4,7 +4,7 @@ import com.ssafy.runit.domain.group.dto.response.GetGroupUsersInfo;
 import com.ssafy.runit.domain.group.dto.response.GroupUserInfo;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
-import com.ssafy.runit.domain.rank.service.RankService;
+import com.ssafy.runit.domain.rank.service.ExperienceRankManager;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.GroupErrorCode;
@@ -13,7 +13,6 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
-    private final RankService rankService;
+    private final ExperienceRankManager experienceRankManager;
 
     @Override
     @Transactional(readOnly = true)
@@ -38,9 +37,8 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new CustomException(GroupErrorCode.GROUP_NO_USERS_ERROR));
         Map<String, User> userMap = group.getUsers().stream()
                 .collect(Collectors.toMap(u -> String.valueOf(u.getId()), u -> u));
-        List<String> userIds = new ArrayList<>(userMap.keySet());
-        Map<String, Integer> rankDiff = rankService.getRankDiff(userIds, groupId); // 랭크 변화
-        Set<ZSetOperations.TypedTuple<Object>> rankings = rankService.getGroupRanking(groupId);
+        Map<String, Integer> rankDiff = experienceRankManager.getRankDiff(groupId); // 랭크 변화
+        Set<ZSetOperations.TypedTuple<Object>> rankings = experienceRankManager.getGroupRanking(groupId);
         List<GroupUserInfo> userInfos = rankings.stream()
                 .map(ranking -> {
                     String userId = String.valueOf(ranking.getValue());
