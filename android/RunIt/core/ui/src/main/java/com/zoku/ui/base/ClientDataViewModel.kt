@@ -1,7 +1,6 @@
 package com.zoku.ui.base
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.DataClient.OnDataChangedListener
 import com.google.android.gms.wearable.MessageClient
@@ -12,7 +11,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.collections.plus
@@ -46,6 +44,7 @@ class ClientDataViewModel @Inject constructor(
                     )
                 )
             }
+
             else -> {
                 state
             }
@@ -90,9 +89,12 @@ class ClientDataViewModel @Inject constructor(
                 timber.log.Timber.Forest.tag("ClientDataViewModel").e("BPM 받기 실패")
             }
         }
-        updateMessageType(
-            PhoneWatchConnection.getType(messageEvent.path) ?: PhoneWatchConnection.EMPTY
-        )
+        if (phoneWatchData.value.route != messageEvent.path) {
+            updateMessageType(
+                PhoneWatchConnection.getType(messageEvent.path) ?: PhoneWatchConnection.EMPTY
+            )
+        }
+
         Timber.tag("ClientDataViewModel").d("message받기 $messageEvent")
     }
 
