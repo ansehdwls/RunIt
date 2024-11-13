@@ -7,6 +7,8 @@ import com.ssafy.runit.domain.record.dto.request.RecordSaveRequest;
 import com.ssafy.runit.domain.record.dto.response.*;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.service.RecordService;
+import com.ssafy.runit.exception.CustomException;
+import com.ssafy.runit.exception.code.RecordErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -35,7 +37,9 @@ public class RecordController implements RecordDocs {
     public RunItApiResponse<RecordPostResponse> saveRecord(@AuthenticationPrincipal UserDetails userDetails,
                                                            @RequestPart(value = "dto") RecordSaveRequest recordSaveRequest,
                                                            @RequestPart(value = "images") MultipartFile file) {
-
+        if (recordSaveRequest.getRecord().getDistance() < 100){
+            throw new CustomException(RecordErrorCode.NOT_ALLOW_DISTANCE);
+        }
 
         Record record = recordService.saveRunningRecord(userDetails, recordSaveRequest, file);
 
