@@ -11,4 +11,24 @@ public enum RankType {
             default -> NONE;
         };
     }
+
+    public static String calRankScore(RankType type, double score) {
+        return switch (type) {
+            case PACE -> {
+                score = Math.round(score * 100) / 100.0;
+                yield PACE.getPaceFormatted(score);
+            }
+            case DISTANCE -> String.format("%.2f km", score);
+            default -> String.valueOf((int) score);
+        };
+    }
+
+    public String getPaceFormatted(double pace) {
+        if (pace == 0) {
+            return "N/A";
+        }
+        int minutes = (int) pace;
+        int seconds = (int) Math.round((pace - minutes) * 60);
+        return String.format("%d'%02d'/km", minutes, seconds);
+    }
 }
