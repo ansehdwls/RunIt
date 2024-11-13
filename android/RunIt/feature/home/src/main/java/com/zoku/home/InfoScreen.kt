@@ -1,8 +1,10 @@
 package com.zoku.home
 
 
+import android.graphics.Color.TRANSPARENT
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +31,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,6 +42,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -63,6 +68,10 @@ import com.zoku.home.component.DropDownMenu
 import com.zoku.network.model.response.RunToday
 import com.zoku.network.model.response.RunWeekList
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import java.time.LocalDate
+import java.time.temporal.WeekFields
+import java.util.Locale
 import kotlin.random.Random
 
 @Composable
@@ -82,16 +91,16 @@ fun InfoScreen(
     var listType by remember {
         mutableStateOf(0)
     }
+    val isFlipped = remember { mutableStateOf(false) }
+
+    val rotation by animateFloatAsState(targetValue = if (isFlipped.value) 360f else 0f,
+        animationSpec = tween(durationMillis = 500))
 
     val viewModel: InfoViewModel = hiltViewModel()
     val todayRecord by viewModel.todayRecord.collectAsState()
     val totalAllRecord by viewModel.totalAllRecord.collectAsState()
     val totalWeekRecord by viewModel.totalWeekRecord.collectAsState()
     val totalWeekList by viewModel.totalWeekList.collectAsState()
-
-    viewModel.getRunToday()
-    viewModel.getTotalRecord()
-    viewModel.getWeekList()
 
     Surface(
         modifier = modifier
@@ -134,11 +143,31 @@ fun InfoScreen(
                  selectedOption ->
                     if (selectedOption == "러닝 기록 전체") isAllRecord = true
                     else isAllRecord = false
-
+                isFlipped.value = !isFlipped.value
             }
+            if(isAllRecord){
+                RunningRecord(
+                    modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(com.zoku.ui.BaseWhiteBackground)
+                        .graphicsLayer {
+                            rotationY = rotation
+                            transformOrigin = TransformOrigin.Center
 
-            RunningRecord(modifier, if(isAllRecord) totalAllRecord.totalDistance else totalWeekRecord.weekDistance,
-                if(isAllRecord) totalAllRecord.totalTime else totalWeekRecord.weekTime)
+                        }, totalAllRecord.totalDistance ,
+                    totalAllRecord.totalTime ,
+                    com.zoku.ui.BaseWhiteBackground)
+            }
+           else RunningRecord(
+                modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(com.zoku.ui.BaseYellow)
+                    .graphicsLayer {
+                        rotationY = rotation
+                    },
+                totalWeekRecord.weekDistance,
+               totalWeekRecord.weekTime,
+                com.zoku.ui.BaseYellow)
 
             Spacer(modifier = modifier.height(30.dp))
 
@@ -367,40 +396,42 @@ fun RunningDiary(modifier: Modifier = Modifier,
 }
 
 @Composable
-fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double) {
+fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,color: Color) {
+
     Row(
-        modifier = modifier
+        modifier = Modifier
+            .padding(horizontal = 10.dp)
             .fillMaxWidth()
     ) {
         Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
+            modifier = modifier
                 .padding(0.dp)
                 .weight(1f)
                 .height(110.dp)
-                .background(com.zoku.ui.BaseWhiteBackground)
         ) {
             Column(
                 Modifier
+                    .background(color)
                     .fillMaxHeight()
                     .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.padding(top = 35.dp))
+                Spacer(modifier = Modifier
+                    .padding(top = 35.dp))
                 Text(
                     text = "$distance",
                     modifier = Modifier
+                        .background(color)
                         .weight(1f)
-                        .fillMaxWidth()
-                        .background(com.zoku.ui.BaseWhiteBackground),
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     fontSize = 26.sp,
                     fontFamily = com.zoku.ui.ZokuFamily
                 )
                 Text(
                     text = "거리/km", modifier = Modifier
+                        .background(color)
                         .weight(1f)
-                        .fillMaxWidth()
-                        .background(com.zoku.ui.BaseWhiteBackground),
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Center, fontSize = 12.sp,
                     fontFamily = com.zoku.ui.ZokuFamily
                 )
@@ -409,16 +440,15 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double)
         }
 
         Spacer(
-            modifier = modifier
+            modifier = Modifier
                 .padding(horizontal = 10.dp)
         )
 
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .weight(1f)
                 .clip(RoundedCornerShape(16.dp))
                 .height(110.dp)
-                .background(com.zoku.ui.BaseWhiteBackground)
         ) {
             Column(
                 Modifier
@@ -429,18 +459,18 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double)
                 Text(
                     text = "$time",
                     modifier = Modifier
+                        .background(color)
                         .weight(1f)
-                        .fillMaxWidth()
-                        .background(com.zoku.ui.BaseWhiteBackground),
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     fontSize = 26.sp,
                     fontFamily = com.zoku.ui.ZokuFamily
                 )
                 Text(
                     text = "시간/hr", modifier = Modifier
+                        .background(color)
                         .weight(1f)
-                        .fillMaxWidth()
-                        .background(com.zoku.ui.BaseWhiteBackground),
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Center, fontSize = 12.sp,
                     fontFamily = com.zoku.ui.ZokuFamily
                 )
@@ -490,12 +520,15 @@ fun HomeFunctionButton(
 
 @Composable
 fun BarChartScreen( list : List<Double>) {
+
+    val weekField = WeekFields.of(Locale.getDefault()).weekOfMonth()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "10 월 1주", fontFamily = com.zoku.ui.ZokuFamily)
+        Text(text = "${LocalDate.now().monthValue} 월 ${LocalDate.now().get(weekField)}주", fontFamily = com.zoku.ui.ZokuFamily)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -520,7 +553,10 @@ fun BarChartScreen( list : List<Double>) {
 
                     // Y축 설정
                     axisLeft.apply {
-                        isEnabled = false
+                        axisMinimum = 0f  // Y축의 최소값을 0으로 설정
+                        setDrawGridLines(false)
+                        setDrawLabels(false)
+                        axisLineColor = TRANSPARENT
                     }
                     axisRight.isEnabled = false // 오른쪽 Y축 비활성화
                     // 선택 리스너 추가 (막대 선택 시 Y값 표시 및 색상 변경)
@@ -559,7 +595,7 @@ fun getBarData1(list : List<Double>): BarData {
     val days = arrayOf("월", "화", "수", "목", "금", "토", "일")
 
     for (i in days.indices) {
-        values.add(BarEntry(i.toFloat(), list[i].toFloat()))
+        values.add(BarEntry(i.toFloat(),  if (list[i] == 0.0) 0.1f else list[i].toFloat()))
     }
 
     // 데이터셋 설정
@@ -568,7 +604,7 @@ fun getBarData1(list : List<Double>): BarData {
     }
 
     return BarData(set1).apply {
-        barWidth = 0.2f
+        barWidth = 0.6f
     }
 
 
