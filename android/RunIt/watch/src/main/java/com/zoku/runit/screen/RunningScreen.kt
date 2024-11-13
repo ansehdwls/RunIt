@@ -1,6 +1,7 @@
 package com.zoku.runit.screen
 
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -63,6 +64,8 @@ fun RunningScreen(
             sendBpm(bpm, duration, connection)
         }
     )
+
+    BackHandler {}
 }
 
 

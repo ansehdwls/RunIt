@@ -40,8 +40,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-        PermissionHelper(this, PERMISSIONS, ::finish).launchPermission()
         super.onCreate(savedInstanceState)
+        PermissionHelper(this, PERMISSIONS, ::finish).launchPermission()
         setContent {
             navController = rememberNavController()
             AppScaffold {
@@ -51,9 +51,9 @@ class MainActivity : ComponentActivity() {
                     sendBpm = ::sendBpm
                 )
             }
-
         }
     }
+
 
     override fun onResume() {
         super.onResume()

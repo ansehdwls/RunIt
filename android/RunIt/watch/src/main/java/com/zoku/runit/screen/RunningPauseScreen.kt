@@ -1,5 +1,6 @@
 package com.zoku.runit.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,9 +15,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,7 +43,7 @@ import java.time.Duration
 fun RunningPauseScreen(
     modifier: Modifier = Modifier,
     runningData: ExerciseResult?,
-    onPauseStatus : () -> Unit,
+    onPauseStatus: () -> Unit,
     onStopClick: () -> Unit,
     onResumeClick: () -> Unit
 ) {
@@ -51,18 +52,20 @@ fun RunningPauseScreen(
     var pauseFlag by remember { mutableStateOf(false) }
     Timber.tag("RunningPauseScreen").d("${uiState.exerciseState?.exerciseState}")
     Timber.tag("RunningPauseScreen").d("${runningData?.time}")
-
-    when(uiState.exerciseState?.exerciseState){
+    BackHandler {}
+    when (uiState.exerciseState?.exerciseState) {
         ExerciseState.USER_PAUSED -> {
-            if(!pauseFlag){
+            if (!pauseFlag) {
                 onPauseStatus()
                 pauseFlag = true
             }
 
         }
+
         ExerciseState.USER_RESUMING -> {
             onResumeClick()
         }
+
         ExerciseState.ENDED -> {
             onStopClick()
         }
