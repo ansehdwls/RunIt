@@ -20,7 +20,10 @@ public class GroupController implements GroupDocs {
 
     @Override
     @GetMapping("/users")
-    public RunItApiResponse<GetGroupUsersInfo> GetGroupUsersInfo(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Long groupId) {
-        return RunItApiResponse.create(groupService.findUsersByGroupWithRank(groupId, userDetails.getUsername()), "그룹 구성원 정보 조회에 성공했습니다.");
+    public RunItApiResponse<GetGroupUsersInfo> GetGroupUsersInfo(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam Long groupId,
+            @RequestParam(defaultValue = "experience") String rankType) {
+        return RunItApiResponse.create(groupService.findUsersByGroupWithRank(groupId, userDetails.getUsername(), rankType), "그룹 구성원 정보 조회에 성공했습니다.");
     }
 }
