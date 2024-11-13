@@ -31,6 +31,10 @@ public class Record {
     @OneToMany(mappedBy = "record")
     private List<Split> splitList;
 
+    public void updateSplitList(List<Split> splitList) {
+        this.splitList = splitList;
+    }
+
     private Double distance;
 
     private Integer bpm;

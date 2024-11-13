@@ -5,8 +5,8 @@ import com.ssafy.runit.domain.record.dto.response.*;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.repository.RecordRepository;
 import com.ssafy.runit.domain.split.dto.response.SplitResponse;
-import com.ssafy.runit.domain.split.entity.Split;
 import com.ssafy.runit.domain.split.repository.SplitRepository;
+import com.ssafy.runit.domain.split.service.SplitService;
 import com.ssafy.runit.domain.track.repository.TrackRepository;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,6 +45,7 @@ public class RecordServiceImpl implements RecordService {
     private final SplitRepository splitRepository;
     private final UserRepository userRepository;
     private final S3UploadUtil s3UploadUtil;
+    private final SplitService splitService;
 
     @Override
     @Transactional
@@ -52,7 +54,7 @@ public class RecordServiceImpl implements RecordService {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow(
                 () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
         );
-
+        log.debug("user-group : {}", findUser.getUserGroup().getId());
         Record record = request.mapper(findUser);
 
         recordRepository.save(record);
@@ -60,13 +62,12 @@ public class RecordServiceImpl implements RecordService {
         try {
             String url = s3UploadUtil.saveFile(file);
             Record afRecord = request.toEntity(record, url);
-
             trackRepository.save(afRecord.getTrack());
-
-            List<Split> splitList = afRecord.getSplitList();
-
-            splitRepository.saveAll(splitList);
-        } catch (Exception e) {
+            record.updateSplitList(afRecord.getSplitList());
+            splitService.saveAllSplit(record);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (IOException e) {
             throw new CustomException(TrackErrorCode.NOT_FOUND_TRACK_IMG);
         }
 
