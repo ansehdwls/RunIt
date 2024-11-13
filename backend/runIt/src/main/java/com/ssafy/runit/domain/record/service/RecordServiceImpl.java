@@ -55,18 +55,21 @@ public class RecordServiceImpl implements RecordService {
 
         recordRepository.save(record);
 
+        String url = "";
+
         try {
-            String url = s3UploadUtil.saveFile(file);
-            Record afRecord = request.toEntity(record, url);
-
-            trackRepository.save(afRecord.getTrack());
-
-            List<Pace> paceList = afRecord.getPaceList();
-
-            paceRepository.saveAll(paceList);
+            url = s3UploadUtil.saveFile(file);
         } catch (Exception e) {
             throw new CustomException(TrackErrorCode.NOT_FOUND_TRACK_IMG);
         }
+
+        Record afRecord = request.toEntity(record, url);
+
+        trackRepository.save(afRecord.getTrack());
+
+        List<Pace> paceList = afRecord.getPaceList();
+
+        paceRepository.saveAll(paceList);
 
         return record;
     }
