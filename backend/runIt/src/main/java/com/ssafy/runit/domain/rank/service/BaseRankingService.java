@@ -27,9 +27,13 @@ public abstract class BaseRankingService<T> {
     }
 
 
-    public Set<ZSetOperations.TypedTuple<Object>> getGroupRanking(long groupId) {
+    public Set<ZSetOperations.TypedTuple<Object>> getGroupRanking(long groupId, int sortOpt) {
         String key = getRankKey(String.valueOf(groupId));
-        return redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, -1);
+        if (sortOpt == 1) {
+            return redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, -1);
+        } else {
+            return redisTemplate.opsForZSet().rangeWithScores(key, 0, -1);
+        }
     }
 
     public Map<String, Integer> getRankDiff(long groupId) {

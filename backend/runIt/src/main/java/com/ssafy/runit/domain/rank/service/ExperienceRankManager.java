@@ -18,7 +18,7 @@ public class ExperienceRankManager {
     }
 
     public Set<ZSetOperations.TypedTuple<Object>> getGroupRanking(long groupId) {
-        return experiencePointRankingService.getGroupRanking(groupId);
+        return experiencePointRankingService.getGroupRanking(groupId, 1);
     }
 
     public void updateScore(long groupId, String userIdStr, long changed) {
