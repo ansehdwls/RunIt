@@ -11,10 +11,8 @@ import com.ssafy.runit.domain.record.dto.response.RecordTodayResponse;
 import com.ssafy.runit.domain.record.service.RecordService;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
-import com.ssafy.runit.domain.user.service.UserService;
 import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.AuthErrorCode;
-import com.ssafy.runit.exception.code.ExperienceErrorCode;
 import com.ssafy.runit.util.DateUtils;
 import com.ssafy.runit.util.ExperienceUtil;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +55,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     public List<ExperienceGetListResponse> experienceList(Long userId) {
-        List<ExperienceGetListResponse> expList = experienceRepository.findByUser_Id(userId);
-        return expList;
+        return experienceRepository.findByUser_Id(userId);
     }
 
     @Override
@@ -69,7 +66,7 @@ public class ExperienceServiceImpl implements ExperienceService {
         RecordTodayResponse todayResponse = recordService.getTodayData(userDetails);
         long restDis = (long) (todayResponse.distance() - (todayExp * 100));
 
-        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attType, size, restDis);
+        List<Pair<String, Long>> result = ExperienceUtil.experienceCalc(attType, size, (restDis < 0)?0:restDis);
         int sum = 0;
         for (Pair<String, Long> item : result) {
 
@@ -95,11 +92,7 @@ public class ExperienceServiceImpl implements ExperienceService {
         LocalDateTime startDay = today.atStartOfDay();
         LocalDateTime endDay = today.plusDays(1).atStartOfDay();
 
-        return experienceRepository.findByUserIdAndCreateAtBetween(user.getId(), startDay, endDay)
-                .stream()
-                .filter(experience -> experience.getActivity().equals("거리"))
-                .mapToLong(Experience :: getChanged)
-                .sum();
+        return experienceRepository.findByUserIdAndCreateAtBetween(user.getId(), startDay, endDay).orElse(0L);
 
     }
 }

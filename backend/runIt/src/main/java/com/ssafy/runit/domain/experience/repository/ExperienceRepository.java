@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ExperienceRepository extends JpaRepository<Experience, Long> {
 
@@ -18,5 +19,7 @@ public interface ExperienceRepository extends JpaRepository<Experience, Long> {
 
     List<ExperienceGetListResponse> findByUser_Id(Long userId);
 
-    List<Experience> findByUserIdAndCreateAtBetween(Long userId, LocalDateTime startDay, LocalDateTime endDay);
+    @Query("SELECT sum(e.changed) from Experience e " +
+            "WHERE e.user.id = :userId AND createAt BETWEEN :startDay AND :endDay")
+    Optional<Long> findByUserIdAndCreateAtBetween(@Param("userId") Long userId, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
 }
