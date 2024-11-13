@@ -5,6 +5,7 @@ import com.ssafy.runit.domain.group.dto.response.GroupUserInfo;
 import com.ssafy.runit.domain.group.entity.Group;
 import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.rank.RankType;
+import com.ssafy.runit.domain.rank.service.DistanceRankManager;
 import com.ssafy.runit.domain.rank.service.ExperienceRankManager;
 import com.ssafy.runit.domain.rank.service.PaceRankManager;
 import com.ssafy.runit.domain.user.entity.User;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,7 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
     private final ExperienceRankManager experienceRankManager;
     private final PaceRankManager paceRankManager;
+    private final DistanceRankManager distanceRankManager;
 
     @Override
     @Transactional(readOnly = true)
@@ -44,59 +47,51 @@ public class GroupServiceImpl implements GroupService {
         RankType type = RankType.fromString(rankType);
         switch (type) {
             case EXPERIENCE -> {
-                return GetExperienceRank(group, user, userMap);
+                return GetExperienceRank(group, user, userMap, RankType.EXPERIENCE);
             }
             case PACE -> {
-                return GetPaceRank(group, user, userMap);
+                return GetPaceRank(group, user, userMap, RankType.PACE);
             }
-            default -> throw new CustomException(ServerErrorCode.UNKNOWN_SERVER_ERROR);
+
+            case DISTANCE -> {
+                return GetDistanceRank(group, user, userMap, RankType.DISTANCE);
+            }
+            default -> throw new CustomException(GroupErrorCode.INVALID_RANK_TYPE_ERROR);
         }
     }
 
-    public GetGroupUsersInfo GetPaceRank(Group group, User user, Map<String, User> userMap) {
-        Map<String, Integer> rankDiff = paceRankManager.getRankDiff(group.getId()); // 랭크 변화
-        Set<ZSetOperations.TypedTuple<Object>> rankings = paceRankManager.getGroupRanking(group.getId());
-        List<GroupUserInfo> userInfos = rankings.stream()
-                .map(ranking -> {
-                    String userId = String.valueOf(ranking.getValue());
-                    Double score = ranking.getScore();
-                    score = Math.round(score * 100) / 100.0;
-                    int diff = rankDiff.getOrDefault(userId, 0);
-                    User u = userMap.get(userId);
-                    if (u == null) {
-                        return null;
-                    }
-                    return GroupUserInfo.fromEntity(u, getPaceFormatted(score), diff);
-                })
-                .toList();
-        return new GetGroupUsersInfo().Mapper(userInfos, user, group.getGroupLeague().getRank().getRank());
+    public GetGroupUsersInfo GetPaceRank(Group group, User user, Map<String, User> userMap, RankType type) {
+        return getGetGroupUsersInfo(group, user, userMap, paceRankManager.getRankDiff(group.getId()), paceRankManager.getGroupRanking(group.getId()), type);
     }
 
-    public GetGroupUsersInfo GetExperienceRank(Group group, User user, Map<String, User> userMap) {
-        Map<String, Integer> rankDiff = experienceRankManager.getRankDiff(group.getId()); // 랭크 변화
-        Set<ZSetOperations.TypedTuple<Object>> rankings = experienceRankManager.getGroupRanking(group.getId());
-        List<GroupUserInfo> userInfos = rankings.stream()
-                .map(ranking -> {
-                    String userId = String.valueOf(ranking.getValue());
-                    Double score = ranking.getScore();
-                    score = Math.round(score * 100) / 100.0;
-                    int diff = rankDiff.getOrDefault(userId, 0);
-                    User u = userMap.get(userId);
-                    if (u == null) {
-                        return null;
-                    }
-                    return GroupUserInfo.fromEntity(u, String.valueOf(score), diff);
-                })
-                .toList();
-        return new GetGroupUsersInfo().Mapper(userInfos, user, group.getGroupLeague().getRank().getRank());
+    public GetGroupUsersInfo GetExperienceRank(Group group, User user, Map<String, User> userMap, RankType type) {
+        return getGetGroupUsersInfo(group, user, userMap, experienceRankManager.getRankDiff(group.getId()), experienceRankManager.getGroupRanking(group.getId()), type);
     }
 
-    public String getPaceFormatted(Double pace) {
-        if (pace == null) {
-            return "N/A";
+    public GetGroupUsersInfo GetDistanceRank(Group group, User user, Map<String, User> userMap, RankType type) {
+        return getGetGroupUsersInfo(group, user, userMap, distanceRankManager.getRankDiff(group.getId()), distanceRankManager.getGroupRanking(group.getId()), type);
+    }
+
+    private GetGroupUsersInfo getGetGroupUsersInfo(Group group, User user, Map<String, User> userMap, Map<String, Integer> rankDiff2, Set<ZSetOperations.TypedTuple<Object>> groupRanking, RankType type) {
+        List<GroupUserInfo> userInfos;
+        if(groupRanking.isEmpty()){
+            userInfos = group.getUsers().stream()
+                    .map(u -> GroupUserInfo.fromEntity(u, RankType.calRankScore(type, 0.0), 0))
+                    .collect(Collectors.toList());
+        } else {
+            userInfos = groupRanking.stream()
+                    .map(ranking -> {
+                        String userId = String.valueOf(ranking.getValue());
+                        Double score = Objects.requireNonNullElse(ranking.getScore(), 0.0);
+                        int diff = rankDiff2.getOrDefault(userId, 0);
+                        User u = userMap.get(userId);
+                        if (u == null) {
+                            return null;
+                        }
+                        return GroupUserInfo.fromEntity(u, RankType.calRankScore(type, score), diff);
+                    })
+                    .toList();
         }
-        int minutes = pace.intValue();
-        int seconds = (int) Math.round((pace - minutes) * 60);
-        return String.format("%d'%02d'/km", minutes, seconds);
+        return new GetGroupUsersInfo().Mapper(userInfos, user, group.getGroupLeague().getRank().getRank());
     }
 }
