@@ -80,8 +80,9 @@ dependencies {
 
     //hilt
     implementation(libs.hilt)
-//    kapt(libs.hilt.compiler)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
 
     // kakao
     implementation (libs.v2.all) // 전체 모듈 설치, 2.11.0 버전부터 지원

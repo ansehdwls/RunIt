@@ -1,7 +1,5 @@
 package com.zoku.login
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,27 +24,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.zoku.ui.Black
 
-private const val TAG = "LoginScreen"
 
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel) {
-    val context = LocalContext.current
-
+    
     val uiState by viewModel.uiState.collectAsState()
 
-    // 한번 만 호출되야함.
     LaunchedEffect(uiState.isLogin) {
         if (uiState.isLogin) {
             onLoginSuccess()
-            Log.d(TAG, "LoginScreen: 호츛ㄹ")
-            Log.d(
-                TAG, "LoginScreen: ${uiState.userId}"
-                        + " ${uiState.nickName}"
-                        + " ${uiState.image}"
-                        + " ${uiState.isLogin}"
-            )
         }
     }
 
@@ -54,7 +45,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel) {
         modifier = Modifier
             .fillMaxHeight()
             .background(
-                color = com.zoku.ui.BaseDarkBackground
+                color = Black
             )
             .verticalScroll(rememberScrollState())
             .systemBarsPadding(),
@@ -68,7 +59,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel) {
                 .wrapContentHeight()
         ) {
             Image(
-                painter = painterResource(id = R.drawable.logo),
+                painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = "Logo Title",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -86,9 +77,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel) {
 
         KakaoLoginButton(
             onKakaoLoginClick = {
-                Toast.makeText(context, "로그인 버튼 클릭됨", Toast.LENGTH_SHORT).show()
                 viewModel.handleKaKaoLogin()
-
             }
         )
     }
@@ -101,10 +90,10 @@ fun KakaoLoginButton(onKakaoLoginClick: () -> Unit) {
     Surface(
         onClick = { onKakaoLoginClick() },
         modifier = Modifier.fillMaxWidth(),
-        color = com.zoku.ui.BaseDarkBackground
+        color = Black
     ) {
         Image(
-            painter = painterResource(id = R.drawable.kakao_login_medium_wide),  // 카카오 로그인 아이콘
+            painter = painterResource(id = R.drawable.ic_kakao),  // 카카오 로그인 아이콘
             contentDescription = "Kakao Login",
             modifier = Modifier
                 .fillMaxWidth()
@@ -112,4 +101,11 @@ fun KakaoLoginButton(onKakaoLoginClick: () -> Unit) {
                 .height(50.dp)
         )
     }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun previewLogin() {
+    LoginScreen(onLoginSuccess = {}, viewModel = hiltViewModel())
+
 }
