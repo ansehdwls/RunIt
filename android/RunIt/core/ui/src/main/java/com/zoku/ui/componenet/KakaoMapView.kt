@@ -26,8 +26,6 @@ import com.kakao.vectormap.route.RouteLineStyle
 import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
 import com.zoku.ui.model.LocationData
-import com.zoku.ui.routeColor
-import kotlinx.coroutines.CoroutineDispatcher
 import com.zoku.ui.theme.routeColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -94,8 +92,8 @@ fun KakaoMapView(
                                     LatLng.from(centerLat, centerLng)
                                 )
                                 kakaoMap.moveCamera(cameraUpdate)
-                            }else{
-                                initialLocation?.let{
+                            } else {
+                                initialLocation?.let {
                                     val cameraUpdate = CameraUpdateFactory.newCenterPosition(
                                         LatLng.from(it.latitude, it.longitude)
                                     )

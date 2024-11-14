@@ -32,16 +32,13 @@ import com.zoku.running.model.RunningUIState
 import com.zoku.running.util.formatTime
 import com.zoku.running.util.meterToKilo
 import com.zoku.running.util.timeToPace
-import com.zoku.ui.BaseGrayBackground
-import com.zoku.ui.BaseYellow
-import com.zoku.ui.RoundButtonGray
-import com.zoku.ui.theme.BaseGrayBackground
-import com.zoku.ui.theme.BaseYellow
-import com.zoku.ui.theme.RoundButtonGray
 import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.componenet.RoundStopButton
+import com.zoku.ui.theme.BaseGrayBackground
+import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.RoundButtonGray
 import kotlinx.coroutines.delay
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
