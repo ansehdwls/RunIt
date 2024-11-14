@@ -178,7 +178,7 @@ fun InfoScreen(
                 HomeFunctionButton(modifier = buttonModifier
                     .background(Color.White), onClick = {
                     moveToHistory()
-                }, icon = R.drawable.calendar_info_icon, "히스토리", iconModifier
+                }, icon = R.drawable.ic_calendar_info, "히스토리", iconModifier
                 )
 
                 Spacer(modifier = Modifier.width(20.dp))
@@ -187,7 +187,7 @@ fun InfoScreen(
                     modifier = buttonModifier
                         .background(BaseYellow),
                     onClick = { moveToRunning() },
-                    icon = R.drawable.run_info_icon,
+                    icon = R.drawable.ic_run_info,
                     "",
                     iconModifier
                         .height(60.dp)
@@ -199,7 +199,7 @@ fun InfoScreen(
                 HomeFunctionButton(modifier = buttonModifier
                     .background(Color.White), onClick = {
                     moveToRecordMode()
-                }, icon = R.drawable.record_info_icon, "기록 갱신", iconModifier
+                }, icon = R.drawable.ic_ranking_info, "기록 갱신", iconModifier
                 )
             }
         }
