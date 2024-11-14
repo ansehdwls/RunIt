@@ -53,6 +53,9 @@ class RankViewModel @Inject constructor(
                 }
             }
         }
+        getAllExpHistory()
+        getWeekExp()
+        getAttendance()
     }
 
     fun getAllExpHistory(){
@@ -97,12 +100,12 @@ class RankViewModel @Inject constructor(
         }
     }
 
-    fun getGroupList(){
+    fun getGroupList(rankType : String = ""){
         viewModelScope.launch {
 
             dataStoreRepository.groupId.collect{ groupId ->
                 if(groupId != 0){
-                    when(val result = groupRepository.getGroupInfo(groupId)){
+                    when(val result = groupRepository.getGroupInfo(groupId,rankType)){
                         is NetworkResult.Success -> {
                             Log.d("확인", " 성공 ${result}")
                             _groupInfoList.value = result.data.data

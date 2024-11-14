@@ -22,15 +22,25 @@ import com.kakao.vectormap.route.RouteLineSegment
 import com.kakao.vectormap.route.RouteLineStyle
 import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
+import com.zoku.network.model.response.RouteInfo
 import com.zoku.ui.routeColor
 import kotlin.random.Random
 
 private const val TAG = "RecordMap"
 
 @Composable
-fun RecordMap(modifier: Modifier = Modifier) {
+fun RecordMap(modifier: Modifier = Modifier,
+              routeList : List<RouteInfo> = emptyList()
+) {
 
-    KakaoMapViewWithRandomRoute()
+    if(routeList.size > 0)
+        KakaoMapViewWithRandomRoute()
+    else
+        KakaoMapViewWithRandomRoute(initialLatitude = routeList[0].latitude,
+            initialLongitude = routeList[0].longitude,
+            numberOfPoints = routeList.size,
+            routeList = routeList
+            )
 
 }
 
@@ -39,14 +49,15 @@ fun KakaoMapViewWithRandomRoute(
     modifier: Modifier = Modifier,
     initialLatitude: Double = 37.5665, // 시작 지점의 위도 (예: 서울)
     initialLongitude: Double = 126.9780, // 시작 지점의 경도 (예: 서울)
-    numberOfPoints: Int = 10 // 생성할 경로 점의 개수
+    numberOfPoints: Int = 0, // 생성할 경로 점의 개수,
+    routeList : List<RouteInfo> = emptyList()
 ) {
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
 
     //  랜던 값 배치
     val randomLocationList = remember {
-        generateRandomRoute(initialLatitude, initialLongitude, numberOfPoints)
+        generateRandomRoute(initialLatitude, initialLongitude, numberOfPoints, routeList = routeList)
     }
 
     AndroidView(
@@ -83,12 +94,13 @@ fun KakaoMapViewWithRandomRoute(
 private fun generateRandomRoute(
     startLat: Double,
     startLng: Double,
-    points: Int
+    points: Int,
+    routeList: List<RouteInfo>
 ): List<LocationData> {
     return List(points) {
         // 임의의 범위 내에서 위도 및 경도 변동을 설정.
-        val randomLat = startLat + Random.nextDouble(-0.01, 0.01)
-        val randomLng = startLng + Random.nextDouble(-0.01, 0.01)
+        val randomLat = routeList[points].latitude
+        val randomLng = routeList[points].longitude
         LocationData(randomLat, randomLng)
     }
 }
