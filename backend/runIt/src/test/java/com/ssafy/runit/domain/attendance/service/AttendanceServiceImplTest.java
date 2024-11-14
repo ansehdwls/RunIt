@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -154,6 +155,21 @@ public class AttendanceServiceImplTest {
             } else {
                 assertFalse(dayResponse.attended(), "홀수 날에는 `attended`가 `false`이어야 합니다.");
             }
+        }
+        verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
+        verify(attendanceRepository, times(1)).findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday);
+    }
+
+    @Test
+    @DisplayName("주간 출석 조회 성공 - 일주일 출석 기록이 없는 경우")
+    void getWeekAttendance_NoAttendance_Success() {
+        when(userRepository.findByUserNumber(eq(TEST_NUMBER))).thenReturn(Optional.of(user));
+        when(attendanceRepository.findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday))
+                .thenReturn(Collections.emptyList());
+        List<DayAttendanceResponse> response = attendanceService.getWeekAttendance(TEST_NUMBER);
+        assertEquals(7, response.size(), "주간 출석 기록은 7일이어야 합니다.");
+        for (DayAttendanceResponse dayResponse : response) {
+            assertFalse(dayResponse.attended(), "출석을 한 적이 없으므로 `attended`가 `false` 이어야 합니다.");
         }
         verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
         verify(attendanceRepository, times(1)).findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday);
