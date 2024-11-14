@@ -76,6 +76,7 @@ class MainActivity : ComponentActivity() {
         mainViewModel.appExit.flowWithLifecycle(lifecycle)
             .onEach {
                 if(it){
+                    Timber.tag("MainActivity").d("앱 종료")
                     this.appExit(lifecycleScope)
                 }
             }

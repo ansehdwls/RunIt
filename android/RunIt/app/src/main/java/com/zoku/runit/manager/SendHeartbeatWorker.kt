@@ -9,6 +9,7 @@ import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.Wearable
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
