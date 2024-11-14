@@ -23,8 +23,7 @@ import com.kakao.vectormap.route.RouteLineStyle
 import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
 import com.zoku.network.model.response.RouteInfo
-import com.zoku.ui.routeColor
-import kotlin.random.Random
+import com.zoku.ui.theme.routeColor
 
 private const val TAG = "RecordMap"
 

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.zoku.network.model.response.WeekList
+import com.zoku.ui.theme.ZokuFamily
 import java.time.LocalDate
 
 @Composable
@@ -50,7 +51,7 @@ fun RunHistoryRecordListScreen(selectedDay : LocalDate, list: List<WeekList>, on
                     color = Color.White,
                     fontSize = 20.sp,
                     modifier = Modifier.padding(top = 10.dp, start = 20.dp, bottom = 5.dp),
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
             }
 
@@ -128,6 +129,6 @@ fun DailyRouteText(modifier: Modifier, text: String, fontSize: TextUnit) {
         modifier = modifier,
         fontSize = fontSize,
         textAlign = TextAlign.Center,
-        fontFamily = com.zoku.ui.ZokuFamily
+        fontFamily = ZokuFamily
     )
 }

@@ -3,7 +3,6 @@ package com.zoku.running
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -40,16 +39,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.zoku.network.model.request.Pace
 import com.zoku.network.model.response.PaceRecord
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.running.util.getIso8601TimeString
-import com.zoku.ui.BaseGrayBackground
-import com.zoku.ui.BaseYellow
-import com.zoku.ui.CustomTypo
-import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RecordDetailInfo
+import com.zoku.ui.theme.BaseGrayBackground
+import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.CustomTypo
+import com.zoku.ui.theme.RoundButtonGray
+import com.zoku.ui.theme.RunItTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -104,12 +103,14 @@ fun RunningResultScreen(
                 .weight(0.7f),
             contentAlignment = Alignment.Center
         ) {
-            RecordDetailInfo(startDestination = 1,
+            RecordDetailInfo(
+                startDestination = 1,
                 runRecord = RunRecordDetail(
                     startTime = getIso8601TimeString(System.currentTimeMillis()),
                     endTime = getIso8601TimeString(System.currentTimeMillis()),
-                    paceList = listOf(PaceRecord(10, 10), PaceRecord( 20, 20))
-                ))
+                    paceList = listOf(PaceRecord(10, 10), PaceRecord(20, 20))
+                )
+            )
         }
 
         Box(
@@ -156,7 +157,8 @@ fun RunningResultScreen(
 //                    border = BorderStroke(0.1.dp, BaseYellow)
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
                             .background(BaseGrayBackground),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -226,7 +228,7 @@ fun RunningResultScreen(
 @Preview
 @Composable
 fun RunningResultPreview() {
-    com.zoku.ui.RunItTheme {
+    RunItTheme {
         RunningResultScreen(runningViewModel = hiltViewModel<RunningViewModel>(),
             moveToHome = {})
     }

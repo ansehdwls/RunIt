@@ -1,4 +1,4 @@
-package com.zoku.home
+package com.zoku.home.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -13,6 +13,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.text.removeSurrounding
+import kotlin.text.split
+import kotlin.text.substringAfter
+import kotlin.text.substringBefore
+import kotlin.text.toDoubleOrNull
 
 @HiltViewModel
 class RecordModeViewModel @Inject constructor(

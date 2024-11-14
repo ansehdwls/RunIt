@@ -23,7 +23,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import kotlin.random.Random
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -31,9 +30,10 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.zoku.network.model.response.PaceRecord
 import com.zoku.network.model.response.RunRecordDetail
+import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.ZokuFamily
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 
@@ -102,7 +102,7 @@ fun RecordDetailInfo(
                             },
                             modifier = Modifier
                         ) {
-                            Text(text = "도전하기", fontFamily = com.zoku.ui.ZokuFamily)
+                            Text(text = "도전하기", fontFamily = ZokuFamily)
                         }
                     }
                 }
@@ -122,13 +122,13 @@ fun RecordDate(today: String, time: String) {
             text = today,
             textAlign = TextAlign.Start,
             modifier = Modifier.weight(1f),
-            fontFamily = com.zoku.ui.ZokuFamily
+            fontFamily = ZokuFamily
         )
         Text(
             text = time,
             textAlign = TextAlign.End,
             modifier = Modifier.weight(1f),
-            fontFamily = com.zoku.ui.ZokuFamily
+            fontFamily = ZokuFamily
         )
     }
 }
@@ -155,12 +155,12 @@ fun AverageData(modifier: Modifier = Modifier, data: String, type: String) {
             text = data,
             fontSize = 20.sp,
             textAlign = TextAlign.Center,
-            fontFamily = com.zoku.ui.ZokuFamily
+            fontFamily = ZokuFamily
         )
         Text(
             text = type,
             modifier = Modifier.padding(start = 5.dp),
-            fontFamily = com.zoku.ui.ZokuFamily
+            fontFamily = ZokuFamily
         )
     }
 }
@@ -173,7 +173,7 @@ fun RecordGraph(title: String, list: List<PaceRecord>, type: Int) {
             .fillMaxWidth()
             .padding(start = 10.dp)
     ) {
-        Text(text = title, fontFamily = com.zoku.ui.ZokuFamily)
+        Text(text = title, fontFamily = ZokuFamily)
         // 예시 데이터
         LineChartView(list, type)
     }
@@ -209,7 +209,7 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
             val entries = (0..list.size-1).map { Entry((it+1).toFloat(),
                 if(type == 1 ) list[it].bpmList.toFloat() else list[it].durationList?.toFloat() ?: 0.0f) }
             val lineDataSet = LineDataSet(entries, "Sample Data").apply {
-                color = com.zoku.ui.BaseYellow.toArgb()
+                color = BaseYellow.toArgb()
                 lineWidth = 2f
                 circleRadius = 4f
                 setDrawCircleHole(false)

@@ -21,18 +21,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,31 +41,32 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.formatter.LargeValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.zoku.home.component.DropDownMenu
+import com.zoku.home.viewmodel.InfoViewModel
 import com.zoku.network.model.response.RunToday
 import com.zoku.network.model.response.RunWeekList
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import com.zoku.ui.theme.BaseWhiteBackground
+import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.CustomTypo
+import com.zoku.ui.theme.PurpleGrey80
+import com.zoku.ui.theme.ZokuFamily
 import java.time.LocalDate
 import java.time.temporal.WeekFields
 import java.util.Locale
-import kotlin.random.Random
 
 @Composable
 fun InfoScreen(
@@ -93,8 +87,10 @@ fun InfoScreen(
     }
     val isFlipped = remember { mutableStateOf(false) }
 
-    val rotation by animateFloatAsState(targetValue = if (isFlipped.value) 360f else 0f,
-        animationSpec = tween(durationMillis = 500))
+    val rotation by animateFloatAsState(
+        targetValue = if (isFlipped.value) 360f else 0f,
+        animationSpec = tween(durationMillis = 500)
+    )
 
     val viewModel: InfoViewModel = hiltViewModel()
     val todayRecord by viewModel.todayRecord.collectAsState()
@@ -118,7 +114,7 @@ fun InfoScreen(
                 text = context.getString(R.string.today),
                 color = Color.White,
                 modifier = modifier.padding(bottom = 5.dp),
-                fontFamily = com.zoku.ui.ZokuFamily
+                fontFamily = ZokuFamily
             )
             TodayDashBoard(modifier.align(Alignment.CenterHorizontally), todayRecord)
 
@@ -130,8 +126,10 @@ fun InfoScreen(
                 "거리",
                 runningDiaryMenu
             ) { selectedOption ->
-                if (selectedOption == context.getString(R.string.running_diary) + " 거리") listType = 0
-                else if(selectedOption == context.getString(R.string.running_diary) + " 시간") listType = 1
+                if (selectedOption == context.getString(R.string.running_diary) + " 거리") listType =
+                    0
+                else if (selectedOption == context.getString(R.string.running_diary) + " 시간") listType =
+                    1
                 else listType = 2
             }
 
@@ -139,35 +137,40 @@ fun InfoScreen(
 
             Spacer(modifier = modifier.height(20.dp))
 
-            HomeTitle(modifier.padding(bottom = 5.dp), "러닝 기록", "전체", runningRecordMenu){
-                 selectedOption ->
-                    if (selectedOption == "러닝 기록 전체") isAllRecord = true
-                    else isAllRecord = false
+            HomeTitle(
+                modifier.padding(bottom = 5.dp),
+                "러닝 기록",
+                "전체",
+                runningRecordMenu
+            ) { selectedOption ->
+                if (selectedOption == "러닝 기록 전체") isAllRecord = true
+                else isAllRecord = false
                 isFlipped.value = !isFlipped.value
             }
-            if(isAllRecord){
+            if (isAllRecord) {
                 RunningRecord(
                     modifier
                         .clip(RoundedCornerShape(16.dp))
-                        .background(com.zoku.ui.BaseWhiteBackground)
+                        .background(BaseWhiteBackground)
                         .graphicsLayer {
                             rotationY = rotation
                             transformOrigin = TransformOrigin.Center
 
-                        }, totalAllRecord.totalDistance ,
-                    totalAllRecord.totalTime ,
-                    com.zoku.ui.BaseWhiteBackground)
-            }
-           else RunningRecord(
+                        }, totalAllRecord.totalDistance,
+                    totalAllRecord.totalTime,
+                    BaseWhiteBackground
+                )
+            } else RunningRecord(
                 modifier
                     .clip(RoundedCornerShape(16.dp))
-                    .background(com.zoku.ui.BaseYellow)
+                    .background(BaseYellow)
                     .graphicsLayer {
                         rotationY = rotation
                     },
                 totalWeekRecord.weekDistance,
-               totalWeekRecord.weekTime,
-                com.zoku.ui.BaseYellow)
+                totalWeekRecord.weekTime,
+                BaseYellow
+            )
 
             Spacer(modifier = modifier.height(30.dp))
 
@@ -184,19 +187,20 @@ fun InfoScreen(
                     .width(60.dp)
                     .weight(1f)
 
-                HomeFunctionButton(modifier = buttonModifier
-                    .background(Color.White), onClick = {
-                    moveToHistory()
-                }, icon = R.drawable.calendar_info_icon, "히스토리", iconModifier
+                HomeFunctionButton(
+                    modifier = buttonModifier
+                        .background(Color.White), onClick = {
+                        moveToHistory()
+                    }, icon = R.drawable.ic_calendar_info, "히스토리", iconModifier
                 )
 
                 Spacer(modifier = Modifier.width(20.dp))
 
                 HomeFunctionButton(
                     modifier = buttonModifier
-                        .background(com.zoku.ui.BaseYellow),
+                        .background(BaseYellow),
                     onClick = { moveToRunning() },
-                    icon = R.drawable.run_info_icon,
+                    icon = R.drawable.ic_run_info,
                     "",
                     iconModifier
                         .height(60.dp)
@@ -205,10 +209,11 @@ fun InfoScreen(
 
                 Spacer(modifier = Modifier.width(20.dp))
 
-                HomeFunctionButton(modifier = buttonModifier
-                    .background(Color.White), onClick = {
-                    moveToRecordMode()
-                }, icon = R.drawable.record_info_icon, "기록 갱신", iconModifier
+                HomeFunctionButton(
+                    modifier = buttonModifier
+                        .background(Color.White), onClick = {
+                        moveToRecordMode()
+                    }, icon = R.drawable.ic_ranking_info, "기록 갱신", iconModifier
                 )
             }
         }
@@ -227,7 +232,7 @@ fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
             .clip(RoundedCornerShape(16.dp))
             .fillMaxWidth()
             .height(80.dp)
-            .background(com.zoku.ui.BaseWhiteBackground)
+            .background(BaseWhiteBackground)
     ) {
         Row(
             Modifier
@@ -235,14 +240,15 @@ fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
                 .fillMaxWidth()
                 .fillMaxHeight(), // Row가 Box의 전체 높이를 채우도록 설정
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
 
             TodayRecord(
                 modifier = Modifier.weight(1f),
-                dir = Arrangement.End,
+                dir = Arrangement.Center,
                 iconModifier = iconModifier,
                 result = "${todayRecord.distance}", unit = "Km",
-                imgResource = R.drawable.run_home_icon
+                imgResource = R.drawable.ic_run_home
             )
 
             VerticalDivider(
@@ -258,7 +264,7 @@ fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
                 dir = Arrangement.Center,
                 iconModifier = iconModifier,
                 result = "${todayRecord.time}", unit = "hr",
-                imgResource = R.drawable.time_home_icon
+                imgResource = R.drawable.ic_time_home
             )
 
             VerticalDivider(
@@ -271,10 +277,10 @@ fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
 
             TodayRecord(
                 modifier = Modifier.weight(1f),
-                dir = Arrangement.Start,
+                dir = Arrangement.Center,
                 iconModifier = iconModifier,
                 result = "${todayRecord.pace}", unit = "pace",
-                imgResource = R.drawable.fire_home_icon
+                imgResource = R.drawable.ic_fire_home
             )
 
         }
@@ -308,13 +314,13 @@ fun TodayRecord(
                 text = result,
                 modifier = Modifier.align(Alignment.Start), // 왼쪽 정렬
                 fontSize = 16.sp,
-                fontFamily = com.zoku.ui.ZokuFamily
+                fontFamily = ZokuFamily
             )
             Text(
                 text = unit,
                 modifier = Modifier.align(Alignment.End), // 오른쪽 정렬
                 fontSize = 12.sp,
-                fontFamily = com.zoku.ui.ZokuFamily
+                fontFamily = ZokuFamily
             )
         }
     }
@@ -326,7 +332,7 @@ fun HomeTitle(
     title: String,
     firstSelect: String,
     menu: Array<String>,
-    selectType : (String) -> Unit
+    selectType: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf(firstSelect) }
@@ -342,7 +348,7 @@ fun HomeTitle(
             modifier = modifier
                 .weight(1f) // Text는 전체 너비 중 1의 비율로 공간을 차지
                 .align(Alignment.CenterVertically),
-            fontFamily = com.zoku.ui.ZokuFamily
+            fontFamily = ZokuFamily
         )
 
         Box(
@@ -357,7 +363,7 @@ fun HomeTitle(
                     color = Color.White,
                     modifier = Modifier
                         .clickable { expanded = !expanded },  // 클릭 시 드롭다운 열기/닫기
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
                 DropDownMenu(
                     expanded = expanded,
@@ -377,26 +383,28 @@ fun HomeTitle(
 }
 
 @Composable
-fun RunningDiary(modifier: Modifier = Modifier,
-                 totalWeekList : RunWeekList,
-                 listType : Int) {
+fun RunningDiary(
+    modifier: Modifier = Modifier,
+    totalWeekList: RunWeekList,
+    listType: Int
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .height(200.dp)
-            .background(com.zoku.ui.BaseWhiteBackground)
+            .background(BaseWhiteBackground)
     ) {
-        when(listType){
-            0 -> if(totalWeekList.disList.isNotEmpty()) BarChartScreen(totalWeekList.disList)
-            1 -> if(totalWeekList.timeList.isNotEmpty())BarChartScreen(totalWeekList.timeList)
-            2 ->if(totalWeekList.paceList.isNotEmpty()) BarChartScreen(totalWeekList.paceList)
+        when (listType) {
+            0 -> if (totalWeekList.disList.isNotEmpty()) BarChartScreen(totalWeekList.disList)
+            1 -> if (totalWeekList.timeList.isNotEmpty()) BarChartScreen(totalWeekList.timeList)
+            2 -> if (totalWeekList.paceList.isNotEmpty()) BarChartScreen(totalWeekList.paceList)
         }
     }
 }
 
 @Composable
-fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,color: Color) {
+fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double, color: Color) {
 
     Row(
         modifier = Modifier
@@ -415,8 +423,10 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                     .fillMaxHeight()
                     .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier
-                    .padding(top = 35.dp))
+                Spacer(
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                )
                 Text(
                     text = "$distance",
                     modifier = Modifier
@@ -425,7 +435,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     fontSize = 26.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
                 Text(
                     text = "거리/km", modifier = Modifier
@@ -433,7 +443,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                         .weight(1f)
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center, fontSize = 12.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
                 Spacer(modifier = Modifier.padding(top = 20.dp))
             }
@@ -464,7 +474,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     fontSize = 26.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
                 Text(
                     text = "시간/hr", modifier = Modifier
@@ -472,7 +482,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                         .weight(1f)
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center, fontSize = 12.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
                 Spacer(modifier = Modifier.padding(top = 20.dp))
             }
@@ -505,11 +515,15 @@ fun HomeFunctionButton(
             )
             if (info.isNotEmpty()) {
                 Text(
-                    text = info, modifier = Modifier
-                        .height(20.dp)
+                    text = info,
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(top = 10.dp)
                         .fillMaxWidth(),
-                    textAlign = TextAlign.Center, fontSize = 12.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    style = CustomTypo().mapleLight.copy(
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center
+                    )
                 )
             }
             Spacer(modifier = Modifier.padding(top = 20.dp))
@@ -519,7 +533,7 @@ fun HomeFunctionButton(
 
 
 @Composable
-fun BarChartScreen( list : List<Double>) {
+fun BarChartScreen(list: List<Double>) {
 
     val weekField = WeekFields.of(Locale.getDefault()).weekOfMonth()
 
@@ -528,7 +542,10 @@ fun BarChartScreen( list : List<Double>) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "${LocalDate.now().monthValue} 월 ${LocalDate.now().get(weekField)}주", fontFamily = com.zoku.ui.ZokuFamily)
+        Text(
+            text = "${LocalDate.now().monthValue} 월 ${LocalDate.now().get(weekField)}주",
+            fontFamily = ZokuFamily
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -569,7 +586,7 @@ fun BarChartScreen( list : List<Double>) {
                                 // 강조된 항목 색상 변경
                                 (data.getDataSetByIndex(
                                     h?.dataSetIndex ?: 0
-                                ) as BarDataSet).highLightColor = com.zoku.ui.BaseYellow.toArgb()
+                                ) as BarDataSet).highLightColor = BaseYellow.toArgb()
                                 highlightValue(h)  // 선택한 항목 강조
                             }
                         }
@@ -590,17 +607,17 @@ fun BarChartScreen( list : List<Double>) {
     }
 }
 
-fun getBarData1(list : List<Double>): BarData {
+fun getBarData1(list: List<Double>): BarData {
     val values = ArrayList<BarEntry>()
     val days = arrayOf("월", "화", "수", "목", "금", "토", "일")
 
     for (i in days.indices) {
-        values.add(BarEntry(i.toFloat(),  if (list[i] == 0.0) 0.1f else list[i].toFloat()))
+        values.add(BarEntry(i.toFloat(), if (list[i] == 0.0) 0.1f else list[i].toFloat()))
     }
 
     // 데이터셋 설정
     val set1 = BarDataSet(values, null).apply {
-        color = com.zoku.ui.PurpleGrey80.toArgb()
+        color = PurpleGrey80.toArgb()
     }
 
     return BarData(set1).apply {
@@ -618,4 +635,10 @@ class DayAxisFormatter : ValueFormatter() {
         val index = value.toInt() % days.size
         return days[index]
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewTodayDashBoard() {
+    TodayDashBoard(todayRecord = RunToday(2.0, 2.0, 2.0))
 }

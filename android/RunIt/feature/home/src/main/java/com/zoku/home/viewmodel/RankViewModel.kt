@@ -1,10 +1,9 @@
-package com.zoku.home
+package com.zoku.home.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoku.data.NetworkResult
-import com.zoku.data.model.LoginData
 import com.zoku.data.repository.AttendanceRepository
 import com.zoku.data.repository.DataStoreRepository
 import com.zoku.data.repository.ExpRepository
@@ -12,14 +11,11 @@ import com.zoku.data.repository.GroupRepository
 import com.zoku.network.model.response.AttendanceDay
 import com.zoku.network.model.response.ExpDataHistory
 import com.zoku.network.model.response.GroupList
-import com.zoku.network.model.response.GroupMember
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.exp
 
 @HiltViewModel
 class RankViewModel @Inject constructor(
@@ -36,7 +32,7 @@ class RankViewModel @Inject constructor(
     private val _allExpHistoryDataList = MutableStateFlow<List<ExpDataHistory>>(emptyList())
     val allExpHistoryDataList : StateFlow<List<ExpDataHistory>> = _allExpHistoryDataList
 
-    private val _groupInfoList = MutableStateFlow<GroupList>(GroupList(emptyList(),1,1))
+    private val _groupInfoList = MutableStateFlow<GroupList>(GroupList(emptyList(), 1, 1))
     val groupInfo : StateFlow<GroupList> = _groupInfoList
 
     private val _attendanceWeekInfo = MutableStateFlow<List<AttendanceDay>>(emptyList())

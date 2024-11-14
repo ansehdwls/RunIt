@@ -1,13 +1,10 @@
 package com.zoku.home
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,16 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -32,16 +25,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
@@ -50,30 +42,35 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.zoku.home.viewmodel.RecordModeViewModel
+import com.zoku.home.viewmodel.RunHistoryViewModel
 import com.zoku.network.model.response.RunRecordDetail
-import com.zoku.ui.BaseGrayBackground
-import com.zoku.ui.BaseYellow
-import com.zoku.ui.CustomTypo
-import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.RecordDetailInfo
-import com.zoku.ui.componenet.RecordGraph
 import com.zoku.ui.componenet.RecordMap
+import com.zoku.ui.theme.BaseGray
+import com.zoku.ui.theme.BaseGrayBackground
+import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.CustomTypo
+import com.zoku.ui.theme.RoundButtonGray
+import com.zoku.ui.theme.ZokuFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecordModeDetail(modifier: Modifier = Modifier,
-                     recordId: Int,
-                     moveToPractice : () -> Unit,
-                     moveToRunning : (recordDto : RunRecordDetail) -> Unit) {
-    val viewModel : RunHistoryViewModel = hiltViewModel()
+fun RecordModeDetail(
+    modifier: Modifier = Modifier,
+    recordId: Int,
+    moveToPractice: () -> Unit,
+    moveToRunning: (recordDto: RunRecordDetail) -> Unit
+) {
+    val viewModel: RunHistoryViewModel = hiltViewModel()
     val runRecord by viewModel.historyRunRecord.collectAsState()
-    val recordViewModel : RecordModeViewModel = hiltViewModel()
+    val recordViewModel: RecordModeViewModel = hiltViewModel()
     val routeList by recordViewModel.routeList.collectAsState()
-    with(viewModel){
+    with(viewModel) {
         getRunRecordDetail(recordId)
 
     }
-    with(recordViewModel){
+    with(recordViewModel) {
         getRouteList(recordId)
         Log.d("확인", "RecordModeDetail: $routeList")
     }
@@ -82,7 +79,7 @@ fun RecordModeDetail(modifier: Modifier = Modifier,
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(com.zoku.ui.BaseGray)
+            .background(BaseGray)
     ) {
         // title
         RecordDetailTitle(
@@ -90,7 +87,7 @@ fun RecordModeDetail(modifier: Modifier = Modifier,
                 .fillMaxWidth()
                 .padding(vertical = 20.dp)
         ) {
-           showDialog = true
+            showDialog = true
         }
 
         // 지도 경로 표시
@@ -104,7 +101,8 @@ fun RecordModeDetail(modifier: Modifier = Modifier,
         Box(
             modifier.weight(7f)
         ) {
-            RecordDetailInfo(runRecord = runRecord,
+            RecordDetailInfo(
+                runRecord = runRecord,
                 moveToRunning = moveToRunning
             )
         }
@@ -197,7 +195,7 @@ fun RecordModeDetail(modifier: Modifier = Modifier,
 }
 
 @Composable
-fun RecordDetailTitle(modifier: Modifier = Modifier, updateRecord : () -> Unit) {
+fun RecordDetailTitle(modifier: Modifier = Modifier, updateRecord: () -> Unit) {
     var isEditing by remember { mutableStateOf(false) }
     var title by remember { mutableStateOf("사용자 코스") }
 
@@ -236,7 +234,7 @@ fun RecordDetailTitle(modifier: Modifier = Modifier, updateRecord : () -> Unit) 
                                         text = "코스명을 입력하세요",
                                         color = Color.Gray,
                                         style = TextStyle(fontSize = 20.sp),
-                                        fontFamily = com.zoku.ui.ZokuFamily
+                                        fontFamily = ZokuFamily
                                     )
                                 }
                                 innerTextField()  // 실제 입력 필드
@@ -250,14 +248,13 @@ fun RecordDetailTitle(modifier: Modifier = Modifier, updateRecord : () -> Unit) 
                             contentDescription = null
                         )
                     }
-                }
-                else {
+                } else {
                     Text(
                         text = title,
                         color = Color.White,
                         fontSize = 32.sp,
                         textAlign = TextAlign.Center,
-                        fontFamily = com.zoku.ui.ZokuFamily
+                        fontFamily = ZokuFamily
                     )
                     IconButton(
                         onClick = { isEditing = true }
