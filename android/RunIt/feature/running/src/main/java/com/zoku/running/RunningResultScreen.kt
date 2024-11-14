@@ -78,7 +78,7 @@ fun RunningResultScreen(
             KakaoMapView(
                 totalLocationList = totalRunningList,
                 onCaptureComplete = { file ->
-                    if (runningViewModel.uiState.value.distance.toInt() < 100) {
+                    if (runningViewModel.totalPaceList.isNotEmpty()) {
                         Toast.makeText(context, "최소 100m는 달려야 경험치가 저장됩니다!", Toast.LENGTH_LONG)
                             .show()
                     } else {

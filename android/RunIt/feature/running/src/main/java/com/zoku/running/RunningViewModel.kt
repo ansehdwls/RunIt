@@ -60,11 +60,11 @@ class RunningViewModel @Inject constructor(
     private var last100Value: Int = 0
 
     private val bpmList = mutableListOf<Int>()
-    private val paceList = mutableListOf<Pace>()
 
     fun getPracticeRecord(runDto: RunRecordDetail) {
         _practiceRecord.value = runDto
     }
+    val totalPaceList = mutableListOf<Pace>()
 
 
     // TTS
@@ -82,7 +82,6 @@ class RunningViewModel @Inject constructor(
     val uiState: StateFlow<RunningUIState> = _uiState
     private val _totalRunningList = MutableStateFlow<List<LocationData>>(emptyList())
     val totalRunningList: StateFlow<List<LocationData>> = _totalRunningList
-    val totalPaceList = mutableListOf<Pace>()
 
     // GPS
     private val fusedLocationClient: FusedLocationProviderClient =
@@ -112,7 +111,7 @@ class RunningViewModel @Inject constructor(
                     )
 
                     // 100m 이동시
-                    val current100Value = ((uiState.value.distance % 100) / 100).toInt()
+                    val current100Value = ((uiState.value.distance % 1000) / 100).toInt()
                     if (current100Value != last100Value) {
                         val timeDifference =
                             ((System.currentTimeMillis() - last100Time) / 1000).toInt()
@@ -122,14 +121,14 @@ class RunningViewModel @Inject constructor(
                         if (bpmList.size >= timeDifference) {
                             val recentBpmList = bpmList.takeLast(timeDifference)
                             updateUIState(newBPM = recentBpmList.average().toInt())
-                            paceList.add(
+                            totalPaceList.add(
                                 Pace(
                                     bpm = recentBpmList.average().toInt(),
                                     pace = timeDifference * 10
                                 )
                             )
                         } else {
-                            paceList.add(Pace(bpm = 0, pace = timeDifference * 10))
+                            totalPaceList.add(Pace(bpm = 0, pace = timeDifference * 10))
                         }
 
                         last100Value = current100Value
@@ -149,7 +148,6 @@ class RunningViewModel @Inject constructor(
     init {
         val filter = IntentFilter("com.zoku.running.LOCATION_UPDATE")
         application.registerReceiver(locationReceiver, filter, Context.RECEIVER_EXPORTED)
-        startTime = System.currentTimeMillis()
     }
 
 
@@ -194,6 +192,8 @@ class RunningViewModel @Inject constructor(
     }
 
     fun startTimer() {
+        startTime = System.currentTimeMillis()
+        last100Time = startTime
         getInitialLocation()
         timerJob = viewModelScope.launch {
             while (true) {
@@ -250,7 +250,7 @@ class RunningViewModel @Inject constructor(
                         endTime = getIso8601TimeString(System.currentTimeMillis()),
                         bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt()
                     ),
-                    paceList = paceList
+                    paceList = totalPaceList
                 )
             )
 
