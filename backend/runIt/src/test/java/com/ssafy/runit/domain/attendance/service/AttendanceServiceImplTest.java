@@ -16,10 +16,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -69,4 +69,24 @@ public class AttendanceServiceImplTest {
         verify(attendanceRepository, never()).save(any(Attendance.class));
         verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
     }
+
+    @Test
+    @DisplayName("출석 기록이 있는 경우 오늘 출석 여부를 'true'로 반환한다")
+    void getTodayAttended_Success() {
+        UserDetails userDetails = new CustomUserDetails(user);
+        LocalDate today = LocalDate.now();
+        Attendance attendance = Attendance.builder()
+                .id(1L)
+                .user(user)
+                .createdAt(today)
+                .build();
+        when(userRepository.findByUserNumber(eq(TEST_NUMBER))).thenReturn(Optional.of(user));
+        when(attendanceRepository.findByUserAndCreatedAt(user, today)).thenReturn(Optional.of(attendance));
+        Boolean result = attendanceService.getTodayAttended(userDetails, today);
+        assertTrue(result, "출석 기록이 존재하므로 true를 반환해야 합니다.");
+        verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
+        verify(attendanceRepository, times(1)).findByUserAndCreatedAt(user, today);
+        verify(attendanceRepository, never()).save(any(Attendance.class));
+    }
+
 }
