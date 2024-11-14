@@ -30,6 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.util.formatTime
+import com.zoku.running.util.meterToKilo
+import com.zoku.running.util.timeToPace
+import com.zoku.ui.BaseGrayBackground
+import com.zoku.ui.BaseYellow
+import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.theme.BaseGrayBackground
 import com.zoku.ui.theme.BaseYellow
 import com.zoku.ui.theme.RoundButtonGray
@@ -90,7 +95,11 @@ fun RunningPauseScreen(
                 verticalAlignment = Alignment.Bottom
             ) {
                 InfoColumn()
-                ValueColumn(uiState = uiState)
+                ValueColumn(
+                    uiState = uiState,
+                    averagePace = if (runningViewModel.totalPaceList.isEmpty()) 0
+                    else runningViewModel.totalPaceList.map { it.pace }.average().toInt()
+                )
             }
 
             SpreadButtonBox(
@@ -176,7 +185,8 @@ fun InfoColumn(modifier: Modifier = Modifier) {
 @Composable
 fun ValueColumn(
     modifier: Modifier = Modifier,
-    uiState: RunningUIState
+    uiState: RunningUIState,
+    averagePace: Int = 0,
 ) {
     Column(
         modifier = modifier
@@ -185,7 +195,7 @@ fun ValueColumn(
         verticalArrangement = Arrangement.SpaceAround
     ) {
         RobotoText(
-            text = "-'--'",
+            text = timeToPace(averagePace),
             color = BaseYellow,
             fontSize = 40.sp
         )
@@ -197,7 +207,7 @@ fun ValueColumn(
         )
 
         RobotoText(
-            text = "${uiState.distance}",
+            text = meterToKilo(uiState.distance.toInt()),
             color = BaseYellow,
             fontSize = 40.sp
         )

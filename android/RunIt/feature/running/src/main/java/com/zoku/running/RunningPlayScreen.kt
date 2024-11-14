@@ -36,6 +36,11 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.zoku.running.service.LocationService
 import com.zoku.running.util.formatTime
+import com.zoku.running.util.meterToKilo
+import com.zoku.running.util.timeToPace
+import com.zoku.ui.BaseGrayBackground
+import com.zoku.ui.BaseYellow
+import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.model.RunningConnectionState
@@ -84,6 +89,7 @@ fun RunningPlayScreen(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             val bpmTimePair = if (connectionState is RunningConnectionState.ConnectionSuccess) {
+                connectionState.data.bpm?.let { runningViewModel.addBpm(it) }
                 Pair(connectionState.data.bpm, connectionState.data.time)
             } else {
                 Pair(uiState.bpm, uiState.time)
@@ -91,7 +97,7 @@ fun RunningPlayScreen(
 
 
             TopInfoWithText(
-                topName = "-'--'",
+                topName = "${timeToPace(uiState.face)}",
                 bottomName = "페이스"
             )
             TopInfoWithText(
@@ -112,7 +118,7 @@ fun RunningPlayScreen(
             verticalAlignment = Alignment.Bottom
         ) {
             RobotoText(
-                text = "${uiState.distance}",
+                text = meterToKilo(uiState.distance.toInt()),
                 fontSize = 80.sp,
                 color = BaseYellow,
                 style = "Bold"

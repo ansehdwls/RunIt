@@ -79,18 +79,23 @@ fun RunningResultScreen(
             KakaoMapView(
                 totalLocationList = totalRunningList,
                 onCaptureComplete = { file ->
-                    runningViewModel.postRunningRecord(
-                        captureFile = file,
-                        onSuccess = { exp, isAttend ->
-                            Toast.makeText(context, "경험치가 ${exp} 증가했습니다!", Toast.LENGTH_SHORT)
-                                .show()
-                            isMapCompleted = true
-                        },
-                        onFail = { message ->
-                            Toast.makeText(context, "API 실패 ${message}", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    )
+                    if (runningViewModel.totalPaceList.isNotEmpty()) {
+                        Toast.makeText(context, "최소 100m는 달려야 경험치가 저장됩니다!", Toast.LENGTH_LONG)
+                            .show()
+                    } else {
+                        runningViewModel.postRunningRecord(
+                            captureFile = file,
+                            onSuccess = { exp, isAttend ->
+                                Toast.makeText(context, "경험치가 ${exp} 증가했습니다!", Toast.LENGTH_SHORT)
+                                    .show()
+                                isMapCompleted = true
+                            },
+                            onFail = { message ->
+                                Toast.makeText(context, "API 실패 ${message}", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        )
+                    }
                 },
                 initialLocation = runningViewModel.getInitialLocationData(),
                 isResult = true

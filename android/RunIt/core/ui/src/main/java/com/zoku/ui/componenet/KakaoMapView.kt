@@ -26,6 +26,8 @@ import com.kakao.vectormap.route.RouteLineStyle
 import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
 import com.zoku.ui.model.LocationData
+import com.zoku.ui.routeColor
+import kotlinx.coroutines.CoroutineDispatcher
 import com.zoku.ui.theme.routeColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -117,7 +119,9 @@ fun KakaoMapView(
                                                 CoroutineScope(Dispatchers.IO).launch {
                                                     Log.d("확인", "맵저장")
                                                     saveBitmapAsFile(file, bitmap)
-                                                    onCaptureComplete(file)
+                                                    CoroutineScope(Dispatchers.Main).launch {
+                                                        onCaptureComplete(file)
+                                                    }
                                                 }
                                             } else {
                                                 Log.d("확인", "KakaoMapView PixelCopy 실패 ")
