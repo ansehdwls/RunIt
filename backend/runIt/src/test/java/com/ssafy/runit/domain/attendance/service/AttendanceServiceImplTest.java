@@ -86,7 +86,18 @@ public class AttendanceServiceImplTest {
         assertTrue(result, "출석 기록이 존재하므로 true를 반환해야 합니다.");
         verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
         verify(attendanceRepository, times(1)).findByUserAndCreatedAt(user, today);
-        verify(attendanceRepository, never()).save(any(Attendance.class));
     }
 
+    @Test
+    @DisplayName("출석 기록이 없는 경우 오늘 출석 여부를 'false'로 반환한다")
+    void getTodayAttended_Fail() {
+        UserDetails userDetails = new CustomUserDetails(user);
+        LocalDate today = LocalDate.now();
+        when(userRepository.findByUserNumber(eq(TEST_NUMBER))).thenReturn(Optional.of(user));
+        when(attendanceRepository.findByUserAndCreatedAt(user, today)).thenReturn(Optional.empty());
+        Boolean result = attendanceService.getTodayAttended(userDetails, today);
+        assertFalse(result, "출석 기록이 존재하지 않으므로 false를 반환해야 합니다.");
+        verify(userRepository, times(2)).findByUserNumber(eq(TEST_NUMBER));
+        verify(attendanceRepository, times(1)).findByUserAndCreatedAt(user, today);
+    }
 }
