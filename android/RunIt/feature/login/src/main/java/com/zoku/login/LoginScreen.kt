@@ -32,7 +32,7 @@ import com.zoku.ui.Black
 
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel) {
-    
+
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState.isLogin) {
