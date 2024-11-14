@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -125,6 +126,34 @@ public class AttendanceServiceImplTest {
         assertEquals(7, response.size(), "주간 출석 기록은 7일이어야 합니다.");
         for (DayAttendanceResponse dayResponse : response) {
             assertTrue(dayResponse.attended(), "모든 날에 출석했으므로, attended 값은 `true`이어야 합니다.");
+        }
+        verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
+        verify(attendanceRepository, times(1)).findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday);
+    }
+
+    @Test
+    @DisplayName("주간 출석 조회 성공 - 일부 날 출석")
+    void getWeekAttendance_SomeAttendance_Success() {
+        when(userRepository.findByUserNumber(eq(TEST_NUMBER))).thenReturn(Optional.of(user));
+        List<Attendance> attendances = Stream.of(DayOfWeek.values())
+                .filter(day -> day.getValue() % 2 == 0)
+                .map(day -> Attendance.builder()
+                        .id(day.getValue())
+                        .user(user)
+                        .createdAt(nearMonday.plusDays(day.getValue() - 1))
+                        .build())
+                .toList();
+
+        when(attendanceRepository.findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday)).thenReturn(attendances);
+        List<DayAttendanceResponse> response = attendanceService.getWeekAttendance(TEST_NUMBER);
+        assertEquals(7, response.size(), "주간 출석 기록은 7일이어야 합니다.");
+        for (DayAttendanceResponse dayResponse : response) {
+            long daysBetween = ChronoUnit.DAYS.between(nearMonday, dayResponse.date());
+            if (daysBetween % 2 != 0) {
+                assertTrue(dayResponse.attended(), "짝수 날에는 `attended`가 `true`이어야 합니다.");
+            } else {
+                assertFalse(dayResponse.attended(), "홀수 날에는 `attended`가 `false`이어야 합니다.");
+            }
         }
         verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
         verify(attendanceRepository, times(1)).findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday);
