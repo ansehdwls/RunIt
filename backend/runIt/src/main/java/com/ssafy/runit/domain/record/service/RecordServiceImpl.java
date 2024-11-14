@@ -7,6 +7,7 @@ import com.ssafy.runit.domain.record.dto.response.*;
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.record.repository.RecordRepository;
 import com.ssafy.runit.domain.split.dto.response.SplitResponse;
+import com.ssafy.runit.domain.split.entity.Split;
 import com.ssafy.runit.domain.split.repository.SplitRepository;
 import com.ssafy.runit.domain.track.repository.TrackRepository;
 import com.ssafy.runit.domain.user.entity.User;
@@ -121,7 +122,8 @@ public class RecordServiceImpl implements RecordService {
 
         double dis = 0;
         long time = 0L;
-        Integer pace = 0;
+        int pace = 0;
+
 
         for (Record item : recordList) {
             dis += item.getDistance();
@@ -133,7 +135,9 @@ public class RecordServiceImpl implements RecordService {
 
             time += (hours * 60) + minutes;
 
-            pace += item.getBpm();
+            pace += item.getSplitList().stream()
+                    .mapToInt(Split::getPace) // 각 요소에서 특정 속성 값을 추출하여 더함
+                    .sum() / item.getSplitList().size();
         }
 
         if (recordList.isEmpty()) {
