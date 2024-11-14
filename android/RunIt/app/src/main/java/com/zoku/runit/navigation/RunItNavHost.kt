@@ -44,7 +44,8 @@ fun RunItMainNavHost(
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
     startDestination: String = ScreenDestinations.login.route,
-    viewModel: ClientDataViewModel
+    viewModel: ClientDataViewModel,
+    sendHeartBeat : () -> Unit
 ) {
     var isUserLoggedIn by remember { mutableStateOf(false) }
     val loginViewModel: LoginViewModel = hiltViewModel()
@@ -70,7 +71,8 @@ fun RunItMainNavHost(
                 )
             },
             moveToExpHistory = { navController.navigateToExpHistory() },
-            phoneWatchConnection = phoneWatchData
+            phoneWatchConnection = phoneWatchData,
+            sendHeartBeat = sendHeartBeat
         )
         this.runHistory()
         this.recordMode(

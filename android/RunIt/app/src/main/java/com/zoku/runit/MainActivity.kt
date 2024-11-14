@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity() {
                         ::sendWearable,
                         ::sendWearable,
                         viewModel = clientDataViewModel,
+                        sendHeartBeat = ::sendHeartbeatToWatch
                     )
                 }
             }
@@ -84,7 +85,7 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun sendHeartbeatToWatch(type : Boolean) { // true -> 시작, false -> 종료
+    private fun sendHeartbeatToWatch(type: Boolean = true) { // true -> 시작, false -> 종료
         val data = Data.Builder()
             .putBoolean("type", type)
             .build()

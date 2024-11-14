@@ -37,8 +37,9 @@ class MainViewModel @Inject constructor(
     private fun listenForHeartbeats() {
         viewModelScope.launch {
             messageClient.addListener { messageEvent ->
-                Timber.tag("MainViewModel").d("확인 처리 $messageEvent")
-                if (messageEvent.path == "/start-activity") {
+                Timber.tag("MainViewModel").d("확인 처리 ${messageEvent.path}")
+                if (messageEvent.path == "/heartbeat-true") {
+                    Timber.tag("MainViewModel").d("active")
                     _isPhoneActive.update {
                         true
                     }

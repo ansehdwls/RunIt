@@ -19,6 +19,7 @@ fun MainScreen(
     onResumeWearableActivityClick: (String) -> Unit,
     onStopWearableActivityClick: (String) -> Unit,
     viewModel : ClientDataViewModel,
+    sendHeartBeat : () -> Unit
 ) {
     val navController = rememberNavController()
     RunItMainNavHost(
@@ -30,5 +31,6 @@ fun MainScreen(
         onResumeWearableActivityClick = onResumeWearableActivityClick,
         onStopWearableActivityClick = onStopWearableActivityClick,
         viewModel = viewModel,
+        sendHeartBeat = sendHeartBeat
     )
 }

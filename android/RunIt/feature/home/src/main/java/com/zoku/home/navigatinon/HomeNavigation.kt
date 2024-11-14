@@ -31,9 +31,11 @@ fun NavGraphBuilder.homeScreen(
     moveToRecordMode: () -> Unit,
     moveToRunning: () -> Unit,
     moveToExpHistory: () -> Unit,
-    phoneWatchConnection: PhoneWatchConnection
+    phoneWatchConnection: PhoneWatchConnection,
+    sendHeartBeat : () -> Unit
 ) {
     composable(route = ScreenDestinations.home.route) {
+        sendHeartBeat()
         HomeScreen(
             moveToHistory = moveToHistory,
             moveToRecordMode = moveToRecordMode,
