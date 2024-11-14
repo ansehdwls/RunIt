@@ -22,10 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.zoku.home.viewmodel.RankViewModel
-import com.zoku.ui.CustomTypo
+import com.zoku.ui.theme.BaseDarkBackground
+import com.zoku.ui.theme.CustomTypo
+import com.zoku.ui.theme.ZokuFamily
 
 @Composable
-fun ExpHistory(modifier: Modifier = Modifier){
+fun ExpHistory(modifier: Modifier = Modifier) {
     val rankViewModel: RankViewModel = hiltViewModel()
 
     rankViewModel.getAllExpHistory()
@@ -36,24 +38,30 @@ fun ExpHistory(modifier: Modifier = Modifier){
         modifier.fillMaxSize()
     ) {
         item {
-            Text(text = "획득경험치", modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp),
+            Text(
+                text = "획득경험치", modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
                 fontSize = 30.sp,
-                fontFamily = com.zoku.ui.ZokuFamily,
-                textAlign = TextAlign.Center)
+                fontFamily = ZokuFamily,
+                textAlign = TextAlign.Center
+            )
 
-            if(list.isEmpty()){
-                Text(text = "획득한 경험치가 없습니다", modifier.fillMaxSize()
-                    .padding(top = 50.dp),
+            if (list.isEmpty()) {
+                Text(
+                    text = "획득한 경험치가 없습니다",
+                    modifier
+                        .fillMaxSize()
+                        .padding(top = 50.dp),
                     style = CustomTypo().jalnan.copy(
                         textAlign = TextAlign.Center,
                         color = Color.White
-                    ))
+                    )
+                )
             }
         }
 
-        items(list.size) {  index ->
+        items(list.size) { index ->
             val item = list[index]
 
             Box(
@@ -62,7 +70,7 @@ fun ExpHistory(modifier: Modifier = Modifier){
                     .padding(horizontal = 15.dp, vertical = 12.dp) // Box 외부에 padding 적용
                     .height(100.dp)
                     .clip(RoundedCornerShape(18.dp))
-                    .background(com.zoku.ui.BaseDarkBackground)
+                    .background(BaseDarkBackground)
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize(), // Row가 Box의 크기에 맞도록 설정
@@ -74,7 +82,7 @@ fun ExpHistory(modifier: Modifier = Modifier){
                             .padding(start = 8.dp, top = 8.dp)
                             .align(Alignment.Top),
                         textAlign = TextAlign.Start,
-                        fontFamily = com.zoku.ui.ZokuFamily
+                        fontFamily = ZokuFamily
                     )
                     Text(
                         text = item.activity,
@@ -83,13 +91,13 @@ fun ExpHistory(modifier: Modifier = Modifier){
                             .padding(start = 8.dp),
                         textAlign = TextAlign.Start,
                         fontSize = 30.sp,
-                        fontFamily = com.zoku.ui.ZokuFamily
+                        fontFamily = ZokuFamily
                     )
                     Text(
                         text = "+${item.changed}xp",
                         modifier = Modifier.padding(end = 8.dp),
                         textAlign = TextAlign.End,
-                        fontFamily = com.zoku.ui.ZokuFamily
+                        fontFamily = ZokuFamily
                     )
                 }
             }

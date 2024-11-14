@@ -36,7 +36,7 @@ import com.zoku.runit.model.ExerciseScreenState
 import com.zoku.runit.model.toExerciseResult
 import com.zoku.runit.util.formatDistanceKm
 import com.zoku.runit.viewmodel.RunViewModel
-import com.zoku.ui.BaseYellow
+import com.zoku.ui.theme.BaseYellow
 import com.zoku.ui.CustomTypo
 import com.zoku.ui.model.PhoneWatchConnection
 import kotlinx.coroutines.delay

@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
-import com.zoku.ui.BaseYellow
+import com.zoku.ui.theme.BaseYellow
 
 @Composable
 fun StatusText(buildString : AnnotatedString, modifier: Modifier = Modifier, type: String) {

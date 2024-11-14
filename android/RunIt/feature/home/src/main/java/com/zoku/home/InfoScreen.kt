@@ -57,6 +57,10 @@ import com.zoku.home.component.DropDownMenu
 import com.zoku.home.viewmodel.InfoViewModel
 import com.zoku.network.model.response.RunToday
 import com.zoku.network.model.response.RunWeekList
+import com.zoku.ui.theme.BaseWhiteBackground
+import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.PurpleGrey80
+import com.zoku.ui.theme.ZokuFamily
 import java.time.LocalDate
 import java.time.temporal.WeekFields
 import java.util.Locale
@@ -105,7 +109,7 @@ fun InfoScreen(
                 text = context.getString(R.string.today),
                 color = Color.White,
                 modifier = modifier.padding(bottom = 5.dp),
-                fontFamily = com.zoku.ui.ZokuFamily
+                fontFamily = ZokuFamily
             )
             TodayDashBoard(modifier.align(Alignment.CenterHorizontally), todayRecord)
 
@@ -136,25 +140,25 @@ fun InfoScreen(
                 RunningRecord(
                     modifier
                         .clip(RoundedCornerShape(16.dp))
-                        .background(com.zoku.ui.BaseWhiteBackground)
+                        .background(BaseWhiteBackground)
                         .graphicsLayer {
                             rotationY = rotation
                             transformOrigin = TransformOrigin.Center
 
                         }, totalAllRecord.totalDistance ,
                     totalAllRecord.totalTime ,
-                    com.zoku.ui.BaseWhiteBackground)
+                    BaseWhiteBackground)
             }
            else RunningRecord(
                 modifier
                     .clip(RoundedCornerShape(16.dp))
-                    .background(com.zoku.ui.BaseYellow)
+                    .background(BaseYellow)
                     .graphicsLayer {
                         rotationY = rotation
                     },
                 totalWeekRecord.weekDistance,
                totalWeekRecord.weekTime,
-                com.zoku.ui.BaseYellow)
+               BaseYellow)
 
             Spacer(modifier = modifier.height(30.dp))
 
@@ -181,7 +185,7 @@ fun InfoScreen(
 
                 HomeFunctionButton(
                     modifier = buttonModifier
-                        .background(com.zoku.ui.BaseYellow),
+                        .background(BaseYellow),
                     onClick = { moveToRunning() },
                     icon = R.drawable.run_info_icon,
                     "",
@@ -214,7 +218,7 @@ fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
             .clip(RoundedCornerShape(16.dp))
             .fillMaxWidth()
             .height(80.dp)
-            .background(com.zoku.ui.BaseWhiteBackground)
+            .background(BaseWhiteBackground)
     ) {
         Row(
             Modifier
@@ -295,13 +299,13 @@ fun TodayRecord(
                 text = result,
                 modifier = Modifier.align(Alignment.Start), // 왼쪽 정렬
                 fontSize = 16.sp,
-                fontFamily = com.zoku.ui.ZokuFamily
+                fontFamily = ZokuFamily
             )
             Text(
                 text = unit,
                 modifier = Modifier.align(Alignment.End), // 오른쪽 정렬
                 fontSize = 12.sp,
-                fontFamily = com.zoku.ui.ZokuFamily
+                fontFamily = ZokuFamily
             )
         }
     }
@@ -329,7 +333,7 @@ fun HomeTitle(
             modifier = modifier
                 .weight(1f) // Text는 전체 너비 중 1의 비율로 공간을 차지
                 .align(Alignment.CenterVertically),
-            fontFamily = com.zoku.ui.ZokuFamily
+            fontFamily = ZokuFamily
         )
 
         Box(
@@ -344,7 +348,7 @@ fun HomeTitle(
                     color = Color.White,
                     modifier = Modifier
                         .clickable { expanded = !expanded },  // 클릭 시 드롭다운 열기/닫기
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
                 DropDownMenu(
                     expanded = expanded,
@@ -372,7 +376,7 @@ fun RunningDiary(modifier: Modifier = Modifier,
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .height(200.dp)
-            .background(com.zoku.ui.BaseWhiteBackground)
+            .background(BaseWhiteBackground)
     ) {
         when(listType){
             0 -> if(totalWeekList.disList.isNotEmpty()) BarChartScreen(totalWeekList.disList)
@@ -412,7 +416,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     fontSize = 26.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
                 Text(
                     text = "거리/km", modifier = Modifier
@@ -420,7 +424,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                         .weight(1f)
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center, fontSize = 12.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
                 Spacer(modifier = Modifier.padding(top = 20.dp))
             }
@@ -451,7 +455,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     fontSize = 26.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
                 Text(
                     text = "시간/hr", modifier = Modifier
@@ -459,7 +463,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                         .weight(1f)
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center, fontSize = 12.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
                 Spacer(modifier = Modifier.padding(top = 20.dp))
             }
@@ -496,7 +500,7 @@ fun HomeFunctionButton(
                         .height(20.dp)
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center, fontSize = 12.sp,
-                    fontFamily = com.zoku.ui.ZokuFamily
+                    fontFamily = ZokuFamily
                 )
             }
             Spacer(modifier = Modifier.padding(top = 20.dp))
@@ -515,7 +519,7 @@ fun BarChartScreen( list : List<Double>) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "${LocalDate.now().monthValue} 월 ${LocalDate.now().get(weekField)}주", fontFamily = com.zoku.ui.ZokuFamily)
+        Text(text = "${LocalDate.now().monthValue} 월 ${LocalDate.now().get(weekField)}주", fontFamily = ZokuFamily)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -556,7 +560,7 @@ fun BarChartScreen( list : List<Double>) {
                                 // 강조된 항목 색상 변경
                                 (data.getDataSetByIndex(
                                     h?.dataSetIndex ?: 0
-                                ) as BarDataSet).highLightColor = com.zoku.ui.BaseYellow.toArgb()
+                                ) as BarDataSet).highLightColor = BaseYellow.toArgb()
                                 highlightValue(h)  // 선택한 항목 강조
                             }
                         }
@@ -587,7 +591,7 @@ fun getBarData1(list : List<Double>): BarData {
 
     // 데이터셋 설정
     val set1 = BarDataSet(values, null).apply {
-        color = com.zoku.ui.PurpleGrey80.toArgb()
+        color = PurpleGrey80.toArgb()
     }
 
     return BarData(set1).apply {

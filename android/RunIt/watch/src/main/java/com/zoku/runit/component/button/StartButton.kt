@@ -14,8 +14,8 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
-import com.zoku.ui.BaseYellow
-import com.zoku.ui.Black
+import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.Black
 
 
 @Composable

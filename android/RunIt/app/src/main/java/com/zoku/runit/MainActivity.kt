@@ -25,6 +25,7 @@ import com.google.android.gms.wearable.Wearable
 import com.zoku.runit.manager.SendHeartbeatWorker
 import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.model.PhoneWatchConnection
+import com.zoku.ui.theme.RunItTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -53,19 +54,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         enableEdgeToEdge()
-//        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-//            if (task.isSuccessful) {
-//                val token = task.result
-//                Log.d("FCM Token", token)
-//            } else {
-//                Log.w("FCM Token", "Fetching FCM registration token failed", task.exception)
-//            }
-//        }
-
         setContent {
-            com.zoku.ui.RunItTheme {
+            RunItTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MainScreen(
                         Modifier.padding(innerPadding),
@@ -153,7 +144,7 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    com.zoku.ui.RunItTheme {
+    RunItTheme {
 //        MainScreen()
     }
 }

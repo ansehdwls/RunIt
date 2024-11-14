@@ -24,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,17 +34,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.zoku.home.viewmodel.RankViewModel
 import com.zoku.network.model.response.AttendanceDay
 import com.zoku.network.model.response.GroupMember
-import com.zoku.ui.BaseDarkBackground
-import com.zoku.ui.CustomTypo
+import com.zoku.ui.theme.BaseDarkBackground
+import com.zoku.ui.theme.CustomTypo
+import com.zoku.ui.theme.League
+import com.zoku.ui.theme.RankProfile
+import com.zoku.ui.theme.ZokuFamily
+import com.zoku.ui.theme.leagueList
 import java.time.LocalDate
 import kotlin.math.ceil
 import kotlin.math.floor
-import com.zoku.ui.League
-import com.zoku.ui.leagueList
 
 @Composable
 fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
@@ -66,7 +68,7 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
     }
 
     with(rankViewModel) {
-        when(listType ){
+        when (listType) {
             0 -> getGroupList("experience")
             1 -> getGroupList("pace")
             2 -> getGroupList("distance")
@@ -77,16 +79,30 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
             .padding(horizontal = 10.dp)
             .fillMaxSize()
     ) {
-        RankingInfo(moveToExpHistory, weekExp, attendanceList,myName,groupList.rank, leagueList[groupList.leagueRank -1])
+        RankingInfo(
+            moveToExpHistory,
+            weekExp,
+            attendanceList,
+            myName,
+            groupList.rank,
+            leagueList[groupList.leagueRank - 1]
+        )
 
-        HomeTitle(modifier.padding(top = 10.dp, bottom = 5.dp), "그룹 내 순위", "종합 순위", rankMenu){
-                selectedOption ->
+        HomeTitle(
+            modifier.padding(top = 10.dp, bottom = 5.dp),
+            "그룹 내 순위",
+            "종합 순위",
+            rankMenu
+        ) { selectedOption ->
             if (selectedOption == "그룹 내 순위" + " 종합 순위") listType = 0
-            else if(selectedOption == "그룹 내 순위" + " 페이스 순위") listType = 1
+            else if (selectedOption == "그룹 내 순위" + " 페이스 순위") listType = 1
             else listType = 2
         }
 
-        if (groupList.userInfos.isNotEmpty()) UserRanking(groupList.userInfos,(groupList.leagueRank -1))
+        if (groupList.userInfos.isNotEmpty()) UserRanking(
+            groupList.userInfos,
+            (groupList.leagueRank - 1)
+        )
     }
 }
 
@@ -95,15 +111,15 @@ fun RankingInfo(
     moveToExpHistory: () -> Unit,
     weekExp: Int,
     attendanceList: List<AttendanceDay>,
-    myName : String,
-    myRank:Int,
+    myName: String,
+    myRank: Int,
     league: League
 ) {
     val baseModifier = Modifier.fillMaxWidth()
     Box(
         modifier = baseModifier
             .clip(RoundedCornerShape(15.dp))
-            .background(com.zoku.ui.BaseDarkBackground)
+            .background(BaseDarkBackground)
     )
     {
         Column(
@@ -111,8 +127,8 @@ fun RankingInfo(
         ) {
             InfoIconButton("리그 정보", onClick = {})
 
-            UserProfile(myName,league)
-            if (attendanceList.isNotEmpty()){
+            UserProfile(myName, league)
+            if (attendanceList.isNotEmpty()) {
                 DailyCheckView(
                     baseModifier
                         .padding(top = 10.dp),
@@ -120,7 +136,7 @@ fun RankingInfo(
                 )
             }
 
-            ExpView(baseModifier, moveToExpHistory, weekExp,myRank)
+            ExpView(baseModifier, moveToExpHistory, weekExp, myRank)
 
             InfoIconButton("경험치 획득 방법", onClick = {})
         }
@@ -128,7 +144,7 @@ fun RankingInfo(
 }
 
 @Composable
-fun UserProfile(myName : String,league: League) {
+fun UserProfile(myName: String, league: League) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -176,7 +192,7 @@ fun UserProfile(myName : String,league: League) {
                 textAlign = TextAlign.End,
                 fontSize = 14.sp,
                 color = Color(league.color),
-                fontFamily = com.zoku.ui.ZokuFamily
+                fontFamily = ZokuFamily
             )
         )
         Image(
@@ -202,7 +218,7 @@ fun InfoIconButton(title: String, onClick: () -> Unit) {
             text = title,
             modifier = Modifier.weight(1f),
             fontSize = 10.sp,
-            fontFamily = com.zoku.ui.ZokuFamily,
+            fontFamily = ZokuFamily,
             color = Color.White,
             textAlign = TextAlign.End
         )
@@ -232,13 +248,13 @@ fun DailyCheckView(
         for (i in 0..today) {
             DailyCheck(
                 Modifier.weight(1f),
-                day = attendanceList[i].day.substring(0,1),
+                day = attendanceList[i].day.substring(0, 1),
                 type = if (attendanceList[i].attended) 1 else 2
             )
         }
-        for (i in today+1 until 7) {
+        for (i in today + 1 until 7) {
             DailyCheck(
-                Modifier.weight(1f), day = attendanceList[i].day.substring(0,1), type = 0
+                Modifier.weight(1f), day = attendanceList[i].day.substring(0, 1), type = 0
             )
         }
     }
@@ -272,7 +288,7 @@ fun ExpView(
     modifier: Modifier = Modifier,
     moveToExpHistory: () -> Unit,
     weekExp: Int,
-    myRank : Int
+    myRank: Int
 ) {
     Row(
         modifier = modifier
@@ -318,12 +334,13 @@ fun ExpView(
 }
 
 @Composable
-fun UserRanking(groupList: List<GroupMember>,
-                rank : Int
-                ) {
+fun UserRanking(
+    groupList: List<GroupMember>,
+    rank: Int
+) {
 
     val groupSize = groupList.size
-    val promoteCount = ceil(groupSize* 0.3).toInt()
+    val promoteCount = ceil(groupSize * 0.3).toInt()
     val demoteCount = floor(groupSize * 0.3).toInt()
 
 
@@ -511,13 +528,13 @@ fun UserRankingProfile(
                 )
             }
             val iconRes =
-                if(item.rankDiff > 0) R.drawable.up_rank_icon
-                else if(item.rankDiff == 0) R.drawable.stop_icon
+                if (item.rankDiff > 0) R.drawable.up_rank_icon
+                else if (item.rankDiff == 0) R.drawable.stop_icon
                 else R.drawable.down_rank_icon
 
             val rankColor =
-                if(item.rankDiff > 0) Color.Green
-                else if(item.rankDiff == 0) com.zoku.ui.RankProfile
+                if (item.rankDiff > 0) Color.Green
+                else if (item.rankDiff == 0) RankProfile
                 else Color.Red
 
             Box(
@@ -530,7 +547,7 @@ fun UserRankingProfile(
                     contentDescription = null,
                     modifier = baseModifier
                         .size(50.dp) // 명확한 크기 설정
-                        .padding(top = 15.dp, bottom = 15.dp,start =20.dp, end = 8.dp)
+                        .padding(top = 15.dp, bottom = 15.dp, start = 20.dp, end = 8.dp)
                 )
             }
             Box(

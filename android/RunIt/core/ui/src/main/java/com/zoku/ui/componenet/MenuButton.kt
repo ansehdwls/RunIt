@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.zoku.ui.theme.ZokuFamily
 
 
 @Composable
@@ -26,6 +27,6 @@ fun MenuButton(modifier : Modifier = Modifier, name : String, backgroundColor : 
         ),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Text(text = name,fontFamily = com.zoku.ui.ZokuFamily)
+        Text(text = name,fontFamily = ZokuFamily)
     }
 }

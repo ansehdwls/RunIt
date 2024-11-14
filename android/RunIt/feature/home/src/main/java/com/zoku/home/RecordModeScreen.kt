@@ -29,7 +29,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.zoku.home.viewmodel.RecordModeViewModel
 import com.zoku.network.model.response.RunPractice
-import com.zoku.ui.CustomTypo
+import com.zoku.ui.theme.BaseGray
+import com.zoku.ui.theme.CustomTypo
+import com.zoku.ui.theme.ZokuFamily
 
 @Composable
 fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :(Int)->Unit){
@@ -43,7 +45,7 @@ fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :(Int)->Unit){
       modifier = modifier
           .fillMaxWidth()
           .fillMaxHeight()
-          .background(com.zoku.ui.BaseGray)
+          .background(BaseGray)
           .systemBarsPadding()
   ) {
       // 타이틀
@@ -54,7 +56,7 @@ fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :(Int)->Unit){
                 .fillMaxWidth()
                 .padding(vertical = 20.dp),
             textAlign = TextAlign.Center,
-            fontFamily = com.zoku.ui.ZokuFamily
+            fontFamily = ZokuFamily
         )
 
       // 기록 리스트
@@ -94,7 +96,7 @@ fun RecordList(modifier: Modifier, moveToDetail :(Int)->Unit,
             Text(text = item.startTime.substringBefore("T"),
                 color = Color.White,
                 modifier = Modifier.fillMaxWidth(),
-                fontFamily = com.zoku.ui.ZokuFamily)
+                fontFamily = ZokuFamily)
 
             RecordDataView(modifier = Modifier
                 .fillMaxWidth()
@@ -134,7 +136,7 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : (Int) -> Unit,
                     .fillMaxWidth()
                     .padding(top = 10.dp, end = 25.dp),
                 textAlign = TextAlign.End,
-                fontFamily = com.zoku.ui.ZokuFamily
+                fontFamily = ZokuFamily
             )
 
             Text(
@@ -143,7 +145,7 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : (Int) -> Unit,
                     .fillMaxWidth()
                     .padding(end = 10.dp),
                 textAlign = TextAlign.End,
-                fontFamily = com.zoku.ui.ZokuFamily
+                fontFamily = ZokuFamily
             )
 
 
@@ -178,14 +180,14 @@ fun RecordTextView(modifier: Modifier,
             Text(text = item.name,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.Center),
-                fontFamily = com.zoku.ui.ZokuFamily)
+                fontFamily = ZokuFamily)
         }
         Box(modifier = Modifier.weight(3f)){
             Column {
                 Text(text = "거리 : ${item.distance}km",
-                    fontFamily = com.zoku.ui.ZokuFamily)
+                    fontFamily = ZokuFamily)
                 Text(text = "시간 : ${item.bpm}분",
-                    fontFamily = com.zoku.ui.ZokuFamily)
+                    fontFamily = ZokuFamily)
             }
         }
     }
