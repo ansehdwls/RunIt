@@ -174,4 +174,16 @@ public class AttendanceServiceImplTest {
         verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
         verify(attendanceRepository, times(1)).findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday);
     }
+
+    @Test
+    @DisplayName("주간 출석 조회 실패 - 사용자 존재하지 않음")
+    void getWeekAttendance_UserNotFound_Failure() {
+        when(userRepository.findByUserNumber(TEST_NUMBER)).thenReturn(Optional.empty());
+        CustomException exception = assertThrows(CustomException.class,
+                () -> attendanceService.getWeekAttendance(TEST_NUMBER));
+        assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR, exception.getErrorCodeType());
+        assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR.message(), exception.getErrorCodeType().message());
+        verify(userRepository, times(1)).findByUserNumber(TEST_NUMBER);
+        verify(attendanceRepository, never()).findByUserAndCreatedAtAfterOrderByCreatedAtAsc(any(User.class), any(LocalDate.class));
+    }
 }
