@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -84,8 +85,10 @@ fun InfoScreen(
     }
     val isFlipped = remember { mutableStateOf(false) }
 
-    val rotation by animateFloatAsState(targetValue = if (isFlipped.value) 360f else 0f,
-        animationSpec = tween(durationMillis = 500))
+    val rotation by animateFloatAsState(
+        targetValue = if (isFlipped.value) 360f else 0f,
+        animationSpec = tween(durationMillis = 500)
+    )
 
     val viewModel: InfoViewModel = hiltViewModel()
     val todayRecord by viewModel.todayRecord.collectAsState()
@@ -121,8 +124,10 @@ fun InfoScreen(
                 "거리",
                 runningDiaryMenu
             ) { selectedOption ->
-                if (selectedOption == context.getString(R.string.running_diary) + " 거리") listType = 0
-                else if(selectedOption == context.getString(R.string.running_diary) + " 시간") listType = 1
+                if (selectedOption == context.getString(R.string.running_diary) + " 거리") listType =
+                    0
+                else if (selectedOption == context.getString(R.string.running_diary) + " 시간") listType =
+                    1
                 else listType = 2
             }
 
@@ -130,13 +135,17 @@ fun InfoScreen(
 
             Spacer(modifier = modifier.height(20.dp))
 
-            HomeTitle(modifier.padding(bottom = 5.dp), "러닝 기록", "전체", runningRecordMenu){
-                 selectedOption ->
-                    if (selectedOption == "러닝 기록 전체") isAllRecord = true
-                    else isAllRecord = false
+            HomeTitle(
+                modifier.padding(bottom = 5.dp),
+                "러닝 기록",
+                "전체",
+                runningRecordMenu
+            ) { selectedOption ->
+                if (selectedOption == "러닝 기록 전체") isAllRecord = true
+                else isAllRecord = false
                 isFlipped.value = !isFlipped.value
             }
-            if(isAllRecord){
+            if (isAllRecord) {
                 RunningRecord(
                     modifier
                         .clip(RoundedCornerShape(16.dp))
@@ -145,11 +154,11 @@ fun InfoScreen(
                             rotationY = rotation
                             transformOrigin = TransformOrigin.Center
 
-                        }, totalAllRecord.totalDistance ,
-                    totalAllRecord.totalTime ,
-                    BaseWhiteBackground)
-            }
-           else RunningRecord(
+                        }, totalAllRecord.totalDistance,
+                    totalAllRecord.totalTime,
+                    BaseWhiteBackground
+                )
+            } else RunningRecord(
                 modifier
                     .clip(RoundedCornerShape(16.dp))
                     .background(BaseYellow)
@@ -157,8 +166,9 @@ fun InfoScreen(
                         rotationY = rotation
                     },
                 totalWeekRecord.weekDistance,
-               totalWeekRecord.weekTime,
-               BaseYellow)
+                totalWeekRecord.weekTime,
+                BaseYellow
+            )
 
             Spacer(modifier = modifier.height(30.dp))
 
@@ -175,10 +185,11 @@ fun InfoScreen(
                     .width(60.dp)
                     .weight(1f)
 
-                HomeFunctionButton(modifier = buttonModifier
-                    .background(Color.White), onClick = {
-                    moveToHistory()
-                }, icon = R.drawable.ic_calendar_info, "히스토리", iconModifier
+                HomeFunctionButton(
+                    modifier = buttonModifier
+                        .background(Color.White), onClick = {
+                        moveToHistory()
+                    }, icon = R.drawable.ic_calendar_info, "히스토리", iconModifier
                 )
 
                 Spacer(modifier = Modifier.width(20.dp))
@@ -196,10 +207,11 @@ fun InfoScreen(
 
                 Spacer(modifier = Modifier.width(20.dp))
 
-                HomeFunctionButton(modifier = buttonModifier
-                    .background(Color.White), onClick = {
-                    moveToRecordMode()
-                }, icon = R.drawable.ic_ranking_info, "기록 갱신", iconModifier
+                HomeFunctionButton(
+                    modifier = buttonModifier
+                        .background(Color.White), onClick = {
+                        moveToRecordMode()
+                    }, icon = R.drawable.ic_ranking_info, "기록 갱신", iconModifier
                 )
             }
         }
@@ -226,14 +238,15 @@ fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
                 .fillMaxWidth()
                 .fillMaxHeight(), // Row가 Box의 전체 높이를 채우도록 설정
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
 
             TodayRecord(
                 modifier = Modifier.weight(1f),
-                dir = Arrangement.End,
+                dir = Arrangement.Center,
                 iconModifier = iconModifier,
                 result = "${todayRecord.distance}", unit = "Km",
-                imgResource = R.drawable.run_home_icon
+                imgResource = R.drawable.ic_run_home
             )
 
             VerticalDivider(
@@ -249,7 +262,7 @@ fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
                 dir = Arrangement.Center,
                 iconModifier = iconModifier,
                 result = "${todayRecord.time}", unit = "hr",
-                imgResource = R.drawable.time_home_icon
+                imgResource = R.drawable.ic_time_home
             )
 
             VerticalDivider(
@@ -262,10 +275,10 @@ fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
 
             TodayRecord(
                 modifier = Modifier.weight(1f),
-                dir = Arrangement.Start,
+                dir = Arrangement.Center,
                 iconModifier = iconModifier,
                 result = "${todayRecord.pace}", unit = "pace",
-                imgResource = R.drawable.fire_home_icon
+                imgResource = R.drawable.ic_fire_home
             )
 
         }
@@ -317,7 +330,7 @@ fun HomeTitle(
     title: String,
     firstSelect: String,
     menu: Array<String>,
-    selectType : (String) -> Unit
+    selectType: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf(firstSelect) }
@@ -368,9 +381,11 @@ fun HomeTitle(
 }
 
 @Composable
-fun RunningDiary(modifier: Modifier = Modifier,
-                 totalWeekList : RunWeekList,
-                 listType : Int) {
+fun RunningDiary(
+    modifier: Modifier = Modifier,
+    totalWeekList: RunWeekList,
+    listType: Int
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -378,16 +393,16 @@ fun RunningDiary(modifier: Modifier = Modifier,
             .height(200.dp)
             .background(BaseWhiteBackground)
     ) {
-        when(listType){
-            0 -> if(totalWeekList.disList.isNotEmpty()) BarChartScreen(totalWeekList.disList)
-            1 -> if(totalWeekList.timeList.isNotEmpty())BarChartScreen(totalWeekList.timeList)
-            2 ->if(totalWeekList.paceList.isNotEmpty()) BarChartScreen(totalWeekList.paceList)
+        when (listType) {
+            0 -> if (totalWeekList.disList.isNotEmpty()) BarChartScreen(totalWeekList.disList)
+            1 -> if (totalWeekList.timeList.isNotEmpty()) BarChartScreen(totalWeekList.timeList)
+            2 -> if (totalWeekList.paceList.isNotEmpty()) BarChartScreen(totalWeekList.paceList)
         }
     }
 }
 
 @Composable
-fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,color: Color) {
+fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double, color: Color) {
 
     Row(
         modifier = Modifier
@@ -406,8 +421,10 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                     .fillMaxHeight()
                     .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier
-                    .padding(top = 35.dp))
+                Spacer(
+                    modifier = Modifier
+                        .padding(top = 35.dp)
+                )
                 Text(
                     text = "$distance",
                     modifier = Modifier
@@ -510,7 +527,7 @@ fun HomeFunctionButton(
 
 
 @Composable
-fun BarChartScreen( list : List<Double>) {
+fun BarChartScreen(list: List<Double>) {
 
     val weekField = WeekFields.of(Locale.getDefault()).weekOfMonth()
 
@@ -519,7 +536,10 @@ fun BarChartScreen( list : List<Double>) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "${LocalDate.now().monthValue} 월 ${LocalDate.now().get(weekField)}주", fontFamily = ZokuFamily)
+        Text(
+            text = "${LocalDate.now().monthValue} 월 ${LocalDate.now().get(weekField)}주",
+            fontFamily = ZokuFamily
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -581,12 +601,12 @@ fun BarChartScreen( list : List<Double>) {
     }
 }
 
-fun getBarData1(list : List<Double>): BarData {
+fun getBarData1(list: List<Double>): BarData {
     val values = ArrayList<BarEntry>()
     val days = arrayOf("월", "화", "수", "목", "금", "토", "일")
 
     for (i in days.indices) {
-        values.add(BarEntry(i.toFloat(),  if (list[i] == 0.0) 0.1f else list[i].toFloat()))
+        values.add(BarEntry(i.toFloat(), if (list[i] == 0.0) 0.1f else list[i].toFloat()))
     }
 
     // 데이터셋 설정
@@ -609,4 +629,10 @@ class DayAxisFormatter : ValueFormatter() {
         val index = value.toInt() % days.size
         return days[index]
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewTodayDashBoard(){
+    TodayDashBoard(todayRecord = RunToday(2.0, 2.0, 2.0))
 }
