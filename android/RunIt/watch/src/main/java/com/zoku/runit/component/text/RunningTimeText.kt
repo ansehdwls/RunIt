@@ -10,7 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
-import com.zoku.ui.CustomTypo
+import com.zoku.ui.theme.CustomTypo
 import com.zoku.runit.util.formatElapsedTime
 import java.time.Duration
 

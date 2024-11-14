@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.OutlinedButton
-import com.zoku.ui.BaseYellow
+import com.zoku.ui.theme.BaseYellow
 
 @Composable
 fun RunningButton(

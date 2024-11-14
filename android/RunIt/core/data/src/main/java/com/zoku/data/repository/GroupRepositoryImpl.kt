@@ -9,9 +9,9 @@ import javax.inject.Inject
 class GroupRepositoryImpl @Inject constructor(
     private val groupApi: GroupApi
 ) : GroupRepository, ApiHandler{
-    override suspend fun getGroupInfo(groupId : Int): NetworkResult<GroupResponse> {
+    override suspend fun getGroupInfo(groupId : Int, rankType : String ): NetworkResult<GroupResponse> {
         return handleApi {
-            groupApi.getUserGroup(groupId)
+            groupApi.getUserGroup(groupId, rankType)
         }
     }
 }

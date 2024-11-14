@@ -25,13 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.zoku.ui.BaseWhiteBackground
-import com.zoku.ui.BaseYellow
-import com.zoku.ui.base.ClientDataViewModel
 import com.zoku.ui.componenet.MenuButton
 import com.zoku.ui.model.PhoneWatchConnection
-import timber.log.Timber
+import com.zoku.ui.theme.BaseGray
+import com.zoku.ui.theme.BaseWhiteBackground
+import com.zoku.ui.theme.BaseYellow
 
 
 @Composable
@@ -41,23 +39,22 @@ fun HomeScreen(
     moveToRecordMode: () -> Unit,
     moveToRunning: () -> Unit,
     moveToExpHistory: () -> Unit,
-    phoneWatchConnection : PhoneWatchConnection,
+    phoneWatchConnection: PhoneWatchConnection,
 
-) {
-
-    Timber.tag("HomeScreen").d("실행 데이터 $phoneWatchConnection")
+    ) {
+    var isInfo by remember { mutableStateOf(true) }
+    var isHistory by remember {
+        mutableStateOf(false)
+    }
 
     if (phoneWatchConnection == PhoneWatchConnection.SEND_BPM) {
         moveToRunning()
     }
     BackOnPressed()
-    var isInfo by remember { mutableStateOf(true) }
-    var isHistory by remember {
-        mutableStateOf(false)
-    }
+
     val baseModifier = Modifier
         .fillMaxSize()
-        .background(com.zoku.ui.BaseGray)
+        .background(BaseGray)
     Column(
         modifier = if (isInfo) baseModifier
             .verticalScroll(rememberScrollState())
@@ -71,7 +68,7 @@ fun HomeScreen(
                 .height(36.dp)
                 .align(Alignment.CenterHorizontally)
                 .background(
-                    color = com.zoku.ui.BaseGray,
+                    color = BaseGray,
                     shape = RoundedCornerShape(8.dp)
                 ),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -103,7 +100,7 @@ fun HomeScreen(
         if (isInfo) {
             InfoScreen(
                 modifier = modifier
-                    .background(com.zoku.ui.BaseGray)
+                    .background(BaseGray)
                     .padding(horizontal = 10.dp),
                 moveToHistory = moveToHistory,
                 moveToRecordMode = moveToRecordMode,

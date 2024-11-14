@@ -35,6 +35,9 @@ import com.zoku.running.util.timeToPace
 import com.zoku.ui.BaseGrayBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
+import com.zoku.ui.theme.BaseGrayBackground
+import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.RoundButtonGray
 import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton

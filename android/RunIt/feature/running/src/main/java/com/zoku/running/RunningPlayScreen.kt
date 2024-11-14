@@ -44,6 +44,9 @@ import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
 import com.zoku.ui.model.RunningConnectionState
+import com.zoku.ui.theme.BaseGrayBackground
+import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.RoundButtonGray
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
@@ -228,7 +231,7 @@ fun stopLocationService(context: Context) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    com.zoku.ui.RunItTheme {
+    com.zoku.ui.theme.RunItTheme {
         RunningPlayScreen(
             onPauseClick = { Log.d("Zz", "Zzz") },
             runningViewModel = hiltViewModel<RunningViewModel>(),

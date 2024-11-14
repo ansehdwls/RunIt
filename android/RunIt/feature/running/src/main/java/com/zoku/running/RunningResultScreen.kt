@@ -42,12 +42,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.zoku.network.model.response.PaceRecord
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.running.util.getIso8601TimeString
-import com.zoku.ui.BaseGrayBackground
-import com.zoku.ui.BaseYellow
-import com.zoku.ui.CustomTypo
-import com.zoku.ui.RoundButtonGray
 import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RecordDetailInfo
+import com.zoku.ui.theme.BaseGrayBackground
+import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.CustomTypo
+import com.zoku.ui.theme.RoundButtonGray
+import com.zoku.ui.theme.RunItTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -232,7 +233,7 @@ fun RunningResultScreen(
 @Preview
 @Composable
 fun RunningResultPreview() {
-    com.zoku.ui.RunItTheme {
+    RunItTheme {
         RunningResultScreen(runningViewModel = hiltViewModel<RunningViewModel>(),
             moveToHome = {})
     }

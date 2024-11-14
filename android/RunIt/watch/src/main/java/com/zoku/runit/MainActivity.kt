@@ -4,12 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -18,10 +21,14 @@ import com.google.android.gms.wearable.Wearable
 import com.google.android.horologist.compose.layout.AppScaffold
 import com.zoku.runit.ui.MainScreen
 import com.zoku.runit.util.PermissionHelper
+import com.zoku.runit.util.appExit
+import com.zoku.runit.viewmodel.MainViewModel
 import com.zoku.ui.model.PhoneWatchConnection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -35,6 +42,8 @@ class MainActivity : ComponentActivity() {
     private val messageClient by lazy { Wearable.getMessageClient(this) }
     private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
 
+    private val mainViewModel : MainViewModel by viewModels()
+
     private lateinit var navController: NavHostController
 
     var InitphoneWatchConnection = PhoneWatchConnection.EMPTY
@@ -43,12 +52,14 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         PermissionHelper(this, PERMISSIONS, ::finish).launchPermission()
+        observeMainExit()
         setContent {
             navController = rememberNavController()
             AppScaffold {
                 MainScreen(
                     modifier = Modifier.fillMaxSize(),
                     navController = navController,
+                    mainViewModel = mainViewModel,
                     sendBpm = ::sendBpm
                 )
             }
@@ -61,6 +72,15 @@ class MainActivity : ComponentActivity() {
         isActivityActive = true
     }
 
+    private fun observeMainExit(){
+        mainViewModel.appExit.flowWithLifecycle(lifecycle)
+            .onEach {
+                if(it){
+                    this.appExit(lifecycleScope)
+                }
+            }
+            .launchIn(lifecycleScope)
+    }
 
     private fun sendBpm(bpm: Int? = 0, time: Int? = 0, phoneWatchConnection: PhoneWatchConnection) {
         lifecycleScope.launch {
@@ -106,7 +126,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         private const val PHONE_CAPABILITY = "phone"
-        private const val SEND_BPM = "/send-bpm"
+        private const val SEND_BPM = "/heart-false"
         var isActivityActive = false
     }
 

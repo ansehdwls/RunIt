@@ -10,6 +10,8 @@ import com.zoku.data.repository.GroupRepository
 import com.zoku.data.repository.GroupRepositoryImpl
 import com.zoku.data.repository.LoginRepository
 import com.zoku.data.repository.LoginRepositoryImpl
+import com.zoku.data.repository.RouteRepository
+import com.zoku.data.repository.RouteRepositoryImpl
 import com.zoku.data.repository.RunningRepository
 import com.zoku.data.repository.RunningRepositoryImpl
 import com.zoku.data.repository.TestRepository
@@ -73,4 +75,10 @@ interface RepositoryModule {
     fun bindAttendanceRepository(
         attendanceRepositoryImpl: AttendanceRepositoryImpl
     ) : AttendanceRepository
+
+    @Binds
+    @Singleton
+    fun bindRouteRepository(
+        routeRepositoryImpl: RouteRepositoryImpl
+    ) : RouteRepository
 }

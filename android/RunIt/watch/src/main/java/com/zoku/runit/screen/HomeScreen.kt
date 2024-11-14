@@ -25,13 +25,13 @@ import com.zoku.runit.component.button.StartButton
 import com.zoku.runit.viewmodel.HomeViewModel
 import com.zoku.runit.viewmodel.MainViewModel
 import com.zoku.runit.viewmodel.RunViewModel
-import com.zoku.ui.CustomTypo
+import com.zoku.ui.theme.CustomTypo
 import timber.log.Timber
 
 @Composable
 fun HomeScreen(
     modifier: Modifier,
-    mainViewModel: MainViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel,
     onStartClick: () -> Unit
 ) {
     val homeViewModel = hiltViewModel<HomeViewModel>()

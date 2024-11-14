@@ -9,6 +9,7 @@ interface GroupApi {
 
     @GET("api/group/users")
     suspend fun getUserGroup(
-        @Query("groupId") groupId: Int
+        @Query("groupId") groupId: Int,
+        @Query("rankType") rankType: String
     ) : Response<GroupResponse>
 }

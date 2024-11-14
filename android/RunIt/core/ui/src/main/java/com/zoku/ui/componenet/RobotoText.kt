@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import com.zoku.ui.CustomTypo
+import com.zoku.ui.theme.CustomTypo
 
 @Composable
 fun RobotoText(
