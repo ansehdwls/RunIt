@@ -31,7 +31,7 @@ import timber.log.Timber
 @Composable
 fun HomeScreen(
     modifier: Modifier,
-    mainViewModel: MainViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel,
     onStartClick: () -> Unit
 ) {
     val homeViewModel = hiltViewModel<HomeViewModel>()

@@ -11,6 +11,7 @@ import com.zoku.runit.model.ExerciseResult
 import com.zoku.runit.screen.HomeScreen
 import com.zoku.runit.screen.RunningPauseScreen
 import com.zoku.runit.screen.RunningScreen
+import com.zoku.runit.viewmodel.MainViewModel
 import com.zoku.ui.model.PhoneWatchConnection
 import timber.log.Timber
 
@@ -19,6 +20,7 @@ fun WatchNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     startDestination: String = WatchScreenDestination.home.route,
+    mainViewModel : MainViewModel,
     sendBpm: (Int, Int, PhoneWatchConnection) -> Unit
 ) {
     NavHost(
@@ -27,7 +29,7 @@ fun WatchNavHost(
         modifier = modifier,
     ) {
         composable(route = WatchScreenDestination.home.route) {
-            HomeScreen(modifier) {
+            HomeScreen(modifier, mainViewModel) {
                 sendBpm(0, 0, PhoneWatchConnection.START_RUNNING)
                 navController.navigate(WatchScreenDestination.running.route)
             }
