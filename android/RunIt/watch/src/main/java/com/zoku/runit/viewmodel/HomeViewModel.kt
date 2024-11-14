@@ -18,9 +18,6 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val _checkPhoneActive = MutableStateFlow(false)
-    val checkPhoneActive: StateFlow<Boolean> get() = _checkPhoneActive
-
 
     fun prepareRunning() {
         healthServicesRepository.prepareExercise()
@@ -31,21 +28,5 @@ class HomeViewModel @Inject constructor(
         healthServicesRepository.startExercise()
     }
 
-    fun checkPhoneActive() {
-        viewModelScope.launch {
-            runCatching { healthServicesRepository.checkPhoneActive() }
-                .onSuccess {
-                    Timber.tag("HomeViewModel").d("checkPhoneActive $it")
-                    _checkPhoneActive.value = it
-                }
-                .onFailure {
-                    Timber.tag("HomeViewModel").d("checkPhoneActive fail $it")
-                    _checkPhoneActive.value = false
-                }
-        }
-    }
 
-    init {
-        checkPhoneActive()
-    }
 }

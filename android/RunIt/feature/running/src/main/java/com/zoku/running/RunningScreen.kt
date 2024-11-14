@@ -41,32 +41,34 @@ fun RunningScreen(
 
     Timber.tag("RunningScreen").d("상태값 확인 isPlay $isPlay isFirstPlay $isFirstPlay isResult $isResult $phoneWatchData")
     runningViewModel.getPracticeRecord(runRecordDetail)
-    when (phoneWatchData) {
-        PhoneWatchConnection.PAUSE_RUNNING -> {
-            isPlay = false
-        }
+    if(currentCheck is RunningConnectionState.ConnectionSuccess){
+        when (phoneWatchData) {
+            PhoneWatchConnection.PAUSE_RUNNING -> {
+                isPlay = false
+            }
 
-        PhoneWatchConnection.RESUME_RUNNING -> {
-            isPlay = true
-            isFirstPlay = false
-        }
+            PhoneWatchConnection.RESUME_RUNNING -> {
+                isPlay = true
+                isFirstPlay = false
+            }
 
-        PhoneWatchConnection.STOP_RUNNING -> {
-            isResult = true
-        }
+            PhoneWatchConnection.STOP_RUNNING -> {
+                isResult = true
+            }
 
-        PhoneWatchConnection.SEND_BPM -> {
-            isPlay = true
-            isFirstPlay = true
-        }
-        PhoneWatchConnection.START_RUNNING -> {
-            isPlay = true
-            isFirstPlay = true
-        }
+            PhoneWatchConnection.SEND_BPM -> {
+                isPlay = true
+                isFirstPlay = true
+            }
+            PhoneWatchConnection.START_RUNNING -> {
+                isPlay = true
+                isFirstPlay = true
+            }
 
-        else -> {}
-
+            else -> {}
+        }
     }
+
     HandleRunningState(
         runningViewModel = runningViewModel,
         moveToHome = moveToHome,
@@ -74,12 +76,12 @@ fun RunningScreen(
         onResumeWearableActivityClick = onResumeWearableActivityClick,
         onStopWearableActivityClick = onStopWearableActivityClick,
         currentCheck = currentCheck,
+        onIsPlayChange = { isPlay = it },
+        onIsFirstPlayChange = { isFirstPlay = it },
+        onIsResultChange = { isResult = it },
         isPlay = isPlay,
         isFirstPlay = isFirstPlay,
         isResult = isResult,
-        onIsPlayChange = { isPlay = it },
-        onIsFirstPlayChange = { isFirstPlay = it },
-        onIsResultChange = { isResult = it }
     )
 }
 
