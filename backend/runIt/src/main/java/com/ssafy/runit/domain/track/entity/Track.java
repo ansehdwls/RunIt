@@ -23,7 +23,7 @@ public class Track {
     private Record record;
 
     private String trackImageUrl;
-
+    @Lob
     private String path;
 
 }
