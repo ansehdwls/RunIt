@@ -36,6 +36,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.zoku.running.service.LocationService
 import com.zoku.running.util.formatTime
+import com.zoku.running.util.timeToFace
 import com.zoku.ui.BaseGrayBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
@@ -84,6 +85,7 @@ fun RunningPlayScreen(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             val bpmTimePair = if (connectionState is RunningConnectionState.ConnectionSuccess) {
+                connectionState.data.bpm?.let { runningViewModel.addBpm(it) }
                 Pair(connectionState.data.bpm, connectionState.data.time)
             } else {
                 Pair(uiState.bpm, uiState.time)
@@ -91,7 +93,7 @@ fun RunningPlayScreen(
 
 
             TopInfoWithText(
-                topName = "-'--'",
+                topName = "${timeToFace(uiState.face)}",
                 bottomName = "페이스"
             )
             TopInfoWithText(

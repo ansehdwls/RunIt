@@ -21,6 +21,7 @@ import com.zoku.data.repository.RunningRepository
 import com.zoku.network.model.request.Pace
 import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.Track
+import com.zoku.network.model.response.PaceRecord
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.service.LocationService
@@ -48,16 +49,26 @@ class RunningViewModel @Inject constructor(
     private val runningRepository: RunningRepository
 ) : AndroidViewModel(application), TextToSpeech.OnInitListener {
 
-    private val _practiceRecord = MutableStateFlow<RunRecordDetail?>(null )
-    val practiceRecord : StateFlow<RunRecordDetail?> = _practiceRecord
+    // Running Record
+    private val _practiceRecord = MutableStateFlow<RunRecordDetail?>(null)
+    val practiceRecord: StateFlow<RunRecordDetail?> = _practiceRecord
 
-    fun getPracticeRecord(runDto : RunRecordDetail)
-    {
+    private var startTime: Long = 0
+    private var endTime: Long = 0
+
+    private var last100Time: Long = 0
+    private var last100Value: Int = 0
+
+    private val paceRecord: List<PaceRecord> = emptyList()
+    private val bpmList = mutableListOf<Int>()
+    private val paceList = mutableListOf<Pace>()
+
+    fun getPracticeRecord(runDto: RunRecordDetail) {
         _practiceRecord.value = runDto
     }
 
 
-    //tts
+    // TTS
     private var tts: TextToSpeech = TextToSpeech(application, this)
 
     // UI variable
@@ -72,6 +83,7 @@ class RunningViewModel @Inject constructor(
     val uiState: StateFlow<RunningUIState> = _uiState
     private val _totalRunningList = MutableStateFlow<List<LocationData>>(emptyList())
     val totalRunningList: StateFlow<List<LocationData>> = _totalRunningList
+    val totalPaceList = mutableListOf<Pace>()
 
     // GPS
     private val fusedLocationClient: FusedLocationProviderClient =
@@ -96,13 +108,36 @@ class RunningViewModel @Inject constructor(
                 }
                 if (lastLocation != null) {
                     val distance = lastLocation!!.distanceTo(newLocation)
-                    Log.d(
-                        "확인",
-                        "거리를 재고 있어요 $distance 총 ${uiState.value.distance + distance.toInt()}"
-                    )
                     updateUIState(
                         newDistance = uiState.value.distance + distance.toInt()
                     )
+
+                    // 100m 이동시
+                    val current100Value = ((uiState.value.distance % 100) / 100).toInt()
+                    if (current100Value != last100Value) {
+                        val timeDifference =
+                            ((System.currentTimeMillis() - last100Time) / 1000).toInt()
+
+                        updateUIState(newFace = (timeDifference * 10))
+
+                        if (bpmList.size >= timeDifference) {
+                            val recentBpmList = bpmList.takeLast(timeDifference)
+                            updateUIState(newBPM = recentBpmList.average().toInt())
+                            paceList.add(
+                                Pace(
+                                    bpm = recentBpmList.average().toInt(),
+                                    pace = timeDifference * 10
+                                )
+                            )
+                        } else {
+                            paceList.add(Pace(bpm = 0, pace = timeDifference * 10))
+                        }
+
+                        last100Value = current100Value
+                        last100Time = System.currentTimeMillis()
+                    }
+
+
                 }
                 lastLocation = newLocation
             }
@@ -192,7 +227,11 @@ class RunningViewModel @Inject constructor(
         timerJob?.cancel()
     }
 
-    fun postRunningRecord(captureFile: File, onSuccess: (Int,Boolean) -> Unit, onFail: (String) -> Unit) {
+    fun postRunningRecord(
+        captureFile: File,
+        onSuccess: (Int, Boolean) -> Unit,
+        onFail: (String) -> Unit
+    ) {
         viewModelScope.launch {
 
             val filePart = MultipartBody.Part.createFormData(
@@ -210,9 +249,9 @@ class RunningViewModel @Inject constructor(
                         distance = uiState.value.distance,
                         startTime = getIso8601TimeString(System.currentTimeMillis()),
                         endTime = getIso8601TimeString(System.currentTimeMillis()),
-                        bpm = 100
+                        bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt()
                     ),
-                    paceList = listOf(Pace(pace = 10, bpm = 10), Pace(pace = 20, bpm = 20))
+                    paceList = paceList
                 )
             )
 
@@ -224,7 +263,7 @@ class RunningViewModel @Inject constructor(
 
             when (val result = runningRepository.postRunningRecord(requestBody, filePart)) {
                 is NetworkResult.Success -> {
-                    onSuccess(result.data.data.exp,result.data.data.isAttend)
+                    onSuccess(result.data.data.exp, result.data.data.isAttend)
                 }
 
                 is NetworkResult.Error -> {
@@ -240,6 +279,19 @@ class RunningViewModel @Inject constructor(
     }
 
     fun getInitialLocationData(): LocationData? = initialLocation
+
+    fun setStartTime(startTime: Long) {
+        this.startTime = startTime
+        last100Time = startTime
+    }
+
+    fun setEndTime(endTime: Long) {
+        this.endTime = endTime
+    }
+
+    fun addBpm(bpm: Int) {
+        bpmList.add(bpm)
+    }
 
     override fun onCleared() {
         super.onCleared()

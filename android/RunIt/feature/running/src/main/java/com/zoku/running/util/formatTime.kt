@@ -23,3 +23,7 @@ fun getIso8601TimeString(timeMillis: Long): String {
     dateFormat.timeZone = TimeZone.getTimeZone("Asia/Seoul")
     return dateFormat.format(date)
 }
+
+fun timeToFace(second: Int):String{
+    return "${second / 60}'${String.format("%02d", second % 60)}"
+}
