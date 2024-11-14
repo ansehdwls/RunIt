@@ -1,5 +1,6 @@
 package com.zoku.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -67,7 +68,15 @@ fun RecordModeDetail(modifier: Modifier = Modifier,
     val viewModel : RunHistoryViewModel = hiltViewModel()
     val runRecord by viewModel.historyRunRecord.collectAsState()
     val recordViewModel : RecordModeViewModel = hiltViewModel()
-    viewModel.getRunRecordDetail(recordId)
+    val routeList by recordViewModel.routeList.collectAsState()
+    with(viewModel){
+        getRunRecordDetail(recordId)
+
+    }
+    with(recordViewModel){
+        getRouteList(recordId)
+        Log.d("확인", "RecordModeDetail: $routeList")
+    }
     var showDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -88,7 +97,7 @@ fun RecordModeDetail(modifier: Modifier = Modifier,
         Box(
             modifier.weight(3f)
         ) {
-            RecordMap()
+            RecordMap(routeList = routeList)
         }
 
         // 세부 기록 표시
@@ -119,7 +128,8 @@ fun RecordModeDetail(modifier: Modifier = Modifier,
 //                    border = BorderStroke(0.1.dp, BaseYellow)
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
                                 .background(BaseGrayBackground),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally

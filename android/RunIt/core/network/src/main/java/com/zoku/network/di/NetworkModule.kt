@@ -7,6 +7,7 @@ import com.zoku.network.api.AttendanceApi
 import com.zoku.network.api.ExpApi
 import com.zoku.network.api.GroupApi
 import com.zoku.network.api.LoginApi
+import com.zoku.network.api.RouteApi
 import com.zoku.network.api.RunningApi
 import com.zoku.network.api.TestApi
 import com.zoku.network.api.UserApi
@@ -100,4 +101,8 @@ object NetworkModule {
     fun provideAttendanceService(@Named("runit") retrofit: Retrofit) : AttendanceApi =
         retrofit.create(AttendanceApi::class.java)
 
+    @Singleton
+    @Provides
+    fun provideRouteService(@Named("runit") retrofit: Retrofit) : RouteApi =
+        retrofit.create(RouteApi::class.java)
 }

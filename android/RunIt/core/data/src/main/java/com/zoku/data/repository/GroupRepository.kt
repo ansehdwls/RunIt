@@ -5,5 +5,7 @@ import com.zoku.network.model.response.GroupResponse
 
 interface GroupRepository {
 
-    suspend fun getGroupInfo(groupId : Int) : NetworkResult<GroupResponse>
+    suspend fun getGroupInfo(groupId : Int,
+                             rankType : String ) : NetworkResult<GroupResponse>
+
 }

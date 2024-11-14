@@ -70,11 +70,16 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
     // 그룹 리스트
     val groupList by rankViewModel.groupInfo.collectAsState()
 
+    var listType by remember {
+        mutableStateOf(0)
+    }
+
     with(rankViewModel) {
-        getAllExpHistory()
-        getWeekExp()
-        getGroupList()
-        getAttendance()
+        when(listType ){
+            0 -> getGroupList("experience")
+            1 -> getGroupList("pace")
+            2 -> getGroupList("distance")
+        }
     }
     Column(
         modifier = modifier
@@ -84,7 +89,10 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
         RankingInfo(moveToExpHistory, weekExp, attendanceList,myName,groupList.rank, leagueList[groupList.leagueRank -1])
 
         HomeTitle(modifier.padding(top = 10.dp, bottom = 5.dp), "그룹 내 순위", "종합 순위", rankMenu){
-
+                selectedOption ->
+            if (selectedOption == "그룹 내 순위" + " 종합 순위") listType = 0
+            else if(selectedOption == "그룹 내 순위" + " 페이스 순위") listType = 1
+            else listType = 2
         }
 
         if (groupList.userInfos.isNotEmpty()) UserRanking(groupList.userInfos,(groupList.leagueRank -1))
@@ -320,7 +328,7 @@ fun ExpView(
 
 @Composable
 fun UserRanking(groupList: List<GroupMember>,
-                rank : Int,
+                rank : Int
                 ) {
 
     val groupSize = groupList.size
@@ -465,6 +473,8 @@ fun UserRankingProfile(
     item: GroupMember, index: Int
 ) {
     val baseModifier = Modifier.fillMaxHeight()
+
+
     Surface(
         color = BaseDarkBackground,
         modifier = modifier
@@ -506,7 +516,7 @@ fun UserRankingProfile(
                 contentAlignment = Alignment.CenterEnd
             ) {
                 RankText(
-                    text = "${item.exp}xp", fontSize = 24.sp
+                    text = "${item.score}", fontSize = 24.sp
                 )
             }
             val iconRes =
