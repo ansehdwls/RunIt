@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -60,6 +61,7 @@ import com.zoku.network.model.response.RunToday
 import com.zoku.network.model.response.RunWeekList
 import com.zoku.ui.theme.BaseWhiteBackground
 import com.zoku.ui.theme.BaseYellow
+import com.zoku.ui.theme.CustomTypo
 import com.zoku.ui.theme.PurpleGrey80
 import com.zoku.ui.theme.ZokuFamily
 import java.time.LocalDate
@@ -513,11 +515,15 @@ fun HomeFunctionButton(
             )
             if (info.isNotEmpty()) {
                 Text(
-                    text = info, modifier = Modifier
-                        .height(20.dp)
+                    text = info,
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(top = 10.dp)
                         .fillMaxWidth(),
-                    textAlign = TextAlign.Center, fontSize = 12.sp,
-                    fontFamily = ZokuFamily
+                    style = CustomTypo().mapleLight.copy(
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center
+                    )
                 )
             }
             Spacer(modifier = Modifier.padding(top = 20.dp))
@@ -633,6 +639,6 @@ class DayAxisFormatter : ValueFormatter() {
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewTodayDashBoard(){
+fun PreviewTodayDashBoard() {
     TodayDashBoard(todayRecord = RunToday(2.0, 2.0, 2.0))
 }
