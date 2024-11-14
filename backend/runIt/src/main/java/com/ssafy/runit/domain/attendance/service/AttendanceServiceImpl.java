@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Stream;
 
 @Service
@@ -69,7 +67,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public void saveAttendance(UserDetails userDetails) {
-        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
+        User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow(
+                () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
+        );
         Attendance attendance = new AttendanceSaveDto().toEntity(findUser);
         attendanceRepository.save(attendance);
     }

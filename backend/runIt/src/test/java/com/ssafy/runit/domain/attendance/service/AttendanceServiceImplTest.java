@@ -5,6 +5,8 @@ import com.ssafy.runit.domain.attendance.entity.Attendance;
 import com.ssafy.runit.domain.attendance.repository.AttendanceRepository;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
+import com.ssafy.runit.exception.CustomException;
+import com.ssafy.runit.exception.code.AuthErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -52,5 +56,17 @@ public class AttendanceServiceImplTest {
         attendanceService.saveAttendance(userDetails);
         verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
         verify(attendanceRepository, times(1)).save(any(Attendance.class));
+    }
+
+    @Test
+    @DisplayName("출석 저장 실패 - 사용자 미존재 시 예외 발생")
+    void saveAttendance_UnregisteredUser_ThrowException() {
+        UserDetails userDetails = new CustomUserDetails(user);
+        when(userRepository.findByUserNumber(eq(TEST_NUMBER))).thenReturn(Optional.empty());
+        CustomException exception = assertThrows(CustomException.class, () -> attendanceService.saveAttendance(userDetails));
+        assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR, exception.getErrorCodeType());
+        assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR.message(), exception.getErrorCodeType().message());
+        verify(attendanceRepository, never()).save(any(Attendance.class));
+        verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
     }
 }
