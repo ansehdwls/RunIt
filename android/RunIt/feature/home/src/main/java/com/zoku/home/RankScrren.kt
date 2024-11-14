@@ -14,9 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,27 +31,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.zoku.home.component.DropDownMenu
+import com.zoku.home.viewmodel.RankViewModel
 import com.zoku.network.model.response.AttendanceDay
 import com.zoku.network.model.response.GroupMember
 import com.zoku.ui.BaseDarkBackground
 import com.zoku.ui.CustomTypo
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.withContext
-import org.w3c.dom.Text
 import java.time.LocalDate
 import kotlin.math.ceil
 import kotlin.math.floor
 import com.zoku.ui.League
-import com.zoku.ui.RankProfile
 import com.zoku.ui.leagueList
 
 @Composable

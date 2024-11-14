@@ -1,4 +1,4 @@
-package com.zoku.home
+package com.zoku.home.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -27,13 +27,13 @@ class InfoViewModel @Inject constructor(
         getWeekList()
     }
 
-    private val _todayRecord = MutableStateFlow<RunToday>(RunToday(0.0,0.0,0.0))
+    private val _todayRecord = MutableStateFlow<RunToday>(RunToday(0.0, 0.0, 0.0))
     val todayRecord : StateFlow<RunToday> get() = _todayRecord
 
-    private val _totalAllRecord = MutableStateFlow<AllTotal>(AllTotal(0.0,0.0))
+    private val _totalAllRecord = MutableStateFlow<AllTotal>(AllTotal(0.0, 0.0))
     val totalAllRecord : StateFlow<AllTotal> get()  = _totalAllRecord
 
-    private val _totalWeekRecord = MutableStateFlow<WeekTotal>(WeekTotal(0.0,0.0))
+    private val _totalWeekRecord = MutableStateFlow<WeekTotal>(WeekTotal(0.0, 0.0))
     val totalWeekRecord : StateFlow<WeekTotal> get()  = _totalWeekRecord
 
     private val _totalWeekList = MutableStateFlow<RunWeekList>(
@@ -69,7 +69,7 @@ class InfoViewModel @Inject constructor(
                     Log.d("확인", " 성공 ${result}")
                     _totalAllRecord.value =
                         AllTotal(
-                            totalDistance =  result.data.data.totalDistance,
+                            totalDistance = result.data.data.totalDistance,
                             totalTime = result.data.data.totalTime
                         )
                     _totalWeekRecord.value =
