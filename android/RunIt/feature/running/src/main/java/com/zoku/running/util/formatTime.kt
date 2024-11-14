@@ -24,6 +24,6 @@ fun getIso8601TimeString(timeMillis: Long): String {
     return dateFormat.format(date)
 }
 
-fun timeToFace(second: Int):String{
+fun timeToPace(second: Int):String{
     return "${second / 60}'${String.format("%02d", second % 60)}"
 }

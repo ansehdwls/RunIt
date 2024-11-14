@@ -10,6 +10,7 @@ import android.location.Location
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -54,12 +55,10 @@ class RunningViewModel @Inject constructor(
     val practiceRecord: StateFlow<RunRecordDetail?> = _practiceRecord
 
     private var startTime: Long = 0
-    private var endTime: Long = 0
 
     private var last100Time: Long = 0
     private var last100Value: Int = 0
 
-    private val paceRecord: List<PaceRecord> = emptyList()
     private val bpmList = mutableListOf<Int>()
     private val paceList = mutableListOf<Pace>()
 
@@ -150,6 +149,7 @@ class RunningViewModel @Inject constructor(
     init {
         val filter = IntentFilter("com.zoku.running.LOCATION_UPDATE")
         application.registerReceiver(locationReceiver, filter, Context.RECEIVER_EXPORTED)
+        startTime = System.currentTimeMillis()
     }
 
 
@@ -233,7 +233,6 @@ class RunningViewModel @Inject constructor(
         onFail: (String) -> Unit
     ) {
         viewModelScope.launch {
-
             val filePart = MultipartBody.Part.createFormData(
                 name = "images",
                 filename = captureFile.name,
@@ -247,7 +246,7 @@ class RunningViewModel @Inject constructor(
                     ),
                     record = com.zoku.network.model.request.Record(
                         distance = uiState.value.distance,
-                        startTime = getIso8601TimeString(System.currentTimeMillis()),
+                        startTime = getIso8601TimeString(startTime),
                         endTime = getIso8601TimeString(System.currentTimeMillis()),
                         bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt()
                     ),
@@ -279,15 +278,6 @@ class RunningViewModel @Inject constructor(
     }
 
     fun getInitialLocationData(): LocationData? = initialLocation
-
-    fun setStartTime(startTime: Long) {
-        this.startTime = startTime
-        last100Time = startTime
-    }
-
-    fun setEndTime(endTime: Long) {
-        this.endTime = endTime
-    }
 
     fun addBpm(bpm: Int) {
         bpmList.add(bpm)

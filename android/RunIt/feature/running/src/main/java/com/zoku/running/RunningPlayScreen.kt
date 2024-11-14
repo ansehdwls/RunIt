@@ -36,7 +36,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.zoku.running.service.LocationService
 import com.zoku.running.util.formatTime
-import com.zoku.running.util.timeToFace
+import com.zoku.running.util.meterToKilo
+import com.zoku.running.util.timeToPace
 import com.zoku.ui.BaseGrayBackground
 import com.zoku.ui.BaseYellow
 import com.zoku.ui.RoundButtonGray
@@ -93,7 +94,7 @@ fun RunningPlayScreen(
 
 
             TopInfoWithText(
-                topName = "${timeToFace(uiState.face)}",
+                topName = "${timeToPace(uiState.face)}",
                 bottomName = "페이스"
             )
             TopInfoWithText(
@@ -114,7 +115,7 @@ fun RunningPlayScreen(
             verticalAlignment = Alignment.Bottom
         ) {
             RobotoText(
-                text = "${uiState.distance}",
+                text = meterToKilo(uiState.distance.toInt()),
                 fontSize = 80.sp,
                 color = BaseYellow,
                 style = "Bold"

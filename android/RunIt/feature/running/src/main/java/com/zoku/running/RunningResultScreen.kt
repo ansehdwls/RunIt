@@ -3,7 +3,6 @@ package com.zoku.running
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.zoku.network.model.request.Pace
 import com.zoku.network.model.response.PaceRecord
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.running.util.getIso8601TimeString
@@ -80,18 +78,23 @@ fun RunningResultScreen(
             KakaoMapView(
                 totalLocationList = totalRunningList,
                 onCaptureComplete = { file ->
-                    runningViewModel.postRunningRecord(
-                        captureFile = file,
-                        onSuccess = { exp, isAttend ->
-                            Toast.makeText(context, "경험치가 ${exp} 증가했습니다!", Toast.LENGTH_SHORT)
-                                .show()
-                            isMapCompleted = true
-                        },
-                        onFail = { message ->
-                            Toast.makeText(context, "API 실패 ${message}", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    )
+                    if (runningViewModel.uiState.value.distance.toInt() < 100) {
+                        Toast.makeText(context, "최소 100m는 달려야 경험치가 저장됩니다!", Toast.LENGTH_LONG)
+                            .show()
+                    } else {
+                        runningViewModel.postRunningRecord(
+                            captureFile = file,
+                            onSuccess = { exp, isAttend ->
+                                Toast.makeText(context, "경험치가 ${exp} 증가했습니다!", Toast.LENGTH_SHORT)
+                                    .show()
+                                isMapCompleted = true
+                            },
+                            onFail = { message ->
+                                Toast.makeText(context, "API 실패 ${message}", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        )
+                    }
                 },
                 initialLocation = runningViewModel.getInitialLocationData(),
                 isResult = true
@@ -104,12 +107,14 @@ fun RunningResultScreen(
                 .weight(0.7f),
             contentAlignment = Alignment.Center
         ) {
-            RecordDetailInfo(startDestination = 1,
+            RecordDetailInfo(
+                startDestination = 1,
                 runRecord = RunRecordDetail(
                     startTime = getIso8601TimeString(System.currentTimeMillis()),
                     endTime = getIso8601TimeString(System.currentTimeMillis()),
-                    paceList = listOf(PaceRecord(10, 10), PaceRecord( 20, 20))
-                ))
+                    paceList = listOf(PaceRecord(10, 10), PaceRecord(20, 20))
+                )
+            )
         }
 
         Box(
@@ -156,7 +161,8 @@ fun RunningResultScreen(
 //                    border = BorderStroke(0.1.dp, BaseYellow)
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
                             .background(BaseGrayBackground),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
