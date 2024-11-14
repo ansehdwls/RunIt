@@ -19,13 +19,13 @@ public enum RankType {
                 yield PACE.getPaceFormatted(score);
             }
             case DISTANCE -> String.format("%.2f km", score);
-            default -> String.valueOf((int) score);
+            default -> (int) score + "xp";
         };
     }
 
     public String getPaceFormatted(double pace) {
         if (pace == 0) {
-            return "N/A";
+            return "--";
         }
         int minutes = (int) pace;
         int seconds = (int) Math.round((pace - minutes) * 60);
