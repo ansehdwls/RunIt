@@ -1,12 +1,10 @@
 package com.ssafy.runit.domain.attendance.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.runit.config.security.CustomUserDetails;
 import com.ssafy.runit.config.security.CustomUserDetailsService;
 import com.ssafy.runit.domain.attendance.dto.response.DayAttendanceResponse;
 import com.ssafy.runit.domain.attendance.service.AttendanceService;
 import com.ssafy.runit.domain.user.entity.User;
-import com.ssafy.runit.domain.user.service.UserService;
 import com.ssafy.runit.util.DateUtils;
 import com.ssafy.runit.util.JwtTokenProvider;
 import io.restassured.RestAssured;
@@ -37,12 +35,6 @@ public class AttendanceControllerTest {
 
     @MockBean
     private AttendanceService attendanceService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private UserService userService;
 
     @MockBean
     private CustomUserDetailsService customUserDetailsService;
@@ -87,6 +79,25 @@ public class AttendanceControllerTest {
                 .log().all()
                 .statusCode(200)
                 .body("data.size()", equalTo(7))
+                .body("message", equalTo("주간 출석 조회에 성공했습니다."));
+        verify(customUserDetailsService, times(1)).loadUserByUsername(eq(TEST_NUMBER));
+        verify(attendanceService, times(1)).getWeekAttendance(eq(TEST_NUMBER));
+    }
+
+
+    @Test
+    @DisplayName("[주간 출석 조회] 기록이 없을 경우 검증")
+    void getWeeklyAttendance_NoAttendance_Success() {
+        when(customUserDetailsService.loadUserByUsername(eq(TEST_NUMBER))).thenReturn(customUserDetails);
+        given()
+                .header("Authorization", TOKEN_PREFIX + refreshToken) // JWT 토큰 포함
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get(BASE_URL + "week")
+                .then()
+                .log().all()
+                .statusCode(200)
+                .body("data.size()", equalTo(0))
                 .body("message", equalTo("주간 출석 조회에 성공했습니다."));
         verify(customUserDetailsService, times(1)).loadUserByUsername(eq(TEST_NUMBER));
         verify(attendanceService, times(1)).getWeekAttendance(eq(TEST_NUMBER));
