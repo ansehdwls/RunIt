@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.util.formatTime
-import com.zoku.running.util.meterToKilo
+import com.zoku.running.util.meterToKiloString
 import com.zoku.running.util.timeToPace
 import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RobotoText
@@ -204,7 +204,7 @@ fun ValueColumn(
         )
 
         RobotoText(
-            text = meterToKilo(uiState.distance.toInt()),
+            text = meterToKiloString(uiState.distance.toInt()),
             color = BaseYellow,
             fontSize = 40.sp
         )

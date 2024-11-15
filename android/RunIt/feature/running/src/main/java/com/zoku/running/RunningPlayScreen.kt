@@ -36,7 +36,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.zoku.running.service.LocationService
 import com.zoku.running.util.formatTime
-import com.zoku.running.util.meterToKilo
+import com.zoku.running.util.meterToKiloString
 import com.zoku.running.util.timeToPace
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
@@ -124,7 +124,7 @@ fun RunningPlayScreen(
             verticalAlignment = Alignment.Bottom
         ) {
             RobotoText(
-                text = meterToKilo(uiState.distance.toInt()),
+                text = meterToKiloString(uiState.distance.toInt()),
                 fontSize = 80.sp,
                 color = BaseYellow,
                 style = "Bold"

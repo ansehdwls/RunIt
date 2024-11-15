@@ -262,7 +262,7 @@ class RunningViewModel @Inject constructor(
                         path = filteredPathList.toString()
                     ),
                     record = com.zoku.network.model.request.Record(
-                        distance = uiState.value.distance,
+                        distance = uiState.value.distance/1000,
                         startTime = getIso8601TimeString(startTime),
                         endTime = getIso8601TimeString(System.currentTimeMillis()),
                         bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt()
