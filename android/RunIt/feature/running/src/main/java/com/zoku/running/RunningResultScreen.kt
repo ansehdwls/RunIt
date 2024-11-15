@@ -98,13 +98,13 @@ fun RunningResultScreen(
             KakaoMapView(
                 totalLocationList = totalRunningList,
                 onCaptureComplete = { file ->
-                    if (runningViewModel.totalPaceList.isEmpty()) {
-                        runningViewModel.updateRunningEvent(
-                            RunningEventState.RunningFailToast(
-                                "최소 100m 이상 뛰어야 합니다. "
-                            )
-                        )
-                    } else {
+//                    if (runningViewModel.totalPaceList.isEmpty()) {
+//                        runningViewModel.updateRunningEvent(
+//                            RunningEventState.RunningFailToast(
+//                                "최소 100m 이상 뛰어야 합니다. "
+//                            )
+//                        )
+//                    } else {
                         Timber.tag("데이터 확인").d("${runningViewModel.totalRunningList.value}")
                         runningViewModel.postRunningRecord(
                             captureFile = file,
@@ -126,7 +126,7 @@ fun RunningResultScreen(
                                 showDialog = showDialog.copy(second = false)
                             }
                         )
-                    }
+//                    }
                 },
                 initialLocation = runningViewModel.getInitialLocationData(),
                 isResult = true

@@ -294,8 +294,8 @@ class RunningViewModel @Inject constructor(
                 )
             )
 
-            Log.d(
-                "리퀘스트확인", " 레코드 : ${
+            Timber.tag("RunningViewModel").d(
+                "리퀘스트확인 레코드 : ${
                     com.zoku.network.model.request.Record(
                         distance = uiState.value.distance / 1000,
                         startTime = getIso8601TimeString(startTime),
