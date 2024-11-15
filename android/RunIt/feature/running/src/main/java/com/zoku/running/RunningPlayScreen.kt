@@ -36,7 +36,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.zoku.running.service.LocationService
 import com.zoku.running.util.formatTime
-import com.zoku.running.util.meterToKilo
+import com.zoku.running.util.meterToKiloString
 import com.zoku.running.util.timeToPace
 import com.zoku.ui.componenet.RobotoText
 import com.zoku.ui.componenet.RoundRunButton
@@ -55,14 +55,23 @@ fun RunningPlayScreen(
     runningViewModel: RunningViewModel,
     connectionState: RunningConnectionState,
 ) {
-    val locationPermissionsState = rememberMultiplePermissionsState(
-        permissions = listOf(
+    val permissionsList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.FOREGROUND_SERVICE,
             Manifest.permission.FOREGROUND_SERVICE_LOCATION
         )
-    )
+    } else {
+        listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.FOREGROUND_SERVICE
+        )
+    }
+
+    val locationPermissionsState = rememberMultiplePermissionsState(permissions = permissionsList)
+
     LaunchedEffect(locationPermissionsState.allPermissionsGranted) {
         if (locationPermissionsState.allPermissionsGranted) {
             runningViewModel.startTimer()
@@ -117,7 +126,7 @@ fun RunningPlayScreen(
         ) {
             Timber.tag("RunningPlayScreen").d("distance ${uiState.distance}")
             RobotoText(
-                text = meterToKilo(uiState.distance.toInt()),
+                text = meterToKiloString(uiState.distance.toInt()),
                 fontSize = 80.sp,
                 color = BaseYellow,
                 style = "Bold"

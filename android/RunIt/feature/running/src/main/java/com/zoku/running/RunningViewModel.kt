@@ -69,6 +69,7 @@ class RunningViewModel @Inject constructor(
 
     private var last100Time: Long = 0
     private var last100Value: Int = 0
+    private var lastIndex = -1
 
     private val bpmList = mutableListOf<Int>()
 
@@ -131,8 +132,8 @@ class RunningViewModel @Inject constructor(
 
                         updateUIState(newFace = (timeDifference * 10))
 
-                        if (bpmList.size >= timeDifference) {
-                            val recentBpmList = bpmList.takeLast(timeDifference)
+                        if (lastIndex + 1 < bpmList.size) {
+                            val recentBpmList = bpmList.subList(lastIndex + 1, bpmList.size)
                             updateUIState(newBPM = recentBpmList.average().toInt())
                             totalPaceList.add(
                                 Pace(
@@ -144,6 +145,20 @@ class RunningViewModel @Inject constructor(
                             totalPaceList.add(Pace(bpm = 0, pace = timeDifference * 10))
                         }
 
+//                        if (bpmList.size >= timeDifference) {
+//                            val recentBpmList = bpmList.takeLast(timeDifference)
+//                            updateUIState(newBPM = recentBpmList.average().toInt())
+//                            totalPaceList.add(
+//                                Pace(
+//                                    bpm = recentBpmList.average().toInt(),
+//                                    pace = timeDifference * 10
+//                                )
+//                            )
+//                        } else {
+//                            totalPaceList.add(Pace(bpm = 0, pace = timeDifference * 10))
+//                        }
+
+                        lastIndex = bpmList.size - 1
                         last100Value = current100Value
                         last100Time = System.currentTimeMillis()
                     }
@@ -251,14 +266,16 @@ class RunningViewModel @Inject constructor(
                 filename = captureFile.name,
                 body = captureFile.asRequestBody("image/png".toMediaTypeOrNull())
             )
-            Timber.tag("RunningViewModel").d("PostRunningRecord ${uiState.value.distance}")
+
+            val filteredPathList = totalRunningList.value.filterIndexed { index, _ -> index % 2 != 0 }
+
             val userJson = Gson().toJson(
                 PostRunningRecordRequest(
                     track = Track(
-                        path = totalRunningList.value.toString()
+                        path = filteredPathList.toString()
                     ),
                     record = com.zoku.network.model.request.Record(
-                        distance = uiState.value.distance,
+                        distance = uiState.value.distance/1000,
                         startTime = getIso8601TimeString(startTime),
                         endTime = getIso8601TimeString(System.currentTimeMillis()),
                         bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt()
