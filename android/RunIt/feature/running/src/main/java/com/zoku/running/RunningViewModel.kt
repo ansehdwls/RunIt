@@ -105,10 +105,16 @@ class RunningViewModel @Inject constructor(
         override fun onReceive(context: Context, intent: Intent) {
             val isPause = intent.getBooleanExtra("isPause", false)
             if (isPause) {
-                val locationList =
-                    intent.getParcelableArrayListExtra("locationList", LocationData::class.java)
-                locationList?.let {
-                    _totalRunningList.value += it
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val locationList = intent.getParcelableArrayListExtra("locationList", LocationData::class.java)
+                    locationList?.let {
+                        _totalRunningList.value += it
+                    }
+                } else {
+                    val locationList = intent.getParcelableArrayListExtra<LocationData>("locationList")
+                    locationList?.let {
+                        _totalRunningList.value += it
+                    }
                 }
             } else {
                 val latitude = intent.getDoubleExtra("latitude", 0.0)
