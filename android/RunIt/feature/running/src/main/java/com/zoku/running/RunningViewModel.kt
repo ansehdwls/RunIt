@@ -66,6 +66,8 @@ class RunningViewModel @Inject constructor(
         }
     }
 
+    private var isPractice = false
+
     private var recordId: Int = 0
     private var startTime: Long = 0
 
@@ -77,6 +79,7 @@ class RunningViewModel @Inject constructor(
 
     fun getPracticeRecord(runDto: RunRecordDetail) {
         _practiceRecord.value = runDto
+        if(runDto.id > 0)isPractice = true
     }
 
     val totalPaceList = mutableListOf<Pace>()
@@ -332,6 +335,8 @@ class RunningViewModel @Inject constructor(
 
         }
     }
+
+    fun getIsPractice() = isPractice
 
     fun getInitialLocationData(): LocationData? = initialLocation
 

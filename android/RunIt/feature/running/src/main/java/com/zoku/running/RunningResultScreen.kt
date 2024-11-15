@@ -1,6 +1,7 @@
 package com.zoku.running
 
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -105,27 +106,27 @@ fun RunningResultScreen(
 //                            )
 //                        )
 //                    } else {
-                        Timber.tag("데이터 확인").d("${runningViewModel.totalRunningList.value}")
-                        runningViewModel.postRunningRecord(
-                            captureFile = file,
-                            onSuccess = { data ->
-                                Toast.makeText(
-                                    context,
-                                    "경험치가 ${data.exp} 증가했습니다!",
-                                    Toast.LENGTH_SHORT
+                    Timber.tag("데이터 확인").d("${runningViewModel.totalRunningList.value}")
+                    runningViewModel.postRunningRecord(
+                        captureFile = file,
+                        onSuccess = { data ->
+                            Toast.makeText(
+                                context,
+                                "경험치가 ${data.exp} 증가했습니다!",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                            showDialog = showDialog.copy(second = true)
+                        },
+                        onFail = { message ->
+                            runningViewModel.updateRunningEvent(
+                                RunningEventState.RunningFailToast(
+                                    message
                                 )
-                                    .show()
-                                showDialog = showDialog.copy(second = true)
-                            },
-                            onFail = { message ->
-                                runningViewModel.updateRunningEvent(
-                                    RunningEventState.RunningFailToast(
-                                        message
-                                    )
-                                )
-                                showDialog = showDialog.copy(second = false)
-                            }
-                        )
+                            )
+                            showDialog = showDialog.copy(second = false)
+                        }
+                    )
 //                    }
                 },
                 initialLocation = runningViewModel.getInitialLocationData(),
@@ -157,6 +158,7 @@ fun RunningResultScreen(
         ) {
             Button(
                 onClick = {
+                    Log.d("다이얼로그", "${showDialog.second}")
                     if (!showDialog.second) { //Dialog 보여줄지 처리
                         moveToHome()
                     } else {
@@ -185,7 +187,8 @@ fun RunningResultScreen(
         },
         onOkClick = {
             runningViewModel.updatePracticeRecord()
-        }
+        },
+        isPractice = runningViewModel.getIsPractice()
     )
 }
 
@@ -195,7 +198,8 @@ fun RunningResultScreen(
 fun RunningResultDialog(
     showDialog: Pair<Boolean, Boolean>,
     onShowDialog: (Boolean) -> Unit,
-    onOkClick: () -> Unit
+    onOkClick: () -> Unit,
+    isPractice: Boolean = false
 ) {
     if (showDialog.first && showDialog.second) {
         BasicAlertDialog(onDismissRequest = { onShowDialog(false) }) {
@@ -223,7 +227,7 @@ fun RunningResultDialog(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "경로를 저장하시겠습니까?",
+                            text = if (isPractice) "경로를 갱신 하시겠습니까?" else "경로를 저장 하시겠습니까?",
                             style = CustomTypo().jalnan,
                             fontSize = 16.sp,
                             color = Color.White,
