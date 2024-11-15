@@ -1,7 +1,5 @@
 package com.zoku.network.model.request
 
-import java.sql.Date
-
 data class PostRunningRecordRequest(
     val track: Track,
     val record: Record,
@@ -17,6 +15,7 @@ data class Record(
     val startTime: String,
     val endTime: String,
     val bpm: Int,
+    val duration: Int,
 )
 
 data class Pace(
