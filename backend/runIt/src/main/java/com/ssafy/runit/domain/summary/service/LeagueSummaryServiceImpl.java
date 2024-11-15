@@ -5,6 +5,9 @@ import com.ssafy.runit.domain.group.repository.GroupRepository;
 import com.ssafy.runit.domain.league.LeagueRank;
 import com.ssafy.runit.domain.league.entity.League;
 import com.ssafy.runit.domain.league.repository.LeagueRepository;
+import com.ssafy.runit.domain.rank.service.DistanceRankManager;
+import com.ssafy.runit.domain.rank.service.ExperienceRankManager;
+import com.ssafy.runit.domain.rank.service.PaceRankManager;
 import com.ssafy.runit.domain.summary.entity.LeagueSummary;
 import com.ssafy.runit.domain.summary.repository.LeagueSummaryRepository;
 import com.ssafy.runit.domain.user.entity.User;
@@ -27,6 +30,9 @@ public class LeagueSummaryServiceImpl implements LeagueSummaryService {
     private final LeagueSummaryRepository leagueSummaryRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+    private final DistanceRankManager distanceRankManager;
+    private final ExperienceRankManager experienceRankManager;
+    private final PaceRankManager paceRankManager;
 
 
     @Override
@@ -59,6 +65,10 @@ public class LeagueSummaryServiceImpl implements LeagueSummaryService {
 
         for (Group group : groups) {
             processGroup(group, lastMonday, league, advanceUser, degradeUser, waitUser);
+            String groupId = String.valueOf(group.getId());
+            distanceRankManager.deleteRank(groupId);
+            paceRankManager.deleteRank(groupId);
+            experienceRankManager.deleteRank(groupId);
         }
 
         advanceMap.put(league.getId(), advanceUser);
@@ -85,7 +95,7 @@ public class LeagueSummaryServiceImpl implements LeagueSummaryService {
         int advanceCount = counts[0];
         int degradeCount = counts[1];
         int waitCount = counts[2];
-        log.debug("[승급]: {} [강등] : {} [잔류]: {}",advanceCount,degradeCount,waitCount);
+        log.debug("[승급]: {} [강등] : {} [잔류]: {}", advanceCount, degradeCount, waitCount);
         allocateUsersToCategories(sortedUsers, advanceCount, degradeCount, advanceUser, degradeUser, waitUser);
     }
 
@@ -185,6 +195,7 @@ public class LeagueSummaryServiceImpl implements LeagueSummaryService {
             int userAssignCount = averageUserCount + (i < res ? 1 : 0);
             for (int j = 0; j < userAssignCount && totalIdx < users.size(); j++) {
                 User assignUser = users.get(totalIdx++);
+                paceRankManager.deleteHash(String.valueOf(assignUser.getId()));
                 assignUser.updateGroup(group);
             }
         }
