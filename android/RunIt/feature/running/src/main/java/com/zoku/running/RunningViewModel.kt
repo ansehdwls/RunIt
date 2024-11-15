@@ -21,6 +21,7 @@ import com.zoku.data.repository.RunningRepository
 import com.zoku.network.model.request.Pace
 import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.Track
+import com.zoku.network.model.response.ExpWithAttend
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.running.model.RunningEventState
 import com.zoku.running.model.RunningUIState
@@ -65,6 +66,7 @@ class RunningViewModel @Inject constructor(
         }
     }
 
+    private var recordId: Int = 0
     private var startTime: Long = 0
 
     private var last100Time: Long = 0
@@ -106,12 +108,14 @@ class RunningViewModel @Inject constructor(
             val isPause = intent.getBooleanExtra("isPause", false)
             if (isPause) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    val locationList = intent.getParcelableArrayListExtra("locationList", LocationData::class.java)
+                    val locationList =
+                        intent.getParcelableArrayListExtra("locationList", LocationData::class.java)
                     locationList?.let {
                         _totalRunningList.value += it
                     }
                 } else {
-                    val locationList = intent.getParcelableArrayListExtra<LocationData>("locationList")
+                    val locationList =
+                        intent.getParcelableArrayListExtra<LocationData>("locationList")
                     locationList?.let {
                         _totalRunningList.value += it
                     }
@@ -263,7 +267,7 @@ class RunningViewModel @Inject constructor(
 
     fun postRunningRecord(
         captureFile: File,
-        onSuccess: (Int, Boolean) -> Unit,
+        onSuccess: (ExpWithAttend) -> Unit,
         onFail: (String) -> Unit
     ) {
         viewModelScope.launch {
@@ -273,7 +277,8 @@ class RunningViewModel @Inject constructor(
                 body = captureFile.asRequestBody("image/png".toMediaTypeOrNull())
             )
 
-            val filteredPathList = totalRunningList.value.filterIndexed { index, _ -> index % 2 != 0 }
+            val filteredPathList =
+                totalRunningList.value.filterIndexed { index, _ -> index % 2 != 0 }
 
             val userJson = Gson().toJson(
                 PostRunningRecordRequest(
@@ -281,7 +286,7 @@ class RunningViewModel @Inject constructor(
                         path = filteredPathList.toString()
                     ),
                     record = com.zoku.network.model.request.Record(
-                        distance = uiState.value.distance/1000,
+                        distance = uiState.value.distance / 1000,
                         startTime = getIso8601TimeString(startTime),
                         endTime = getIso8601TimeString(System.currentTimeMillis()),
                         bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt()
@@ -298,14 +303,18 @@ class RunningViewModel @Inject constructor(
 
             when (val result = runningRepository.postRunningRecord(requestBody, filePart)) {
                 is NetworkResult.Success -> {
-                    onSuccess(result.data.data.exp, result.data.data.isAttend)
+                    Timber.tag("RunningViewModel").d("달리기 저장 ${result.data.data}")
+                    recordId = result.data.data.id
+                    onSuccess(result.data.data)
                 }
 
                 is NetworkResult.Error -> {
+                    Timber.tag("RunningViewModel").d("달리기 에러 ${result.errorMsg}")
                     onFail("${result.errorMsg}")
                 }
 
                 is NetworkResult.Exception -> {
+                    Timber.tag("RunningViewModel").d("달리기 네트워크 에러 ${result.e}")
                     onFail("서버가 연결이 되지 않았습니다.")
                 }
             }
@@ -318,6 +327,26 @@ class RunningViewModel @Inject constructor(
     fun addBpm(bpm: Int) {
         bpmList.add(bpm)
     }
+
+    fun updatePracticeRecord() {
+        viewModelScope.launch {
+            when (val result = runningRepository.updateRunPracticeMode(recordId)) {
+                is NetworkResult.Success -> {
+                    updateRunningEvent(RunningEventState.RunningRecordModeSuccess)
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 갱신 성공 ${result.data}")
+                }
+
+                is NetworkResult.Error -> {
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 갱신 실패 ${result.errorMsg}")
+                }
+
+                is NetworkResult.Exception -> {
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 갱신 네트워크 ${result.e}")
+                }
+            }
+        }
+    }
+
 
     override fun onCleared() {
         super.onCleared()

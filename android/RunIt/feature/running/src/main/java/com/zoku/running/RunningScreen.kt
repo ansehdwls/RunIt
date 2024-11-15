@@ -102,8 +102,6 @@ fun HandleRunningState(
     onIsFirstPlayChange: (Boolean) -> Unit,
     onIsResultChange: (Boolean) -> Unit,
 ) {
-
-
     if (isResult) {
         RunningResultScreen(
             runningViewModel = runningViewModel,

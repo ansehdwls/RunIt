@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.text.removeSurrounding
 import kotlin.text.split
@@ -23,39 +24,58 @@ import kotlin.text.toDoubleOrNull
 class RecordModeViewModel @Inject constructor(
     private val runningRepository: RunningRepository,
     private val routeRepository: RouteRepository
-) : ViewModel()
-{
+) : ViewModel() {
     private val _practiceList = MutableStateFlow<List<RunPractice>>(emptyList())
-    val practiceList : StateFlow<List<RunPractice>> = _practiceList
+    val practiceList: StateFlow<List<RunPractice>> = _practiceList
 
     private val _routeList = MutableStateFlow<List<RouteInfo>>(emptyList())
-    val routeList : StateFlow<List<RouteInfo>> = _routeList
+    val routeList: StateFlow<List<RouteInfo>> = _routeList
 
 
-    fun getPracticeList(){
+    fun getPracticeList() {
         viewModelScope.launch {
-            when(val result = runningRepository.getRunPracticeList()){
+            when (val result = runningRepository.getRunPracticeList()) {
                 is NetworkResult.Success -> {
-                    Log.d("확인", " 성공 ${result}")
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 불러오기 성공 ${result.data}")
                     _practiceList.value = result.data.data
                 }
 
                 is NetworkResult.Error -> {
-                    Log.d("확인", "실패, 에러 ${result}")
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 불러오기 에러 ${result.errorMsg}")
                 }
 
                 is NetworkResult.Exception -> {
-                    Log.d("확인", "서버 연결 에러")
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 불러오기 네트워크 에러 ${result.e}")
                 }
             }
         }
     }
 
-    fun updatePracticeRecord(recordId : Int){
+    fun updatePracticeRecord(recordId: Int) {
         viewModelScope.launch {
-            when(val result = runningRepository.updateRunPracticeMode(recordId)){
+            when (val result = runningRepository.updateRunPracticeMode(recordId)) {
+                is NetworkResult.Success -> {
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 갱신 성공 ${result.data}")
+                }
+
+                is NetworkResult.Error -> {
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 갱신 실패 ${result.errorMsg}")
+                }
+
+                is NetworkResult.Exception -> {
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 갱신 네트워크 ${result.e}")
+                }
+            }
+        }
+    }
+
+
+    fun getRouteList(recordId: Int) {
+        viewModelScope.launch {
+            when (val result = routeRepository.getRouteList(recordId)) {
                 is NetworkResult.Success -> {
                     Log.d("확인", " 성공 ${result}")
+                    _routeList.value = parseRouteInfoList(result.data.data)
                 }
 
                 is NetworkResult.Error -> {
@@ -66,26 +86,6 @@ class RecordModeViewModel @Inject constructor(
                     Log.d("확인", "서버 연결 에러")
                 }
             }
-        }
-    }
-
-
-    fun getRouteList(recordId : Int){
-        viewModelScope.launch {
-           when(val result = routeRepository.getRouteList(recordId)){
-               is NetworkResult.Success -> {
-                   Log.d("확인", " 성공 ${result}")
-                   _routeList.value = parseRouteInfoList(result.data.data)
-               }
-
-               is NetworkResult.Error -> {
-                   Log.d("확인", "실패, 에러 ${result}")
-               }
-
-               is NetworkResult.Exception -> {
-                   Log.d("확인", "서버 연결 에러")
-               }
-           }
         }
     }
 

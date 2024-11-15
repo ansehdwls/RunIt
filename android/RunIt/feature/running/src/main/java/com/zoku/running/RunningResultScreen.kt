@@ -52,7 +52,6 @@ import com.zoku.ui.theme.BaseYellow
 import com.zoku.ui.theme.CustomTypo
 import com.zoku.ui.theme.RoundButtonGray
 import com.zoku.ui.theme.RunItTheme
-import kotlinx.coroutines.delay
 import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,18 +64,21 @@ fun RunningResultScreen(
 ) {
     val context = LocalContext.current
     val totalRunningList by runningViewModel.totalRunningList.collectAsState()
-    var isMapCompleted by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(Pair(false, false)) }
     val runningEvent by runningViewModel.runningEvent.collectAsStateWithLifecycle(RunningEventState.RunningEmpty)
+
 
     LaunchedEffect(runningEvent) {
         when (runningEvent) {
             is RunningEventState.RunningFailToast -> {
                 val message = (runningEvent as RunningEventState.RunningFailToast).message
                 Toast.makeText(context, "최소 저장 거리는 100m입니다.", Toast.LENGTH_SHORT).show()
-                delay(500L)
+            }
+
+            is RunningEventState.RunningRecordModeSuccess -> {
                 moveToHome()
             }
+
             else -> {}
         }
     }
@@ -106,10 +108,14 @@ fun RunningResultScreen(
                         Timber.tag("데이터 확인").d("${runningViewModel.totalRunningList.value}")
                         runningViewModel.postRunningRecord(
                             captureFile = file,
-                            onSuccess = { exp, isAttend ->
-                                Toast.makeText(context, "경험치가 ${exp} 증가했습니다!", Toast.LENGTH_SHORT)
+                            onSuccess = { data ->
+                                Toast.makeText(
+                                    context,
+                                    "경험치가 ${data.exp} 증가했습니다!",
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
-                                isMapCompleted = true
+                                showDialog = showDialog.copy(second = true)
                             },
                             onFail = { message ->
                                 runningViewModel.updateRunningEvent(
@@ -117,6 +123,7 @@ fun RunningResultScreen(
                                         message
                                     )
                                 )
+                                showDialog = showDialog.copy(second = false)
                             }
                         )
                     }
@@ -150,13 +157,17 @@ fun RunningResultScreen(
         ) {
             Button(
                 onClick = {
-                    showDialog = true
+                    if (!showDialog.second) { //Dialog 보여줄지 처리
+                        moveToHome()
+                    } else {
+                        showDialog = showDialog.copy(first = true)
+                    }
+
                 },
                 colors = ButtonDefaults.buttonColors(BaseYellow),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
-                    .fillMaxWidth(0.3f),
-                enabled = isMapCompleted
+                    .fillMaxWidth(0.3f)
             ) {
                 Text(
                     text = "확인",
@@ -167,13 +178,32 @@ fun RunningResultScreen(
         }
     }
 
-    if (showDialog) {
-        BasicAlertDialog(onDismissRequest = { showDialog = false }) {
+    RunningResultDialog(
+        showDialog = showDialog,
+        onShowDialog = { show ->
+            showDialog = showDialog.copy(first = show)
+        },
+        onOkClick = {
+            runningViewModel.updatePracticeRecord()
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun RunningResultDialog(
+    showDialog: Pair<Boolean, Boolean>,
+    onShowDialog: (Boolean) -> Unit,
+    onOkClick: () -> Unit
+) {
+    if (showDialog.first && showDialog.second) {
+        BasicAlertDialog(onDismissRequest = { onShowDialog(false) }) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .pointerInput(Unit) {
-                        detectTapGestures(onTap = { showDialog = false })
+                        detectTapGestures(onTap = { onShowDialog(false) })
                     }
                     .padding(16.dp),
                 verticalArrangement = Arrangement.Center
@@ -210,7 +240,9 @@ fun RunningResultScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             TextButton(
-                                onClick = { showDialog = false },
+                                onClick = {
+                                    onShowDialog(false)
+                                },
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(8.dp)
@@ -230,8 +262,7 @@ fun RunningResultScreen(
 
                             TextButton(
                                 onClick = {
-                                    showDialog = false
-                                    moveToHome()
+                                    onOkClick()
                                 },
                                 modifier = Modifier
                                     .weight(1f)
@@ -253,7 +284,6 @@ fun RunningResultScreen(
 }
 
 
-
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview
 @Composable
@@ -261,5 +291,18 @@ fun RunningResultPreview() {
     RunItTheme {
         RunningResultScreen(runningViewModel = hiltViewModel<RunningViewModel>(),
             moveToHome = {})
+    }
+}
+
+@Preview(showBackground = true)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun PreviewDialog() {
+    RunItTheme {
+        RunningResultDialog(
+            Pair(false, false),
+            onShowDialog = {},
+            onOkClick = {}
+        )
     }
 }

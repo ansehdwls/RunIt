@@ -6,6 +6,7 @@ data class PostRunningRecordResponse(
 )
 
 data class ExpWithAttend(
+    val id: Int,
     val isAttend: Boolean,
     val exp: Int
 )
