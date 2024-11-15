@@ -24,10 +24,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.fcmToken FROM User u WHERE u.fcmToken IS NOT NULL")
     List<String> findAllFcmTokens();
 
-    @Query("SELECT u FROM User u JOIN u.experiences e " +
-            "WHERE u.userGroup.id = :groupId AND e.createAt >= :startDate " +
+    @Query("SELECT u FROM User u LEFT JOIN u.experiences e " +
+            "WHERE u.userGroup.id = :groupId AND (e.createAt >= :startDate OR e.createAt IS NULL) " +
             "GROUP BY u.id " +
-            "ORDER BY SUM(e.changed) ASC")
+            "ORDER BY COALESCE(SUM(e.changed), 0) ASC")
     List<User> findUsersWithExperienceSum(@Param("groupId") Long groupId, @Param("startDate") LocalDateTime startDate);
 
     List<User> findUserByUserGroup(Group group);
