@@ -59,7 +59,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 
 
 
-        return experienceRepository.findByUser_Id(userId).stream()
+        return experienceRepository.findByUserId(userId).stream()
                 .map(ExperienceGetListResponse::fromEntity)
                 .collect(Collectors.toList());
     }
