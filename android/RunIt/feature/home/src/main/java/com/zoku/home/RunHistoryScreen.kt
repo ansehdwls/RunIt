@@ -111,7 +111,6 @@ fun RunHistoryScreen(
                 onDateClick = { day ->
                     // 클릭한 날짜를 그대로 selectedDay로 설정하여 주간이 변경되지 않도록 함
                     selectedDay = day// 클릭된 날짜 업데이트
-                    Log.d("확인", "RunHistoryScreen: $day")
                     selectHistory = false
                 },
                 challengeList = historyWeekList

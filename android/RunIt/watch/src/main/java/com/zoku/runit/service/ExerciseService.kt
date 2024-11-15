@@ -5,6 +5,7 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import androidx.core.app.ServiceCompat
 import androidx.health.services.client.data.ExerciseState
 import androidx.lifecycle.Lifecycle
@@ -37,7 +38,6 @@ class ExerciseService : LifecycleService() {
     private var isStarted = false //서비스 시작 여부
     private val localBinder = LocalBinder()
     private var phoneActive = false
-
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -100,6 +100,7 @@ class ExerciseService : LifecycleService() {
         }
     }
 
+
     //핸드폰 앱 로그인 확인
     fun setPhoneActive(check: Boolean) {
         Timber.tag("ExerciseService").d("setPhoneActive $check")
@@ -118,7 +119,7 @@ class ExerciseService : LifecycleService() {
 
     //운동 시작 함수
     suspend fun startExercise() {
-//        postOngoingActivityNotification()
+        postOngoingActivityNotification()
         exerciseClientManager.startExercise()
     }
 
@@ -135,7 +136,7 @@ class ExerciseService : LifecycleService() {
     //운동 종료 함수
     suspend fun endExercise() {
         exerciseClientManager.endExercise()
-//        removeOngoingActivityNotification()
+        removeOngoingActivityNotification()
     }
 
     //랩 표시 함수

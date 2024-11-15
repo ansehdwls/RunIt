@@ -1,7 +1,11 @@
 package com.zoku.runit
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.PowerManager
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -48,11 +52,15 @@ class MainActivity : ComponentActivity() {
 
     var InitphoneWatchConnection = PhoneWatchConnection.EMPTY
 
+    private lateinit var wakeLock: PowerManager.WakeLock
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         PermissionHelper(this, PERMISSIONS, ::finish).launchPermission()
         observeMainExit()
+        setWakeRock()
         setContent {
             navController = rememberNavController()
             AppScaffold {
@@ -119,11 +127,22 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    fun setWakeRock(){
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::WakeLockTag")
+        wakeLock.acquire(10*60*1000L )
+    }
+    
     override fun onStop() {
         super.onStop()
         isActivityActive = false
     }
 
+    @SuppressLint("Wakelock")
+    override fun onDestroy() {
+        super.onDestroy()
+        wakeLock.release()
+    }
 
     companion object {
         private const val PHONE_CAPABILITY = "phone"
