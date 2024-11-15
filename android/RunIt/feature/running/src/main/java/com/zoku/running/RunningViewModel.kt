@@ -58,6 +58,7 @@ class RunningViewModel @Inject constructor(
 
     private var last100Time: Long = 0
     private var last100Value: Int = 0
+    private var lastIndex = -1
 
     private val bpmList = mutableListOf<Int>()
 
@@ -118,8 +119,8 @@ class RunningViewModel @Inject constructor(
 
                         updateUIState(newFace = (timeDifference * 10))
 
-                        if (bpmList.size >= timeDifference) {
-                            val recentBpmList = bpmList.takeLast(timeDifference)
+                        if (lastIndex + 1 < bpmList.size) {
+                            val recentBpmList = bpmList.subList(lastIndex + 1, bpmList.size)
                             updateUIState(newBPM = recentBpmList.average().toInt())
                             totalPaceList.add(
                                 Pace(
@@ -131,6 +132,20 @@ class RunningViewModel @Inject constructor(
                             totalPaceList.add(Pace(bpm = 0, pace = timeDifference * 10))
                         }
 
+//                        if (bpmList.size >= timeDifference) {
+//                            val recentBpmList = bpmList.takeLast(timeDifference)
+//                            updateUIState(newBPM = recentBpmList.average().toInt())
+//                            totalPaceList.add(
+//                                Pace(
+//                                    bpm = recentBpmList.average().toInt(),
+//                                    pace = timeDifference * 10
+//                                )
+//                            )
+//                        } else {
+//                            totalPaceList.add(Pace(bpm = 0, pace = timeDifference * 10))
+//                        }
+
+                        lastIndex = bpmList.size - 1
                         last100Value = current100Value
                         last100Time = System.currentTimeMillis()
                     }
