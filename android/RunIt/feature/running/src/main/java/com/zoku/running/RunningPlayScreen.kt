@@ -54,14 +54,23 @@ fun RunningPlayScreen(
     runningViewModel: RunningViewModel,
     connectionState: RunningConnectionState,
 ) {
-    val locationPermissionsState = rememberMultiplePermissionsState(
-        permissions = listOf(
+    val permissionsList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.FOREGROUND_SERVICE,
             Manifest.permission.FOREGROUND_SERVICE_LOCATION
         )
-    )
+    } else {
+        listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.FOREGROUND_SERVICE
+        )
+    }
+
+    val locationPermissionsState = rememberMultiplePermissionsState(permissions = permissionsList)
+
     LaunchedEffect(locationPermissionsState.allPermissionsGranted) {
         if (locationPermissionsState.allPermissionsGranted) {
             runningViewModel.startTimer()
