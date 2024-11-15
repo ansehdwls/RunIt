@@ -10,7 +10,6 @@ import android.location.Location
 import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,8 +21,8 @@ import com.zoku.data.repository.RunningRepository
 import com.zoku.network.model.request.Pace
 import com.zoku.network.model.request.PostRunningRecordRequest
 import com.zoku.network.model.request.Track
-import com.zoku.network.model.response.PaceRecord
 import com.zoku.network.model.response.RunRecordDetail
+import com.zoku.running.model.RunningEventState
 import com.zoku.running.model.RunningUIState
 import com.zoku.running.service.LocationService
 import com.zoku.running.util.getIso8601TimeString
@@ -31,7 +30,9 @@ import com.zoku.ui.model.LocationData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -39,6 +40,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 import java.io.File
 import java.util.Locale
 import javax.inject.Inject
@@ -54,6 +56,15 @@ class RunningViewModel @Inject constructor(
     private val _practiceRecord = MutableStateFlow<RunRecordDetail?>(null)
     val practiceRecord: StateFlow<RunRecordDetail?> = _practiceRecord
 
+    private val _runningEvent = MutableSharedFlow<RunningEventState>()
+    val runningEvent: SharedFlow<RunningEventState> get() = _runningEvent
+
+    fun updateRunningEvent(value: RunningEventState) {
+        viewModelScope.launch {
+            _runningEvent.emit(value)
+        }
+    }
+
     private var startTime: Long = 0
 
     private var last100Time: Long = 0
@@ -65,6 +76,7 @@ class RunningViewModel @Inject constructor(
     fun getPracticeRecord(runDto: RunRecordDetail) {
         _practiceRecord.value = runDto
     }
+
     val totalPaceList = mutableListOf<Pace>()
 
 
@@ -107,6 +119,7 @@ class RunningViewModel @Inject constructor(
                 }
                 if (lastLocation != null) {
                     val distance = lastLocation!!.distanceTo(newLocation)
+                    Timber.tag("RunningViewModel").d("$distance")
                     updateUIState(
                         newDistance = uiState.value.distance + distance.toInt()
                     )
