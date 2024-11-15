@@ -122,7 +122,7 @@ public class RecordServiceImpl implements RecordService {
 
         double dis = 0;
         long time = 0L;
-        int pace = 0;
+        double pace = 0;
 
 
         for (Record item : recordList) {
@@ -131,22 +131,22 @@ public class RecordServiceImpl implements RecordService {
             Duration duration = Duration.between(item.getStartTime(), item.getEndTime());
 
             long hours = duration.toHours(); // 총 시간 차이
-            long minutes = duration.toMinutes() % 60; //
+            long minutes = duration.toMinutes(); //
 
             time += (hours * 60) + minutes;
 
 
             pace += item.getSplitList().stream()
-                    .mapToInt(Split::getPace) // 각 요소에서 특정 속성 값을 추출하여 더함
+                    .mapToDouble(Split::getPace) // 각 요소에서 특정 속성 값을 추출하여 더함
                     .sum() / item.getSplitList().size();
 
             log.debug("item size{} record size {}", item.getSplitList().size(), recordList.size());
         }
 
         if (recordList.isEmpty()) {
-            return RecordTodayResponse.fromEntity(0.0, 0L, 0);
+            return RecordTodayResponse.fromEntity(0.0, 0L, 0.0);
         } else {
-            return RecordTodayResponse.fromEntity(dis, time, pace / recordList.size());
+            return RecordTodayResponse.fromEntity(dis, time, pace / recordList.size()/60);
         }
     }
 
