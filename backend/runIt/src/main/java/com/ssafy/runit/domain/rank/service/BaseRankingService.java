@@ -123,4 +123,9 @@ public abstract class BaseRankingService<T> {
         long currentTimeMillis = System.currentTimeMillis();
         return (currentTimeMillis % 1000000) * 1e-9;
     }
+
+    protected void removeSortedSetKey(String id) {
+        redisTemplate.delete(getRankKey(id));
+        redisTemplate.delete(getPreviousRankKey(id));
+    }
 }

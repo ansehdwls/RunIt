@@ -52,4 +52,12 @@ public class PaceRankManager {
     public Set<ZSetOperations.TypedTuple<Object>> getGroupRanking(long groupId) {
         return averagePaceRankingService.getGroupRanking(groupId, -1);
     }
+
+    public void deleteRank(String groupId) {
+        averagePaceRankingService.removeSortedSetKey(groupId);
+    }
+
+    public void deleteHash(String userId) {
+        redisTemplate.opsForHash().delete(averagePaceRankingService.getSubKey(userId));
+    }
 }

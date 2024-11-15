@@ -23,4 +23,8 @@ public class DistanceRankManager {
     public void updateDistance(long groupId, String userIdStr, double changed) {
         distanceRankingService.updateScore(groupId, userIdStr, changed);
     }
+
+    public void deleteRank(String groupId) {
+        distanceRankingService.removeSortedSetKey(groupId);
+    }
 }

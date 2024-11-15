@@ -24,4 +24,8 @@ public class ExperienceRankManager {
     public void updateScore(long groupId, String userIdStr, long changed) {
         experiencePointRankingService.updateScore(groupId, userIdStr, changed);
     }
+
+    public void deleteRank(String groupId) {
+        experiencePointRankingService.removeSortedSetKey(groupId);
+    }
 }
