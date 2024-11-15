@@ -49,7 +49,7 @@ public class DateUtils {
         Duration duration = Duration.between(stTime, endTime);
 
         long hours = duration.toHours(); // 총 시간 차이
-        long minutes = duration.toMinutes() % 60; //
+        long minutes = duration.toMinutes(); //
 
         return  (hours * 60) + minutes;
 

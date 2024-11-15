@@ -175,7 +175,7 @@ public class RecordServiceImpl implements RecordService {
 
             long time = 0L;
             double dis = 0.0;
-            int pace = 0;
+            double pace = 0;
             int cnt = 0;
 
             for (Record item : recordList) {
@@ -186,7 +186,9 @@ public class RecordServiceImpl implements RecordService {
                     }
 
                     dis += item.getDistance();
-                    pace += item.getBpm();
+                    pace += item.getSplitList().stream()
+                            .mapToDouble(Split::getPace) // 각 요소에서 특정 속성 값을 추출하여 더함
+                            .sum() / item.getSplitList().size();
 
                     cnt += 1;
                 }
@@ -196,9 +198,9 @@ public class RecordServiceImpl implements RecordService {
             disList.add(dis);
 
             if (cnt > 0) {
-                paceList.add((double) pace / cnt);
+                paceList.add(pace / cnt / 60);
             } else {
-                paceList.add((double) pace);
+                paceList.add(pace);
             }
         }
 
