@@ -135,11 +135,11 @@ public class RecordServiceImpl implements RecordService {
 
             time += (hours * 60) + minutes;
 
-
-            pace += item.getSplitList().stream()
-                    .mapToDouble(Split::getPace) // 각 요소에서 특정 속성 값을 추출하여 더함
-                    .sum() / item.getSplitList().size();
-
+            if(!item.getSplitList().isEmpty()) {
+                pace += item.getSplitList().stream()
+                        .mapToDouble(Split::getPace) // 각 요소에서 특정 속성 값을 추출하여 더함
+                        .sum() / item.getSplitList().size();
+            }
             log.debug("item size{} record size {}", item.getSplitList().size(), recordList.size());
         }
 
@@ -186,9 +186,11 @@ public class RecordServiceImpl implements RecordService {
                     }
 
                     dis += item.getDistance();
-                    pace += item.getSplitList().stream()
-                            .mapToDouble(Split::getPace) // 각 요소에서 특정 속성 값을 추출하여 더함
-                            .sum() / item.getSplitList().size();
+                    if(!item.getSplitList().isEmpty()) {
+                        pace += item.getSplitList().stream()
+                                .mapToDouble(Split::getPace) // 각 요소에서 특정 속성 값을 추출하여 더함
+                                .sum() / item.getSplitList().size();
+                    }
 
                     cnt += 1;
                 }
