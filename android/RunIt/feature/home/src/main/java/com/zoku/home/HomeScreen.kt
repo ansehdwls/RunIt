@@ -43,9 +43,7 @@ fun HomeScreen(
 
     ) {
     var isInfo by remember { mutableStateOf(true) }
-    var isHistory by remember {
-        mutableStateOf(false)
-    }
+
 
     if (phoneWatchConnection == PhoneWatchConnection.SEND_BPM) {
         moveToRunning()

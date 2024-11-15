@@ -263,7 +263,7 @@ fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
                 modifier = Modifier.weight(1f),
                 dir = Arrangement.Center,
                 iconModifier = iconModifier,
-                result = "${todayRecord.time}", unit = "hr",
+                result = "${todayRecord.time}", unit = "min",
                 imgResource = R.drawable.ic_time_home
             )
 
