@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
@@ -50,7 +51,10 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 @Composable
-fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
+fun RankScreen(
+    modifier: Modifier = Modifier,
+    moveToExpHistory: () -> Unit,
+) {
     val rankMenu = arrayOf("종합 순위", "페이스 순위", "거리 순위")
     val rankViewModel: RankViewModel = hiltViewModel()
 
@@ -75,9 +79,10 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
         }
     }
     Column(
-        modifier = modifier
-            .padding(horizontal = 10.dp)
-            .fillMaxSize()
+        modifier =
+            modifier
+                .padding(horizontal = 10.dp)
+                .fillMaxSize(),
     ) {
         RankingInfo(
             moveToExpHistory,
@@ -85,24 +90,30 @@ fun RankScreen(modifier: Modifier = Modifier, moveToExpHistory: () -> Unit) {
             attendanceList,
             myName,
             groupList.rank,
-            leagueList[groupList.leagueRank - 1]
+            leagueList[groupList.leagueRank - 1],
         )
 
         HomeTitle(
             modifier.padding(top = 10.dp, bottom = 5.dp),
             "그룹 내 순위",
             "종합 순위",
-            rankMenu
+            rankMenu,
         ) { selectedOption ->
-            if (selectedOption == "그룹 내 순위" + " 종합 순위") listType = 0
-            else if (selectedOption == "그룹 내 순위" + " 페이스 순위") listType = 1
-            else listType = 2
+            if (selectedOption == "그룹 내 순위" + " 종합 순위") {
+                listType = 0
+            } else if (selectedOption == "그룹 내 순위" + " 페이스 순위") {
+                listType = 1
+            } else {
+                listType = 2
+            }
         }
 
-        if (groupList.userInfos.isNotEmpty()) UserRanking(
-            groupList.userInfos,
-            (groupList.leagueRank - 1)
-        )
+        if (groupList.userInfos.isNotEmpty()) {
+            UserRanking(
+                groupList.userInfos,
+                (groupList.leagueRank - 1),
+            )
+        }
     }
 }
 
@@ -113,17 +124,17 @@ fun RankingInfo(
     attendanceList: List<AttendanceDay>,
     myName: String,
     myRank: Int,
-    league: League
+    league: League,
 ) {
     val baseModifier = Modifier.fillMaxWidth()
     Box(
-        modifier = baseModifier
-            .clip(RoundedCornerShape(15.dp))
-            .background(BaseDarkBackground)
-    )
-    {
+        modifier =
+            baseModifier
+                .clip(RoundedCornerShape(15.dp))
+                .background(BaseDarkBackground),
+    ) {
         Column(
-            modifier = baseModifier
+            modifier = baseModifier,
         ) {
             InfoIconButton("리그 정보", onClick = {})
 
@@ -132,7 +143,7 @@ fun RankingInfo(
                 DailyCheckView(
                     baseModifier
                         .padding(top = 10.dp),
-                    attendanceList
+                    attendanceList,
                 )
             }
 
@@ -144,75 +155,87 @@ fun RankingInfo(
 }
 
 @Composable
-fun UserProfile(myName: String, league: League) {
+fun UserProfile(
+    myName: String,
+    league: League,
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
     ) {
         Column {
             RankText(
                 text = "환영합니다! 오늘도 화이팅 :)",
-                fontSize = 12.sp
+                fontSize = 12.sp,
             )
             Row(
-                modifier = Modifier.padding(top = 20.dp)
+                modifier = Modifier.padding(top = 20.dp),
             ) {
                 Text(
                     text = myName,
-                    style = CustomTypo().mapleBold.copy(
-                        color = Color.White,
-                        fontSize = 25.sp
-                    )
+                    style =
+                        CustomTypo().mapleBold.copy(
+                            color = Color.White,
+                            fontSize = 25.sp,
+                        ),
                 )
                 RankText(
                     text = "님",
                     fontSize = 12.sp,
-                    modifier = Modifier.align(Alignment.Bottom)
+                    modifier = Modifier.align(Alignment.Bottom),
                 )
             }
         }
         Text(
             text = "현재 ",
-            modifier = Modifier
-                .weight(1f)
-                .align(Alignment.Bottom),
-            style = CustomTypo().jalnan.copy(
-                fontSize = 12.sp,
-                color = Color.White,
-                textAlign = TextAlign.End,
-            )
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .align(Alignment.Bottom),
+            style =
+                CustomTypo().jalnan.copy(
+                    fontSize = 12.sp,
+                    color = Color.White,
+                    textAlign = TextAlign.End,
+                ),
         )
 
         Text(
-            text = league.name, modifier = Modifier
-                .align(Alignment.Bottom),
-
-            style = CustomTypo().jalnan.copy(
-                textAlign = TextAlign.End,
-                fontSize = 14.sp,
-                color = Color(league.color),
-                fontFamily = ZokuFamily
-            )
+            text = league.name,
+            modifier =
+                Modifier
+                    .align(Alignment.Bottom),
+            style =
+                CustomTypo().jalnan.copy(
+                    textAlign = TextAlign.End,
+                    fontSize = 14.sp,
+                    color = Color(league.color),
+                    fontFamily = ZokuFamily,
+                ),
         )
         Image(
             painter = painterResource(id = league.imageUrl),
             contentDescription = null,
-            modifier = Modifier
-                .width(60.dp)
-                .height(60.dp)
-                .align(Alignment.Bottom),
-            contentScale = ContentScale.Crop
+            modifier =
+                Modifier
+                    .width(60.dp)
+                    .height(60.dp)
+                    .align(Alignment.Bottom),
+            contentScale = ContentScale.Crop,
         )
     }
 }
 
 @Composable
-fun InfoIconButton(title: String, onClick: () -> Unit) {
-
+fun InfoIconButton(
+    title: String,
+    onClick: () -> Unit,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = title,
@@ -220,17 +243,19 @@ fun InfoIconButton(title: String, onClick: () -> Unit) {
             fontSize = 10.sp,
             fontFamily = ZokuFamily,
             color = Color.White,
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
         )
         IconButton(
-            onClick = { onClick() }) {
+            onClick = { onClick() },
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.info_rank_icon),
                 contentDescription = null,
-                modifier = Modifier
-                    .width(13.dp)
-                    .height(13.dp),
-                contentScale = ContentScale.Crop
+                modifier =
+                    Modifier
+                        .width(13.dp)
+                        .height(13.dp),
+                contentScale = ContentScale.Crop,
             )
         }
     }
@@ -239,45 +264,55 @@ fun InfoIconButton(title: String, onClick: () -> Unit) {
 @Composable
 fun DailyCheckView(
     modifier: Modifier = Modifier,
-    attendanceList: List<AttendanceDay>
+    attendanceList: List<AttendanceDay>,
 ) {
     val today = LocalDate.now().dayOfWeek.value - 1
     Row(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         for (i in 0..today) {
             DailyCheck(
                 Modifier.weight(1f),
                 day = attendanceList[i].day.substring(0, 1),
-                type = if (attendanceList[i].attended) 1 else 2
+                type = if (attendanceList[i].attended) 1 else 2,
             )
         }
         for (i in today + 1 until 7) {
             DailyCheck(
-                Modifier.weight(1f), day = attendanceList[i].day.substring(0, 1), type = 0
+                Modifier.weight(1f),
+                day = attendanceList[i].day.substring(0, 1),
+                type = 0,
             )
         }
     }
 }
 
 @Composable
-fun DailyCheck(modifier: Modifier = Modifier, type: Int = 0, day: String) {
+fun DailyCheck(
+    modifier: Modifier = Modifier,
+    type: Int = 0,
+    day: String,
+) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painter = painterResource(
-                id = when (type) {
-                    0 -> R.drawable.none_rank_icon
-                    1 -> R.drawable.success_rank_icon
-                    else -> R.drawable.fail_rank_icon
-                }
-            ), contentDescription = null,
-            modifier = Modifier
-                .width(25.dp)
-                .height(35.dp)
-                .padding(bottom = 10.dp)
+            painter =
+                painterResource(
+                    id =
+                        when (type) {
+                            0 -> R.drawable.none_rank_icon
+                            1 -> R.drawable.success_rank_icon
+                            else -> R.drawable.fail_rank_icon
+                        },
+                ),
+            contentDescription = null,
+            modifier =
+                Modifier
+                    .width(25.dp)
+                    .height(35.dp)
+                    .padding(bottom = 10.dp),
         )
         RankText(text = day)
     }
@@ -288,44 +323,43 @@ fun ExpView(
     modifier: Modifier = Modifier,
     moveToExpHistory: () -> Unit,
     weekExp: Int,
-    myRank: Int
+    myRank: Int,
 ) {
     Row(
-        modifier = modifier
-            .padding(vertical = 5.dp)
+        modifier =
+            modifier
+                .padding(vertical = 5.dp),
     ) {
-
         Column(
-            modifier = Modifier.padding(horizontal = 10.dp)
+            modifier = Modifier.padding(horizontal = 10.dp),
         ) {
-
             Row {
                 Surface(
                     color = Color.Transparent,
                     onClick = {
                         moveToExpHistory()
-                    }
+                    },
                 ) {
                     RankText(text = "획득경험치")
                 }
                 Image(
                     painter = painterResource(id = R.drawable.next_run_history_icon),
                     contentDescription = null,
-                    modifier = Modifier
-                        .width(20.dp)
-                        .height(20.dp)
-                        .align(Alignment.CenterVertically)
+                    modifier =
+                        Modifier
+                            .width(20.dp)
+                            .height(20.dp)
+                            .align(Alignment.CenterVertically),
                 )
             }
 
             RankText(text = "$weekExp xp")
-
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         Column(
-            modifier = Modifier.padding(horizontal = 10.dp)
+            modifier = Modifier.padding(horizontal = 10.dp),
         ) {
             RankText(text = "현재순위")
             RankText(text = "${myRank}위")
@@ -336,20 +370,18 @@ fun ExpView(
 @Composable
 fun UserRanking(
     groupList: List<GroupMember>,
-    rank: Int
+    rank: Int,
 ) {
-
     val groupSize = groupList.size
     val promoteCount = ceil(groupSize * 0.3).toInt()
     val demoteCount = floor(groupSize * 0.3).toInt()
 
-
     LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
     ) {
-
         // 승급 인원
         items(promoteCount) { index ->
             val item = groupList[index]
@@ -357,50 +389,57 @@ fun UserRanking(
                 Modifier
                     .fillMaxWidth(),
                 item,
-                index
+                index,
             )
         }
 
         // 승급 표시, 알이면 없음
-        if (rank > 0) item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 20.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .align(Alignment.CenterVertically),
-                    contentAlignment = Alignment.CenterStart
+        if (rank > 0) {
+            item {
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 20.dp),
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.up_rank_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .width(20.dp)
-                            .height(20.dp)
+                    Box(
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .align(Alignment.CenterVertically),
+                        contentAlignment = Alignment.CenterStart,
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.up_rank_icon),
+                            contentDescription = null,
+                            modifier =
+                                Modifier
+                                    .width(20.dp)
+                                    .height(20.dp),
+                        )
+                    }
+                    Text(
+                        text = "승급",
+                        style =
+                            CustomTypo().jalnan.copy(
+                                color = Color.Green,
+                                fontSize = 24.sp,
+                            ),
                     )
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.CenterEnd,
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.up_rank_icon),
+                            contentDescription = null,
+                            modifier =
+                                Modifier
+                                    .width(20.dp)
+                                    .height(20.dp),
+                        )
+                    }
                 }
-                Text(
-                    text = "승급",
-                    style = CustomTypo().jalnan.copy(
-                        color = Color.Green, fontSize = 24.sp,
-                    )
-                )
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.up_rank_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .width(20.dp)
-                            .height(20.dp)
-                    )
-                }
-
             }
         }
         // 유지 인원
@@ -410,52 +449,58 @@ fun UserRanking(
                 Modifier
                     .fillMaxWidth(),
                 item,
-                promoteCount + index
+                promoteCount + index,
             )
         }
 
         if (demoteCount > 0) {
             // 강등 알이면 없음
-            if (rank > 0) item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .align(Alignment.CenterVertically),
-                        contentAlignment = Alignment.CenterStart
+            if (rank > 0) {
+                item {
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 20.dp),
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.down_rank_icon),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .width(20.dp)
-                                .height(20.dp)
+                        Box(
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .align(Alignment.CenterVertically),
+                            contentAlignment = Alignment.CenterStart,
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.down_rank_icon),
+                                contentDescription = null,
+                                modifier =
+                                    Modifier
+                                        .width(20.dp)
+                                        .height(20.dp),
+                            )
+                        }
+                        Text(
+                            text = "강등",
+                            style =
+                                CustomTypo().jalnan.copy(
+                                    color = Color.Red,
+                                    fontSize = 24.sp,
+                                ),
                         )
+                        Box(
+                            modifier = Modifier.weight(1f),
+                            contentAlignment = Alignment.CenterEnd,
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.down_rank_icon),
+                                contentDescription = null,
+                                modifier =
+                                    Modifier
+                                        .width(20.dp)
+                                        .height(20.dp),
+                            )
+                        }
                     }
-                    Text(
-                        text = "강등",
-                        style = CustomTypo().jalnan.copy(
-                            color = Color.Red,
-                            fontSize = 24.sp,
-                        )
-                    )
-                    Box(
-                        modifier = Modifier.weight(1f),
-                        contentAlignment = Alignment.CenterEnd
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.down_rank_icon),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .width(20.dp)
-                                .height(20.dp)
-                        )
-                    }
-
                 }
             }
 
@@ -466,11 +511,9 @@ fun UserRanking(
                     Modifier
                         .fillMaxWidth(),
                     item,
-                    groupSize - demoteCount + index
+                    groupSize - demoteCount + index,
                 )
             }
-
-
         }
     }
 }
@@ -478,88 +521,100 @@ fun UserRanking(
 @Composable
 fun UserRankingProfile(
     modifier: Modifier = Modifier,
-    item: GroupMember, index: Int
+    item: GroupMember,
+    index: Int,
 ) {
     val baseModifier = Modifier.fillMaxHeight()
 
-
     Surface(
         color = BaseDarkBackground,
-        modifier = modifier
-            .height(80.dp)
-            .padding(vertical = 8.dp)
-            .clip(RoundedCornerShape(10.dp))
+        modifier =
+            modifier
+                .height(80.dp)
+                .padding(vertical = 8.dp)
+                .clip(RoundedCornerShape(10.dp)),
     ) {
         Row {
             Box(
-                modifier = baseModifier
-                    .padding(start = 10.dp)
-                    .weight(3f),
-                contentAlignment = Alignment.Center
+                modifier =
+                    baseModifier
+                        .padding(start = 10.dp)
+                        .wrapContentWidth(),
+                contentAlignment = Alignment.Center,
             ) {
                 RankText(
                     text = "${index + 1}",
-                    fontSize = 24.sp
+                    fontSize = 24.sp,
                 )
             }
             Image(
                 painter = rememberAsyncImagePainter(item.imageUrl),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = baseModifier
-                    .size(80.dp) // 명확한 크기 설정
-                    .padding(horizontal = 20.dp, vertical = 14.dp)
-                    .clip(RoundedCornerShape(50.dp))
-
+                modifier =
+                    baseModifier
+                        .size(80.dp) // 명확한 크기 설정
+                        .padding(horizontal = 20.dp, vertical = 14.dp)
+                        .clip(RoundedCornerShape(50.dp)),
             )
             Box(
-                modifier = baseModifier.weight(10f),
-                contentAlignment = Alignment.CenterStart
+                modifier = baseModifier.wrapContentWidth(),
+                contentAlignment = Alignment.CenterStart,
             ) {
                 RankText(text = item.userName, fontSize = 20.sp)
             }
             Box(
-                modifier = baseModifier
-                    .padding(end = 10.dp),
-                contentAlignment = Alignment.CenterEnd
+                modifier = baseModifier.weight(1f),
+                contentAlignment = Alignment.CenterEnd,
             ) {
                 RankText(
-                    text = "${item.score}", fontSize = 24.sp
+                    text = "${item.score}",
+                    fontSize = 24.sp,
                 )
             }
             val iconRes =
-                if (item.rankDiff > 0) R.drawable.up_rank_icon
-                else if (item.rankDiff == 0) R.drawable.stop_icon
-                else R.drawable.down_rank_icon
+                if (item.rankDiff > 0) {
+                    R.drawable.up_rank_icon
+                } else if (item.rankDiff == 0) {
+                    R.drawable.stop_icon
+                } else {
+                    R.drawable.down_rank_icon
+                }
 
             val rankColor =
-                if (item.rankDiff > 0) Color.Green
-                else if (item.rankDiff == 0) RankProfile
-                else Color.Red
+                if (item.rankDiff > 0) {
+                    Color.Green
+                } else if (item.rankDiff == 0) {
+                    RankProfile
+                } else {
+                    Color.Red
+                }
 
             Box(
                 modifier = baseModifier,
-                contentAlignment = Alignment.CenterEnd
+                contentAlignment = Alignment.CenterEnd,
             ) {
-
                 Image(
                     painter = painterResource(id = iconRes),
                     contentDescription = null,
-                    modifier = baseModifier
-                        .size(50.dp) // 명확한 크기 설정
-                        .padding(top = 15.dp, bottom = 15.dp, start = 20.dp, end = 8.dp)
+                    modifier =
+                        baseModifier
+                            .size(50.dp) // 명확한 크기 설정
+                            .padding(top = 15.dp, bottom = 15.dp, start = 20.dp, end = 8.dp),
                 )
             }
             Box(
                 modifier = baseModifier,
-                contentAlignment = Alignment.CenterEnd
+                contentAlignment = Alignment.CenterEnd,
             ) {
                 RankText(
-                    text = item.rankDiff.toString(), fontSize = 12.sp,
-                    modifier = Modifier
-                        .width(20.dp)
-                        .padding(end = 10.dp),
-                    color = rankColor
+                    text = item.rankDiff.toString(),
+                    fontSize = 12.sp,
+                    modifier =
+                        Modifier
+                            .width(20.dp)
+                            .padding(end = 10.dp),
+                    color = rankColor,
                 )
             }
         }
@@ -571,15 +626,16 @@ fun RankText(
     modifier: Modifier = Modifier,
     text: String,
     fontSize: TextUnit = 15.sp,
-    color: Color = Color.White
+    color: Color = Color.White,
 ) {
     Text(
         modifier = modifier,
         text = text,
-        style = CustomTypo().jalnan.copy(
-            fontSize = fontSize,
-            textAlign = TextAlign.Center,
-            color = color
-        ),
+        style =
+            CustomTypo().jalnan.copy(
+                fontSize = fontSize,
+                textAlign = TextAlign.Center,
+                color = color,
+            ),
     )
 }
