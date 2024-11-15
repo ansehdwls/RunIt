@@ -20,7 +20,7 @@ fun NavController.navigateToRunHistory() = navigate(route = ScreenDestinations.r
 fun NavController.navigateToRecordModeScreen() =
     navigate(route = ScreenDestinations.RecordMode.route)
 
-fun NavController.navigateToRecordModeDetail(recordId :Int) =
+fun NavController.navigateToRecordModeDetail(recordId: Int) =
     navigate(route = ScreenDestinations.RecordModeDetail.createRoute(recordId))
 
 fun NavController.navigateToExpHistory() = navigate(route = ScreenDestinations.expHistory.route)
@@ -32,7 +32,7 @@ fun NavGraphBuilder.homeScreen(
     moveToRunning: () -> Unit,
     moveToExpHistory: () -> Unit,
     phoneWatchConnection: PhoneWatchConnection,
-    sendHeartBeat : () -> Unit
+    sendHeartBeat: () -> Unit
 ) {
     composable(route = ScreenDestinations.home.route) {
         sendHeartBeat()
@@ -52,22 +52,25 @@ fun NavGraphBuilder.runHistory() {
     }
 }
 
-fun NavGraphBuilder.recordMode(moveToDetail: (Int) -> Unit) {
+fun NavGraphBuilder.recordMode(moveToDetail: (Int) -> Unit, onBackButtonClick: () -> Unit) {
     composable(route = ScreenDestinations.RecordMode.route) {
-        RecordModeScreen(moveToDetail = moveToDetail)
+        RecordModeScreen(moveToDetail = moveToDetail, onBackButtonClick = {
+            onBackButtonClick()
+        })
     }
 }
 
 fun NavGraphBuilder.recordDetail(
-    moveToPractice : () -> Unit,
-    moveToRunning: (runRecordDto : RunRecordDetail) -> Unit
+    moveToPractice: () -> Unit,
+    moveToRunning: (runRecordDto: RunRecordDetail) -> Unit
 ) {
     composable(route = ScreenDestinations.RecordModeDetail.route,
-        arguments = listOf(navArgument("recordId") {  type = NavType.IntType })) {
-            backStackEntry ->
+        arguments = listOf(navArgument("recordId") { type = NavType.IntType })
+    ) { backStackEntry ->
         val recordId = backStackEntry.arguments?.getInt("recordId") ?: 0
 
-        RecordModeDetail(recordId = recordId,
+        RecordModeDetail(
+            recordId = recordId,
             moveToPractice = moveToPractice,
             moveToRunning = moveToRunning
         )

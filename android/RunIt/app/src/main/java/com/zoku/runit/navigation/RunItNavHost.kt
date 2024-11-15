@@ -45,7 +45,7 @@ fun RunItMainNavHost(
     onStopWearableActivityClick: (String) -> Unit,
     startDestination: String = ScreenDestinations.login.route,
     viewModel: ClientDataViewModel,
-    sendHeartBeat : () -> Unit
+    sendHeartBeat: () -> Unit
 ) {
     var isUserLoggedIn by remember { mutableStateOf(false) }
     val loginViewModel: LoginViewModel = hiltViewModel()
@@ -78,6 +78,9 @@ fun RunItMainNavHost(
         this.recordMode(
             moveToDetail = { recordId ->
                 navController.navigateToRecordModeDetail(recordId)
+            },
+            onBackButtonClick = {
+                navController.popBackStack()
             }
         )
         this.loginScreen(onLoginSuccess = {

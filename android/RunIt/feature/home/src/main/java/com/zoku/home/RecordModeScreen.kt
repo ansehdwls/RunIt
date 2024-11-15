@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,85 +38,118 @@ import com.zoku.ui.theme.CustomTypo
 import com.zoku.ui.theme.ZokuFamily
 
 @Composable
-fun RecordModeScreen(modifier: Modifier = Modifier, moveToDetail :(Int)->Unit){
+fun RecordModeScreen(
+    modifier: Modifier = Modifier,
+    viewModel: RecordModeViewModel = hiltViewModel(),
+    moveToDetail: (Int) -> Unit,
+    onBackButtonClick: () -> Unit
+) {
 
-    val viewModel : RecordModeViewModel = hiltViewModel()
     val practiceList by viewModel.practiceList.collectAsState()
 
     viewModel.getPracticeList()
 
-  Column(
-      modifier = modifier
-          .fillMaxWidth()
-          .fillMaxHeight()
-          .background(BaseGray)
-          .systemBarsPadding()
-  ) {
-      // 타이틀
-        Text(text = "기록갱신",
-            color = Color.White,
-            fontSize = 32.sp,
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(BaseGray)
+            .systemBarsPadding()
+    ) {
+        // 타이틀
+
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 20.dp),
-            textAlign = TextAlign.Center,
-            fontFamily = ZokuFamily
-        )
+                .padding(horizontal = 20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            IconButton(
+                onClick = {
+                    onBackButtonClick()
+                },
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back_white),
+                    contentDescription = "back",
+                    tint = Color.White
+                )
+            }
+            Text(
+                text = "기록갱신",
+                style = CustomTypo().mapleLight.copy(
+                    color = Color.White,
+                    fontSize = 32.sp,
+                ),
+                modifier = Modifier.align(Alignment.Center)
+            )
 
-      // 기록 리스트
-      if(practiceList.isNotEmpty()){
-          RecordList(
-              modifier
-                  .weight(1f)
-                  .padding(horizontal = 20.dp)
-              , moveToDetail= moveToDetail,
-              practiceList
-          )
-      }
-  }
+
+        }
+
+
+        // 기록 리스트
+        if (practiceList.isNotEmpty()) {
+            RecordList(
+                modifier
+                    .weight(1f)
+                    .padding(horizontal = 20.dp), moveToDetail = moveToDetail,
+                practiceList
+            )
+        }
+    }
 }
 
 @Composable
-fun RecordList(modifier: Modifier, moveToDetail :(Int)->Unit,
-               runningAllList : List<RunPractice>){
+fun RecordList(
+    modifier: Modifier, moveToDetail: (Int) -> Unit,
+    runningAllList: List<RunPractice>
+) {
     LazyColumn(
         modifier = modifier
     ) {
 
-        if(runningAllList.isEmpty()) {
-            item{
-                Text(text = "현재 기록이 없습니다",
+        if (runningAllList.isEmpty()) {
+            item {
+                Text(
+                    text = "현재 기록이 없습니다",
                     style = CustomTypo().jalnan.copy(
                         color = Color.White
                     ),
-                    )
+                )
             }
         }
 
 
-        items(runningAllList.size){ index ->
+        items(runningAllList.size) { index ->
             val item = runningAllList[index]
             // 날짜
-            Text(text = item.startTime.substringBefore("T"),
+            Text(
+                text = item.startTime.substringBefore("T"),
                 color = Color.White,
                 modifier = Modifier.fillMaxWidth(),
-                fontFamily = ZokuFamily)
+                fontFamily = ZokuFamily
+            )
 
-            RecordDataView(modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .padding(top = 5.dp)
-                .clip(RoundedCornerShape(16.dp))
-                ,moveToDetail = moveToDetail,
-                item)
+            RecordDataView(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(top = 5.dp)
+                    .clip(RoundedCornerShape(16.dp)), moveToDetail = moveToDetail,
+                item
+            )
         }
 
     }
 }
 
 @Composable
-fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : (Int) -> Unit,
-                   item : RunPractice){
+fun RecordDataView(
+    modifier: Modifier = Modifier, moveToDetail: (Int) -> Unit,
+    item: RunPractice
+) {
 
     val startTime = item.startTime.substringAfter("T").substring(0, 5)
     val endTime = item.endTime.substringAfter("T").substring(0, 5)
@@ -131,7 +168,7 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : (Int) -> Unit,
         ) {
             // 시간
             Text(
-                text = if(startHour > 12) "오후 $startTime" else "오전 $startTime",
+                text = if (startHour > 12) "오후 $startTime" else "오전 $startTime",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp, end = 25.dp),
@@ -140,7 +177,7 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : (Int) -> Unit,
             )
 
             Text(
-                text = "~ ${if(endHour > 12) "오후 $endTime" else  "오전 $endTime" }",
+                text = "~ ${if (endHour > 12) "오후 $endTime" else "오전 $endTime"}",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(end = 10.dp),
@@ -155,12 +192,14 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : (Int) -> Unit,
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Image(painter = rememberAsyncImagePainter(item.imageUrl),
+                Image(
+                    painter = rememberAsyncImagePainter(item.imageUrl),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .weight(3f)
-                        .padding(10.dp))
+                        .padding(10.dp)
+                )
                 RecordTextView(
                     modifier = Modifier.weight(1f),
                     item
@@ -171,24 +210,43 @@ fun RecordDataView(modifier : Modifier = Modifier, moveToDetail : (Int) -> Unit,
 }
 
 @Composable
-fun RecordTextView(modifier: Modifier,
-                   item: RunPractice){
+fun RecordTextView(
+    modifier: Modifier,
+    item: RunPractice
+) {
     Column(
         modifier = modifier
     ) {
-        Box(modifier = Modifier.weight(2f)){
-            Text(text = item.name,
+        Box(modifier = Modifier.weight(2f)) {
+            Text(
+                text = item.name,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.Center),
-                fontFamily = ZokuFamily)
+                fontFamily = ZokuFamily
+            )
         }
-        Box(modifier = Modifier.weight(3f)){
+        Box(modifier = Modifier.weight(3f)) {
             Column {
-                Text(text = "거리 : ${item.distance}km",
-                    fontFamily = ZokuFamily)
-                Text(text = "시간 : ${item.bpm}분",
-                    fontFamily = ZokuFamily)
+                Text(
+                    text = "거리 : ${item.distance}km",
+                    fontFamily = ZokuFamily
+                )
+                Text(
+                    text = "시간 : ${item.bpm}분",
+                    fontFamily = ZokuFamily
+                )
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewRecord() {
+    RecordModeScreen(
+        Modifier,
+        viewModel = hiltViewModel(),
+        onBackButtonClick = {},
+        moveToDetail = {}
+    )
 }
