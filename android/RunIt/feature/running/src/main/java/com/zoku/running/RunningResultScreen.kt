@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,8 +40,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoku.network.model.response.PaceRecord
 import com.zoku.network.model.response.RunRecordDetail
+import com.zoku.running.model.RunningEventState
 import com.zoku.running.util.getIso8601TimeString
 import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RecordDetailInfo
@@ -49,6 +52,8 @@ import com.zoku.ui.theme.BaseYellow
 import com.zoku.ui.theme.CustomTypo
 import com.zoku.ui.theme.RoundButtonGray
 import com.zoku.ui.theme.RunItTheme
+import kotlinx.coroutines.delay
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -62,7 +67,19 @@ fun RunningResultScreen(
     val totalRunningList by runningViewModel.totalRunningList.collectAsState()
     var isMapCompleted by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
+    val runningEvent by runningViewModel.runningEvent.collectAsStateWithLifecycle(RunningEventState.RunningEmpty)
 
+    LaunchedEffect(runningEvent) {
+        when (runningEvent) {
+            is RunningEventState.RunningFailToast -> {
+                val message = (runningEvent as RunningEventState.RunningFailToast).message
+                Toast.makeText(context, "최소 저장 거리는 100m입니다.", Toast.LENGTH_SHORT).show()
+                delay(500L)
+                moveToHome()
+            }
+            else -> {}
+        }
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -80,9 +97,13 @@ fun RunningResultScreen(
                 totalLocationList = totalRunningList,
                 onCaptureComplete = { file ->
                     if (runningViewModel.totalPaceList.isNotEmpty()) {
-                        Toast.makeText(context, "최소 100m는 달려야 경험치가 저장됩니다!", Toast.LENGTH_LONG)
-                            .show()
+                        runningViewModel.updateRunningEvent(
+                            RunningEventState.RunningFailToast(
+                                "최소 100m 이상 뛰어야 합니다. "
+                            )
+                        )
                     } else {
+                        Timber.tag("데이터 확인").d("${runningViewModel.totalRunningList.value}")
                         runningViewModel.postRunningRecord(
                             captureFile = file,
                             onSuccess = { exp, isAttend ->
@@ -91,8 +112,11 @@ fun RunningResultScreen(
                                 isMapCompleted = true
                             },
                             onFail = { message ->
-                                Toast.makeText(context, "API 실패 ${message}", Toast.LENGTH_SHORT)
-                                    .show()
+                                runningViewModel.updateRunningEvent(
+                                    RunningEventState.RunningFailToast(
+                                        message
+                                    )
+                                )
                             }
                         )
                     }
@@ -227,6 +251,7 @@ fun RunningResultScreen(
         }
     }
 }
+
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
