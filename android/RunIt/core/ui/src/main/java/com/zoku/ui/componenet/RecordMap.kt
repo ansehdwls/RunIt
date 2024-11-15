@@ -28,19 +28,21 @@ import com.zoku.ui.theme.routeColor
 private const val TAG = "RecordMap"
 
 @Composable
-fun RecordMap(modifier: Modifier = Modifier,
-              routeList : List<RouteInfo> = emptyList()
+fun RecordMap(
+    modifier: Modifier = Modifier,
+    routeList: List<RouteInfo> = emptyList()
 ) {
 
-    if(routeList.size > 0)
-        KakaoMapViewWithRandomRoute()
-    else
-        KakaoMapViewWithRandomRoute(initialLatitude = routeList[0].latitude,
+    if (routeList.isNotEmpty()) {
+        KakaoMapViewWithRandomRoute(
+            initialLatitude = routeList[0].latitude,
             initialLongitude = routeList[0].longitude,
             numberOfPoints = routeList.size,
             routeList = routeList
-            )
-
+        )
+    } else {
+        KakaoMapViewWithRandomRoute()
+    }
 }
 
 @Composable
@@ -49,14 +51,19 @@ fun KakaoMapViewWithRandomRoute(
     initialLatitude: Double = 37.5665, // 시작 지점의 위도 (예: 서울)
     initialLongitude: Double = 126.9780, // 시작 지점의 경도 (예: 서울)
     numberOfPoints: Int = 0, // 생성할 경로 점의 개수,
-    routeList : List<RouteInfo> = emptyList()
+    routeList: List<RouteInfo> = emptyList()
 ) {
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
 
     //  랜던 값 배치
     val randomLocationList = remember {
-        generateRandomRoute(initialLatitude, initialLongitude, numberOfPoints, routeList = routeList)
+        generateRandomRoute(
+            initialLatitude,
+            initialLongitude,
+            numberOfPoints,
+            routeList = routeList
+        )
     }
 
     AndroidView(
