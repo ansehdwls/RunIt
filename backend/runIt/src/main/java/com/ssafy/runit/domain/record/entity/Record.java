@@ -45,13 +45,14 @@ public class Record {
 
     private Boolean isPractice;
 
+    private Integer duration;
+
     public Double getPace() {
-        if (startTime == null || endTime == null || distance < 0) {
+        if (startTime == null || endTime == null || distance < 0 || duration < 0) {
             return null;
         }
-        Duration duration = Duration.between(startTime, endTime);
-        long minutes = duration.toMinutes();
-        long seconds = duration.toSeconds() % 60;
+        long minutes = duration / 60; //21
+        long seconds = duration % 60; //40
         double totalMinutes = minutes + (seconds / 60.0);
         if (totalMinutes <= 0) {
             return null;
