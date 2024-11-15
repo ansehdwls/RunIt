@@ -96,7 +96,7 @@ fun RunningResultScreen(
             KakaoMapView(
                 totalLocationList = totalRunningList,
                 onCaptureComplete = { file ->
-                    if (runningViewModel.totalPaceList.isNotEmpty()) {
+                    if (runningViewModel.totalPaceList.isEmpty()) {
                         runningViewModel.updateRunningEvent(
                             RunningEventState.RunningFailToast(
                                 "최소 100m 이상 뛰어야 합니다. "

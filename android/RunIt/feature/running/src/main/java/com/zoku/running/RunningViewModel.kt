@@ -40,6 +40,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 import java.io.File
 import java.util.Locale
 import javax.inject.Inject
@@ -117,6 +118,7 @@ class RunningViewModel @Inject constructor(
                 }
                 if (lastLocation != null) {
                     val distance = lastLocation!!.distanceTo(newLocation)
+                    Timber.tag("RunningViewModel").d("$distance")
                     updateUIState(
                         newDistance = uiState.value.distance + distance.toInt()
                     )
@@ -249,7 +251,7 @@ class RunningViewModel @Inject constructor(
                 filename = captureFile.name,
                 body = captureFile.asRequestBody("image/png".toMediaTypeOrNull())
             )
-
+            Timber.tag("RunningViewModel").d("PostRunningRecord ${uiState.value.distance}")
             val userJson = Gson().toJson(
                 PostRunningRecordRequest(
                     track = Track(

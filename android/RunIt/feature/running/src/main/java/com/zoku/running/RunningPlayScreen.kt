@@ -44,6 +44,7 @@ import com.zoku.ui.model.RunningConnectionState
 import com.zoku.ui.theme.BaseGrayBackground
 import com.zoku.ui.theme.BaseYellow
 import com.zoku.ui.theme.RoundButtonGray
+import timber.log.Timber
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
@@ -114,6 +115,7 @@ fun RunningPlayScreen(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.Bottom
         ) {
+            Timber.tag("RunningPlayScreen").d("distance ${uiState.distance}")
             RobotoText(
                 text = meterToKilo(uiState.distance.toInt()),
                 fontSize = 80.sp,
