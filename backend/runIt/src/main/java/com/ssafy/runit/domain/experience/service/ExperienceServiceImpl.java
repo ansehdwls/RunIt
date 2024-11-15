@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -55,7 +56,12 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     public List<ExperienceGetListResponse> experienceList(Long userId) {
-        return experienceRepository.findByUser_Id(userId);
+
+
+
+        return experienceRepository.findByUser_Id(userId).stream()
+                .map(ExperienceGetListResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
