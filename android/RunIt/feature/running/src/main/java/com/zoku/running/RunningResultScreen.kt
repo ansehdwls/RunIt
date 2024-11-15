@@ -1,7 +1,6 @@
 package com.zoku.running
 
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -77,6 +76,11 @@ fun RunningResultScreen(
             }
 
             is RunningEventState.RunningRecordModeSuccess -> {
+                if(runningViewModel.getIsPractice()){
+                    Toast.makeText(context,"연습모드 갱신에 성공하였습니다!",Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(context,"연습모드 저장에 성공하였습니다!",Toast.LENGTH_SHORT).show()
+                }
                 moveToHome()
             }
 
@@ -158,7 +162,6 @@ fun RunningResultScreen(
         ) {
             Button(
                 onClick = {
-                    Log.d("다이얼로그", "${showDialog.second}")
                     if (!showDialog.second) { //Dialog 보여줄지 처리
                         moveToHome()
                     } else {
@@ -169,7 +172,8 @@ fun RunningResultScreen(
                 colors = ButtonDefaults.buttonColors(BaseYellow),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
-                    .fillMaxWidth(0.3f)
+                    .fillMaxWidth(0.3f),
+                enabled = showDialog.second
             ) {
                 Text(
                     text = "확인",
