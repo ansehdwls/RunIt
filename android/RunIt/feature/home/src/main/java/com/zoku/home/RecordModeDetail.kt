@@ -194,6 +194,8 @@ fun RecordModeDetail(
     }
 }
 
+
+
 @Composable
 fun RecordDetailTitle(modifier: Modifier = Modifier, updateRecord: () -> Unit) {
     var isEditing by remember { mutableStateOf(false) }

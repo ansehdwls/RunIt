@@ -44,7 +44,6 @@ fun RecordDetailInfo(
     moveToRunning : (recordDto : RunRecordDetail) -> Unit = {}
 ) {
     if(runRecord != null){
-        Log.d("확인", "RecordDetailInfo: ${runRecord.startTime}")
         val startTime = runRecord.startTime.toString()
             .substringAfter("T")
             .take(5) // 시간 부분에서 앞 5자 (예: "06:26")만 가져옴
