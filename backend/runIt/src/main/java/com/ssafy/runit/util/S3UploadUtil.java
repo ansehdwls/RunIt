@@ -17,8 +17,8 @@ public class S3UploadUtil {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String saveFile(MultipartFile multipartFile) throws IOException {
-        String originalFilename = multipartFile.getOriginalFilename();
+    public String saveFile(MultipartFile multipartFile, Long userId, Long recordId) throws IOException {
+        String originalFilename = userId.toString()+":"+recordId.toString()+multipartFile.getOriginalFilename();
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());

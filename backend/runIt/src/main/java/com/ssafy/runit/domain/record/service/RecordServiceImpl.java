@@ -63,7 +63,7 @@ public class RecordServiceImpl implements RecordService {
         recordRepository.save(record);
 
         try {
-            String url = s3UploadUtil.saveFile(file);
+            String url = s3UploadUtil.saveFile(file, findUser.getId(), record.getId());
             Record afRecord = request.toEntity(record, url);
             trackRepository.save(afRecord.getTrack());
             record.updateSplitList(afRecord.getSplitList());
@@ -135,9 +135,12 @@ public class RecordServiceImpl implements RecordService {
 
             time += (hours * 60) + minutes;
 
+
             pace += item.getSplitList().stream()
                     .mapToInt(Split::getPace) // 각 요소에서 특정 속성 값을 추출하여 더함
                     .sum() / item.getSplitList().size();
+
+            log.debug("item size{} record size {}", item.getSplitList().size(), recordList.size());
         }
 
         if (recordList.isEmpty()) {
