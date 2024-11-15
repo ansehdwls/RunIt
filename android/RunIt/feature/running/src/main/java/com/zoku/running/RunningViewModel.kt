@@ -67,7 +67,6 @@ class RunningViewModel @Inject constructor(
 
     private var startTime: Long = 0
 
-    private var last100Time: Long = 0
     private var last100Value: Int = 0
     private var lastIndex = -1
 
@@ -78,7 +77,6 @@ class RunningViewModel @Inject constructor(
     }
 
     val totalPaceList = mutableListOf<Pace>()
-
 
     // TTS
     private var tts: TextToSpeech = TextToSpeech(application, this)
@@ -106,12 +104,14 @@ class RunningViewModel @Inject constructor(
             val isPause = intent.getBooleanExtra("isPause", false)
             if (isPause) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    val locationList = intent.getParcelableArrayListExtra("locationList", LocationData::class.java)
+                    val locationList =
+                        intent.getParcelableArrayListExtra("locationList", LocationData::class.java)
                     locationList?.let {
                         _totalRunningList.value += it
                     }
                 } else {
-                    val locationList = intent.getParcelableArrayListExtra<LocationData>("locationList")
+                    val locationList =
+                        intent.getParcelableArrayListExtra<LocationData>("locationList")
                     locationList?.let {
                         _totalRunningList.value += it
                     }
@@ -134,7 +134,7 @@ class RunningViewModel @Inject constructor(
                     val current100Value = ((uiState.value.distance % 1000) / 100).toInt()
                     if (current100Value != last100Value) {
                         val timeDifference =
-                            ((System.currentTimeMillis() - last100Time) / 1000).toInt()
+                            ((System.currentTimeMillis()/1000 - uiState.value.time)).toInt()
 
                         updateUIState(newFace = (timeDifference * 10))
 
@@ -166,7 +166,6 @@ class RunningViewModel @Inject constructor(
 
                         lastIndex = bpmList.size - 1
                         last100Value = current100Value
-                        last100Time = System.currentTimeMillis()
                     }
 
 
@@ -227,7 +226,6 @@ class RunningViewModel @Inject constructor(
 
     fun startTimer() {
         startTime = System.currentTimeMillis()
-        last100Time = startTime
         getInitialLocation()
         timerJob = viewModelScope.launch {
             while (true) {
@@ -273,7 +271,8 @@ class RunningViewModel @Inject constructor(
                 body = captureFile.asRequestBody("image/png".toMediaTypeOrNull())
             )
 
-            val filteredPathList = totalRunningList.value.filterIndexed { index, _ -> index % 2 != 0 }
+            val filteredPathList =
+                totalRunningList.value.filterIndexed { index, _ -> index % 2 != 0 }
 
             val userJson = Gson().toJson(
                 PostRunningRecordRequest(
@@ -281,10 +280,11 @@ class RunningViewModel @Inject constructor(
                         path = filteredPathList.toString()
                     ),
                     record = com.zoku.network.model.request.Record(
-                        distance = uiState.value.distance/1000,
+                        distance = uiState.value.distance / 1000,
                         startTime = getIso8601TimeString(startTime),
                         endTime = getIso8601TimeString(System.currentTimeMillis()),
-                        bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt()
+                        bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt(),
+                        duration = uiState.value.time
                     ),
                     paceList = totalPaceList
                 )
