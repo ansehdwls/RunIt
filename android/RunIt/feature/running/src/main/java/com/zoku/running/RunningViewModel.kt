@@ -346,18 +346,35 @@ class RunningViewModel @Inject constructor(
 
     fun updatePracticeRecord() {
         viewModelScope.launch {
+            if(isPractice){
+                practiceRecord.value?.id?.let {
+                    when (val result = runningRepository.updateRunPracticeMode(it)) {
+                        is NetworkResult.Success -> {
+                            Timber.tag("RecordModeViewModel").d("연습 리스트 빼는거 성공 ${result.data}")
+                        }
+
+                        is NetworkResult.Error -> {
+                            Timber.tag("RecordModeViewModel").d("연습 리스트 뺴는거 실패 ${result.errorMsg}")
+                        }
+
+                        is NetworkResult.Exception -> {
+                            Timber.tag("RecordModeViewModel").d("연습 리스트 빼는거 네트워크 ${result.e}")
+                        }
+                    }
+                }
+            }
             when (val result = runningRepository.updateRunPracticeMode(recordId)) {
                 is NetworkResult.Success -> {
                     updateRunningEvent(RunningEventState.RunningRecordModeSuccess)
-                    Timber.tag("RecordModeViewModel").d("연습 리스트 갱신 성공 ${result.data}")
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 새거 넣기 성공 ${result.data}")
                 }
 
                 is NetworkResult.Error -> {
-                    Timber.tag("RecordModeViewModel").d("연습 리스트 갱신 실패 ${result.errorMsg}")
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 새거 넣기 실패 ${result.errorMsg}")
                 }
 
                 is NetworkResult.Exception -> {
-                    Timber.tag("RecordModeViewModel").d("연습 리스트 갱신 네트워크 ${result.e}")
+                    Timber.tag("RecordModeViewModel").d("연습 리스트 새거 넣기 네트워크 ${result.e}")
                 }
             }
         }
