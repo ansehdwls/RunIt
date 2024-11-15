@@ -69,8 +69,8 @@ class RunningViewModel @Inject constructor(
     private var recordId: Int = 0
     private var startTime: Long = 0
 
-    private var last100Time: Long = 0
     private var last100Value: Int = 0
+    private var last100Second: Int = 0
     private var lastIndex = -1
 
     private val bpmList = mutableListOf<Int>()
@@ -80,7 +80,6 @@ class RunningViewModel @Inject constructor(
     }
 
     val totalPaceList = mutableListOf<Pace>()
-
 
     // TTS
     private var tts: TextToSpeech = TextToSpeech(application, this)
@@ -138,7 +137,7 @@ class RunningViewModel @Inject constructor(
                     val current100Value = ((uiState.value.distance % 1000) / 100).toInt()
                     if (current100Value != last100Value) {
                         val timeDifference =
-                            ((System.currentTimeMillis() - last100Time) / 1000).toInt()
+                            (uiState.value.time - last100Second)
 
                         updateUIState(newFace = (timeDifference * 10))
 
@@ -170,7 +169,7 @@ class RunningViewModel @Inject constructor(
 
                         lastIndex = bpmList.size - 1
                         last100Value = current100Value
-                        last100Time = System.currentTimeMillis()
+                        last100Second = uiState.value.time
                     }
 
 
@@ -231,7 +230,6 @@ class RunningViewModel @Inject constructor(
 
     fun startTimer() {
         startTime = System.currentTimeMillis()
-        last100Time = startTime
         getInitialLocation()
         timerJob = viewModelScope.launch {
             while (true) {
@@ -289,10 +287,23 @@ class RunningViewModel @Inject constructor(
                         distance = uiState.value.distance / 1000,
                         startTime = getIso8601TimeString(startTime),
                         endTime = getIso8601TimeString(System.currentTimeMillis()),
-                        bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt()
+                        bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt(),
+                        duration = uiState.value.time
                     ),
                     paceList = totalPaceList
                 )
+            )
+
+            Log.d(
+                "리퀘스트확인", " 레코드 : ${
+                    com.zoku.network.model.request.Record(
+                        distance = uiState.value.distance / 1000,
+                        startTime = getIso8601TimeString(startTime),
+                        endTime = getIso8601TimeString(System.currentTimeMillis()),
+                        bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt(),
+                        duration = uiState.value.time
+                    )
+                }"
             )
 
             val userRequestBody = userJson.toRequestBody("application/json".toMediaTypeOrNull())
