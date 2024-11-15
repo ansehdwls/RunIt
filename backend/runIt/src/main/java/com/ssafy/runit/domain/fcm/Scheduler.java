@@ -18,7 +18,8 @@ public class Scheduler {
     private final FcmService fcmService;
     private final UserService userService;
 
-    @Scheduled(cron = "${schedule.week-start.cron}")
+    //@Scheduled(cron = "${schedule.week-start.cron}")
+    @Scheduled(cron = "0 0 0 * * ?") // 임시 스케쥴링 매일 00시
     public void sendWeekStartNotification() {
         List<String> tokens = userService.findAllFcmTokens();
         String title = SchedulerConstants.WEEK_START_NOTIFICATION[0];

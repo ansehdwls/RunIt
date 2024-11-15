@@ -85,7 +85,7 @@ public class LeagueSummaryServiceImpl implements LeagueSummaryService {
         int advanceCount = counts[0];
         int degradeCount = counts[1];
         int waitCount = counts[2];
-        System.out.println("승급 : " + advanceCount + " 강등 : " + degradeCount + " 대기:" + waitCount);
+        log.debug("[승급]: {} [강등] : {} [잔류]: {}",advanceCount,degradeCount,waitCount);
         allocateUsersToCategories(sortedUsers, advanceCount, degradeCount, advanceUser, degradeUser, waitUser);
     }
 
@@ -112,10 +112,9 @@ public class LeagueSummaryServiceImpl implements LeagueSummaryService {
                                        Map<Long, Set<User>> degradeMap,
                                        Map<Long, Set<User>> waitMap) {
         for (League league : leagues) {
-            log.debug("{} 인원 할당", league.getLeagueName());
             List<User> totalUsers = gatherUsersForLeague(league, advanceMap, degradeMap, waitMap);
+            log.debug("[{}] {} 인원 할당", league.getLeagueName(), totalUsers.size());
             if (totalUsers.isEmpty()) {
-                log.debug("할당된 인원 없음!");
                 continue;
             }
             assignUsersToGroups(totalUsers, league);
