@@ -16,6 +16,7 @@ public class RecordSaveDto {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer bpm;
+    private Integer duration;
 
     public Record toEntity(User user){
         return Record.builder()
@@ -25,6 +26,7 @@ public class RecordSaveDto {
                 .startTime(startTime)
                 .endTime(endTime)
                 .isPractice(false)
+                .duration(duration)
                 .build();
 
     }
