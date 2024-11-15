@@ -4,6 +4,8 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class DateUtils {
 
@@ -53,5 +55,14 @@ public class DateUtils {
 
         return  (hours * 60) + minutes;
 
+    }
+
+    public static String trimToSeconds(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+        // 초 단위로 자르고 포맷팅
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return dateTime.truncatedTo(ChronoUnit.SECONDS).format(formatter);
     }
 }
