@@ -9,7 +9,7 @@ data class HistoryWeekResponse(
 
 data class WeekList(
     val id : Int,
-    val distance : Int,
+    val distance : Double,
     val bpm : Int,
     val startTime : Timestamp,
     val endTime : Timestamp ,

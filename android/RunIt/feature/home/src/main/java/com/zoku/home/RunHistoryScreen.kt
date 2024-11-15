@@ -41,9 +41,11 @@ import java.util.Locale
 
 
 @Composable
-fun RunHistoryScreen(modifier: Modifier = Modifier) {
+fun RunHistoryScreen(
+    modifier: Modifier = Modifier,
+    viewModel : RunHistoryViewModel = hiltViewModel()
+) {
 
-    val viewModel: RunHistoryViewModel = hiltViewModel()
     var selectHistory by remember {
         mutableStateOf(false)
     }
