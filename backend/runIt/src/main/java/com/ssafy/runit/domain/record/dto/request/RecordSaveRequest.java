@@ -32,6 +32,7 @@ public class RecordSaveRequest {
 
         Record recordResult = Record.builder()
                 .user(user)
+                .duration(recordEntity.getDuration())
                 .bpm(recordEntity.getBpm())
                 .distance(recordEntity.getDistance())
                 .startTime(recordEntity.getStartTime())
