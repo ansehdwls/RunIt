@@ -263,7 +263,7 @@ fun TodayDashBoard(modifier: Modifier = Modifier, todayRecord: RunToday) {
                 modifier = Modifier.weight(1f),
                 dir = Arrangement.Center,
                 iconModifier = iconModifier,
-                result = "${todayRecord.time}", unit = "min",
+                result = "${todayRecord.time.toInt()}", unit = "min",
                 imgResource = R.drawable.ic_time_home
             )
 
@@ -467,7 +467,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
             ) {
                 Spacer(modifier = Modifier.padding(top = 35.dp))
                 Text(
-                    text = "$time",
+                    text = "${time.toInt()}",
                     modifier = Modifier
                         .background(color)
                         .weight(1f)
@@ -477,7 +477,7 @@ fun RunningRecord(modifier: Modifier = Modifier, distance: Double, time: Double,
                     fontFamily = ZokuFamily
                 )
                 Text(
-                    text = "시간/hr", modifier = Modifier
+                    text = "분/min", modifier = Modifier
                         .background(color)
                         .weight(1f)
                         .fillMaxWidth(),
@@ -641,4 +641,5 @@ class DayAxisFormatter : ValueFormatter() {
 @Composable
 fun PreviewTodayDashBoard() {
     TodayDashBoard(todayRecord = RunToday(2.0, 2.0, 2.0))
+
 }
