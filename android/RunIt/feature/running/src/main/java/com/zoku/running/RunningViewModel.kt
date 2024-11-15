@@ -254,10 +254,12 @@ class RunningViewModel @Inject constructor(
                 body = captureFile.asRequestBody("image/png".toMediaTypeOrNull())
             )
 
+            val filteredPathList = totalRunningList.value.filterIndexed { index, _ -> index % 2 != 0 }
+
             val userJson = Gson().toJson(
                 PostRunningRecordRequest(
                     track = Track(
-                        path = totalRunningList.value.toString()
+                        path = filteredPathList.toString()
                     ),
                     record = com.zoku.network.model.request.Record(
                         distance = uiState.value.distance,
