@@ -1,5 +1,6 @@
 package com.zoku.runit
 
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -54,6 +55,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         enableEdgeToEdge()
         setContent {
             RunItTheme {
