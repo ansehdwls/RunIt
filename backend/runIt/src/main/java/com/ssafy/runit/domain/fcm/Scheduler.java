@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -19,8 +20,10 @@ public class Scheduler {
     private final UserService userService;
 
     //@Scheduled(cron = "${schedule.week-start.cron}")
-    @Scheduled(cron = "0 0 0 * * ?") // 임시 스케쥴링 매일 00시
+    @Scheduled(cron = "0 0 0 * * ?") // 임시 스케쥴링 매일 00시 자정ㅈ
     public void sendWeekStartNotification() {
+        long startTime = System.currentTimeMillis();
+        log.debug("스케쥴러 시작 !! : {}", LocalDate.now());
         List<String> tokens = userService.findAllFcmTokens();
         String title = SchedulerConstants.WEEK_START_NOTIFICATION[0];
         String body = SchedulerConstants.WEEK_START_NOTIFICATION[1];
@@ -36,5 +39,7 @@ public class Scheduler {
                             .body(body)
                             .title(title).build());
         }
+        long endTime = System.currentTimeMillis();
+        log.debug("스케쥴러 끝 !! : {} 소요시간 : {}ms,", LocalDate.now(), endTime-startTime);
     }
 }
