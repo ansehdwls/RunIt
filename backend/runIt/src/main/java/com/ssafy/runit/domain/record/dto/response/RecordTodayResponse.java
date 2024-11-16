@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.record.dto.response;
 
+import com.ssafy.runit.util.DoubleUtils;
 import lombok.Builder;
 
 @Builder
@@ -10,9 +11,9 @@ public record RecordTodayResponse(
 ) {
     public static RecordTodayResponse fromEntity(Double dis, Long time, Double pace){
         return RecordTodayResponse.builder()
-                .pace(pace)
+                .pace(DoubleUtils.distanceFormatter(pace))
                 .time(time)
-                .distance(dis)
+                .distance(DoubleUtils.distanceFormatter(dis))
                 .build();
     }
 }

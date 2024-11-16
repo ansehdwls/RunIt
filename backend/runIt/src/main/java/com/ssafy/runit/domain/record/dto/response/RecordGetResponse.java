@@ -2,6 +2,7 @@ package com.ssafy.runit.domain.record.dto.response;
 
 import com.ssafy.runit.domain.record.entity.Record;
 import com.ssafy.runit.domain.split.dto.response.SplitResponse;
+import com.ssafy.runit.util.DoubleUtils;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public record RecordGetResponse(
     public static RecordGetResponse fromEntity(Record record, List<SplitResponse> paceLs) {
         return RecordGetResponse.builder()
                 .id(record.getId())
-                .distance(record.getDistance())
+                .distance(DoubleUtils.distanceFormatter(record.getDistance()))
                 .bpm(record.getBpm())
                 .startTime(record.getStartTime())
                 .endTime(record.getEndTime())
