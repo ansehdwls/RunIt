@@ -6,6 +6,7 @@ import com.ssafy.runit.exception.CustomException;
 import com.ssafy.runit.exception.code.ServerErrorCode;
 import com.ssafy.runit.util.DateUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaceRankManager {
 
     private final AveragePaceRankingService averagePaceRankingService;
@@ -58,6 +60,13 @@ public class PaceRankManager {
     }
 
     public void deleteHash(String userId) {
-        redisTemplate.opsForHash().delete(averagePaceRankingService.getSubKey(userId));
+        String key = averagePaceRankingService.getSubKey(userId);
+        String [] fields = {"total_pace", "count"};
+        try {
+            Long result = redisTemplate.opsForHash().delete(key, fields);
+            log.info("HDEL 수행 완료. 키: {}, 삭제된 필드 수: {}", key, result);
+        } catch (Exception e) {
+            log.error("HDEL 수행 중 오류 발생. 키: {}, 오류: {}", key, e.getMessage(), e);
+        }
     }
 }
