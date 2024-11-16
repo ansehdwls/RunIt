@@ -17,6 +17,7 @@ import com.ssafy.runit.exception.code.AuthErrorCode;
 import com.ssafy.runit.exception.code.RecordErrorCode;
 import com.ssafy.runit.exception.code.TrackErrorCode;
 import com.ssafy.runit.util.DateUtils;
+import com.ssafy.runit.util.DoubleUtils;
 import com.ssafy.runit.util.S3UploadUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -197,12 +198,12 @@ public class RecordServiceImpl implements RecordService {
             }
 
             timeList.add(time);
-            disList.add(dis);
+            disList.add(DoubleUtils.distanceFormatter(dis));
 
             if (cnt > 0) {
-                paceList.add(pace / cnt / 60);
+                paceList.add(DoubleUtils.distanceFormatter(pace / cnt / 60));
             } else {
-                paceList.add(pace);
+                paceList.add(DoubleUtils.distanceFormatter(pace));
             }
         }
 

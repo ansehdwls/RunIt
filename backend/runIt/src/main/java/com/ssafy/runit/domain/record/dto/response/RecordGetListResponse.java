@@ -1,6 +1,7 @@
 package com.ssafy.runit.domain.record.dto.response;
 
 import com.ssafy.runit.domain.record.entity.Record;
+import com.ssafy.runit.util.DoubleUtils;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public record RecordGetListResponse(
     public static RecordGetListResponse fromEntity(Record record, String name, String imageUrl){
         return RecordGetListResponse.builder()
                 .id(record.getId())
-                .distance(record.getDistance())
+                .distance(DoubleUtils.distanceFormatter(record.getDistance()))
                 .bpm(record.getBpm())
                 .startTime(record.getStartTime())
                 .endTime(record.getEndTime())

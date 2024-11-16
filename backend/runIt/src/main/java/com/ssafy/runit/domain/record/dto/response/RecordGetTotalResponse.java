@@ -1,5 +1,6 @@
 package com.ssafy.runit.domain.record.dto.response;
 
+import com.ssafy.runit.util.DoubleUtils;
 import lombok.Builder;
 
 @Builder
@@ -11,9 +12,9 @@ public record RecordGetTotalResponse(
 ) {
     public static RecordGetTotalResponse fromEntity(Double tDis, Long tTime, Double wDis, Long wTime){
         return RecordGetTotalResponse.builder()
-                .totalDistance(tDis)
+                .totalDistance(DoubleUtils.distanceFormatter(tDis))
                 .totalTime(tTime)
-                .weekDistance(wDis)
+                .weekDistance(DoubleUtils.distanceFormatter(wDis))
                 .weekTime(wTime)
                 .build();
     }
