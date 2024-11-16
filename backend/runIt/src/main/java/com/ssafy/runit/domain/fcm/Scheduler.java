@@ -2,6 +2,7 @@ package com.ssafy.runit.domain.fcm;
 
 import com.ssafy.runit.domain.fcm.dto.SendFcmMessage;
 import com.ssafy.runit.domain.fcm.service.FcmService;
+import com.ssafy.runit.domain.summary.service.LeagueSummaryService;
 import com.ssafy.runit.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,11 +19,13 @@ public class Scheduler {
 
     private final FcmService fcmService;
     private final UserService userService;
+    private final LeagueSummaryService leagueSummaryService;
 
     //@Scheduled(cron = "${schedule.week-start.cron}")
     @Scheduled(cron = "0 0 0 * * ?") // 임시 스케쥴링 매일 00시 자정ㅈ
     public void sendWeekStartNotification() {
         long startTime = System.currentTimeMillis();
+        leagueSummaryService.processWeeklySummary();
         log.debug("스케쥴러 시작 !! : {}", LocalDate.now());
         List<String> tokens = userService.findAllFcmTokens();
         String title = SchedulerConstants.WEEK_START_NOTIFICATION[0];
@@ -40,6 +43,6 @@ public class Scheduler {
                             .title(title).build());
         }
         long endTime = System.currentTimeMillis();
-        log.debug("스케쥴러 끝 !! : {} 소요시간 : {}ms,", LocalDate.now(), endTime-startTime);
+        log.debug("스케쥴러 끝 !! : {} 소요시간 : {}ms,", LocalDate.now(), endTime - startTime);
     }
 }
