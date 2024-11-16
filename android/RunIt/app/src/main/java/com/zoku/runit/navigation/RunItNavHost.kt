@@ -101,10 +101,13 @@ fun RunItMainNavHost(
             onResumeWearableActivityClick = onResumeWearableActivityClick,
             onStopWearableActivityClick = onStopWearableActivityClick,
             moveToHome = {
-                navController.popBackStack(
-                    route = ScreenDestinations.home.route,
-                    inclusive = false
-                )
+                navController.navigate(ScreenDestinations.home.route) {
+                    // 모든 기존 스택을 제거
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true // 루트 화면까지 모두 제거
+                    }
+                    launchSingleTop = true // 중복된 홈 화면 방지
+                }
             },
             viewModel
         )

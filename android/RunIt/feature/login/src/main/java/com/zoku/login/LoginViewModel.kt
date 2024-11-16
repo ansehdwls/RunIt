@@ -84,7 +84,7 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-    fun handleKaKaoLogin() {
+    fun handleKaKaoLogin(context: Context) {
 
         // 카카오계정으로 로그인 공통 callback 구성
         // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
@@ -111,8 +111,8 @@ class LoginViewModel @Inject constructor(
         }
 
         // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
-        if (UserApiClient.instance.isKakaoTalkLoginAvailable(getApplication())) {
-            UserApiClient.instance.loginWithKakaoTalk(getApplication()) { token, error ->
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+            UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
                 if (error != null) {
                     Log.e(TAG, "카카오톡으로 로그인 실패", error)
 

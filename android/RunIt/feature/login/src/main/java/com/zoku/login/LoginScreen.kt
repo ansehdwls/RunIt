@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,7 +34,7 @@ import com.zoku.ui.theme.Black
 fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel) {
 
     val uiState by viewModel.uiState.collectAsState()
-
+    val context = LocalContext.current
     LaunchedEffect(uiState.isLogin) {
         if (uiState.isLogin) {
             onLoginSuccess()
@@ -76,7 +77,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel) {
 
         KakaoLoginButton(
             onKakaoLoginClick = {
-                viewModel.handleKaKaoLogin()
+                viewModel.handleKaKaoLogin(context)
             }
         )
     }
