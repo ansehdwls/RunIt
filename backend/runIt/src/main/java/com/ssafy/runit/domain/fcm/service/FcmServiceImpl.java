@@ -1,11 +1,10 @@
 package com.ssafy.runit.domain.fcm.service;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.ssafy.runit.domain.fcm.dto.SendFcmMessage;
-import com.ssafy.runit.exception.CustomException;
-import com.ssafy.runit.exception.code.ServerErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +25,11 @@ public class FcmServiceImpl implements FcmService {
             dataPayload.put("link", message.getLink());
             Message sendMessage = Message.builder().setToken(message.getToken()).putAllData(dataPayload).setNotification(notification).build();
             FirebaseMessaging.getInstance().send(sendMessage);
-        } catch (Exception e) {
-            throw new CustomException(ServerErrorCode.UNKNOWN_SERVER_ERROR);
+        } catch (FirebaseMessagingException e){
+            log.warn("Fcm Token Error : {}!",message.getToken());
+        }
+        catch (Exception e) {
+            log.warn("알 수 없는 내부 오류입니다.");
         }
     }
 }
