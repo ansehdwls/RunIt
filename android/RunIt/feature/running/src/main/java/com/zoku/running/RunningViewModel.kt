@@ -70,6 +70,7 @@ class RunningViewModel @Inject constructor(
 
     private var recordId: Int = 0
     private var startTime: Long = 0
+    private var endTime: Long = 0
 
     private var last100Value: Int = 0
     private var last100Second: Int = 0
@@ -298,6 +299,8 @@ class RunningViewModel @Inject constructor(
             val filteredPathList =
                 totalRunningList.value.filterIndexed { index, _ -> index % 2 != 0 }
 
+            endTime = System.currentTimeMillis()
+
             val userJson = Gson().toJson(
                 PostRunningRecordRequest(
                     track = Track(
@@ -306,7 +309,7 @@ class RunningViewModel @Inject constructor(
                     record = com.zoku.network.model.request.Record(
                         distance = uiState.value.distance / 1000,
                         startTime = getIso8601TimeString(startTime),
-                        endTime = getIso8601TimeString(System.currentTimeMillis()),
+                        endTime = getIso8601TimeString(endTime),
                         bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt(),
                         duration = uiState.value.time
                     ),
@@ -319,7 +322,7 @@ class RunningViewModel @Inject constructor(
                     com.zoku.network.model.request.Record(
                         distance = uiState.value.distance / 1000,
                         startTime = getIso8601TimeString(startTime),
-                        endTime = getIso8601TimeString(System.currentTimeMillis()),
+                        endTime = getIso8601TimeString(endTime),
                         bpm = if (bpmList.average().isNaN()) 0 else bpmList.average().toInt(),
                         duration = uiState.value.time
                     )
@@ -396,6 +399,9 @@ class RunningViewModel @Inject constructor(
             }
         }
     }
+
+    fun getStartTime() = startTime
+    fun getEndTime() = endTime
 
 
     override fun onCleared() {

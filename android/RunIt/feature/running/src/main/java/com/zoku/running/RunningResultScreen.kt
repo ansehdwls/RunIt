@@ -41,10 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.zoku.network.model.response.PaceRecord
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.running.model.RunningEventState
 import com.zoku.running.util.getIso8601TimeString
+import com.zoku.running.util.toPaceRecord
 import com.zoku.ui.componenet.KakaoMapView
 import com.zoku.ui.componenet.RecordDetailInfo
 import com.zoku.ui.theme.BaseGrayBackground
@@ -76,10 +76,10 @@ fun RunningResultScreen(
             }
 
             is RunningEventState.RunningRecordModeSuccess -> {
-                if(runningViewModel.getIsPractice()){
-                    Toast.makeText(context,"연습모드 갱신에 성공하였습니다!",Toast.LENGTH_SHORT).show()
-                }else{
-                    Toast.makeText(context,"연습모드 저장에 성공하였습니다!",Toast.LENGTH_SHORT).show()
+                if (runningViewModel.getIsPractice()) {
+                    Toast.makeText(context, "연습모드 갱신에 성공하였습니다!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "연습모드 저장에 성공하였습니다!", Toast.LENGTH_SHORT).show()
                 }
                 moveToHome()
             }
@@ -147,9 +147,9 @@ fun RunningResultScreen(
             RecordDetailInfo(
                 startDestination = 1,
                 runRecord = RunRecordDetail(
-                    startTime = getIso8601TimeString(System.currentTimeMillis()),
-                    endTime = getIso8601TimeString(System.currentTimeMillis()),
-                    paceList = listOf(PaceRecord(10, 10), PaceRecord(20, 20))
+                    startTime = getIso8601TimeString(runningViewModel.getStartTime()),
+                    endTime = getIso8601TimeString(runningViewModel.getEndTime()),
+                    paceList = runningViewModel.totalPaceList.map { it.toPaceRecord() }
                 )
             )
         }
