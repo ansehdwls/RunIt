@@ -34,6 +34,9 @@ import com.zoku.ui.theme.BaseYellow
 import com.zoku.ui.theme.ZokuFamily
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 
@@ -120,7 +123,6 @@ fun RecordDate(today: String, time: String) {
         Text(
             text = today,
             textAlign = TextAlign.Start,
-            modifier = Modifier.weight(1f),
             fontFamily = ZokuFamily
         )
         Text(
@@ -180,22 +182,35 @@ fun RecordGraph(title: String, list: List<PaceRecord>, type: Int) {
 
 @Composable
 fun LineChartView(list: List<PaceRecord>, type: Int) {
+    Log.d("확인", "LineChartView: $list")
     AndroidView(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
             .padding(16.dp),
         factory = { context ->
-
             LineChart(context).apply {
                 // X축 설정
                 xAxis.position = XAxis.XAxisPosition.BOTTOM
                 xAxis.setDrawGridLines(false)
-                xAxis.granularity = 1f  // X축 레이블 간격
+                xAxis.granularity = 100f  // X축 레이블 간격
 
                 // Y축 설정
                 axisRight.isEnabled = false
-                axisLeft.setDrawGridLines(false)
+
+                with(axisLeft){
+                    setDrawGridLines(false)
+                    setLabelCount(6, true) // Y축 레이블 개수 설정
+                    axisMinimum = 60f // Y축 최소값
+                    axisMaximum = 160f // Y축 최대값
+
+                    // 레이블의 마진 조정
+                    xOffset = 10f // Y축 레이블과 차트 축 간의 간격 (수평)
+                    yOffset = 10f // 레이블과 레이블 간 간격 (수직)
+                    axisMinimum = if (type == 1) 60f else 0f  // bpmList 최소값: 60, durationList 최소값: 0
+                    axisMaximum = if (type == 1) 160f else 1200f // bpmList 최대값: 160, durationList 최대값: 1200
+                }
+
 
                 // 기타 설정
                 description.isEnabled = false
@@ -205,9 +220,27 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
             }
         },
         update = { lineChart ->
-            val entries = (0..list.size-1).map { Entry((it+1).toFloat(),
-                if(type == 1 ) list[it].bpmList.toFloat() else list[it].durationList?.toFloat() ?: 0.0f) }
-            val lineDataSet = LineDataSet(entries, "Sample Data").apply {
+            val entries = if (list.size == 1) {
+                // 데이터가 하나일 경우 가상의 두 번째 점 추가
+                val singleEntry = Entry(200f, if (type == 1) {
+                    list[0].bpmList.coerceIn(60, 160).toFloat()
+                } else {
+                    list[0].durationList?.coerceAtMost(1200)?.toFloat() ?: 0.0f
+                })
+                listOf(singleEntry, Entry(2f, singleEntry.y)) // 동일한 Y값으로 두 번째 점 추가
+            } else {
+                // 데이터가 여러 개일 경우 일반적인 처리
+                list.indices.map { index ->
+                    val value = if (type == 1) {
+                        list[index].bpmList.coerceIn(60, 160).toFloat()
+                    } else {
+                        list[index].durationList?.coerceAtMost(1200)?.toFloat() ?: 0.0f
+                    }
+                    Entry(((index + 1) * 100).toFloat(), value)
+                }
+            }
+
+            val lineDataSet = LineDataSet(entries, if(type == 1) "심박수 bpm" else "페이스 m/h").apply {
                 color = BaseYellow.toArgb()
                 lineWidth = 2f
                 circleRadius = 4f
@@ -222,22 +255,39 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
 }
 
 fun calculateHoursDifference(startTime: String, endTime: String, id : Int): String {
-    // DateTimeFormatterBuilder를 사용하여 1~3자리 밀리초 지원
+    // DateTimeFormatterBuilder로 밀리초 지원
     val formatter = DateTimeFormatterBuilder()
-        .appendPattern( if(id > 0 )"yyyy-MM-dd'T'HH:mm:ss" else "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
         .optionalStart()
         .appendFraction(ChronoField.MILLI_OF_SECOND, 1, 3, true)
         .optionalEnd()
         .toFormatter()
 
+    // ISO 8601 형식 파싱
+    val formatterZ = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
+
     // 문자열을 LocalDateTime으로 변환
-    val startDateTime = LocalDateTime.parse(startTime, formatter)
-    val endDateTime = LocalDateTime.parse(endTime, formatter)
+    val startDateTime = try {
+        OffsetDateTime.parse(startTime, formatterZ)
+    } catch (e: Exception) {
+        LocalDateTime.parse(startTime, formatter).atOffset(ZoneOffset.UTC) // Z 없는 경우 UTC로 가정
+    }
+
+    val endDateTime = try {
+        OffsetDateTime.parse(endTime, formatterZ)
+    } catch (e: Exception) {
+        LocalDateTime.parse(endTime, formatter).atOffset(ZoneOffset.UTC) // Z 없는 경우 UTC로 가정
+    }
+
 
     // 두 시간 사이의 차이 계산
     val duration = Duration.between(startDateTime, endDateTime)
 
-    // 차이를 시간으로 변환하여 소수점 첫째 자리까지 형식화
-    val hours = duration.toMinutes().toDouble() / 60
-    return String.format("%.1f hr", hours)
+    // 시간과 분으로 변환
+    val hours = duration.toHours()
+    val minutes = duration.toMinutes() % 60
+
+    // "0 시간 10 분" 형태로 반환
+    return "${hours}시간 ${minutes}분"
 }

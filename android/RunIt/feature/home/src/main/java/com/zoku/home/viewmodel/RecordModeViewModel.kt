@@ -74,8 +74,8 @@ class RecordModeViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = routeRepository.getRouteList(recordId)) {
                 is NetworkResult.Success -> {
-                    Log.d("확인", " 성공 ${result}")
-                    _routeList.value = parseRouteInfoList(result.data.data)
+                    Log.d("확인", " 성공111 ${result}")
+                    _routeList.value = parseRouteInfoList(result.data.data.path)
                 }
 
                 is NetworkResult.Error -> {

@@ -32,12 +32,9 @@ fun RecordMap(
     modifier: Modifier = Modifier,
     routeList: List<RouteInfo> = emptyList()
 ) {
-
+    Log.d("확인", "RecordMap: $routeList")
     if (routeList.isNotEmpty()) {
         KakaoMapViewWithRandomRoute(
-            initialLatitude = routeList[0].latitude,
-            initialLongitude = routeList[0].longitude,
-            numberOfPoints = routeList.size,
             routeList = routeList
         )
     } else {
@@ -48,9 +45,6 @@ fun RecordMap(
 @Composable
 fun KakaoMapViewWithRandomRoute(
     modifier: Modifier = Modifier,
-    initialLatitude: Double = 37.5665, // 시작 지점의 위도 (예: 서울)
-    initialLongitude: Double = 126.9780, // 시작 지점의 경도 (예: 서울)
-    numberOfPoints: Int = 0, // 생성할 경로 점의 개수,
     routeList: List<RouteInfo> = emptyList()
 ) {
     val context = LocalContext.current
@@ -59,9 +53,6 @@ fun KakaoMapViewWithRandomRoute(
     //  랜던 값 배치
     val randomLocationList = remember {
         generateRandomRoute(
-            initialLatitude,
-            initialLongitude,
-            numberOfPoints,
             routeList = routeList
         )
     }
@@ -98,15 +89,12 @@ fun KakaoMapViewWithRandomRoute(
 
 // 랜덤 경로 생성 함수
 private fun generateRandomRoute(
-    startLat: Double,
-    startLng: Double,
-    points: Int,
     routeList: List<RouteInfo>
 ): List<LocationData> {
-    return List(points) {
+    return List(routeList.size) {
         // 임의의 범위 내에서 위도 및 경도 변동을 설정.
-        val randomLat = routeList[points].latitude
-        val randomLng = routeList[points].longitude
+        val randomLat = routeList[it].latitude
+        val randomLng = routeList[it].longitude
         LocationData(randomLat, randomLng)
     }
 }
