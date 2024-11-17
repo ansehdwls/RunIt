@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -24,77 +26,48 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zoku.ui.R
+import com.zoku.ui.model.GroupInfoData
 import com.zoku.ui.theme.Black
 import com.zoku.ui.theme.CustomTypo
 
 @Composable
 fun ShowGroupInfo() {
-    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Black)
-            .verticalScroll(scrollState)
-        ,
+            .background(Black),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text(
+
+        LazyColumn(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp),
-            text = "리그 정보",
-            style = CustomTypo().mapleBold.copy(
-                fontSize = 30.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center
-            )
-        )
-        Spacer(modifier = Modifier.height(50.dp))
-        ShowGroupItem(
-            modifier = Modifier.wrapContentWidth(),
-            image = R.drawable.ic_egg,
-            text = "알"
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-        ShowGroupItem(
-            modifier = Modifier.wrapContentWidth(),
-            image = R.drawable.ic_sloth,
-            text = "나무늘보"
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-        ShowGroupItem(
-            modifier = Modifier.wrapContentWidth(),
-            image = R.drawable.ic_turtle,
-            text = "거북이"
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        ShowGroupItem(
-            modifier = Modifier.wrapContentWidth(),
-            image = R.drawable.ic_rabbit,
-            text = "토끼"
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        ShowGroupItem(
-            modifier = Modifier.wrapContentWidth(),
-            image = R.drawable.ic_horse,
-            text = "말"
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        ShowGroupItem(
-            modifier = Modifier.wrapContentWidth(),
-            image = R.drawable.ic_cheetah,
-            text = "치타"
-        )
-        Spacer(modifier = Modifier.height(30.dp))
+                .fillMaxSize()
+            ,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                Text(
+                    modifier = Modifier.padding(top = 30.dp),
+                    text = "리그 정보",
+                    style = CustomTypo().mapleBold.copy(
+                        fontSize = 30.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                )
+            }
+            items(GroupInfoData.DEFAULT) { data ->
+                Spacer(modifier = Modifier.height(20.dp))
+                ShowGroupItem(image = data.image, text = data.name)
+            }
+        }
     }
 }
 
 @Composable
 fun ShowGroupItem(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.wrapContentWidth(),
     image: Int,
     text: String
 ) {
