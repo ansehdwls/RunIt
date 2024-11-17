@@ -2,6 +2,7 @@ package com.ssafy.runit.domain.record.repository;
 
 
 import com.ssafy.runit.domain.record.entity.Record;
+import com.ssafy.runit.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,4 +24,6 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     @Modifying
     @Query("UPDATE Record r SET r.isPractice = :isPractice WHERE r.id = :recordId")
     int updateRecordPractice(@Param("recordId") Long recordId, @Param("isPractice") Boolean isPractice);
+
+    List<Record> findByUserIdAndIsPracticeTrueOrderByStartTimeDesc(Long userId);
 }

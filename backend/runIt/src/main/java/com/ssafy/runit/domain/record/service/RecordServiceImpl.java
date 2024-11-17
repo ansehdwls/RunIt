@@ -187,7 +187,7 @@ public class RecordServiceImpl implements RecordService {
                     }
 
                     dis += item.getDistance();
-                    if(!item.getSplitList().isEmpty()) {
+                    if (!item.getSplitList().isEmpty()) {
                         pace += item.getSplitList().stream()
                                 .mapToDouble(Split::getPace) // 각 요소에서 특정 속성 값을 추출하여 더함
                                 .sum() / item.getSplitList().size();
@@ -294,13 +294,10 @@ public class RecordServiceImpl implements RecordService {
     public List<RecordGetListResponse> getRecordPracList(UserDetails userDetails) {
         User findUser = userRepository.findByUserNumber(userDetails.getUsername()).orElseThrow();
 
-        return recordRepository.findByUserId(findUser.getId())
+        return recordRepository.findByUserIdAndIsPracticeTrueOrderByStartTimeDesc(findUser.getId())
                 .stream()
-                .filter(item -> item.getIsPractice())
-                .map(item -> {
-                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), item.getTrack().getTrackImageUrl());
-                })
-                .collect(Collectors.toList());
+                .map(r -> RecordGetListResponse.fromEntity(r, findUser.getUserName(), r.getTrack().getTrackImageUrl()))
+                .toList();
     }
 
     @Override
