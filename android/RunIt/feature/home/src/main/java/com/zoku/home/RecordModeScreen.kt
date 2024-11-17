@@ -111,6 +111,7 @@ fun RecordList(
     modifier: Modifier, moveToDetail: (Int) -> Unit,
     runningAllList: List<RunPractice>
 ) {
+    var today = ""
     LazyColumn(
         modifier = modifier
     ) {
@@ -129,19 +130,22 @@ fun RecordList(
 
         items(runningAllList.size) { index ->
             val item = runningAllList[index]
-            // 날짜
-            Text(
-                text = item.startTime.substringBefore("T"),
-                color = Color.White,
-                modifier = Modifier.fillMaxWidth(),
-                fontFamily = ZokuFamily
-            )
+            if(today != item.startTime.substringBefore("T")){
+                // 날짜
+                Text(
+                    text = item.startTime.substringBefore("T"),
+                    color = Color.White,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontFamily = ZokuFamily
+                )
+                today = item.startTime.substringBefore("T")
+            }
 
             RecordDataView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
-                    .padding(top = 5.dp)
+                    .padding(top = 10.dp)
                     .clip(RoundedCornerShape(16.dp)), moveToDetail = moveToDetail,
                 item
             )

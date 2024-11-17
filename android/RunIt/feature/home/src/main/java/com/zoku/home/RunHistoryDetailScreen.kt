@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.zoku.home.viewmodel.RecordModeViewModel
 import com.zoku.home.viewmodel.RunHistoryViewModel
 import com.zoku.ui.componenet.RecordDetailInfo
 import com.zoku.ui.componenet.RecordMap
@@ -19,7 +21,12 @@ import com.zoku.ui.componenet.RecordMap
 fun RunHistoryDetailScreen(selectRecordId : Int, viewModel: RunHistoryViewModel) {
 
     val runRecord by viewModel.historyRunRecord.collectAsState()
+    val recordViewModel : RecordModeViewModel = hiltViewModel()
+    val routeList by recordViewModel.routeList.collectAsState()
+
+    recordViewModel.getRouteList(selectRecordId)
     viewModel.getRunRecordDetail(recordId = selectRecordId)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,7 +37,7 @@ fun RunHistoryDetailScreen(selectRecordId : Int, viewModel: RunHistoryViewModel)
         Box(modifier = Modifier
             .weight(3f)
             .fillMaxWidth()) {
-            RecordMap()
+            RecordMap(routeList = routeList)
         }
         Box(modifier = Modifier
             .weight(7f)
