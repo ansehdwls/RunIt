@@ -255,7 +255,7 @@ public class RecordServiceImpl implements RecordService {
 
 
         LocalDateTime startTime = LocalDateTime.of(monday, LocalTime.MIN);
-        LocalDateTime endTime = LocalDateTime.of(sunday, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(sunday, LocalTime.MAX);
 
         List<Record> recordList = recordRepository.findByUserIdAndStartTimeBetween(user.getId(), startTime, endTime);
 
