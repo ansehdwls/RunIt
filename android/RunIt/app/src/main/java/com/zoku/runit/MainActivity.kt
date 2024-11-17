@@ -88,6 +88,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun sendHeartbeatToWatch(type: Boolean = true) { // true -> 시작, false -> 종료
+        Timber.tag("MainActivity").d("보내기")
         val data = Data.Builder()
             .putBoolean("type", type)
             .build()
