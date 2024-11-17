@@ -16,9 +16,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,14 +35,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.zoku.home.viewmodel.RankViewModel
 import com.zoku.network.model.response.AttendanceDay
 import com.zoku.network.model.response.GroupMember
+import com.zoku.ui.componenet.ShowGroupInfo
+import com.zoku.ui.componenet.ShowModalBottomSheet
 import com.zoku.ui.theme.BaseDarkBackground
 import com.zoku.ui.theme.CustomTypo
 import com.zoku.ui.theme.League
@@ -50,13 +57,14 @@ import java.time.LocalDate
 import kotlin.math.ceil
 import kotlin.math.floor
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RankScreen(
     modifier: Modifier = Modifier,
     moveToExpHistory: () -> Unit,
+    rankViewModel: RankViewModel = hiltViewModel()
 ) {
     val rankMenu = arrayOf("종합 순위", "페이스 순위", "거리 순위")
-    val rankViewModel: RankViewModel = hiltViewModel()
 
     val myName by rankViewModel.userName.collectAsState()
     // 이번주 출석 현황
@@ -78,11 +86,14 @@ fun RankScreen(
             2 -> getGroupList("distance")
         }
     }
+    //GroupInfo BottomSheet
+    var isShowGroupInfo by remember { mutableStateOf(false) }
+    val modalBottomSheetState = rememberModalBottomSheetState()
     Column(
         modifier =
-            modifier
-                .padding(horizontal = 10.dp)
-                .fillMaxSize(),
+        modifier
+            .padding(horizontal = 10.dp)
+            .fillMaxSize(),
     ) {
         RankingInfo(
             moveToExpHistory,
@@ -91,7 +102,9 @@ fun RankScreen(
             myName,
             groupList.rank,
             leagueList[groupList.leagueRank - 1],
-        )
+        ) {
+            isShowGroupInfo = true
+        }
 
         HomeTitle(
             modifier.padding(top = 10.dp, bottom = 5.dp),
@@ -114,6 +127,12 @@ fun RankScreen(
                 (groupList.leagueRank - 1),
             )
         }
+
+        if (isShowGroupInfo) {
+            ShowGroupInfoBottomSheet(sheetState = modalBottomSheetState, onDismiss = {
+                isShowGroupInfo = false
+            })
+        }
     }
 }
 
@@ -125,18 +144,21 @@ fun RankingInfo(
     myName: String,
     myRank: Int,
     league: League,
+    onShowGroupInfo: (Boolean) -> Unit
 ) {
     val baseModifier = Modifier.fillMaxWidth()
     Box(
         modifier =
-            baseModifier
-                .clip(RoundedCornerShape(15.dp))
-                .background(BaseDarkBackground),
+        baseModifier
+            .clip(RoundedCornerShape(15.dp))
+            .background(BaseDarkBackground),
     ) {
         Column(
             modifier = baseModifier,
         ) {
-            InfoIconButton("리그 정보", onClick = {})
+            InfoIconButton("리그 정보", onClick = {
+                onShowGroupInfo(true)
+            })
 
             UserProfile(myName, league)
             if (attendanceList.isNotEmpty()) {
@@ -161,9 +183,9 @@ fun UserProfile(
 ) {
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
     ) {
         Column {
             RankText(
@@ -176,10 +198,10 @@ fun UserProfile(
                 Text(
                     text = myName,
                     style =
-                        CustomTypo().mapleBold.copy(
-                            color = Color.White,
-                            fontSize = 25.sp,
-                        ),
+                    CustomTypo().mapleBold.copy(
+                        color = Color.White,
+                        fontSize = 25.sp,
+                    ),
                 )
                 RankText(
                     text = "님",
@@ -191,41 +213,60 @@ fun UserProfile(
         Text(
             text = "현재 ",
             modifier =
-                Modifier
-                    .weight(1f)
-                    .align(Alignment.Bottom),
+            Modifier
+                .weight(1f)
+                .align(Alignment.Bottom),
             style =
-                CustomTypo().jalnan.copy(
-                    fontSize = 12.sp,
-                    color = Color.White,
-                    textAlign = TextAlign.End,
-                ),
+            CustomTypo().jalnan.copy(
+                fontSize = 12.sp,
+                color = Color.White,
+                textAlign = TextAlign.End,
+            ),
         )
 
         Text(
             text = league.name,
             modifier =
-                Modifier
-                    .align(Alignment.Bottom),
+            Modifier
+                .align(Alignment.Bottom),
             style =
-                CustomTypo().jalnan.copy(
-                    textAlign = TextAlign.End,
-                    fontSize = 14.sp,
-                    color = Color(league.color),
-                    fontFamily = ZokuFamily,
-                ),
+            CustomTypo().jalnan.copy(
+                textAlign = TextAlign.End,
+                fontSize = 14.sp,
+                color = Color(league.color),
+                fontFamily = ZokuFamily,
+            ),
         )
         Image(
             painter = painterResource(id = league.imageUrl),
             contentDescription = null,
             modifier =
-                Modifier
-                    .width(60.dp)
-                    .height(60.dp)
-                    .align(Alignment.Bottom),
+            Modifier
+                .width(60.dp)
+                .height(60.dp)
+                .align(Alignment.Bottom),
             contentScale = ContentScale.Crop,
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShowGroupInfoBottomSheet(
+    modifier: Modifier = Modifier,
+    sheetState: SheetState,
+    onDismiss : () -> Unit
+) {
+    ShowModalBottomSheet(
+        sheetState = sheetState,
+        onDismiss = {
+            onDismiss()
+        },
+        composable = {
+            ShowGroupInfo()
+        }
+    )
+
 }
 
 @Composable
@@ -252,9 +293,9 @@ fun InfoIconButton(
                 painter = painterResource(id = R.drawable.info_rank_icon),
                 contentDescription = null,
                 modifier =
-                    Modifier
-                        .width(13.dp)
-                        .height(13.dp),
+                Modifier
+                    .width(13.dp)
+                    .height(13.dp),
                 contentScale = ContentScale.Crop,
             )
         }
@@ -299,20 +340,20 @@ fun DailyCheck(
     ) {
         Image(
             painter =
-                painterResource(
-                    id =
-                        when (type) {
-                            0 -> R.drawable.none_rank_icon
-                            1 -> R.drawable.success_rank_icon
-                            else -> R.drawable.fail_rank_icon
-                        },
-                ),
+            painterResource(
+                id =
+                when (type) {
+                    0 -> R.drawable.none_rank_icon
+                    1 -> R.drawable.success_rank_icon
+                    else -> R.drawable.fail_rank_icon
+                },
+            ),
             contentDescription = null,
             modifier =
-                Modifier
-                    .width(25.dp)
-                    .height(35.dp)
-                    .padding(bottom = 10.dp),
+            Modifier
+                .width(25.dp)
+                .height(35.dp)
+                .padding(bottom = 10.dp),
         )
         RankText(text = day)
     }
@@ -327,8 +368,8 @@ fun ExpView(
 ) {
     Row(
         modifier =
-            modifier
-                .padding(vertical = 5.dp),
+        modifier
+            .padding(vertical = 5.dp),
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 10.dp),
@@ -346,10 +387,10 @@ fun ExpView(
                     painter = painterResource(id = R.drawable.next_run_history_icon),
                     contentDescription = null,
                     modifier =
-                        Modifier
-                            .width(20.dp)
-                            .height(20.dp)
-                            .align(Alignment.CenterVertically),
+                    Modifier
+                        .width(20.dp)
+                        .height(20.dp)
+                        .align(Alignment.CenterVertically),
                 )
             }
 
@@ -378,9 +419,9 @@ fun UserRanking(
 
     LazyColumn(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
     ) {
         // 승급 인원
         items(promoteCount) { index ->
@@ -398,33 +439,33 @@ fun UserRanking(
             item {
                 Row(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 20.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 20.dp),
                 ) {
                     Box(
                         modifier =
-                            Modifier
-                                .weight(1f)
-                                .align(Alignment.CenterVertically),
+                        Modifier
+                            .weight(1f)
+                            .align(Alignment.CenterVertically),
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.up_rank_icon),
                             contentDescription = null,
                             modifier =
-                                Modifier
-                                    .width(20.dp)
-                                    .height(20.dp),
+                            Modifier
+                                .width(20.dp)
+                                .height(20.dp),
                         )
                     }
                     Text(
                         text = "승급",
                         style =
-                            CustomTypo().jalnan.copy(
-                                color = Color.Green,
-                                fontSize = 24.sp,
-                            ),
+                        CustomTypo().jalnan.copy(
+                            color = Color.Green,
+                            fontSize = 24.sp,
+                        ),
                     )
                     Box(
                         modifier = Modifier.weight(1f),
@@ -434,9 +475,9 @@ fun UserRanking(
                             painter = painterResource(id = R.drawable.up_rank_icon),
                             contentDescription = null,
                             modifier =
-                                Modifier
-                                    .width(20.dp)
-                                    .height(20.dp),
+                            Modifier
+                                .width(20.dp)
+                                .height(20.dp),
                         )
                     }
                 }
@@ -459,33 +500,33 @@ fun UserRanking(
                 item {
                     Row(
                         modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 20.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 20.dp),
                     ) {
                         Box(
                             modifier =
-                                Modifier
-                                    .weight(1f)
-                                    .align(Alignment.CenterVertically),
+                            Modifier
+                                .weight(1f)
+                                .align(Alignment.CenterVertically),
                             contentAlignment = Alignment.CenterStart,
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.down_rank_icon),
                                 contentDescription = null,
                                 modifier =
-                                    Modifier
-                                        .width(20.dp)
-                                        .height(20.dp),
+                                Modifier
+                                    .width(20.dp)
+                                    .height(20.dp),
                             )
                         }
                         Text(
                             text = "강등",
                             style =
-                                CustomTypo().jalnan.copy(
-                                    color = Color.Red,
-                                    fontSize = 24.sp,
-                                ),
+                            CustomTypo().jalnan.copy(
+                                color = Color.Red,
+                                fontSize = 24.sp,
+                            ),
                         )
                         Box(
                             modifier = Modifier.weight(1f),
@@ -495,9 +536,9 @@ fun UserRanking(
                                 painter = painterResource(id = R.drawable.down_rank_icon),
                                 contentDescription = null,
                                 modifier =
-                                    Modifier
-                                        .width(20.dp)
-                                        .height(20.dp),
+                                Modifier
+                                    .width(20.dp)
+                                    .height(20.dp),
                             )
                         }
                     }
@@ -529,17 +570,17 @@ fun UserRankingProfile(
     Surface(
         color = BaseDarkBackground,
         modifier =
-            modifier
-                .height(80.dp)
-                .padding(vertical = 8.dp)
-                .clip(RoundedCornerShape(10.dp)),
+        modifier
+            .height(80.dp)
+            .padding(vertical = 8.dp)
+            .clip(RoundedCornerShape(10.dp)),
     ) {
         Row {
             Box(
                 modifier =
-                    baseModifier
-                        .padding(start = 10.dp)
-                        .wrapContentWidth(),
+                baseModifier
+                    .padding(start = 10.dp)
+                    .wrapContentWidth(),
                 contentAlignment = Alignment.Center,
             ) {
                 RankText(
@@ -552,10 +593,10 @@ fun UserRankingProfile(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier =
-                    baseModifier
-                        .size(80.dp) // 명확한 크기 설정
-                        .padding(horizontal = 20.dp, vertical = 14.dp)
-                        .clip(RoundedCornerShape(50.dp)),
+                baseModifier
+                    .size(80.dp) // 명확한 크기 설정
+                    .padding(horizontal = 20.dp, vertical = 14.dp)
+                    .clip(RoundedCornerShape(50.dp)),
             )
             Box(
                 modifier = baseModifier.wrapContentWidth(),
@@ -598,9 +639,9 @@ fun UserRankingProfile(
                     painter = painterResource(id = iconRes),
                     contentDescription = null,
                     modifier =
-                        baseModifier
-                            .size(50.dp) // 명확한 크기 설정
-                            .padding(top = 15.dp, bottom = 15.dp, start = 20.dp, end = 8.dp),
+                    baseModifier
+                        .size(50.dp) // 명확한 크기 설정
+                        .padding(top = 15.dp, bottom = 15.dp, start = 20.dp, end = 8.dp),
                 )
             }
             Box(
@@ -611,9 +652,9 @@ fun UserRankingProfile(
                     text = item.rankDiff.toString(),
                     fontSize = 12.sp,
                     modifier =
-                        Modifier
-                            .width(20.dp)
-                            .padding(end = 10.dp),
+                    Modifier
+                        .width(20.dp)
+                        .padding(end = 10.dp),
                     color = rankColor,
                 )
             }
@@ -632,10 +673,23 @@ fun RankText(
         modifier = modifier,
         text = text,
         style =
-            CustomTypo().jalnan.copy(
-                fontSize = fontSize,
-                textAlign = TextAlign.Center,
-                color = color,
-            ),
+        CustomTypo().jalnan.copy(
+            fontSize = fontSize,
+            textAlign = TextAlign.Center,
+            color = color,
+        ),
     )
+}
+
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true, apiLevel = 34)
+@Composable
+fun PreviewGroupInfoBottomSheet(
+    modifier: Modifier = Modifier
+) {
+    var state = rememberModalBottomSheetState()
+    ShowGroupInfoBottomSheet(sheetState = state, onDismiss = {})
 }
