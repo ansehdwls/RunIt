@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,6 +37,10 @@ import com.zoku.network.model.response.RunPractice
 import com.zoku.ui.theme.BaseGray
 import com.zoku.ui.theme.CustomTypo
 import com.zoku.ui.theme.ZokuFamily
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 
 @Composable
 fun RecordModeScreen(
@@ -228,11 +233,15 @@ fun RecordTextView(
         Box(modifier = Modifier.weight(3f)) {
             Column {
                 Text(
-                    text = "거리 : ${item.distance}km",
+                    text = "${item.distance}km",
                     fontFamily = ZokuFamily
                 )
+                Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = "시간 : ${item.bpm}분",
+                    text = calculateHoursDifference(
+                        item.startTime,
+                        item.endTime
+                    ),
                     fontFamily = ZokuFamily
                 )
             }
@@ -249,4 +258,28 @@ fun PreviewRecord() {
         onBackButtonClick = {},
         moveToDetail = {}
     )
+}
+
+fun calculateHoursDifference(startTime: String, endTime: String): String {
+    // DateTimeFormatterBuilder로 밀리초 지원
+    val formatter = DateTimeFormatterBuilder()
+        .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+        .optionalStart()
+        .appendFraction(ChronoField.MILLI_OF_SECOND, 1, 3, true)
+        .optionalEnd()
+        .toFormatter()
+
+    // 문자열을 LocalDateTime으로 변환
+    val startDateTime = LocalDateTime.parse(startTime, formatter)
+    val endDateTime = LocalDateTime.parse(endTime, formatter)
+
+    // 두 시간 사이의 차이 계산
+    val duration = Duration.between(startDateTime, endDateTime)
+
+    // 시간과 분으로 변환
+    val hours = duration.toHours()
+    val minutes = duration.toMinutes() % 60
+
+    // "0 시간 10 분" 형태로 반환
+    return "${hours}시간 ${minutes}분"
 }
