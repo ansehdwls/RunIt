@@ -93,6 +93,9 @@ fun RunItMainNavHost(
             },
             moveToRunning = { runRecordDto ->
                 navController.navigateToRunning(runRecordDto)
+            },
+            popToBack = {
+                navController.popBackStack()
             }
         )
         this.runningScreen(

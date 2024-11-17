@@ -124,7 +124,9 @@ fun RunHistoryScreen(
                         selectRecordId = selectItem
                     })
             } else {
-                RunHistoryDetailScreen(selectRecordId, viewModel)
+                RunHistoryDetailScreen(selectRecordId, viewModel){
+                    selectHistory = false
+                }
             }
         }
     }

@@ -62,7 +62,8 @@ fun NavGraphBuilder.recordMode(moveToDetail: (Int) -> Unit, onBackButtonClick: (
 
 fun NavGraphBuilder.recordDetail(
     moveToPractice: () -> Unit,
-    moveToRunning: (runRecordDto: RunRecordDetail) -> Unit
+    moveToRunning: (runRecordDto: RunRecordDetail) -> Unit,
+    popToBack : () -> Unit
 ) {
     composable(route = ScreenDestinations.RecordModeDetail.route,
         arguments = listOf(navArgument("recordId") { type = NavType.IntType })
@@ -72,7 +73,10 @@ fun NavGraphBuilder.recordDetail(
         RecordModeDetail(
             recordId = recordId,
             moveToPractice = moveToPractice,
-            moveToRunning = moveToRunning
+            moveToRunning = moveToRunning,
+            onBackClick = {
+                popToBack()
+            }
         )
     }
 }
