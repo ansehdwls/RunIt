@@ -4,6 +4,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -24,6 +26,7 @@ import com.kakao.vectormap.route.RouteLineStyles
 import com.kakao.vectormap.route.RouteLineStylesSet
 import com.zoku.network.model.response.RouteInfo
 import com.zoku.ui.theme.routeColor
+import timber.log.Timber
 
 private const val TAG = "RecordMap"
 
@@ -32,7 +35,6 @@ fun RecordMap(
     modifier: Modifier = Modifier,
     routeList: List<RouteInfo> = emptyList()
 ) {
-    Log.d("확인", "RecordMap: $routeList")
     if (routeList.isNotEmpty()) {
         KakaoMapViewWithRandomRoute(
             routeList = routeList
@@ -50,40 +52,44 @@ fun KakaoMapViewWithRandomRoute(
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
 
-    //  랜던 값 배치
+    // 랜덤 경로 생성
     val randomLocationList = remember {
-        generateRandomRoute(
-            routeList = routeList
+        generateRandomRoute(routeList = routeList)
+    }
+    LaunchedEffect(mapView) {
+        mapView.start(
+            object : MapLifeCycleCallback() {
+                override fun onMapDestroy() {
+                    Timber.tag(TAG).d("카카오 맵 종료")
+                }
+
+                override fun onMapError(error: Exception?) {
+                    Timber.tag(TAG).d("카카오 맵 에러 $error")
+                    Toast.makeText(context, "맵 로딩에 실패했습니다", Toast.LENGTH_SHORT).show()
+                }
+            },
+            object : KakaoMapReadyCallback() {
+                override fun onMapReady(kakaoMap: KakaoMap) {
+                    kakaoMap.changeMapType(MapType.NORMAL)
+                    val routeLineManager = kakaoMap.routeLineManager
+                    if (routeLineManager != null) {
+                        val routeLineLayer: RouteLineLayer = routeLineManager.layer
+                        drawRouteOnMap(kakaoMap, routeLineLayer, randomLocationList)
+                    }
+                }
+            }
         )
+    }
+
+    DisposableEffect(mapView) {
+        onDispose {
+            mapView.finish()
+        }
     }
 
     AndroidView(
         modifier = modifier.fillMaxWidth(),
-        factory = { _ ->
-            mapView.apply {
-                start(
-                    object : MapLifeCycleCallback() {
-                        override fun onMapDestroy() {
-                            Log.d("확인", "카카오 맵이 파괴되었습니다")
-                        }
-
-                        override fun onMapError(error: Exception?) {
-                            Log.e("확인", "카카오 맵 에러", error)
-                            Toast.makeText(context, "맵 로딩에 실패했습니다", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    object : KakaoMapReadyCallback() {
-                        override fun onMapReady(kakaoMap: KakaoMap) {
-                            kakaoMap.changeMapType(MapType.NORMAL)
-                            val routeLineManager = kakaoMap.routeLineManager!!
-                            val routeLineLayer: RouteLineLayer = routeLineManager.layer
-
-                            drawRouteOnMap(kakaoMap, routeLineLayer, randomLocationList)
-                        }
-                    },
-                )
-            }
-        }
+        factory = { mapView }
     )
 }
 

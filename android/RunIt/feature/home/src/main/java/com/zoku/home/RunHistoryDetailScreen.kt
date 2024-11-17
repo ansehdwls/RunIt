@@ -1,5 +1,6 @@
 package com.zoku.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,15 +11,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.zoku.home.viewmodel.RunHistoryViewModel
 import com.zoku.ui.componenet.RecordDetailInfo
 import com.zoku.ui.componenet.RecordMap
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun RunHistoryDetailScreen(selectRecordId : Int, viewModel: RunHistoryViewModel) {
+fun RunHistoryDetailScreen(selectRecordId: Int, viewModel: RunHistoryViewModel, onBackClick : () -> Unit) {
 
     val runRecord by viewModel.historyRunRecord.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
     viewModel.getRunRecordDetail(recordId = selectRecordId)
     Column(
         modifier = Modifier
@@ -27,15 +32,25 @@ fun RunHistoryDetailScreen(selectRecordId : Int, viewModel: RunHistoryViewModel)
             .verticalScroll(rememberScrollState()) // 스크롤 가능하도록 설정
     ) {
         // 기록 지도 생성
-        Box(modifier = Modifier
-            .weight(3f)
-            .fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .weight(3f)
+                .fillMaxWidth()
+        ) {
             RecordMap()
         }
-        Box(modifier = Modifier
-            .weight(7f)
-            .fillMaxWidth()) {
-            RecordDetailInfo(startDestination = 1, runRecord =  runRecord)
+        Box(
+            modifier = Modifier
+                .weight(7f)
+                .fillMaxWidth()
+        ) {
+            RecordDetailInfo(startDestination = 1, runRecord = runRecord)
+        }
+        BackHandler {
+            coroutineScope.launch {
+                delay(100L)
+                onBackClick()
+            }
         }
     }
 }
