@@ -142,8 +142,8 @@ class RunningViewModel @Inject constructor(
                         val timeDifference =
                             (uiState.value.time - last100Second)
 
+                        // pace와 bpm 추가 로직
                         updateUIState(newFace = (timeDifference * 10))
-
                         if (lastIndex + 1 < bpmList.size) {
                             val recentBpmList = bpmList.subList(lastIndex + 1, bpmList.size)
                             updateUIState(newBPM = recentBpmList.average().toInt())
@@ -156,6 +156,35 @@ class RunningViewModel @Inject constructor(
                         } else {
                             totalPaceList.add(Pace(bpm = 0, pace = timeDifference * 10))
                         }
+
+                        //1km 별 페이스
+                        if(isPractice){
+                            if(totalPaceList.size > 0 && (totalPaceList.size % 2 == 0)){
+                                val recentPaces = totalPaceList.takeLast(2)
+                                val practicePaces = practiceRecord.value?.paceList?.takeLast(2)
+
+                                practicePaces?.let{
+                                    val recentAveragePace = recentPaces.map { it.pace }.average()
+                                    val practiceAveragePace = practicePaces.mapNotNull { it.durationList }.average()
+                                    if (recentAveragePace > practiceAveragePace) {
+                                        tts.speak(
+                                            "현재 1키로미터 페이스가 연습보다 ${practiceAveragePace.toInt() - recentAveragePace.toInt()}초 느립니다. ",
+                                            TextToSpeech.QUEUE_FLUSH,
+                                            null,
+                                            null
+                                        )
+                                    } else {
+                                        tts.speak(
+                                            "현재 1키로미터 페이스가 연습보다 ${practiceAveragePace.toInt() - recentAveragePace.toInt()}초 빠릅니다. ",
+                                            TextToSpeech.QUEUE_FLUSH,
+                                            null,
+                                            null
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        
 
 //                        if (bpmList.size >= timeDifference) {
 //                            val recentBpmList = bpmList.takeLast(timeDifference)
@@ -198,18 +227,6 @@ class RunningViewModel @Inject constructor(
         newBPM: Int? = null,
     ) {
         _uiState.update { currentState ->
-            newDistance?.let {
-                val intDistance = it.toInt()
-                if ((intDistance > 0) && (intDistance % 10 == 0)) {
-                    //현재 미터단위, 킬로미터로 수정해야함
-                    tts.speak(
-                        "${intDistance}미터 달성하였습니다. 화이팅!",
-                        TextToSpeech.QUEUE_FLUSH,
-                        null,
-                        null
-                    )
-                }
-            }
             currentState.copy(
                 time = newTime ?: currentState.time,
                 distance = newDistance ?: currentState.distance,
