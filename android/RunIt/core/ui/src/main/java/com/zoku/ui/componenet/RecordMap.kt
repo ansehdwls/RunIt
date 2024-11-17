@@ -1,6 +1,5 @@
 package com.zoku.ui.componenet
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -33,21 +32,26 @@ private const val TAG = "RecordMap"
 @Composable
 fun RecordMap(
     modifier: Modifier = Modifier,
-    routeList: List<RouteInfo> = emptyList()
+    routeList: List<RouteInfo> = emptyList(),
+    mapShow: Boolean = true
 ) {
     if (routeList.isNotEmpty()) {
         KakaoMapViewWithRandomRoute(
-            routeList = routeList
+            routeList = routeList,
+            mapShow = mapShow
         )
     } else {
-        KakaoMapViewWithRandomRoute()
+        KakaoMapViewWithRandomRoute(
+            mapShow = mapShow
+        )
     }
 }
 
 @Composable
 fun KakaoMapViewWithRandomRoute(
     modifier: Modifier = Modifier,
-    routeList: List<RouteInfo> = emptyList()
+    routeList: List<RouteInfo> = emptyList(),
+    mapShow: Boolean
 ) {
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
@@ -86,11 +90,13 @@ fun KakaoMapViewWithRandomRoute(
             mapView.finish()
         }
     }
+    if (mapShow) {
+        AndroidView(
+            modifier = modifier.fillMaxWidth(),
+            factory = { mapView }
+        )
+    }
 
-    AndroidView(
-        modifier = modifier.fillMaxWidth(),
-        factory = { mapView }
-    )
 }
 
 // 랜덤 경로 생성 함수

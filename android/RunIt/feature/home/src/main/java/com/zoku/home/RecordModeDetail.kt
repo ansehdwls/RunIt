@@ -1,6 +1,6 @@
 package com.zoku.home
 
-import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +54,7 @@ import com.zoku.ui.theme.BaseYellow
 import com.zoku.ui.theme.CustomTypo
 import com.zoku.ui.theme.RoundButtonGray
 import com.zoku.ui.theme.ZokuFamily
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,19 +62,21 @@ fun RecordModeDetail(
     modifier: Modifier = Modifier,
     recordId: Int,
     moveToPractice: () -> Unit,
-    moveToRunning: (recordDto: RunRecordDetail) -> Unit
+    moveToRunning: (recordDto: RunRecordDetail) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val viewModel: RunHistoryViewModel = hiltViewModel()
     val runRecord by viewModel.historyRunRecord.collectAsState()
     val recordViewModel: RecordModeViewModel = hiltViewModel()
     val routeList by recordViewModel.routeList.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    var mapShow by remember { mutableStateOf(true) }
     with(viewModel) {
         getRunRecordDetail(recordId)
 
     }
     with(recordViewModel) {
         getRouteList(recordId)
-        Log.d("확인", "RecordModeDetail: $routeList")
     }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -94,7 +98,7 @@ fun RecordModeDetail(
         Box(
             modifier.weight(3f)
         ) {
-            RecordMap(routeList = routeList)
+            RecordMap(routeList = routeList, mapShow = mapShow)
         }
 
         // 세부 기록 표시
@@ -106,94 +110,118 @@ fun RecordModeDetail(
                 moveToRunning = moveToRunning
             )
         }
-
-        if (showDialog) {
-            BasicAlertDialog(onDismissRequest = { showDialog = false }) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .pointerInput(Unit) {
-                            detectTapGestures(onTap = { showDialog = false })
-                        }
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Spacer(modifier = Modifier.weight(0.45f))
-                    Surface(
-                        modifier = Modifier
-                            .weight(0.2f),
-                        shape = RoundedCornerShape(8.dp),
-//                    border = BorderStroke(0.1.dp, BaseYellow)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(BaseGrayBackground),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "연습 경로를 삭제하시겠습니까?",
-                                style = CustomTypo().jalnan,
-                                fontSize = 16.sp,
-                                color = Color.White,
-                                modifier = Modifier.padding(vertical = 32.dp)
-                            )
-
-                            HorizontalDivider(
-                                color = RoundButtonGray,
-                                thickness = 1.dp
-                            )
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                TextButton(
-                                    onClick = { showDialog = false },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(8.dp)
-                                ) {
-                                    Text(
-                                        text = "취소",
-                                        style = CustomTypo().mapleLight,
-                                        color = Color.White
-                                    )
-                                }
-
-                                VerticalDivider(
-                                    modifier = Modifier
-                                        .width(1.dp),
-                                    color = RoundButtonGray
-                                )
-
-                                TextButton(
-                                    onClick = {
-                                        showDialog = false
-                                        recordViewModel.updatePracticeRecord(recordId)
-                                        moveToPractice()
-                                    },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(8.dp)
-                                ) {
-                                    Text(
-                                        text = "확인",
-                                        style = CustomTypo().mapleLight,
-                                        color = BaseYellow
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.weight(0.45f))
-                }
+    }
+    if (showDialog) {
+        ShowDialog(
+            onClickText = {
+                recordViewModel.updatePracticeRecord(recordId)
+                moveToPractice()
+            },
+            onShowDialog = { change ->
+                showDialog = change
             }
+        )
+    }
+
+
+    BackHandler {
+        coroutineScope.launch {
+            mapShow = false
+            onBackClick()
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShowDialog(
+    modifier: Modifier = Modifier,
+    onShowDialog: (Boolean) -> Unit,
+    onClickText: () -> Unit
+) {
+    BasicAlertDialog(onDismissRequest = { onShowDialog(false) }) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = { onShowDialog(false) })
+                }
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Spacer(modifier = Modifier.weight(0.45f))
+            Surface(
+                modifier = Modifier
+                    .weight(0.2f),
+                shape = RoundedCornerShape(8.dp),
+//                    border = BorderStroke(0.1.dp, BaseYellow)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(BaseGrayBackground),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "연습 경로를 삭제하시겠습니까?",
+                        style = CustomTypo().jalnan,
+                        fontSize = 16.sp,
+                        color = Color.White,
+                        modifier = Modifier.padding(vertical = 32.dp)
+                    )
+
+                    HorizontalDivider(
+                        color = RoundButtonGray,
+                        thickness = 1.dp
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        TextButton(
+                            onClick = { onShowDialog(false) },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = "취소",
+                                style = CustomTypo().mapleLight,
+                                color = Color.White
+                            )
+                        }
+
+                        VerticalDivider(
+                            modifier = Modifier
+                                .width(1.dp),
+                            color = RoundButtonGray
+                        )
+
+                        TextButton(
+                            onClick = {
+                                onShowDialog(false)
+                                onClickText()
+
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = "확인",
+                                style = CustomTypo().mapleLight,
+                                color = BaseYellow
+                            )
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.weight(0.45f))
+        }
+    }
+}
 
 
 @Composable
