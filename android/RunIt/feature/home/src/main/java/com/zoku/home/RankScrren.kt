@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -40,13 +41,15 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.zoku.home.viewmodel.RankViewModel
 import com.zoku.network.model.response.AttendanceDay
 import com.zoku.network.model.response.GroupMember
+import com.zoku.ui.componenet.CustomDialog
+import com.zoku.ui.componenet.ShowExpInfo
 import com.zoku.ui.componenet.ShowGroupInfo
 import com.zoku.ui.componenet.ShowModalBottomSheet
+import com.zoku.ui.model.ExpInfoData
 import com.zoku.ui.theme.BaseDarkBackground
 import com.zoku.ui.theme.CustomTypo
 import com.zoku.ui.theme.League
@@ -88,6 +91,7 @@ fun RankScreen(
     }
     //GroupInfo BottomSheet
     var isShowGroupInfo by remember { mutableStateOf(false) }
+    var isShowExpInfo by remember { mutableStateOf(false) }
     val modalBottomSheetState = rememberModalBottomSheetState()
     Column(
         modifier =
@@ -102,9 +106,13 @@ fun RankScreen(
             myName,
             groupList.rank,
             leagueList[groupList.leagueRank - 1],
-        ) {
-            isShowGroupInfo = true
-        }
+            onShowGroupInfo = {
+                isShowGroupInfo = true
+            },
+            onShowExpInfo = {
+                isShowExpInfo = true
+            }
+        )
 
         HomeTitle(
             modifier.padding(top = 10.dp, bottom = 5.dp),
@@ -133,6 +141,12 @@ fun RankScreen(
                 isShowGroupInfo = false
             })
         }
+
+        if (isShowExpInfo) {
+            ShowExpInfoDialog() {
+                isShowExpInfo = false
+            }
+        }
     }
 }
 
@@ -144,7 +158,8 @@ fun RankingInfo(
     myName: String,
     myRank: Int,
     league: League,
-    onShowGroupInfo: (Boolean) -> Unit
+    onShowGroupInfo: (Boolean) -> Unit,
+    onShowExpInfo: (Boolean) -> Unit
 ) {
     val baseModifier = Modifier.fillMaxWidth()
     Box(
@@ -171,7 +186,9 @@ fun RankingInfo(
 
             ExpView(baseModifier, moveToExpHistory, weekExp, myRank)
 
-            InfoIconButton("경험치 획득 방법", onClick = {})
+            InfoIconButton("경험치 획득 방법", onClick = {
+                onShowExpInfo(true)
+            })
         }
     }
 }
@@ -250,12 +267,36 @@ fun UserProfile(
     }
 }
 
+@Composable
+fun ShowExpInfoDialog(
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit
+) {
+    val list = ExpInfoData.DEFAULT
+    val pagerState = rememberPagerState(
+        pageCount = { list.size }
+    )
+    CustomDialog(
+        onClickOk = {
+            onDismiss()
+        },
+        composable = {
+            ShowExpInfo(pagerState = pagerState,
+                onOkClick = {
+                    onDismiss()
+                })
+        }
+    )
+
+}
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowGroupInfoBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState,
-    onDismiss : () -> Unit
+    onDismiss: () -> Unit
 ) {
     ShowModalBottomSheet(
         sheetState = sheetState,
@@ -680,8 +721,6 @@ fun RankText(
         ),
     )
 }
-
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
