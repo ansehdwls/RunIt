@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u LEFT JOIN u.experiences e " +
             "WHERE u.userGroup.id = :groupId AND (e.createAt >= :startDate OR e.createAt IS NULL) " +
             "GROUP BY u.id " +
-            "ORDER BY COALESCE(SUM(e.changed), 0) ASC")
+            "ORDER BY COALESCE(SUM(e.changed), 0) DESC ")
     List<User> findUsersWithExperienceSum(@Param("groupId") Long groupId, @Param("startDate") LocalDateTime startDate);
 
     List<User> findUserByUserGroup(Group group);
