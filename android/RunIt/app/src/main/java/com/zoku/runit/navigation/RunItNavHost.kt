@@ -92,6 +92,8 @@ fun RunItMainNavHost(
                 navController.popBackStack()
             },
             moveToRunning = { runRecordDto ->
+                onStartWearableActivityClick(PhoneWatchConnection.START_RUNNING.route)
+                viewModel.updateMessageType(PhoneWatchConnection.START_RUNNING)
                 navController.navigateToRunning(runRecordDto)
             },
             popToBack = {
