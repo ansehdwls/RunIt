@@ -123,7 +123,6 @@ fun RecordDate(today: String, time: String) {
         Text(
             text = today,
             textAlign = TextAlign.Start,
-            modifier = Modifier.weight(1f),
             fontFamily = ZokuFamily
         )
         Text(
@@ -198,11 +197,20 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
 
                 // Y축 설정
                 axisRight.isEnabled = false
-                axisLeft.setDrawGridLines(false)
 
-                // Y축 범위 설정
-                axisLeft.axisMinimum = if (type == 1) 60f else 0f  // bpmList 최소값: 60, durationList 최소값: 0
-                axisLeft.axisMaximum = if (type == 1) 160f else 1200f // bpmList 최대값: 160, durationList 최대값: 1200
+                with(axisLeft){
+                    setDrawGridLines(false)
+                    setLabelCount(6, true) // Y축 레이블 개수 설정
+                    axisMinimum = 60f // Y축 최소값
+                    axisMaximum = 160f // Y축 최대값
+
+                    // 레이블의 마진 조정
+                    xOffset = 10f // Y축 레이블과 차트 축 간의 간격 (수평)
+                    yOffset = 10f // 레이블과 레이블 간 간격 (수직)
+                    axisMinimum = if (type == 1) 60f else 0f  // bpmList 최소값: 60, durationList 최소값: 0
+                    axisMaximum = if (type == 1) 160f else 1200f // bpmList 최대값: 160, durationList 최대값: 1200
+                }
+
 
                 // 기타 설정
                 description.isEnabled = false
