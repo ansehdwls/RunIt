@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoku.data.NetworkResult
 import com.zoku.data.repository.RunningRepository
+import com.zoku.network.model.response.RouteInfo
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.network.model.response.WeekList
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,10 @@ class RunHistoryViewModel @Inject constructor(
 
     private var _isFirst = MutableStateFlow<Boolean>(false)
     val isFirst: StateFlow<Boolean> = _isFirst
+
+    private val _routeList = MutableStateFlow<List<RouteInfo>>(emptyList())
+    val routeList: StateFlow<List<RouteInfo>> = _routeList
+
     fun getWeekList(today: String) {
 
         viewModelScope.launch {
@@ -67,4 +72,5 @@ class RunHistoryViewModel @Inject constructor(
             }
         }
     }
+
 }
