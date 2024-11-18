@@ -44,9 +44,9 @@ import java.time.temporal.ChronoField
 fun RecordDetailInfo(
     modifier: Modifier = Modifier, startDestination: Int = 0,
     runRecord: RunRecordDetail?,
-    moveToRunning : (recordDto : RunRecordDetail) -> Unit = {}
+    moveToRunning: (recordDto: RunRecordDetail) -> Unit = {}
 ) {
-    if(runRecord != null){
+    if (runRecord != null) {
         val startTime = runRecord.startTime.toString()
             .substringAfter("T")
             .take(5) // 시간 부분에서 앞 5자 (예: "06:26")만 가져옴
@@ -74,8 +74,8 @@ fun RecordDetailInfo(
                 // 날짜 및 시간
                 RecordDate(
                     runRecord.startTime.substringBefore("T"),
-                    if(startHour > 12) "오후 $startTime" else "오전 $startTime ~ " +
-                            if(endHour > 12) "오후 $endTime" else  "오전 $endTime"
+                    if (startHour > 12) "오후 $startTime" else "오전 $startTime ~ " +
+                            if (endHour > 12) "오후 $endTime" else "오전 $endTime"
                 )
 
                 // 평균 기록 데이터
@@ -84,7 +84,8 @@ fun RecordDetailInfo(
                         runRecord.startTime,
                         runRecord.endTime,
                         runRecord.id
-                    ), runRecord.bpm
+                    ), runRecord.paceList.map { it.durationList ?: 0 }
+                        .average().toInt()
                 )
 
                 // 그래프
@@ -135,14 +136,14 @@ fun RecordDate(today: String, time: String) {
 }
 
 @Composable
-fun RecordData(modifier: Modifier = Modifier, distance: Double, time: String, bpm: Int) {
+fun RecordData(modifier: Modifier = Modifier, distance: Double, time: String, pace: Int) {
     Row(
         modifier = modifier
             .padding(10.dp)
     ) {
         AverageData(modifier.weight(1f), data = "$distance", "km")
         AverageData(modifier.weight(1f), data = time, "")
-        AverageData(modifier.weight(1f), data = "$bpm", "bpm")
+        AverageData(modifier.weight(1f), data = "${pace / 60}'${pace % 60}", "pace")
     }
 }
 
@@ -186,7 +187,7 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
     AndroidView(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
+            .height(160.dp)
             .padding(16.dp),
         factory = { context ->
             LineChart(context).apply {
@@ -198,7 +199,7 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
                 // Y축 설정
                 axisRight.isEnabled = false
 
-                with(axisLeft){
+                with(axisLeft) {
                     setDrawGridLines(false)
                     setLabelCount(6, true) // Y축 레이블 개수 설정
                     axisMinimum = 60f // Y축 최소값
@@ -207,8 +208,10 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
                     // 레이블의 마진 조정
                     xOffset = 10f // Y축 레이블과 차트 축 간의 간격 (수평)
                     yOffset = 10f // 레이블과 레이블 간 간격 (수직)
-                    axisMinimum = if (type == 1) 60f else 0f  // bpmList 최소값: 60, durationList 최소값: 0
-                    axisMaximum = if (type == 1) 160f else 1200f // bpmList 최대값: 160, durationList 최대값: 1200
+                    axisMinimum =
+                        if (type == 1) 60f else 0f  // bpmList 최소값: 60, durationList 최소값: 0
+                    axisMaximum =
+                        if (type == 1) 160f else 1200f // bpmList 최대값: 160, durationList 최대값: 1200
                 }
 
 
@@ -222,11 +225,13 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
         update = { lineChart ->
             val entries = if (list.size == 1) {
                 // 데이터가 하나일 경우 가상의 두 번째 점 추가
-                val singleEntry = Entry(200f, if (type == 1) {
-                    list[0].bpmList.coerceIn(60, 160).toFloat()
-                } else {
-                    list[0].durationList?.coerceAtMost(1200)?.toFloat() ?: 0.0f
-                })
+                val singleEntry = Entry(
+                    200f, if (type == 1) {
+                        list[0].bpmList.coerceIn(60, 160).toFloat()
+                    } else {
+                        list[0].durationList?.coerceAtMost(1200)?.toFloat() ?: 0.0f
+                    }
+                )
                 listOf(singleEntry, Entry(2f, singleEntry.y)) // 동일한 Y값으로 두 번째 점 추가
             } else {
                 // 데이터가 여러 개일 경우 일반적인 처리
@@ -240,7 +245,7 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
                 }
             }
 
-            val lineDataSet = LineDataSet(entries, if(type == 1) "심박수 bpm" else "페이스 m/h").apply {
+            val lineDataSet = LineDataSet(entries, if (type == 1) "심박수 bpm" else "페이스 m/h").apply {
                 color = BaseYellow.toArgb()
                 lineWidth = 2f
                 circleRadius = 4f
@@ -254,7 +259,7 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
     )
 }
 
-fun calculateHoursDifference(startTime: String, endTime: String, id : Int): String {
+fun calculateHoursDifference(startTime: String, endTime: String, id: Int): String {
     // DateTimeFormatterBuilder로 밀리초 지원
     val formatter = DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
