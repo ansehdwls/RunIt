@@ -395,6 +395,12 @@ fun HomeTitle(
                     // 클릭 시 드롭다운 열기/닫기
                     fontFamily = ZokuFamily,
                 )
+                Spacer(Modifier.width(2.dp))
+                Image(
+                    modifier = Modifier.clickable{expanded = !expanded},
+                    painter = painterResource(R.drawable.ic_arrow_down),
+                    contentDescription = "arrowDown"
+                )
                 DropDownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
@@ -708,3 +714,17 @@ class DayAxisFormatter : ValueFormatter() {
 fun PreviewTodayDashBoard() {
     TodayDashBoard(todayRecord = RunToday(2.0, 2.0, 2.012123123))
 }
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewHomeTitle() {
+    val runningRecordMenu = arrayOf("전체", "일주일")
+    HomeTitle(
+        title = "야호",
+        firstSelect = "이거",
+        menu = runningRecordMenu
+    ) {
+
+    }
+}
+
