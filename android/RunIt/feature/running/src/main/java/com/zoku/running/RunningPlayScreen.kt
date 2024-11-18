@@ -55,7 +55,7 @@ fun RunningPlayScreen(
     runningViewModel: RunningViewModel,
     connectionState: RunningConnectionState,
 ) {
-    val permissionsList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    val permissionsList = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
         listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -74,9 +74,11 @@ fun RunningPlayScreen(
 
     LaunchedEffect(locationPermissionsState.allPermissionsGranted) {
         if (locationPermissionsState.allPermissionsGranted) {
+            Log.d("권한확인","권한 허용 됨")
             runningViewModel.startTimer()
             runningViewModel.startLocationService()
         } else {
+            Log.d("권한확인","권한 허용 안됨")
             locationPermissionsState.launchMultiplePermissionRequest()
         }
     }
