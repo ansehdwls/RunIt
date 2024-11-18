@@ -87,6 +87,12 @@ fun DailyRouteView(modifier: Modifier, list: WeekList, onClick: () -> Unit) {
     val startHour = startTime.substringBefore(":").toIntOrNull() ?: 0
     val endHour = endTime.substringBefore(":").toIntOrNull() ?: 0
 
+    val startTimeBefore = startTime.split(":")
+    val endTimeBefore = endTime.split(":")
+    val startString = if (startHour >= 12) "오후 ${startTimeBefore[0].toInt()-12}:${startTimeBefore[1]} ~ " else "오전 $startTime ~ "
+    val endString = if (endHour >= 12) "오후 ${endTimeBefore[0].toInt()-12}:${endTimeBefore[1]}" else "오전 $endTime"
+
+
     Surface(
         onClick = {onClick() },
         modifier = modifier
@@ -112,10 +118,10 @@ fun DailyRouteView(modifier: Modifier, list: WeekList, onClick: () -> Unit) {
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
                 DailyRouteText(modifier = Modifier.weight(1f), text = "시작", fontSize = 16.sp)
-                DailyRouteText(modifier = Modifier.weight(1f), text = if(startHour > 12) "오후 $startTime" else "오전 $startTime", fontSize = 12.sp)
+                DailyRouteText(modifier = Modifier.weight(1f), text = startString, fontSize = 12.sp)
                 Spacer(modifier = Modifier.height(10.dp))
                 DailyRouteText(modifier = Modifier.weight(1f), text = "종료", fontSize = 16.sp)
-                DailyRouteText(modifier = Modifier.weight(1f), text = if(endHour > 12) "오후 $endTime" else  "오전 $endTime" , fontSize = 12.sp)
+                DailyRouteText(modifier = Modifier.weight(1f), text = endString , fontSize = 12.sp)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
