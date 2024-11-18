@@ -175,9 +175,11 @@ fun RecordDataView(
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
+            val startString = if (startHour >= 12) "오후 $startTime ~ " else "오전 $startTime ~ "
+            val endString = if (endHour >= 12) "오후 $endTime" else "오전 $endTime"
             // 시간
             Text(
-                text = if (startHour > 12) "오후 $startTime ~ " else "오전 $startTime ~ " + if (endHour > 12) "오후 $endTime" else "오전 $endTime",
+                text = startString + endString,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp, end = 25.dp),
