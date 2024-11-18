@@ -89,7 +89,7 @@ fun RunningStatus(
         flag = true
         onPauseClick(uiState, duration)
     } else if (exerciseState == ExerciseState.ACTIVE) {
-        LaunchedEffect(metrics?.heartRate) {
+        LaunchedEffect(metrics?.heartRate, metrics?.distance) {
             while (true) {
                 delay(1000L)
                 sendBpm(
