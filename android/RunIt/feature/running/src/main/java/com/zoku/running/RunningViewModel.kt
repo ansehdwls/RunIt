@@ -160,9 +160,9 @@ class RunningViewModel @Inject constructor(
 
                         //1km 별 페이스
                         if(isPractice){
-                            if(totalPaceList.size > 0 && (totalPaceList.size % 2 == 0)){
-                                val recentPaces = totalPaceList.takeLast(2)
-                                val practicePaces = practiceRecord.value?.paceList?.takeLast(2)
+                            if(totalPaceList.size > 0 && (totalPaceList.size % 10 == 0)){
+                                val recentPaces = totalPaceList.takeLast(10)
+                                val practicePaces = practiceRecord.value?.paceList?.takeLast(10)
 
                                 practicePaces?.let{
                                     val recentAveragePace = recentPaces.map { it.pace }.average()
