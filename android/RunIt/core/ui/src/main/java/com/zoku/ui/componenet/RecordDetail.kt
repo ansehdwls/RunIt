@@ -149,7 +149,7 @@ fun RecordData(modifier: Modifier = Modifier, distance: Double, time: String, pa
         modifier = modifier
             .padding(10.dp)
     ) {
-        AverageData(modifier.weight(1f), data = "$distance", "km")
+        AverageData(modifier.weight(1f), data = String.format("%.2f", distance / 1000), "km")
         AverageData(modifier.weight(1f), data = time, "")
         AverageData(modifier.weight(1f), data = "${pace / 60}'${pace % 60}", "pace")
     }
@@ -199,7 +199,6 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
     list.forEach { l ->
         maxY = maxY.coerceAtLeast(l.durationList ?: 0)
     }
-    Timber.tag("씹버그").d("maxY $maxY")
     AndroidView(
         modifier = Modifier
             .fillMaxWidth()
