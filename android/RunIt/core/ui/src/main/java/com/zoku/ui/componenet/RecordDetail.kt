@@ -67,9 +67,9 @@ fun RecordDetailInfo(
         ) {
             // 길이가 길어 지면 scroll
             Column(
-                modifier = if (startDestination == 0) Modifier
+                modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                else Modifier
+
             ) {
                 // 날짜 및 시간
                 RecordDate(
