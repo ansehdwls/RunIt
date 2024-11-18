@@ -1,5 +1,6 @@
 package com.zoku.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -130,7 +131,7 @@ fun RecordList(
 
         items(runningAllList.size) { index ->
             val item = runningAllList[index]
-            if(today != item.startTime.substringBefore("T")){
+            if (today != item.startTime.substringBefore("T")) {
                 // 날짜
                 Text(
                     text = item.startTime.substringBefore("T"),
@@ -177,20 +178,10 @@ fun RecordDataView(
         ) {
             // 시간
             Text(
-                text = if (startHour > 12) "오후 $startTime" else "오전 $startTime",
+                text = if (startHour > 12) "오후 $startTime ~ " else "오전 $startTime ~ " + if (endHour > 12) "오후 $endTime" else "오전 $endTime",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp, end = 25.dp),
-                textAlign = TextAlign.End,
-                fontFamily = ZokuFamily
-            )
-
-            Text(
-                text = "~ ${if (endHour > 12) "오후 $endTime" else "오전 $endTime"}",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 10.dp),
-                textAlign = TextAlign.End,
                 fontFamily = ZokuFamily
             )
 
