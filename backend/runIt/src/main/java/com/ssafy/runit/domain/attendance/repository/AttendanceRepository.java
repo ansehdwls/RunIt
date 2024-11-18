@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
-    List<Attendance> findByUserAndCreatedAtAfterOrderByCreatedAtAsc(User user, LocalDate date);
+    List<Attendance> findByUserAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(User user, LocalDate date);
 
 
     Optional<Attendance> findByUserAndCreatedAt(User user, LocalDate date);

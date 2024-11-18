@@ -33,7 +33,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 () -> new CustomException(AuthErrorCode.UNREGISTERED_USER_ERROR)
         );
         LocalDate nearMonday = DateUtils.getLastMonday();
-        List<LocalDate> attendances = attendanceRepository.findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday)
+        List<LocalDate> attendances = attendanceRepository.findByUserAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(user, nearMonday)
                 .stream().map(Attendance::getCreatedAt)
                 .toList();
         return Stream.of(DayOfWeek.values()).map(
