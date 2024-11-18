@@ -26,6 +26,8 @@ public abstract class BaseRankingService<T> {
         return UpdateType.ADD;
     }
 
+    protected abstract boolean isDescendingOrder();
+
 
     public Set<ZSetOperations.TypedTuple<Object>> getGroupRanking(long groupId, int sortOpt) {
         String key = getRankKey(String.valueOf(groupId));
@@ -55,7 +57,12 @@ public abstract class BaseRankingService<T> {
         double newScore = calculateScore(data) + calculateTimeAdjustment();
 
         updateUserScore(rankKey, userIdStr, newScore, getUpdateType());
-        Long newRank = redisTemplate.opsForZSet().reverseRank(rankKey, userIdStr);
+        Long newRank;
+        if (isDescendingOrder()) {
+            newRank = redisTemplate.opsForZSet().reverseRank(rankKey, userIdStr);
+        } else {
+            newRank = redisTemplate.opsForZSet().rank(rankKey, userIdStr);
+        }
         if (newRank == null) {
             return;
         }
@@ -80,7 +87,12 @@ public abstract class BaseRankingService<T> {
     }
 
     protected Long getPreviousRank(String rankKey, String userIdStr) {
-        Long previousRank = redisTemplate.opsForZSet().reverseRank(rankKey, userIdStr);
+        Long previousRank;
+        if (isDescendingOrder()) {
+            previousRank = redisTemplate.opsForZSet().reverseRank(rankKey, userIdStr);
+        } else {
+            previousRank = redisTemplate.opsForZSet().rank(rankKey, userIdStr);
+        }
         if (previousRank == null) {
             previousRank = redisTemplate.opsForZSet().zCard(rankKey);
         }
@@ -90,10 +102,18 @@ public abstract class BaseRankingService<T> {
     protected List<String> getAffectedUserIds(String rankKey, Long previousRank, Long newRank, int rankChange) {
         List<String> affectedUserIds = new ArrayList<>();
         Set<Object> affectedUsers;
-        if (rankChange > 0) {
-            affectedUsers = redisTemplate.opsForZSet().reverseRange(rankKey, newRank + 1, previousRank);
+        if (isDescendingOrder()) {
+            if (rankChange > 0) {
+                affectedUsers = redisTemplate.opsForZSet().reverseRange(rankKey, newRank + 1, previousRank);
+            } else {
+                affectedUsers = redisTemplate.opsForZSet().reverseRange(rankKey, previousRank + 1, newRank);
+            }
         } else {
-            affectedUsers = redisTemplate.opsForZSet().reverseRange(rankKey, previousRank + 1, newRank);
+            if (rankChange > 0) {
+                affectedUsers = redisTemplate.opsForZSet().range(rankKey, newRank + 1, previousRank);
+            } else {
+                affectedUsers = redisTemplate.opsForZSet().range(rankKey, previousRank + 1, newRank);
+            }
         }
         if (affectedUsers != null) {
             affectedUserIds.addAll(affectedUsers.stream().map(Object::toString).toList());

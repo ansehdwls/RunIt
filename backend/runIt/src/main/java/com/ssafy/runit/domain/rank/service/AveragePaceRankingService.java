@@ -29,4 +29,9 @@ public class AveragePaceRankingService extends BaseRankingService<Double> {
     public String getSubKey(String userId) {
         return RedisKeys.getUserPaceKey(userId);
     }
+
+    @Override
+    protected boolean isDescendingOrder() {
+        return false;
+    }
 }

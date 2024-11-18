@@ -31,4 +31,9 @@ public class DistanceRankingService extends BaseRankingService<Double> {
     protected UpdateType getUpdateType() {
         return UpdateType.INCREMENT;
     }
+
+    @Override
+    protected boolean isDescendingOrder() {
+        return true;
+    }
 }
