@@ -1,12 +1,10 @@
 package com.ssafy.runit.domain.experience.repository;
 
-import com.ssafy.runit.domain.experience.dto.response.ExperienceGetListResponse;
 import com.ssafy.runit.domain.experience.entity.Experience;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +22,6 @@ public interface ExperienceRepository extends JpaRepository<Experience, Long> {
             "AND e.activity = '거리' " +
             "AND e.createAt BETWEEN :startDay AND :endDay")
     Optional<Long> findByUserIdAndCreateAtBetween(@Param("userId") Long userId, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
+
+    List<Experience> findByUserIdOrderByCreateAtDesc(Long userId);
 }

@@ -6,8 +6,8 @@ import com.ssafy.runit.domain.experience.dto.request.ExperienceSaveRequest;
 import com.ssafy.runit.domain.experience.dto.response.ExperienceGetListResponse;
 import com.ssafy.runit.domain.experience.entity.Experience;
 import com.ssafy.runit.domain.experience.repository.ExperienceRepository;
-import com.ssafy.runit.domain.record.dto.response.RecordTodayResponse;
 import com.ssafy.runit.domain.rank.service.ExperienceRankManager;
+import com.ssafy.runit.domain.record.dto.response.RecordTodayResponse;
 import com.ssafy.runit.domain.record.service.RecordService;
 import com.ssafy.runit.domain.user.entity.User;
 import com.ssafy.runit.domain.user.repository.UserRepository;
@@ -56,10 +56,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     public List<ExperienceGetListResponse> experienceList(Long userId) {
-
-
-
-        return experienceRepository.findByUserId(userId).stream()
+        return experienceRepository.findByUserIdOrderByCreateAtDesc(userId).stream()
                 .map(ExperienceGetListResponse::fromEntity)
                 .collect(Collectors.toList());
     }
