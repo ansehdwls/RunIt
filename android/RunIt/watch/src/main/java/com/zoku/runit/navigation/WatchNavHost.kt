@@ -21,7 +21,7 @@ fun WatchNavHost(
     modifier: Modifier = Modifier,
     startDestination: String = WatchScreenDestination.home.route,
     mainViewModel : MainViewModel,
-    sendBpm: (Int, Int, PhoneWatchConnection) -> Unit
+    sendBpm: (Int, Int, Double, PhoneWatchConnection) -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -30,7 +30,7 @@ fun WatchNavHost(
     ) {
         composable(route = WatchScreenDestination.home.route) {
             HomeScreen(modifier, mainViewModel) {
-                sendBpm(0, 0, PhoneWatchConnection.START_RUNNING)
+                sendBpm(0, 0, 0.0, PhoneWatchConnection.START_RUNNING)
                 navController.navigate(WatchScreenDestination.running.route)
             }
         }
@@ -43,8 +43,8 @@ fun WatchNavHost(
                     this.navigate(WatchScreenDestination.runningPause.createRoute(exerciseResult))
                 }
             },
-                sendBpm = { bpm, duration, connection ->
-                    sendBpm(bpm, duration, connection)
+                sendBpm = { bpm, duration, distance, connection ->
+                    sendBpm(bpm, duration, distance, connection)
                 }
             )
         }
@@ -61,17 +61,17 @@ fun WatchNavHost(
             Timber.tag("WatchNavHost").d("result $data")
             RunningPauseScreen(modifier, data,
                 onPauseStatus = {
-                    sendBpm(0, 0,PhoneWatchConnection.PAUSE_RUNNING)
+                    sendBpm(0, 0, 0.0,PhoneWatchConnection.PAUSE_RUNNING)
                 },
                 onStopClick = {
-                    sendBpm(0, 0,PhoneWatchConnection.STOP_RUNNING)
+                    sendBpm(0, 0, 0.0,PhoneWatchConnection.STOP_RUNNING)
                     navController.popBackStack(
                         route = WatchScreenDestination.home.route,
                         inclusive = false
                     )
                 },
                 onResumeClick = {
-                    sendBpm(0, 0, PhoneWatchConnection.RESUME_RUNNING)
+                    sendBpm(0, 0, 0.0,PhoneWatchConnection.RESUME_RUNNING)
                     navController.popBackStack(
                         route = WatchScreenDestination.running.route,
                         inclusive = false
