@@ -130,7 +130,7 @@ fun HandleRunningState(
                     onStopWearableActivityClick(PhoneWatchConnection.STOP_RUNNING.route)
                     onIsResultChange(true)
                 },
-                runningViewModel = runningViewModel
+                runningViewModel = runningViewModel,
             )
         }
     }

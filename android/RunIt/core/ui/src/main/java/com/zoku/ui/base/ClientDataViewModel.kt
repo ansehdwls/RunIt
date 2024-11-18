@@ -40,7 +40,8 @@ class ClientDataViewModel @Inject constructor(
                 originState.copy(
                     data = originState.data.copy(
                         bpm = state.data.bpm,
-                        time = state.data.time
+                        time = state.data.time,
+                        distance = state.data.distance
                     )
                 )
             }
@@ -74,12 +75,14 @@ class ClientDataViewModel @Inject constructor(
             val bpmString = messageEvent.data.toString(Charsets.UTF_8).split(":")
             val bpm = bpmString[0].toIntOrNull()
             val time = bpmString[1].toIntOrNull()
+            val distance = bpmString[2].toDoubleOrNull()
             if (bpm != null && time != null) {
                 updateConnection(
                     RunningConnectionState.ConnectionSuccess(
                         data = WatchToPhoneData(
                             bpm = bpm,
-                            time = time
+                            time = time,
+                            distance = distance
                         )
                     )
                 )

@@ -13,10 +13,10 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     mainViewModel : MainViewModel,
-    sendBpm: (Int, Int, PhoneWatchConnection) -> Unit
+    sendBpm: (Int, Int, Double, PhoneWatchConnection) -> Unit
 ) {
-    WatchNavHost(navController, modifier, mainViewModel = mainViewModel) { bpm, duration, connection ->
-        sendBpm(bpm, duration, connection)
+    WatchNavHost(navController, modifier, mainViewModel = mainViewModel) { bpm, duration, distance, connection ->
+        sendBpm(bpm, duration, distance,connection)
     }
 }
 

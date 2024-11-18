@@ -82,6 +82,12 @@ fun RunningPlayScreen(
     }
     val uiState by runningViewModel.uiState.collectAsState()
 
+    val bpmTimeDistanceTriple = if (connectionState is RunningConnectionState.ConnectionSuccess) {
+        connectionState.data.bpm?.let { runningViewModel.addBpm(it) }
+        Triple(connectionState.data.bpm, connectionState.data.time, connectionState.data.distance)
+    } else {
+        Triple(uiState.bpm, uiState.time, uiState.distance)
+    }
 
     Column(
         modifier = Modifier
@@ -95,12 +101,6 @@ fun RunningPlayScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            val bpmTimePair = if (connectionState is RunningConnectionState.ConnectionSuccess) {
-                connectionState.data.bpm?.let { runningViewModel.addBpm(it) }
-                Pair(connectionState.data.bpm, connectionState.data.time)
-            } else {
-                Pair(uiState.bpm, uiState.time)
-            }
 
 
             TopInfoWithText(
@@ -108,11 +108,11 @@ fun RunningPlayScreen(
                 bottomName = "페이스"
             )
             TopInfoWithText(
-                topName = "${bpmTimePair.first}",
+                topName = "${bpmTimeDistanceTriple.first}",
                 bottomName = "BPM"
             )
             TopInfoWithText(
-                topName = formatTime(seconds = bpmTimePair.second ?: 0),
+                topName = formatTime(seconds = bpmTimeDistanceTriple.second ?: 0),
                 bottomName = "시간"
             )
         }
@@ -126,7 +126,7 @@ fun RunningPlayScreen(
         ) {
             Timber.tag("RunningPlayScreen").d("distance ${uiState.distance}")
             RobotoText(
-                text = meterToKiloString(uiState.distance.toInt()),
+                text = meterToKiloString(bpmTimeDistanceTriple.third?.toInt() ?: 0),
                 fontSize = 80.sp,
                 color = BaseYellow,
                 style = "Bold"

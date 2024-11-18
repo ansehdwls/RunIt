@@ -2,7 +2,6 @@ package com.zoku.runit
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.PowerManager
 import android.view.WindowManager
@@ -16,7 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -46,7 +44,7 @@ class MainActivity : ComponentActivity() {
     private val messageClient by lazy { Wearable.getMessageClient(this) }
     private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
 
-    private val mainViewModel : MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     private lateinit var navController: NavHostController
 
@@ -80,10 +78,10 @@ class MainActivity : ComponentActivity() {
         isActivityActive = true
     }
 
-    private fun observeMainExit(){
+    private fun observeMainExit() {
         mainViewModel.appExit.flowWithLifecycle(lifecycle)
             .onEach {
-                if(it){
+                if (it) {
                     Timber.tag("MainActivity").d("앱 종료")
                     this.appExit(lifecycleScope)
                 }
@@ -91,7 +89,12 @@ class MainActivity : ComponentActivity() {
             .launchIn(lifecycleScope)
     }
 
-    private fun sendBpm(bpm: Int? = 0, time: Int? = 0, phoneWatchConnection: PhoneWatchConnection) {
+    private fun sendBpm(
+        bpm: Int? = 0,
+        time: Int? = 0,
+        distance: Double? = 0.0,
+        phoneWatchConnection: PhoneWatchConnection
+    ) {
         lifecycleScope.launch {
             try {
                 if (phoneWatchConnection != InitphoneWatchConnection || phoneWatchConnection ==
@@ -102,7 +105,7 @@ class MainActivity : ComponentActivity() {
                         .await()
                         .nodes
 
-                    val bpmTimeData = "${bpm}:${time}".toByteArray(Charsets.UTF_8)
+                    val bpmTimeData = "${bpm}:${time}:${distance}".toByteArray(Charsets.UTF_8)
 
 
                     Timber.tag("sendPhone").d("노드 확인 $bpmTimeData , ${phoneWatchConnection.route}")
@@ -127,12 +130,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun setWakeRock(){
+    fun setWakeRock() {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::WakeLockTag")
-        wakeLock.acquire(10*60*1000L )
+        wakeLock.acquire(10 * 60 * 1000L)
     }
-    
+
     override fun onStop() {
         super.onStop()
         isActivityActive = false
