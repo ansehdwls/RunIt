@@ -14,6 +14,6 @@ public class SplitUtils {
                     .sum() / splitList.size();
         }
 
-        return result;
+        return DoubleUtils.distanceFormatter(result);
     }
 }
