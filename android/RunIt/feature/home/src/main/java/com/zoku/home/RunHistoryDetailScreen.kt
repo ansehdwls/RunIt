@@ -57,11 +57,12 @@ fun RunHistoryDetailScreen(
         ) {
             RecordDetailInfo(startDestination = 1, runRecord = runRecord)
         }
-        BackHandler {
-            coroutineScope.launch {
-                delay(100L)
-                onBackClick()
-            }
+    }
+
+    BackHandler {
+        coroutineScope.launch {
+            delay(100L)
+            onBackClick()
         }
     }
 }
