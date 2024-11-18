@@ -14,7 +14,7 @@ data class ExpInfoData(
             ),
             ExpInfoData(
                 image = R.drawable.ic_exp_run,
-                text = "10m 뛸 때마다\n+1xp"
+                text = "100m 뛸 때마다\n+1xp"
             )
         )
     }
