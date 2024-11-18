@@ -33,12 +33,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.zoku.network.model.response.WeekList
 import com.zoku.ui.theme.ZokuFamily
+import timber.log.Timber
 import java.time.LocalDate
 
 @Composable
 fun RunHistoryRecordListScreen(selectedDay : LocalDate, list: List<WeekList>, onClick: (Int) -> Unit) {
     // 아이템을 통해 높이가 완성 되면 작동
-
+        Timber.tag("RunHistoryRecordListScreen").d("선택 날짜 $selectedDay")
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

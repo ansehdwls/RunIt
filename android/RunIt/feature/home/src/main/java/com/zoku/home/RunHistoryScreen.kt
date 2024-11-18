@@ -33,9 +33,12 @@ import com.zoku.home.viewmodel.RunHistoryViewModel
 import com.zoku.network.model.response.WeekList
 import com.zoku.ui.theme.BaseGray
 import com.zoku.ui.theme.ZokuFamily
+import timber.log.Timber
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.TextStyle
+import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.Locale
 
@@ -51,16 +54,16 @@ fun RunHistoryScreen(
     }
     var selectedDay by remember {
         mutableStateOf(
-            LocalDate.now(ZoneId.systemDefault()).minusDays(1)
+            LocalDate.now(ZoneId.systemDefault())
         )
     }
+    Timber.tag("RunHistoryScreen").d("선택 날짜 $selectedDay")
     var selectRecordId by remember {
         mutableStateOf(0)
     }
     // 주간 시작일을 고정하여 현재 주간의 날짜를 유지
-    val weekStart = selectedDay.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
-    val weekDates = getWeekDates(weekStart)
-
+    val weekDates = getWeekDates(selectedDay)
+    Timber.tag("RunHistoryScreen").d("weekDates $weekDates")
     // 표기 되는 월은 그 주의 월요일 기준
     val monthName = weekDates.first().month.getDisplayName(TextStyle.SHORT, Locale.getDefault())
 
@@ -73,17 +76,11 @@ fun RunHistoryScreen(
 
     // 선택한 요일이 일주일 중 몇번째 인덱스 인지
     val selectedIndex = weekDates.indexOfFirst { it == selectedDay }
-
-    if (selectedIndex != -1) {
-        Log.d("확인", "SelectedDay의 인덱스는: $selectedIndex")
-    } else {
-        Log.d("확인", "SelectedDay가 현재 주에 포함되어 있지 않습니다.")
-    }
-
+    Timber.tag("RunHistoryScreen").d("selectedIndex $selectedIndex")
     val baseModifier = Modifier
         .padding(horizontal = 10.dp)
         .fillMaxWidth()
-    Log.d("확인", "RunHistoryScreen: $historyWeekList")
+
     if (historyWeekList.isNotEmpty()) {
         Column(
             modifier = Modifier
@@ -117,7 +114,7 @@ fun RunHistoryScreen(
             )
             if (!selectHistory) {
                 RunHistoryRecordListScreen(
-                    selectedDay = selectedDay.plusDays(1),
+                    selectedDay = selectedDay,
                     list = historyWeekList[selectedIndex],
                     onClick = { selectItem ->
                         selectHistory = true
@@ -258,7 +255,7 @@ fun WeeklyDateView(
                             .height(25.dp)
                     )
                     Text(
-                        text = date.plusDays(1).dayOfMonth.toString(),
+                        text = date.dayOfMonth.toString(),
                         color = Color.White,
                         textAlign = TextAlign.Center,
                         fontSize = 13.sp,
@@ -273,6 +270,7 @@ fun WeeklyDateView(
 
 fun getWeekDates(today: LocalDate = LocalDate.now()): List<LocalDate> {
 
-    val weekStart = today.with(WeekFields.of(Locale.getDefault()).firstDayOfWeek)
+    val weekStart = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+    Timber.tag("RunHistoryScreen").d("weekStart $weekStart")
     return (0..6).map { weekStart.plusDays(it.toLong()) }
 }
