@@ -147,6 +147,7 @@ fun RunningResultScreen(
             RecordDetailInfo(
                 startDestination = 1,
                 runRecord = RunRecordDetail(
+                    distance = runningViewModel.uiState.value.distance,
                     startTime = getIso8601TimeString(runningViewModel.getStartTime()),
                     endTime = getIso8601TimeString(runningViewModel.getEndTime()),
                     paceList = runningViewModel.totalPaceList.map { it.toPaceRecord() }
