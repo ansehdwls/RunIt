@@ -14,10 +14,11 @@ public record RecordGetListResponse(
         LocalDateTime startTime,
         LocalDateTime endTime,
         String name,
-        String imageUrl
+        String imageUrl,
+        double avgPace
 
 ) {
-    public static RecordGetListResponse fromEntity(Record record, String name, String imageUrl){
+    public static RecordGetListResponse fromEntity(Record record, String name, String imageUrl, double avgPace){
         return RecordGetListResponse.builder()
                 .id(record.getId())
                 .distance(DoubleUtils.distanceFormatter(record.getDistance()))
@@ -26,6 +27,7 @@ public record RecordGetListResponse(
                 .endTime(record.getEndTime())
                 .imageUrl(imageUrl)
                 .name(name)
+                .avgPace(avgPace)
                 .build();
     }
 }

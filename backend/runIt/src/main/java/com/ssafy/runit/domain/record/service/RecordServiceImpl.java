@@ -19,6 +19,7 @@ import com.ssafy.runit.exception.code.TrackErrorCode;
 import com.ssafy.runit.util.DateUtils;
 import com.ssafy.runit.util.DoubleUtils;
 import com.ssafy.runit.util.S3UploadUtil;
+import com.ssafy.runit.util.SplitUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -106,7 +107,7 @@ public class RecordServiceImpl implements RecordService {
                 .stream()
                 .map(item -> {
 
-                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), item.getTrack().getTrackImageUrl());
+                    return RecordGetListResponse.fromEntity(item, findUser.getUserName(), item.getTrack().getTrackImageUrl(), SplitUtils.getPaceAvg(item.getSplitList()));
 
                 })
                 .collect(Collectors.toList());
@@ -282,7 +283,7 @@ public class RecordServiceImpl implements RecordService {
             // 요일 인덱스가 0 이상 6 이하인지 확인
             if (dayIndex >= 0) {
                 RecordGetListResponse toRecord = RecordGetListResponse.fromEntity(
-                        item, user.getUserName(), item.getTrack().getTrackImageUrl());
+                        item, user.getUserName(), item.getTrack().getTrackImageUrl(), SplitUtils.getPaceAvg(item.getSplitList()));
 
                 // 요일 인덱스에 맞는 리스트에 추가
                 result.get(dayIndex).add(toRecord);
@@ -298,7 +299,7 @@ public class RecordServiceImpl implements RecordService {
 
         return recordRepository.findByUserIdAndIsPracticeTrueOrderByStartTimeDesc(findUser.getId())
                 .stream()
-                .map(r -> RecordGetListResponse.fromEntity(r, findUser.getUserName(), r.getTrack().getTrackImageUrl()))
+                .map(r -> RecordGetListResponse.fromEntity(r, findUser.getUserName(), r.getTrack().getTrackImageUrl(), SplitUtils.getPaceAvg(r.getSplitList())))
                 .toList();
     }
 
