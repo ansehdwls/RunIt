@@ -1,6 +1,5 @@
 package com.zoku.home
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -240,6 +239,10 @@ fun RecordTextView(
                     fontFamily = ZokuFamily
                 )
                 Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = "${item.avgPace.toInt() / 60}'${item.avgPace.toInt() % 60} 분",
+                    fontFamily = ZokuFamily
+                )
             }
         }
     }

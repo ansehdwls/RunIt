@@ -7,10 +7,11 @@ data class RunPracticeResponse(
 
 data class RunPractice(
     val id: Int,
-    val distance : Double,
+    val distance: Double,
     val bpm: Int,
     val startTime: String,
     val endTime: String,
     val name: String,
-    val imageUrl: String
+    val imageUrl: String,
+    val avgPace: Double,
 )
