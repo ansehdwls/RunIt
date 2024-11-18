@@ -36,6 +36,7 @@ import com.zoku.network.model.response.PaceRecord
 import com.zoku.network.model.response.RunRecordDetail
 import com.zoku.ui.theme.BaseYellow
 import com.zoku.ui.theme.ZokuFamily
+import timber.log.Timber
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -75,8 +76,10 @@ fun RecordDetailInfo(
                     .verticalScroll(rememberScrollState())
 
             ) {
-                val startString = if (startHour >= 12) "오후 $startTime ~ " else "오전 $startTime ~ "
-                val endString = if (endHour >= 12) "오후 $endTime" else "오전 $endTime"
+                val startTimeBefore = startTime.split(":")
+                val endTimeBefore = endTime.split(":")
+                val startString = if (startHour >= 12) "오후 ${startTimeBefore[0].toInt()-12}:${startTimeBefore[1]} ~ " else "오전 $startTime ~ "
+                val endString = if (endHour >= 12) "오후 ${endTimeBefore[0].toInt()-12}:${endTimeBefore[1]}" else "오전 $endTime"
                 // 날짜 및 시간
                 RecordDate(
                     runRecord.startTime.substringBefore("T"),
@@ -175,6 +178,7 @@ fun AverageData(modifier: Modifier = Modifier, data: String, type: String) {
 
 @Composable
 fun RecordGraph(title: String, list: List<PaceRecord>, type: Int) {
+
     Log.d("씹버그", "${list}")
     Column(
         modifier = Modifier
@@ -195,6 +199,7 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
     list.forEach { l ->
         maxY = maxY.coerceAtLeast(l.durationList ?: 0)
     }
+    Timber.tag("씹버그").d("maxY $maxY")
     AndroidView(
         modifier = Modifier
             .fillMaxWidth()
@@ -212,14 +217,14 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
 
                 with(axisLeft) {
                     setDrawGridLines(false)
-
+                    setLabelCount(6, true)
                     // 레이블의 마진 조정
                     xOffset = 10f // Y축 레이블과 차트 축 간의 간격 (수평)
                     yOffset = 10f // 레이블과 레이블 간 간격 (수직)
                     axisMinimum =
                         if (type == 1) 60f else 0f  // bpmList 최소값: 60, durationList 최소값: 0
                     axisMaximum =
-                        if (type == 1) 160f else (maxY / 60f) + 1 // bpmList 최대값: 160, durationList 최대값: 1200
+                        if (type == 1) 160f else (maxY / 60f)+10 // bpmList 최대값: 160, durationList 최대값: 1200
                 }
 
 
@@ -263,6 +268,7 @@ fun LineChartView(list: List<PaceRecord>, type: Int) {
                 setDrawValues(false)  // 각 점의 값 숨기기
             }
             lineChart.data = LineData(lineDataSet)
+            lineChart.invalidate()
         }
     )
 }
