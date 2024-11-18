@@ -14,9 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -38,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -241,65 +237,13 @@ fun RecordDetailTitle(modifier: Modifier = Modifier, updateRecord: () -> Unit) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // 수정 버튼 클릭 시
-                if (isEditing) {
-                    BasicTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        singleLine = true,
-                        textStyle = TextStyle(
-                            color = Color.White,
-                            fontSize = 32.sp,
-                            textAlign = TextAlign.Center
-                        ),
-                        modifier = Modifier.background(Color.Transparent),
-                        decorationBox = { innerTextField ->
-                            Box(
-                                modifier = Modifier
-                                    .background(Color.Transparent)
-                                    .padding(4.dp)
-                            ) {
-                                if (title.isEmpty()) {
-                                    Text(
-                                        text = "코스명을 입력하세요",
-                                        color = Color.Gray,
-                                        style = TextStyle(fontSize = 20.sp),
-                                        fontFamily = ZokuFamily
-                                    )
-                                }
-                                innerTextField()  // 실제 입력 필드
-                            }
-                        }
-                    )
-                    IconButton(onClick = { isEditing = false }) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            tint = Color.White,
-                            contentDescription = null
-                        )
-                    }
-                } else {
-                    Text(
-                        text = title,
-                        color = Color.White,
-                        fontSize = 32.sp,
-                        textAlign = TextAlign.Center,
-                        fontFamily = ZokuFamily
-                    )
-                    IconButton(
-                        onClick = { isEditing = true }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.edit_record_detail_icon),
-                            tint = Color.White,
-                            modifier = Modifier
-                                .width(25.dp)
-                                .height(25.dp),
-                            contentDescription = null
-                        )
-                    }
-                }
-
+                Text(
+                    text = title,
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    textAlign = TextAlign.Center,
+                    fontFamily = ZokuFamily
+                )
 
             }
         }
