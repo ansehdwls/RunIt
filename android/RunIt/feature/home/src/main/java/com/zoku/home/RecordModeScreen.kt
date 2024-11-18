@@ -239,6 +239,7 @@ fun RecordTextView(
                     ),
                     fontFamily = ZokuFamily
                 )
+                Spacer(modifier = Modifier.height(5.dp))
             }
         }
     }
