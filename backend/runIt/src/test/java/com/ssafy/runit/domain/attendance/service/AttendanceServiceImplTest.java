@@ -122,14 +122,14 @@ public class AttendanceServiceImplTest {
                         .build())
                 .toList();
 
-        when(attendanceRepository.findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday)).thenReturn(attendances);
+        when(attendanceRepository.findByUserAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(user, nearMonday)).thenReturn(attendances);
         List<DayAttendanceResponse> response = attendanceService.getWeekAttendance(TEST_NUMBER);
         assertEquals(7, response.size(), "주간 출석 기록은 7일이어야 합니다.");
         for (DayAttendanceResponse dayResponse : response) {
             assertTrue(dayResponse.attended(), "모든 날에 출석했으므로, attended 값은 `true`이어야 합니다.");
         }
         verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
-        verify(attendanceRepository, times(1)).findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday);
+        verify(attendanceRepository, times(1)).findByUserAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(user, nearMonday);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class AttendanceServiceImplTest {
                         .build())
                 .toList();
 
-        when(attendanceRepository.findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday)).thenReturn(attendances);
+        when(attendanceRepository.findByUserAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(user, nearMonday)).thenReturn(attendances);
         List<DayAttendanceResponse> response = attendanceService.getWeekAttendance(TEST_NUMBER);
         assertEquals(7, response.size(), "주간 출석 기록은 7일이어야 합니다.");
         for (DayAttendanceResponse dayResponse : response) {
@@ -157,14 +157,14 @@ public class AttendanceServiceImplTest {
             }
         }
         verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
-        verify(attendanceRepository, times(1)).findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday);
+        verify(attendanceRepository, times(1)).findByUserAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(user, nearMonday);
     }
 
     @Test
     @DisplayName("주간 출석 조회 성공 - 일주일 출석 기록이 없는 경우")
     void getWeekAttendance_NoAttendance_Success() {
         when(userRepository.findByUserNumber(eq(TEST_NUMBER))).thenReturn(Optional.of(user));
-        when(attendanceRepository.findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday))
+        when(attendanceRepository.findByUserAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(user, nearMonday))
                 .thenReturn(Collections.emptyList());
         List<DayAttendanceResponse> response = attendanceService.getWeekAttendance(TEST_NUMBER);
         assertEquals(7, response.size(), "주간 출석 기록은 7일이어야 합니다.");
@@ -172,7 +172,7 @@ public class AttendanceServiceImplTest {
             assertFalse(dayResponse.attended(), "출석을 한 적이 없으므로 `attended`가 `false` 이어야 합니다.");
         }
         verify(userRepository, times(1)).findByUserNumber(eq(TEST_NUMBER));
-        verify(attendanceRepository, times(1)).findByUserAndCreatedAtAfterOrderByCreatedAtAsc(user, nearMonday);
+        verify(attendanceRepository, times(1)).findByUserAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(user, nearMonday);
     }
 
     @Test
@@ -184,6 +184,6 @@ public class AttendanceServiceImplTest {
         assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR, exception.getErrorCodeType());
         assertEquals(AuthErrorCode.UNREGISTERED_USER_ERROR.message(), exception.getErrorCodeType().message());
         verify(userRepository, times(1)).findByUserNumber(TEST_NUMBER);
-        verify(attendanceRepository, never()).findByUserAndCreatedAtAfterOrderByCreatedAtAsc(any(User.class), any(LocalDate.class));
+        verify(attendanceRepository, never()).findByUserAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(any(User.class), any(LocalDate.class));
     }
 }
