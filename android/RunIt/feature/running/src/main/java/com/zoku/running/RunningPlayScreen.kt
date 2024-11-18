@@ -85,12 +85,11 @@ fun RunningPlayScreen(
     val uiState by runningViewModel.uiState.collectAsState()
 
     val bpmTimeDistanceTriple = if (connectionState is RunningConnectionState.ConnectionSuccess) {
-        connectionState.data.bpm?.let { runningViewModel.addBpm(it) }
         Triple(connectionState.data.bpm, connectionState.data.time, connectionState.data.distance)
     } else {
         Triple(uiState.bpm, uiState.time, uiState.distance)
     }
-
+    runningViewModel.setUiStateByWatch(bpmTimeDistanceTriple)
     Column(
         modifier = Modifier
             .fillMaxSize()

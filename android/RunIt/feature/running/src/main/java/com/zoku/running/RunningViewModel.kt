@@ -80,7 +80,7 @@ class RunningViewModel @Inject constructor(
 
     fun getPracticeRecord(runDto: RunRecordDetail) {
         _practiceRecord.value = runDto
-        if(runDto.id > 0)isPractice = true
+        if (runDto.id > 0) isPractice = true
     }
 
     val totalPaceList = mutableListOf<Pace>()
@@ -159,14 +159,15 @@ class RunningViewModel @Inject constructor(
                         }
 
                         //1km 별 페이스
-                        if(isPractice){
-                            if(totalPaceList.size > 0 && (totalPaceList.size % 10 == 0)){
+                        if (isPractice) {
+                            if (totalPaceList.size > 0 && (totalPaceList.size % 10 == 0)) {
                                 val recentPaces = totalPaceList.takeLast(10)
                                 val practicePaces = practiceRecord.value?.paceList?.takeLast(10)
 
-                                practicePaces?.let{
+                                practicePaces?.let {
                                     val recentAveragePace = recentPaces.map { it.pace }.average()
-                                    val practiceAveragePace = practicePaces.mapNotNull { it.durationList }.average()
+                                    val practiceAveragePace =
+                                        practicePaces.mapNotNull { it.durationList }.average()
                                     if (recentAveragePace > practiceAveragePace) {
                                         tts.speak(
                                             "현재 1키로미터 페이스가 연습보다 ${practiceAveragePace.toInt() - recentAveragePace.toInt()}초 느립니다. ",
@@ -185,7 +186,7 @@ class RunningViewModel @Inject constructor(
                                 }
                             }
                         }
-                        
+
 
 //                        if (bpmList.size >= timeDifference) {
 //                            val recentBpmList = bpmList.takeLast(timeDifference)
@@ -360,13 +361,14 @@ class RunningViewModel @Inject constructor(
 
     fun getInitialLocationData(): LocationData? = initialLocation
 
-    fun addBpm(bpm: Int) {
-        bpmList.add(bpm)
+    fun setUiStateByWatch(newState: Triple<Int?, Int?, Double?>) {
+        bpmList.add(newState.first ?: 0)
+        updateUIState(newDistance = newState.third, newTime = newState.second)
     }
 
     fun updatePracticeRecord() {
         viewModelScope.launch {
-            if(isPractice){
+            if (isPractice) {
                 practiceRecord.value?.id?.let {
                     when (val result = runningRepository.updateRunPracticeMode(it)) {
                         is NetworkResult.Success -> {
