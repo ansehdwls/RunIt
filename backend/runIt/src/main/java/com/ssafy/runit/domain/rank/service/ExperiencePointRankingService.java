@@ -31,4 +31,9 @@ public class ExperiencePointRankingService extends BaseRankingService<Long> {
     protected UpdateType getUpdateType() {
         return UpdateType.INCREMENT;
     }
+
+    @Override
+    protected boolean isDescendingOrder() {
+        return true;
+    }
 }
