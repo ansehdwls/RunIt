@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error Codes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .error-title {
+            text-align: center; /* 제목 중앙 정렬 */
+            width: 80%; /* 테이블과 일치하는 너비 */
+            margin: 20px auto; /* 수평 중앙 정렬 */
+        }
+
+        table {
+            width: 80%; /* 테이블 너비 설정 */
+            margin: 20px auto; /* 테이블 수평 중앙 정렬 */
+            border-collapse: collapse; /* 테이블 경계선 겹치지 않게 설정 */
+            table-layout: fixed; /* 테이블 레이아웃 고정 */
+        }
+
+        th, td {
+            padding: 15px; /* 셀 내부 여백 */
+            text-align: left; /* 텍스트 왼쪽 정렬 */
+            border: 2px solid #ddd; /* 셀 경계선 */
+            box-sizing: border-box; /* 패딩과 보더 포함 */
+            overflow: hidden; /* 내용 넘침 방지 */
+            text-overflow: ellipsis; /* 넘치는 텍스트 줄임표(...) */
+            white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+        }
+
+        th {
+            background-color: #f2f2f2; /* 헤더 배경색 */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9; /* 짝수 행 배경색 */
+        }
+
+        tr:hover {
+            background-color: #f1f1f1; /* 마우스 호버 시 행 배경색 */
+        }
+
+        /* 각 열의 너비 설정: Http Status를 가장 넓게 */
+        th:nth-child(1), td:nth-child(1) { /* Http Status */
+            width: 40%;
+        }
+
+        th:nth-child(2), td:nth-child(2) { /* Code */
+            width: 20%;
+        }
+
+        th:nth-child(3), td:nth-child(3) { /* Message */
+            width: 40%;
+        }
+
+        .home-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .home-link:hover {
+            background-color: #0056b3;
+        }
+
+        /* 반응형 디자인: 작은 화면에서 테이블 너비 조정 */
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .error-title {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:each="entry : ${errorCodesMap}">
+    <h2 class="error-title" th:text="${entry.key}"></h2> <!-- 각 에러 코드 그룹의 제목 -->
+    <table>
+        <thead>
+        <tr>
+            <th>Http Status</th>
+            <th>Code</th>
+            <th>Message</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="errorCode : ${entry.value}">
+            <td th:text="${errorCode.httpStatus()}"></td>
+            <td th:text="${errorCode.errorCode()}"></td>
+            <td th:text="${errorCode.message()}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
