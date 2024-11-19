@@ -1,0 +1,107 @@
+pipeline {
+    agent any
+    tools {
+        jdk 'jdk17'
+    }
+
+    stages {
+
+       stage('application.yml download') {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'application-prod-yml', variable: 'applicationProd'),
+                    file(credentialsId: 'application-test-yml', variable: 'applicationTest')
+                ]) {
+                    script {
+                        sh 'cp $applicationProd backend/runIt/src/main/resources/application-prod.yml'
+                        sh 'cp $applicationTest backend/runIt/src/test/resources/application-test.yml'
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh '''
+                    chmod +x ./backend/runIt/gradlew
+                    cd ./backend/runIt
+                    ./gradlew clean build
+                '''
+            }
+        }
+
+        stage('Docker Hub Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'DOCKER_USER',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
+                    sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+                }
+            }
+        }
+
+        stage('Retrieve and Clean Up Running Container') {
+           steps {
+               script {
+                   def containerId = sh(
+                       script: 'docker ps -q --filter "publish=8081-8081"',
+                       returnStdout: true
+                   ).trim()
+                    echo "Running Container ID: ${containerId}"
+                   if (containerId) {
+                       def imageName = sh(
+                           script: "docker inspect --format='{{.Config.Image}}' ${containerId}",
+                           returnStdout: true
+                       ).trim()
+                       echo "Image Name: ${imageName}"
+                       sh "docker stop ${containerId}"
+                       sh "docker rm ${containerId}"
+                       sh "docker rmi -f ${imageName}"
+                   }
+               }
+           }
+        }
+
+        stage('Docker Build and Push') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'DOCKER_HUB',
+                    usernameVariable: 'DOCKER_REPO',
+                    passwordVariable: 'DOCKER_PROJECT'
+                )]) {
+                    sh '''
+                        cd ./backend
+                        docker build -f runIt/Dockerfile -t "$DOCKER_REPO/runit" .
+                        docker push "$DOCKER_REPO/runit"
+                    '''
+                    echo 'Docker push succeeded!'
+                }
+            }
+        }
+
+
+
+        stage('Deploy') {
+            steps {
+                    sh '''
+                        docker run -d -p 8081:8081 --name runit "rhkeh102416/runit"
+                    '''
+                    echo 'Deployment succeeded!'
+            }
+       }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution completed.'
+        }
+        success {
+            echo 'All stages completed successfully!'
+        }
+        failure {
+            echo 'Pipeline encountered errors.'
+        }
+    }
+}
