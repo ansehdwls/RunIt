@@ -122,4 +122,15 @@
 
 <img src = "picture/KakaoTalk_20241119_085603362.jpg" width="300" height="700">
 
+---
+#### 산출물
+- 시스템 아키텍쳐
+<img src = "picture/24.jpg" width="700" height="500">
+
+- ERD
+<img src = "picture/25.jpg" width="700" height="500">
+
+- 기술 스택
+<img src = "picture/26.jpg" width="700" height="500">
+
 
