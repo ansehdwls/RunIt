@@ -1,0 +1,55 @@
+server:
+  port: ${RUNIT_PORT}
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  application:
+    name: runIt
+
+  output:
+    ansi:
+      enabled: always
+
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+
+  jpa:
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+    hibernate:
+      ddl-auto: update    
+  data:
+    redis:
+      host: ${EC2_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: ${ACCESS_EXPIRATION}
+  refresh-token-expiration: ${REFRESH_EXPIRATION}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET}
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}
