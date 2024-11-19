@@ -1,0 +1,184 @@
+[versions]
+agp = "8.5.0"
+#piechart
+android = "2.12.8"
+coilCompose = "2.0.0"
+datastorePreferences = "1.1.1"
+firebaseBom = "33.5.1"
+composeMaterial = "1.7.5"
+map = "2.4.0"
+mapSdk = "1.4.1"
+piechart = "3.1.0"
+
+kotlin = "2.0.10"
+kotlinx = "1.9.0"
+coreKtx = "1.13.1"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+lifecycleRuntimeKtx = "2.8.6"
+activityCompose = "1.9.3"
+composeBom = "2024.10.00"
+appcompat = "1.7.0"
+material = "1.12.0"
+lifecycleService = "2.8.6"
+ksp = "2.0.10-1.0.24"
+workManager = "2.7.1"
+workRuntimeKtx = "2.10.0"
+#hilt
+hilt = "2.52"
+hiltNavigationCompose = "1.2.0"
+hiltCompiler = "1.2.0"
+hiltWork = "1.2.0"
+
+#network
+retrofit2 = "2.9.0"
+okhttp = "4.9.0"
+#jetpack navigation
+navigation = "2.8.3"
+nav-material = "1.7.4"
+playServicesWearable = "18.2.0"
+navigationRuntimeKtx = "2.8.3"
+
+#Health
+healthServicesClient = "1.1.0-alpha04"
+
+#Watch
+androidx-wear-compose = "1.4.0"
+horologist = "0.5.28"
+v2All = "2.20.1"
+v2Cert = "2.20.1"
+v2Friend = "2.20.1"
+v2Navi = "2.20.1"
+v2Share = "2.20.1"
+v2Talk = "2.20.1"
+v2User = "2.20.1"
+wearToolingPreview = "1.0.0"
+coreSplashscreen = "1.0.1"
+navigationRuntime = "2.8.3"
+desguaring = "2.1.2"
+wearOngoing = "1.0.0"
+#FCM
+fcm = "4.4.2"
+firebaseMessagingKtx = "24.0.3"
+
+#location
+locations = "21.3.0"
+
+#permission
+permission = "0.36.0"
+
+# Logging
+timber = "5.0.1"
+
+# Kakao map
+kakao-map = "2.12.7"
+
+
+[libraries]
+#kakaoMap
+android = { module = "com.kakao.maps.open:android", version.ref = "android" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+map = { module = "net.daum.android:map", version.ref = "map" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+
+#piechart
+piechart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "piechart" }
+
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-material = {group = "androidx.compose.material", name="material", version.ref = "composeMaterial"}
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycleService" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-work = {group = "androidx.work", name="work-rutime-ktx", version.ref="workManager"}
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+# Logging
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+#hilt
+androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
+hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+
+
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
+
+#retrofit
+retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2" }
+okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp3-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit2" }
+#jetpack navigation
+nav = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+nav-material = { group = "androidx.compose.material", name = "material", version.ref = "nav-material" }
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+
+
+#Kakao
+v2-all = { module = "com.kakao.sdk:v2-all", version.ref = "v2All" }
+
+#kakao-map
+kakao-map = { group = "com.kakao.maps.open", name = "android", version.ref = "kakao-map" }
+
+#Wear
+wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "androidx-wear-compose" }
+wear-compose-material = { module = "androidx.wear.compose:compose-material", version.ref = "androidx-wear-compose" }
+wear-compose-pager = { module = "androidx.wear.compose:compose-pager", version.ref = "androidx-wear-compose" }
+androidx-wear-ongoing = { module = "androidx.wear:wear-ongoing", version.ref = "wearOngoing" }
+horologist-composables = { module = "com.google.android.horologist:horologist-composables", version.ref = "horologist" }
+horologist-compose-layout = { module = "com.google.android.horologist:horologist-compose-layout", version.ref = "horologist" }
+horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologist" }
+horologist-health-composables = { module = "com.google.android.horologist:horologist-health-composables", version.ref = "horologist" }
+horologist-health-service = { module = "com.google.android.horologist:horologist-health-service", version.ref = "horologist" }
+androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-navigation-runtime = { group = "androidx.navigation", name = "navigation-runtime", version.ref = "navigationRuntime" }
+core-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desguaring" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+#Health
+androidx-health-services-client = { module = "androidx.health:health-services-client", version.ref = "healthServicesClient" }
+
+#fcm
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
+
+#locations
+locations = { group = "com.google.android.gms", name = "play-services-location", version.ref = "locations" }
+
+#permission
+permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "permission" }
+
+#Coroutine
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinx" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+fcm = { id = "com.google.gms.google-services", version.ref = "fcm" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+parcelize = {id="kotlin-parcelize"}
+
+
+[bundles]
+network = ["retrofit2", "okhttp3", "okhttp3-logging", "gson"]
+nav = ["nav", "nav-material"]

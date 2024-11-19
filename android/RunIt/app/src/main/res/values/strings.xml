@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RunIt</string>
+    <string name="home">정보</string>
+    <string name="ranking">랭킹</string>
+</resources>
